@@ -156,4 +156,14 @@ $RECYCLE.BIN/
 /target/
 /build/
 
+### IntelliJ IDEA ###
+# User-specific stuff
+.idea/
+*.iws
+*.iml
+*.ipr
+
+# IntelliJ generated files
+out/
+
 # End of https://www.toptal.com/developers/gitignore/api/windows,macos,java,eclipse
