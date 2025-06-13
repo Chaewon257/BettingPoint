@@ -52,6 +52,9 @@
 	</main>
 
 	<footer class="footer">
+		<div class="container">
+			<p>&copy; 2025 Betting Point. All rights reserved.</p>
+		</div>
 	</footer>
 	<script src="${cpath}/resources/js/layout.js"></script>
 </body>

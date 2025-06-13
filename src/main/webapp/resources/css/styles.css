@@ -125,3 +125,11 @@ body {
 	padding-top: 3.563rem;
 	margin: 0 auto;
 }
+
+/* Footer */
+.footer {
+	background: #666;
+	color: white;
+	text-align: center;
+	padding: 30px 0;
+}
