@@ -1,0 +1,122 @@
+/* Default css */
+* {
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	font-style: normal;
+	font-weight: 500;
+	font-size: 14px;
+	line-height: 1;
+	font-family: Pretendard, -apple-system, BlinkMacSystemFont, system-ui,
+		'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic',
+		'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif;
+	background-color: #F7F9FC;
+}
+
+/* Header */
+.header {
+	background: white;
+	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Header: Site-title-box */
+.site-title-box {
+	position: relative;
+	width: 100%;
+	background: white;
+	text-align: center;
+	padding: 0.875rem 0rem;
+	border-bottom: 1px solid #D8D8D8;
+}
+
+.site-title-box span {
+	flex-grow: 1;
+	font-size: 1.75rem;
+	font-weight: 800;
+}
+
+.site-title-box div {
+	position: absolute;
+	right: 1.438rem;
+	top: 0;
+	height: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 1.5rem;
+}
+
+.site-title-box div a {
+	color: #000000;
+	text-decoration: none;
+	cursor: pointer;
+}
+
+.site-title-login {
+	padding: 0.375rem 1.625rem;
+	border: 2px solid #000000;
+	border-radius: 20px;
+	transition: all 0.3s;
+}
+
+.site-title-login:hover {
+	background-color: #E7E5E4;
+}
+
+/* Header: Nav-bar */
+.nav-bar {
+	background: white;
+	position: relative; /* 초기엔 고정 아님 */
+	transition: all 0.3s ease;
+	z-index: 999;
+	box-shadow: none;
+}
+
+.nav-bar.fixed {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.nav-bar .container {
+	position: sticky;
+	top: 0;
+	z-index: 100;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 2.188rem 6.75rem 2.188rem 20.688rem;
+}
+
+.nav-bar .logo {
+	position: absolute;
+	left: 6.75rem
+}
+
+.nav-bar .logo img {
+	height: 72px;
+}
+
+.nav {
+	flex-grow: 1;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.nav-item {
+	text-decoration: none;
+	color: #333;
+	font-weight: 500;
+	font-size: 16px;
+	transition: color 0.3s;
+}
+
+.nav-item:hover {
+	color: #4A90E2;
+}
+
