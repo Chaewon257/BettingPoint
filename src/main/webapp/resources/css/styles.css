@@ -120,3 +120,8 @@ body {
 	color: #4A90E2;
 }
 
+/* Main */
+.container {
+	padding-top: 3.563rem;
+	margin: 0 auto;
+}
