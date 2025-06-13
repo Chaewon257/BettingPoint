@@ -133,3 +133,8 @@ body {
 	text-align: center;
 	padding: 30px 0;
 }
+
+/* Test Box */
+.test-box {
+	height: 100vh;
+}
