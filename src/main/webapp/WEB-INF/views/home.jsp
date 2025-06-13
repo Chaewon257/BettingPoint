@@ -1,14 +1,10 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ page session="false" %>
-<html>
-<head>
-	<title>Home</title>
-</head>
-<body>
-<h1>
-	Hello world!  
-</h1>
+<%@ page contentType="text/html; charset=UTF-8"%>
+<%@ taglib prefix="ui" tagdir="/WEB-INF/tags"%>
 
-<P>  The time on the server is ${serverTime}. </P>
-</body>
-</html>
+<ui:layout pageName="홈 페이지">
+	<jsp:attribute name="bodyContent">
+	  	<div class="test-box">
+	  		Layout Tag File 적용 예시 입니다.
+	  	</div>
+  </jsp:attribute>
+</ui:layout>
