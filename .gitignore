@@ -166,4 +166,7 @@ $RECYCLE.BIN/
 # IntelliJ generated files
 out/
 
+# application.properties 파일 무시
+application.properties
+
 # End of https://www.toptal.com/developers/gitignore/api/windows,macos,java,eclipse
