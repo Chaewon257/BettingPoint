@@ -1,6 +1,9 @@
 <%@ tag language="java" pageEncoding="UTF-8" description="공통 레이아웃"%>
+
 <%@ attribute name="pageName" required="true"%>
 <%@ attribute name="bodyContent" fragment="true"%>
+<%@ attribute name="pageType" required="true"%>
+
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
 <c:set var="cpath" value="${pageContext.servletContext.contextPath}" />
@@ -12,50 +15,61 @@
 <link rel="stylesheet" href="${cpath}/resources/css/styles.css">
 </head>
 <body>
-	<header class="header">
-		<div class="site-title-box">
-			<span>Betting Point</span>
-			<div>
-				<c:choose>
-					<c:when test="${not empty sessionScope.loginUser}">
-						<a href="/signup" class="site-title-signup">${sessionScope.loginUser.username } 님</a>
-						<a href="/" class="site-title-login">로그아웃</a>
-					</c:when>
-					<c:otherwise>
-						<a href="/signup" class="site-title-signup">회원가입</a>
-						<a href="/login" class="site-title-login">로그인</a>
-					</c:otherwise>
-				</c:choose>
-			</div>
-		</div>
-		<div class="nav-bar">
-			<div class="container">
-				<div class="logo">
-					<a href="/game/">
-						<img src="${cpath}/resources/images/logo.png" alt="Betting Point Logo" height="40" />
-					</a>
+	<c:choose>
+		<c:when test="${pageType ne 'ingame'}">
+			<header class="header">
+				<div class="site-title-box">
+					<span>Betting Point</span>
+					<div>
+						<c:choose>
+							<c:when test="${not empty sessionScope.loginUser}">
+								<a href="/signup" class="site-title-signup">${sessionScope.loginUser.username} 님</a>
+								<a href="/" class="site-title-login">로그아웃</a>
+							</c:when>
+							<c:otherwise>
+								<a href="/signup" class="site-title-signup">회원가입</a>
+								<a href="/login" class="site-title-login">로그인</a>
+							</c:otherwise>
+						</c:choose>
+					</div>
 				</div>
 
-				<nav class="nav">
-					<a href="/game/solo" class="nav-item">개인게임</a>
-					<a href="/game/team" class="nav-item">단체게임</a>
-					<a href="/board" class="nav-item">게시판</a>
-					<a href="/support" class="nav-item">고객지원</a>
-					<a href="/mypage" class="nav-item">마이페이지</a>
-				</nav>
-			</div>
-		</div>
-	</header>
-
+				<c:if test="${pageType eq 'main'}">
+					<div class="nav-bar">
+						<div class="container">
+							<div class="logo">
+								<a href="/game/"> <img
+									src="${cpath}/resources/images/logo.png"
+									alt="Betting Point Logo" height="40" />
+								</a>
+							</div>
+							<nav class="nav">
+								<a href="/game/solo" class="nav-item">개인게임</a>
+								<a href="/game/team" class="nav-item">단체게임</a>
+								<a href="/board" class="nav-item">게시판</a>
+								<a href="/support" class="nav-item">고객지원</a>
+								<a href="/mypage" class="nav-item">마이페이지</a>
+							</nav>
+						</div>
+					</div>
+				</c:if>
+			</header>
+		</c:when>
+	</c:choose>
+	
 	<main class="container">
 		<jsp:invoke fragment="bodyContent" />
 	</main>
-
-	<footer class="footer">
-		<div class="container">
-			<p>&copy; 2025 Betting Point. All rights reserved.</p>
-		</div>
-	</footer>
-	<script src="${cpath}/resources/js/layout.js"></script>
+	
+	<c:choose>
+		<c:when test="${pageType eq 'main'}">
+			<footer class="footer">
+				<div class="container">
+					<p>&copy; 2025 Betting Point. All rights reserved.</p>
+				</div>
+			</footer>
+			<script src="${cpath}/resources/js/layout.js"></script>
+		</c:when>
+	</c:choose>
 </body>
 </html>
