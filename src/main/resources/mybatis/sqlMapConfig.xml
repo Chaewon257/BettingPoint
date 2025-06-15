@@ -13,5 +13,7 @@
 	<!-- 별명을 등록한다 -->
 	<typeAliases>
 		<!-- <typeAlias type="com.bettopia.game.model.chatbot.ChatBotDTO" alias="chatDTO" /> -->
+		<typeAlias type="com.bettopia.game.model.gameroom.GameRoomResponseDTO" alias="gameRoomResponseDTO" />
+		<typeAlias type="com.bettopia.game.model.gameroom.GameRoomRequestDTO" alias="gameRoomRequestDTO" />
 	</typeAliases>
 </configuration>
