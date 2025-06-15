@@ -4,6 +4,8 @@
 <ui:layout pageName="Betting Poing 로그인" pageType="lobby">
 	<jsp:attribute name="bodyContent">
 	  	<div class="login-content">
+	  		<div class="content-layout">
+	  		</div>
 	  	</div>
 	</jsp:attribute>
 </ui:layout>

@@ -132,6 +132,15 @@ body {
 	height: 100vh;
 	width: 100vw;
 }
+
+.login-content .content-layout {
+	width: 100%;
+	height: 32.813rem;
+	display: flex;
+	align-items: flex-end;
+	justify-content: center;
+	gap: 0.625rem;
+}
 	margin: 0 auto;
 }
 
