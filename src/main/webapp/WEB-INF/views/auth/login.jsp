@@ -5,6 +5,8 @@
 	<jsp:attribute name="bodyContent">
 	  	<div class="login-content">
 	  		<div class="content-layout">
+	  			<img src="${cpath}/resources/images/auth_fox.png" alt="Fox Character" width="220" />
+	  			<img src="${cpath}/resources/images/auth_turtle.png" alt="Turtle Character" width="220" />	  			
 	  		</div>
 	  	</div>
 	</jsp:attribute>

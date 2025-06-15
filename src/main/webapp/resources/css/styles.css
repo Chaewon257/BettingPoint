@@ -141,6 +141,31 @@ body {
 	justify-content: center;
 	gap: 0.625rem;
 }
+
+/* 화면 너비에 따른 이미지 크기 변경 */
+@media (max-width: 1350px) {
+  .login-content .content-layout img {
+  	width: 12.5rem;
+  }
+}
+
+@media (max-width: 1300px) {
+  .login-content .content-layout img {
+  	width: 11.25rem;
+  }
+}
+
+@media (max-width: 1250px) {
+  .login-content .content-layout img {
+  	width: 9.375rem;
+  }
+}
+
+@media (max-width: 1200px) {
+  .login-content .content-layout img {
+  	display: none;
+  }
+}
 	margin: 0 auto;
 }
 
