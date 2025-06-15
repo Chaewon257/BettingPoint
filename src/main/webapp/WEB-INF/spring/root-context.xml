@@ -11,7 +11,7 @@
 
 	<!-- @Service @Component 등록 -->
 	<context:component-scan
-		base-package="com.bettopia.game.model" />
+		base-package="com.bettopia.game.model, com.bettopia.game.socket" />
 
 	<!-- DB properties 등록 -->
 	<bean
