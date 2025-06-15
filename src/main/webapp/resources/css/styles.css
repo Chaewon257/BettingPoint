@@ -121,8 +121,17 @@ body {
 }
 
 /* Main */
-.container {
-	padding-top: 3.563rem;
+/* login */
+.login-content {
+	position: fixed;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	top: 0;
+	left: 0;
+	height: 100vh;
+	width: 100vw;
+}
 	margin: 0 auto;
 }
 
@@ -132,9 +141,4 @@ body {
 	color: white;
 	text-align: center;
 	padding: 30px 0;
-}
-
-/* Test Box */
-.test-box {
-	height: 100vh;
 }
