@@ -28,7 +28,7 @@
 							</c:when>
 							<c:otherwise>
 								<a href="/signup" class="site-title-signup">회원가입</a>
-								<a href="/login" class="site-title-login">로그인</a>
+								<a href="${cpath}/login" class="site-title-login">로그인</a>
 							</c:otherwise>
 						</c:choose>
 					</div>
