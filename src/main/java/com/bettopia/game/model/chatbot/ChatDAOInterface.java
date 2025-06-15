@@ -4,7 +4,7 @@ import java.util.List;
 
 public interface ChatDAOInterface {
 	
-	// 전체 Q&A 목록
+	// 전체 Q&A 목록 
 	public List<ChatQADTO> selectAll();
 	
 	// 질문 텍스트로 답변 가져오기

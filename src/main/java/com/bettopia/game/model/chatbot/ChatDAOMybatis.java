@@ -22,7 +22,7 @@ public class ChatDAOMybatis implements ChatDAOInterface {
 
 	@Override
 	public ChatQADTO selectByQuestion(String uid) {
-		// TODO Auto-generated method stub
+		// TODO Auto-generated method stub 
 		return null;
 	}
 
