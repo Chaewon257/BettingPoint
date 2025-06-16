@@ -25,30 +25,35 @@ public class GameRoomController {
 	@Autowired
 	GameRoomService gameRoomService;
 
+	// 게임방 리스트 조회
 	@GetMapping("/list")
 	public List<GameRoomResponseDTO.GameRoomDTO> selectAll() {
 		return gameRoomService.selectAll();
 	}
 
+	// 게임방 상세 조회
 	@GetMapping("/{roomId}")
 	public GameRoomResponseDTO.GameRoomDTO selectById(@PathVariable String roomId) {
 		return gameRoomService.selectById(roomId);
 	}
 
-	@PostMapping("/insert/{gameId}")
+	// 게임방 생성
+	@PostMapping(value = "/insert", produces = "text/plain;charset=utf-8")
 	public String insertRoom(@RequestBody GameRoomRequestDTO.InsertGameRoomRequestDTO roomRequest,
-							 HttpSession loginUser) {
-		return gameRoomService.insertRoom(roomRequest, loginUser)>0?"방이 생성되었습니다.":"다시 시도해주세요.";
+							 HttpSession session) {
+		return gameRoomService.insertRoom(roomRequest, session)>0?"방이 생성되었습니다.":"다시 시도해주세요.";
 	}
 
-	@PutMapping("/update/{roomId}")
+	// 게임방 수정
+	@PutMapping(value = "/update/{roomId}", produces = "text/plain;charset=utf-8")
 	public String updateRoom(@RequestBody GameRoomRequestDTO.UpdateGameRoomRequestDTO roomRequest,
-							 HttpSession loginUser, @PathVariable String roomId) {
-		return gameRoomService.updateRoom(roomRequest, loginUser, roomId)>0?"방이 수정되었습니다.":"다시 시도해주세요.";
+							 HttpSession session, @PathVariable String roomId) {
+		return gameRoomService.updateRoom(roomRequest, session, roomId)>0?"방이 수정되었습니다.":"다시 시도해주세요.";
 	}
 
-	@DeleteMapping("/delete/{roomId}")
-	public String deleteRoom(@PathVariable String roomId, HttpSession loginUser) {
-		return gameRoomService.deleteRoom(roomId, loginUser)>0?"방이 삭제되었습니다.":"다시 시도해주세요.";
+	// 게임방 삭제
+	@DeleteMapping(value = "/delete/{roomId}", produces = "text/plain;charset=utf-8")
+	public String deleteRoom(@PathVariable String roomId, HttpSession session) {
+		return gameRoomService.deleteRoom(roomId, session) > 0 ? "방이 삭제되었습니다." : "다시 시도해주세요.";
 	}
 }
