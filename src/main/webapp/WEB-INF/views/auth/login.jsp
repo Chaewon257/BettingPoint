@@ -13,6 +13,12 @@
 		  					<img src="${cpath}/resources/images/logo.png" alt="Betting Point Logo" width="178" />
 						</a>
 		  			</div>
+	  				<div class="login-field-box">
+	  					<form class="login-form" action="/login" method="post">
+	  						<input type="password" name="userpw" class="input-field" placeholder="비밀번호">
+	  						
+	  					</form>
+	  				</div>
 	  			</div>
 	  			<img class="auth-character" src="${cpath}/resources/images/auth_turtle.png" alt="Turtle Character" width="220" />	  			
 	  		</div>
