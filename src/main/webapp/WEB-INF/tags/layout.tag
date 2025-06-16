@@ -23,6 +23,7 @@
 				colors : {
 					'gray-1' : '#D8D8D8',
 					'gray-2' : '#E7E5E4',
+					'gray-3' : '#828688',
 					'blue-1' : '#4A90E2',
 				},
 				fontSize : {
@@ -46,15 +47,6 @@
 		<jsp:invoke fragment="bodyContent" />
 	</main>
 	
-	<c:choose>
-		<c:when test="${pageType eq 'main'}">
-			<footer class="footer">
-				<div class="container">
-					<p>&copy; 2025 Betting Point. All rights reserved.</p>
-				</div>
-			</footer>
-			<script src="${cpath}/resources/js/layout.js"></script>
-		</c:when>
-	</c:choose>
+	<layout:footer pageType="${pageType}" />
 </body>
 </html>
