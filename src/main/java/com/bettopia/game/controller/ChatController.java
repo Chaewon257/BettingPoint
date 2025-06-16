@@ -3,31 +3,52 @@ package com.bettopia.game.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.bettopia.game.model.chatbot.ChatQADTO;
 import com.bettopia.game.model.chatbot.ChatQAService;
 
-@Controller
+@RestController
 @RequestMapping("/chat")
 public class ChatController {
 
 	@Autowired
 	ChatQAService chatService;
 	
-	@GetMapping
-    public String chatbotView(Model model) {
-        model.addAttribute("message", "¹İ°©½À´Ï´Ù. ¾Æ·¡ Áú¹®À» ¼±ÅÃÇØÁÖ¼¼¿ä.");
-        model.addAttribute("questions", chatService.selectAll());
-        return "chatbot/chatView";
-    }
-	
-	@GetMapping("/chatlist.do")
-	public List<ChatQADTO> chatListAll(){
-		return chatService.selectAll();
+	@GetMapping(value = "/chat.do", produces = "text/plain;charset=UTF-8")
+	public String f1() {
+		return "test";
 	}
+	
+	// ì§ˆë¬¸ ì „ì²´ ë¦¬ìŠ¤íŠ¸ ë°˜í™˜
+    @GetMapping("/quesiton.do")
+    public List<ChatQADTO> getAllQuestions() {
+        return chatService.selectAll();
+    }
+
+    // uidë¡œ ì§ˆë¬¸-ë‹µë³€ 1ê°œ ì¡°íšŒ
+    @GetMapping(value= "/answer.do", produces = "text/plain;charset=UTF-8")
+    public String getAnswerByUid(String uid) {
+        return chatService.questiontByUid(uid);
+    }
+    
+//    @GetMapping(value="/questionByCate.do", produces = "application/json;charset=UTF-8")
+//    public List<ChatQADTO> getQuestionByCate(@RequestParam("category") String category){
+//    	System.out.println("ì¹´í…Œê³ ë¦¬ë¡œ ë°›ì€ ê°’: " + category);  // ë””ë²„ê¹…ìš©
+//    	return chatService.selectByCate(category.trim());
+//    }
+    
+    @GetMapping(value="/questionByCate.do", produces = "application/json;charset=UTF-8")
+    public List<ChatQADTO> getQuestionByCate(@RequestParam("category") String category){
+    	System.out.println("ğŸ’¡ ì „ë‹¬ë°›ì€ ì¹´í…Œê³ ë¦¬: [" + category + "]");
+        List<ChatQADTO> list = chatService.selectByCate(category.trim());
+        System.out.println("ğŸ’¬ ê²°ê³¼ ê°œìˆ˜: " + list.size());
+
+    	return list;
+    }
 	
 }

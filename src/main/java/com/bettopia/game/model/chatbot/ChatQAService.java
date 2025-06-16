@@ -16,4 +16,12 @@ public class ChatQAService {
 	public List<ChatQADTO> selectAll() {
 		return chatDAO.selectAll();
 	}
+
+	public String questiontByUid(String uid) {
+		return chatDAO.questiontByUid(uid);
+	}
+	
+	public List<ChatQADTO> selectByCate(String category) {
+		return chatDAO.selectByCate(category);
+	}
 }

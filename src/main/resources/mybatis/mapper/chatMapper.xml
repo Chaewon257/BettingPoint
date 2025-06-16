@@ -6,7 +6,19 @@
 <mapper namespace="com.bpoint.chat">
 	
 	<select id="selectAll" resultType="chatDTO">
-		select * from chatbot_qa;
+		SELECT * FROM chatbot_qa;
+	</select> 
+	
+	<select id="questiontByUid" parameterType="String" resultType="String">
+		SELECT answer_text
+	    FROM chatbot_qa 
+	    WHERE uid = #{uid}
+	</select> 
+	
+	<select id="questiontByCate" parameterType="String" resultType="chatDTO">
+		SELECT * 
+		FROM chatbot_qa
+    	WHERE TRIM(category) = #{category}
 	</select> 
 	
 	

@@ -16,20 +16,29 @@ public class ChatDAOMybatis implements ChatDAOInterface {
 	@Override
 	public List<ChatQADTO> selectAll() {
 		List<ChatQADTO> chatlist = sqlSession.selectList(namespace + "selectAll");
-		System.out.println(chatlist!=null?chatlist.toString():"" + "Á¶È¸µÊ(Mybatis)");
+		System.out.println(chatlist!=null?chatlist.toString():"" + "Á¶È¸µÊ");
 		return chatlist;
+	}
+
+	public String questiontByUid(String uid) {
+		String answerText = sqlSession.selectOne(namespace + "questiontByUid", uid);
+		System.out.println(answerText);
+		return answerText;
+	}
+
+	@Override
+	public List<ChatQADTO> selectByCate(String category) {
+		List<ChatQADTO> qlist = sqlSession.selectList(namespace + "questiontByCate", category);
+		System.out.println(qlist.toString() + "Á¶È¸µÊ");
+		return qlist;
 	}
 
 	@Override
 	public ChatQADTO selectByQuestion(String uid) {
-		// TODO Auto-generated method stub 
+		
 		return null;
 	}
 
-	@Override
-	public ChatQADTO selectByCate(String category) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+
 
 }
