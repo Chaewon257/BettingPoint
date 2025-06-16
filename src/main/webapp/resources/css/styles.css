@@ -18,10 +18,10 @@ body {
 
 
 /* Main */
-.container {
-	padding-top: 3.563rem;
+.main-container {
 	margin: 0 auto;
 }
+
 
 /* Footer */
 .footer {

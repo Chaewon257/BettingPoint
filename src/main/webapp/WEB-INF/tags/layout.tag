@@ -42,7 +42,7 @@
 <body>
 	<layout:header pageType="${pageType}" />
 	
-	<main class="container">
+	<main class="main-container">
 		<jsp:invoke fragment="bodyContent" />
 	</main>
 	
