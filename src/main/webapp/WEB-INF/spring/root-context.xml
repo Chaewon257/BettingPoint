@@ -32,20 +32,20 @@
 	</bean>
 
 	<!-- sqlSession 환경 -->
-	<!-- <bean id="sqlSessionFactory"
+	<bean id="sqlSessionFactory"
 		class="org.mybatis.spring.SqlSessionFactoryBean">
-		<property name="dataSource" ref="dataSource"></property>
+		<property name="dataSource" ref="dataSourceOriginal"></property>
 		<property name="configLocation"
-			value="classpath:mybatis/" />
+			value="classpath:mybatis/sqlMapConfig.xml" />
 		<property name="mapperLocations"
-			value="classpath:mybatis/" />
-	</bean> -->
+			value="classpath:mybatis/mapper/*Mapper.xml" />
+	</bean>
 
 	<!-- Mapper의 SQL구문을 실행 -->
-	<!-- <bean id="sqlSession"
+	<bean id="sqlSession"
 		class="org.mybatis.spring.SqlSessionTemplate">
-		<constructor-arg ref="sqlSessionFactory"></constructor-arg>
-	</bean> -->
+		<constructor-arg ref="sqlSessionFactory" />
+	</bean>
 
 	<!-- transaction처리 -->
 	<!-- <bean id="transactionManager"
