@@ -18,15 +18,15 @@
     <!-- 게임방 생성 -->
     <insert id="insert" parameterType="gameRoomResponseDTO$InsertGameRoomResponseDTO">
         insert into game_room(uid, title, min_bet, host_uid, game_uid)
-        values(#{roomId}, #{title}, #{minBet}, #{userId}, #{gameId})
+        values(#{uid}, #{title}, #{min_bet}, #{host_uid}, #{game_uid})
     </insert>
 
     <!-- 게임방 수정 -->
     <update id="update" parameterType="gameRoomResponseDTO$UpdateGameRoomResponseDTO">
         update game_room set
         title = #{title},
-        game_uid = #{gameId}
-        where uid = #{roomId}
+        game_uid = #{game_uid}
+        where uid = #{uid}
     </update>
 
     <!-- 게임방 삭제 -->
