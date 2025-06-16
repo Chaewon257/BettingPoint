@@ -1,6 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8"%>
 <%@ taglib prefix="ui" tagdir="/WEB-INF/tags"%>
 
+
 <ui:layout pageName="Betting Poing 로그인" pageType="lobby">
 	<jsp:attribute name="bodyContent">
 	  	<div class="fixed top-0 left-0 flex items-center justify-center h-screen w-full">
@@ -13,12 +14,11 @@
 		  					<img src="${cpath}/resources/images/logo.png" alt="Betting Point Logo" width="178" />
 						</a>
 		  			</div>
-	  				<div class="grow px-[3.75rem] pt-[6.75rem] flex flex-col justify-items-start">
-	  					<form class="w-full" action="/login" method="post">
-	  						<input type="password" name="userpw" class="w-full px-10 py-4 outline-none bg-gray-4 rounded-full border border-gray-5" placeholder="비밀번호">
-	  						
-	  					</form>
-	  				</div>
+		  			<div class="grow px-[3.75rem] pt-12 flex flex-col">
+		  				<form action="/login" method="post" class=" flex flex-col justify-items-start mb-4">
+		  				</form>
+		  			</div>
+	  				
 	  			</div>
 	  			<img class="w-[14rem] max-1350:w-[12.5rem] max-1300:w-[11.25rem] max-1250:w-[9.375rem] max-1200:hidden" src="${cpath}/resources/images/auth_turtle.png" alt="Turtle Character" width="220" />	  			
 	  		</div>
