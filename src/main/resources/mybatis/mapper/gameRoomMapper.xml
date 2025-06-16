@@ -6,26 +6,26 @@
 <mapper namespace="com.bpoint.gameroom">
 
     <!-- 게임방 리스트 조회 -->
-    <select id="selectAll" resultType="gameRoomResponseDTO">
+    <select id="selectAll" resultType="gameRoomResponseDTO$GameRoomDTO">
         select * from game_room order by created_at
     </select>
 
     <!-- 게임방 상세 조회 -->
-    <select id="selectById" parameterType="String" resultType="gameRoomResponseDTO">
+    <select id="selectById" parameterType="String" resultType="gameRoomResponseDTO$GameRoomDTO">
         select * from game_room where uid = #{roomId}
     </select>
 
     <!-- 게임방 생성 -->
-    <insert id="insert" parameterType="gameRoomRequestDTO">
-        insert into game_room(uid, game_uid, host_uid, title, min_bet)
-        values(#{roomId}, #{gameId}, #{userId}, #{title}, #{minBet})
+    <insert id="insert" parameterType="gameRoomResponseDTO$InsertGameRoomResponseDTO">
+        insert into game_room(uid, title, min_bet, host_uid, game_uid)
+        values(#{roomId}, #{title}, #{minBet}, #{userId}, #{gameId})
     </insert>
 
     <!-- 게임방 수정 -->
-    <update id="update" parameterType="gameRoomRequestDTO">
+    <update id="update" parameterType="gameRoomResponseDTO$UpdateGameRoomResponseDTO">
         update game_room set
-        game_uid = #{gameId},
-        title = #{title}
+        title = #{title},
+        game_uid = #{gameId}
         where uid = #{roomId}
     </update>
 

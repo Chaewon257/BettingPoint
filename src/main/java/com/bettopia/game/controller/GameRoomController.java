@@ -16,6 +16,8 @@ import com.bettopia.game.model.gameroom.GameRoomRequestDTO;
 import com.bettopia.game.model.gameroom.GameRoomResponseDTO;
 import com.bettopia.game.model.gameroom.GameRoomService;
 
+import javax.servlet.http.HttpSession;
+
 @RestController
 @RequestMapping("/gameroom")
 public class GameRoomController {
@@ -24,27 +26,29 @@ public class GameRoomController {
 	GameRoomService gameRoomService;
 
 	@GetMapping("/list")
-	public List<GameRoomResponseDTO> selectAll() {
+	public List<GameRoomResponseDTO.GameRoomDTO> selectAll() {
 		return gameRoomService.selectAll();
 	}
 
 	@GetMapping("/{roomId}")
-	public GameRoomResponseDTO selectById(@PathVariable String roomId) {
+	public GameRoomResponseDTO.GameRoomDTO selectById(@PathVariable String roomId) {
 		return gameRoomService.selectById(roomId);
 	}
 
-	@PostMapping("/insert")
-	public String insertRoom(@RequestBody GameRoomRequestDTO.InsertGameRoomRequestDTO room) {
-		return gameRoomService.insertRoom(room)>0?"방이 생성되었습니다.":"다시 시도해주세요.";
+	@PostMapping("/insert/{gameId}")
+	public String insertRoom(@RequestBody GameRoomRequestDTO.InsertGameRoomRequestDTO roomRequest,
+							 HttpSession loginUser) {
+		return gameRoomService.insertRoom(roomRequest, loginUser)>0?"방이 생성되었습니다.":"다시 시도해주세요.";
 	}
 
-	@PutMapping("/update")
-	public String updateRoom(@RequestBody GameRoomRequestDTO.UpdateGameRoomRequestDTO room) {
-		return gameRoomService.updateRoom(room)>0?"방이 수정되었습니다.":"다시 시도해주세요.";
+	@PutMapping("/update/{roomId}")
+	public String updateRoom(@RequestBody GameRoomRequestDTO.UpdateGameRoomRequestDTO roomRequest,
+							 HttpSession loginUser, @PathVariable String roomId) {
+		return gameRoomService.updateRoom(roomRequest, loginUser, roomId)>0?"방이 수정되었습니다.":"다시 시도해주세요.";
 	}
 
-	@DeleteMapping("/delete")
-	public String deleteRoom(@PathVariable String roomId) {
-		return gameRoomService.deleteRoom(roomId)>0?"방이 삭제되었습니다.":"다시 시도해주세요.";
+	@DeleteMapping("/delete/{roomId}")
+	public String deleteRoom(@PathVariable String roomId, HttpSession loginUser) {
+		return gameRoomService.deleteRoom(roomId, loginUser)>0?"방이 삭제되었습니다.":"다시 시도해주세요.";
 	}
 }
