@@ -24,7 +24,18 @@
 					'gray-3' : '#828688',
 					'gray-4' : '#F7F7F7',
 					'gray-5' : '#D4D4D4',
+					'gray-6' : '#757575',
 					'blue-1' : '#4A90E2',
+					'blue-2' : '#3F7AB6',
+				},
+				fontSize : {
+					'ts-28' : [
+						'1.75rem',
+						{
+							ineHeight: '100%',
+		  					fontWeight: '800'
+						}
+					] 
 				},
 				screens : {
 					'max-1350': { 'max': '1350px' },
