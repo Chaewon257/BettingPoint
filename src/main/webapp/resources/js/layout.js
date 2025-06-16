@@ -2,10 +2,12 @@
 window.addEventListener("scroll", () => {
   const nav = document.querySelector(".nav-bar");
   const trigger = document.querySelector(".site-title-box").offsetHeight;
+  
+  const fixedClasses = ["fixed", "top-0", "left-0", "right-0", "shadow-md"];
 
   if (window.scrollY >= trigger) {
-    nav.classList.add("fixed");
+    nav.classList.add(...fixedClasses);
   } else {
-    nav.classList.remove("fixed");
+    nav.classList.remove(...fixedClasses);
   }
 });
