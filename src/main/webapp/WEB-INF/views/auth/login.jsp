@@ -6,6 +6,8 @@
 	  	<div class="login-content">
 	  		<div class="content-layout">
 	  			<img class="auth-character" src="${cpath}/resources/images/auth_fox.png" alt="Fox Character" width="220" />
+	  			<div class="login-box">
+	  			</div>
 	  			<img class="auth-character" src="${cpath}/resources/images/auth_turtle.png" alt="Turtle Character" width="220" />	  			
 	  		</div>
 	  	</div>
