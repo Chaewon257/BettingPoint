@@ -144,25 +144,25 @@ body {
 
 /* 화면 너비에 따른 이미지 크기 변경 */
 @media (max-width: 1350px) {
-  .login-content .content-layout img {
+  .login-content .content-layout .auth-character {
   	width: 12.5rem;
   }
 }
 
 @media (max-width: 1300px) {
-  .login-content .content-layout img {
+  .login-content .content-layout .auth-character {
   	width: 11.25rem;
   }
 }
 
 @media (max-width: 1250px) {
-  .login-content .content-layout img {
+  .login-content .content-layout .auth-character {
   	width: 9.375rem;
   }
 }
 
 @media (max-width: 1200px) {
-  .login-content .content-layout img {
+  .login-content .content-layout .auth-character {
   	display: none;
   }
 }
