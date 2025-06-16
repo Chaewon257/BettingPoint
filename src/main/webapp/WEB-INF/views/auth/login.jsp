@@ -21,6 +21,11 @@
 		  					<input type="password" name="userpw" class="w-full px-10 py-4 outline-none bg-gray-4 rounded-full border border-gray-5 mb-4" placeholder="비밀번호">
 		  					<input type="submit" class="w-full px-10 py-3 outline-none bg-blue-2 rounded-full border border-blue-2 text-white text-lg hover:bg-blue-1" value="로그인">
 		  				</form>
+		  				<div class="flex gap-x-8 text-gray-3 justify-end px-4">
+		  					<a href="/signup" class="hover:text-gray-6">회원가입</a>
+		  					|
+		  					<a href="/" class="hover:text-gray-6">ID/PW찾기</a>
+		  				</div>
 		  			</div>
 	  				
 	  			</div>
