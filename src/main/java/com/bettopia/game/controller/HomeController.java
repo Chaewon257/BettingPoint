@@ -1,4 +1,4 @@
-package com.bettopia.game;
+package com.bettopia.game.controller;
 
 import java.text.DateFormat;
 import java.util.Date;

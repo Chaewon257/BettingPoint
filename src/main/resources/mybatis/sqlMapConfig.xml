@@ -16,5 +16,6 @@
 		<typeAlias type="com.bettopia.game.model.gameroom.GameRoomResponseDTO$InsertGameRoomResponseDTO" alias="insertGameRoomResponseDTO" />
 		<typeAlias type="com.bettopia.game.model.gameroom.GameRoomResponseDTO$UpdateGameRoomResponseDTO" alias="updateGameRoomResponseDTO" />
 		<typeAlias type="com.bettopia.game.model.gameroom.GameRoomResponseDTO$GameRoomDTO" alias="gameRoomDTO" />
+		<typeAlias type="com.bettopia.game.model.chatbot.ChatQADTO" alias="chatDTO" />
 	</typeAliases>
 </configuration>

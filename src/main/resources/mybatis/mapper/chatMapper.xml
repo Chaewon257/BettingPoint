@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bpoint.chat">
+	
+	<select id="selectAll" resultType="chatDTO">
+		SELECT * FROM chatbot_qa;
+	</select> 
+	
+	<select id="questiontByUid" parameterType="String" resultType="String">
+		SELECT answer_text
+	    FROM chatbot_qa 
+	    WHERE uid = #{uid}
+	</select> 
+	
+	<select id="questiontByCate" parameterType="String" resultType="chatDTO">
+		SELECT * 
+		FROM chatbot_qa
+    	WHERE TRIM(category) = #{category}
+	</select> 
+	
+	
+</mapper>
