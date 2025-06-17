@@ -24,12 +24,26 @@ public class HttpHandshakeInterceptor implements HandshakeInterceptor {
 
 		if (request instanceof ServletServerHttpRequest) {
 			HttpServletRequest servletRequest = ((ServletServerHttpRequest) request).getServletRequest();
+
 			HttpSession httpSession = servletRequest.getSession(false);
 			if (httpSession != null) {
 				// HTTP 세션 아이디를 웹소켓 세션 attributes에 저장
-				attributes.put("HTTP_SESSION_ID", httpSession.getId());
+				attributes.put("httpSession", httpSession.getId());
 				// 유저 정보 저장
 				attributes.put("loginUser", httpSession.getAttribute("loginUser"));
+			}
+
+			// 입장하는 게임방 저장
+			// 쿼리 파라미터에서 roomId 추출
+			String query = servletRequest.getQueryString();
+			if (query != null) {
+				String[] params = query.split("&");
+				for (String param : params) {
+					if (param.startsWith("roomId=")) {
+						String roomId = param.split("=")[1];
+						attributes.put("roomId", roomId);
+					}
+				}
 			}
 		}
 		return true; // 핸드쉐이크 진행
