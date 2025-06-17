@@ -19,14 +19,14 @@ import com.bettopia.game.model.gameroom.GameRoomService;
 import javax.servlet.http.HttpSession;
 
 @RestController
-@RequestMapping("/gameroom")
+@RequestMapping("/api/gameroom")
 public class GameRoomController {
 
 	@Autowired
 	GameRoomService gameRoomService;
 
 	// 게임방 리스트 조회
-	@GetMapping("/list")
+	@GetMapping
 	public List<GameRoomResponseDTO.GameRoomDTO> selectAll() {
 		return gameRoomService.selectAll();
 	}
