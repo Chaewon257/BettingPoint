@@ -24,7 +24,11 @@
 					'gray-1' : '#D8D8D8',
 					'gray-2' : '#E7E5E4',
 					'gray-3' : '#828688',
+					'gray-4' : '#F7F7F7',
+					'gray-5' : '#D4D4D4',
+					'gray-6' : '#757575',
 					'blue-1' : '#4A90E2',
+					'blue-2' : '#3F7AB6',
 				},
 				fontSize : {
 					'ts-28' : [
@@ -34,6 +38,12 @@
 		  					fontWeight: '800'
 						}
 					] 
+				},
+				screens : {
+					'max-1350': { 'max': '1350px' },
+					'max-1300': { 'max': '1300px' },
+					'max-1250': { 'max': '1250px' },
+					'max-1200': { 'max': '1200px' },
 				}
 			}
 		}
