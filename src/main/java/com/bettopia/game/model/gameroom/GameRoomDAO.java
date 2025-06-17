@@ -25,7 +25,7 @@ public class GameRoomDAO {
 	}
 
 	public int insertRoom(GameRoomRequestDTO.InsertGameRoomRequestDTO roomRequest, String userId) {
-		String uid = UUID.randomUUID().toString();
+		String uid = UUID.randomUUID().toString().replace("-", "");
 		GameRoomResponseDTO.InsertGameRoomResponseDTO roomResponse = GameRoomResponseDTO.InsertGameRoomResponseDTO.builder()
 						.uid(uid)
 						.title(roomRequest.getTitle())
