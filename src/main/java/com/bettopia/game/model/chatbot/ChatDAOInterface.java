@@ -4,17 +4,17 @@ import java.util.List;
 
 public interface ChatDAOInterface {
 	
-	// ÀüÃ¼ Q&A ¸ñ·Ï 
+	// ì „ì²´ Q&A ëª©ë¡ 
 	public List<ChatQADTO> selectAll();
 	
-	// uid·Î ´äº¯ °¡Á®¿À±â
+	// uidë¡œ ë‹µë³€ ê°€ì ¸ì˜¤ê¸°
 	public String questiontByUid(String uid);
 
-	// Ä«Å×°í¸®º° Áú¹® ¸ñ·Ï °¡Á®¿À±â
-	public List<ChatQADTO> selectByCate(String category); // Áú¹® Ãâ·Â
+	// ì¹´í…Œê³ ë¦¬ë³„ ì§ˆë¬¸ ëª©ë¡ ê°€ì ¸ì˜¤ê¸°
+	public List<ChatQADTO> selectByCate(String category); // ì§ˆë¬¸ ì¶œë ¥
 	
-	// Áú¹® ÅØ½ºÆ®·Î ´äº¯ °¡Á®¿À±â
-	public ChatQADTO selectByQuestion(String uid); // ´äº¯ Ãâ·Â
+	// ì§ˆë¬¸ í…ìŠ¤íŠ¸ë¡œ ë‹µë³€ ê°€ì ¸ì˜¤ê¸°
+	public ChatQADTO selectByQuestion(String uid); // ë‹µë³€ ì¶œë ¥
 	
 	
 	
