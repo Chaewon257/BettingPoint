@@ -22,6 +22,6 @@
 	</beans:bean>
 	
 	<!-- @Controller 등록 -->
-	<context:component-scan base-package="com.bettopia.game" />
+	<context:component-scan base-package="com.bettopia.game.controller" />
 	
 </beans:beans>

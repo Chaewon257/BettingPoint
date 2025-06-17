@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+	<settings>
+		<setting name="logImpl" value="LOG4J" />
+		<!-- 컬럼의 값이 null이 오면 mybatis에서 컬럼의 타입으로 null 처리 -->
+		<setting name="jdbcTypeForNull" value="NULL" />
+	</settings>
+	
+	<!-- 별명을 등록한다 -->
+	<typeAliases>
+		<!-- <typeAlias type="com.bettopia.game.model.chatbot.ChatBotDTO" alias="chatDTO" /> -->
+		<typeAlias type="com.bettopia.game.model.gameroom.GameRoomResponseDTO$InsertGameRoomResponseDTO" alias="insertGameRoomResponseDTO" />
+		<typeAlias type="com.bettopia.game.model.gameroom.GameRoomResponseDTO$UpdateGameRoomResponseDTO" alias="updateGameRoomResponseDTO" />
+		<typeAlias type="com.bettopia.game.model.gameroom.GameRoomResponseDTO$GameRoomDTO" alias="gameRoomDTO" />
+		<typeAlias type="com.bettopia.game.model.chatbot.ChatQADTO" alias="chatDTO" />
+	</typeAliases>
+</configuration>
