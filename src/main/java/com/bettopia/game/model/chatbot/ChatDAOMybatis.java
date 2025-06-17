@@ -16,7 +16,7 @@ public class ChatDAOMybatis implements ChatDAOInterface {
 	@Override
 	public List<ChatQADTO> selectAll() {
 		List<ChatQADTO> chatlist = sqlSession.selectList(namespace + "selectAll");
-		System.out.println(chatlist!=null?chatlist.toString():"" + "Á¶È¸µÊ");
+		System.out.println(chatlist!=null?chatlist.toString():"" + "ì¡°íšŒë¨");
 		return chatlist;
 	}
 
@@ -29,7 +29,7 @@ public class ChatDAOMybatis implements ChatDAOInterface {
 	@Override
 	public List<ChatQADTO> selectByCate(String category) {
 		List<ChatQADTO> qlist = sqlSession.selectList(namespace + "questiontByCate", category);
-		System.out.println(qlist.toString() + "Á¶È¸µÊ");
+		System.out.println(qlist.toString() + "ì¡°íšŒë¨");
 		return qlist;
 	}
 
