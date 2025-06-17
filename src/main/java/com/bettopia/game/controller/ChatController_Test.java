@@ -1,15 +1,16 @@
-package com.bettopia.game.model.chatbot;
+package com.bettopia.game.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/chat")
+@RequestMapping("/chatbot")
 public class ChatController_Test {
-	@GetMapping
+	@GetMapping("")
     public String moveToChatView() {
-        return "chatbot/chatView"; // �� /WEB-INF/views/chat/chatView.jsp
+		System.out.println("진입성공");
+        return "chatbot/chatView";
     }
 
 }
