@@ -19,13 +19,13 @@ public class GameRoomRestController {
 	GameRoomService gameRoomService;
 
 	// 게임방 리스트 조회
-	@GetMapping
+	@GetMapping("/list")
 	public List<GameRoomResponseDTO> selectAll() {
 		return gameRoomService.selectAll();
 	}
 
 	// 게임방 상세 조회
-	@GetMapping("/{roomId}")
+	@GetMapping("/detail/{roomId}")
 	public GameRoomResponseDTO selectById(@PathVariable String roomId) {
 		return gameRoomService.selectById(roomId);
 	}
