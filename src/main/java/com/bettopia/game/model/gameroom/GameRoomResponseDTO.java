@@ -20,5 +20,4 @@ public class GameRoomResponseDTO {
 	private Date start_at;
 	private String game_uid;
 	private String host_uid;
-	private int players;
 }
