@@ -12,23 +12,31 @@ public class BoardDAOMybatis implements BoardDAOInterface {
 	@Autowired
     SqlSession sqlSession;
     private static final String NAMESPACE = "com.bpoint.board.";
-
+    //목록보기
     @Override
-    public List<BoardResponseDTO> selectAll() {
+    public List<BoardDTO> selectAll() {
         return sqlSession.selectList(NAMESPACE + "selectAll");
     }
-    
+    //등록
     @Override
-    public void insertBoard(BoardResponseDTO board) {
+    public void insertBoard(BoardDTO board) {
         sqlSession.insert(NAMESPACE + "insertBoard", board);
     }
-    
+    //상세보기
     @Override
-    public BoardResponseDTO getBoardByUid(String uid) {
-        return sqlSession.selectOne("board.getBoardByUid", uid);
+    public BoardDTO getBoardByUid(String uid) {
+        return sqlSession.selectOne(NAMESPACE +"getBoardByUid", uid);
     }
-    
-    
+    //수정
+    @Override
+    public void updateBoard(BoardDTO board) {
+        sqlSession.update(NAMESPACE + "updateBoard", board);
+    }
+    //삭제
+	@Override
+    public void deleteBoardByUid(String uid) {
+        sqlSession.delete(NAMESPACE + "deleteBoardByUid", uid);
+    }
 
     
 
