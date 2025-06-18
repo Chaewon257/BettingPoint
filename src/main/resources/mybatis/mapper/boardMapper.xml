@@ -11,7 +11,7 @@
 
 	<!-- 게시글 등록 -->
 	<insert id="insertBoard"
-		parameterType="com.bettopia.game.model.board.BoardDTO">
+		parameterType="boardDTO">
 		INSERT INTO board (
 		uid, title, content, category,
 		board_img, user_uid
@@ -21,13 +21,30 @@
 		#{board_img}, #{user_uid}
 		)
 	</insert>
-	
+
 	<!-- 게시글 상세 조회 -->
-	<select id="getBoardByUid" resultType="boardDTO">
-    	SELECT * FROM board WHERE uid = #{uid}
+	<select id="getBoardByUid" parameterType="String" resultType="boardDTO">
+		SELECT * FROM board WHERE uid = #{uid}
 	</select>
-	
-	
+
+	<!-- 게시글 수정 -->
+	<update id="updateBoard" parameterType="boardDTO">
+        UPDATE board
+        SET
+            title = #{title},
+            content = #{content},
+            category = #{category},
+            updated_at = SYSDATE()
+        WHERE uid = #{uid}
+    </update>
+
+	<!-- 게시글 삭제 -->
+	<delete id="deleteBoardByUid" parameterType="string">
+		DELETE FROM board WHERE uid = #{uid}
+	</delete>
+
+
+
 
 
 
