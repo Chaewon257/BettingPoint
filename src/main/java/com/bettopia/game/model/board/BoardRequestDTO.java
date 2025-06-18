@@ -26,7 +26,7 @@ public class BoardRequestDTO {
 	public static class UpdateBoardRequestDTO {
 		private String content;
 	    private String category;
-	    private String board_img;
+	    private String title;
 		
 	}
 	
