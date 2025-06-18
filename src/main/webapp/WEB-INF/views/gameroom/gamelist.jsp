@@ -1,30 +1,13 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: fzaca
-  Date: 25. 6. 17.
-  Time: 오후 2:50
-  To change this template use File | Settings | File Templates.
---%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%-- EL 해석 방지 설정 --%>
 <%@ page isELIgnored="true" %>
-<%--<%@ taglib prefix="ui" tagdir="/WEB-INF/tags"%>--%>
+<%@ taglib prefix="ui" tagdir="/WEB-INF/tags"%>
 
 <html>
 <head>
     <title>게임방 리스트</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <style>
-        .room-card {
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            padding: 16px;
-            margin-bottom: 12px;
-            width: 300px;
-            background-color: #f5f5f5; /* 임시 배경색 추가 */
-        }
-    </style>
 </head>
 <body>
 
@@ -35,30 +18,74 @@
 </div>
 
 <script>
-    $(function() {
+    $(function () {
+        let gamerooms = []; // 게임방 리스트
+        let games = {}; // 게임 정보
+        let playerCounts = {}; // 각 게임방 플레이어 수
+
         $.ajax({
-            url: "/api/gameroom",
+            url: "/api/gameroom/list",
             method: "GET",
-            success: gameroomList
+            success: function (responseData) {
+                gamerooms = responseData;
+
+                let requests = [];
+
+                // 게임 상세정보 요청들
+                gamerooms.forEach(room => {
+                    let req = $.ajax({
+                        url: `/api/game/detail/${room.game_uid}`,
+                        method: "GET",
+                        success: function (gameData) {
+                            games[room.game_uid] = gameData;
+                        }
+                    });
+                    requests.push(req);
+                });
+
+                // 플레이어 수 요청
+                let playerReq = $.ajax({
+                    url: "/api/player/count",
+                    method: "GET",
+                    success: function (countData) {
+                        playerCounts = countData;
+                    }
+                });
+                requests.push(playerReq);
+
+                // $.when.apply($, requests).done(function() {
+                //     // 모든 데이터 다 받았으니 화면 그리기 함수 호출
+                //     renderRooms(gamerooms, games, playerCounts);
+                // });
+            }
         });
     });
+    <%--function renderRooms(gamerooms, games, playerCounts) {--%>
+    <%--    const container = document.getElementById('room-container');--%>
+    <%--    container.innerHTML = ''; // 초기화--%>
 
-    function gameroomList(responseData) {
-        const container = document.getElementById('room-container');
-        container.innerHTML = ''; // 기존 내용 비우기
+    <%--    gamerooms.forEach(room => {--%>
+    <%--        const gameData = games[room.game_uid];--%>
+    <%--        const playerCount = playerCounts[room.uid];--%>
 
-        $.each(responseData, function(index, room) {
-            let html = `
-                <div class="room-card">
-                    <h3>${room.title}</h3>
-                    <p><strong>최소 베팅 포인트:</strong> ${room.min_bet} point</p>
-                    <p><strong>참여 인원:</strong> ${room.players} / 8</p>
-                    <p><strong>상태:</strong> ${room.status}</p>
-                </div>
-            `;
-            container.insertAdjacentHTML('beforeend', html);
-        });
-    }
+    <%--        const roomDiv = document.createElement('div');--%>
+    <%--        roomDiv.classList.add('room-card');--%>
+
+    <%--        roomDiv.innerHTML = `--%>
+    <%--        <h3>${room.title}</h3>--%>
+    <%--        <p><strong>최소 베팅 포인트:</strong> ${room.min_bet} point</p>--%>
+    <%--        <p><strong>참여 인원:</strong> ${playerCount} / 8</p>--%>
+    <%--        <p><strong>상태:</strong> ${room.status}</p>--%>
+    <%--        <div class="game-info">--%>
+    <%--            <p><strong>게임 이름:</strong> ${gameData ? gameData.name : '정보 없음'}</p>--%>
+    <%--            <p><strong>난이도:</strong> ${gameData ? gameData.level : '-'}</p>--%>
+    <%--            <p><strong>상태:</strong> ${gameData ? gameData.status : '-'}</p>--%>
+    <%--        </div>--%>
+    <%--    `;--%>
+
+    <%--        container.appendChild(roomDiv);--%>
+    <%--    });--%>
+    <%--}--%>
 </script>
 </body>
 </html>
