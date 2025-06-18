@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bpoint.board">
+
+	<!-- 게시판 리스트 조회 -->
+	<select id="selectAll" resultType="boardDTO">
+		SELECT * FROM board ORDER BY created_at DESC
+	</select>
+
+	<!-- 게시글 등록 -->
+	<insert id="insertBoard"
+		parameterType="com.bettopia.game.model.board.BoardDTO">
+		INSERT INTO board (
+		uid, title, content, category,
+		board_img, user_uid
+		)
+		VALUES (
+		#{uid}, #{title}, #{content}, #{category},
+		#{board_img}, #{user_uid}
+		)
+	</insert>
+	
+	<!-- 게시글 상세 조회 -->
+	<select id="getBoardByUid" resultType="boardDTO">
+    	SELECT * FROM board WHERE uid = #{uid}
+	</select>
+	
+	
+
+
+
+
+</mapper>

@@ -1,6 +1,6 @@
 package com.bettopia.game.model.board;
 
-import org.mybatis.spring.SqlSessionTemplate;
+import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -9,18 +9,28 @@ import java.util.List;
 @Repository
 public class BoardDAOMybatis implements BoardDAOInterface {
 
-    private final SqlSessionTemplate sqlSession;
-    private static final String NAMESPACE = "boardMapper.";
-
-    @Autowired
-    public BoardDAOMybatis(SqlSessionTemplate sqlSession) {
-        this.sqlSession = sqlSession;
-    }
+	@Autowired
+    SqlSession sqlSession;
+    private static final String NAMESPACE = "com.bpoint.board.";
 
     @Override
-    public List<BoardDTO> selectAll() {
+    public List<BoardResponseDTO> selectAll() {
         return sqlSession.selectList(NAMESPACE + "selectAll");
     }
+    
+    @Override
+    public void insertBoard(BoardResponseDTO board) {
+        sqlSession.insert(NAMESPACE + "insertBoard", board);
+    }
+    
+    @Override
+    public BoardResponseDTO getBoardByUid(String uid) {
+        return sqlSession.selectOne("board.getBoardByUid", uid);
+    }
+    
+    
+
+    
 
     
 }
