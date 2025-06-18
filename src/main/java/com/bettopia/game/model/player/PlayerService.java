@@ -31,7 +31,9 @@ public class PlayerService {
                 .map(GameRoomResponseDTO::getUid)
                 .collect(Collectors.toList());
         for (String roomId : roomIds) {
-            int count = getPlayers(roomId).size();
+            List<PlayerDTO> players = playerDAO.getAll(roomId);
+            // 플레이어가 없으면 0 처리
+            int count = (players != null) ? players.size() : 0;
             roomPlayers.put(roomId, count);
         }
         return roomPlayers;
