@@ -3,6 +3,7 @@ package com.bettopia.game.socket;
 import com.bettopia.game.model.player.PlayerDAO;
 import com.bettopia.game.model.player.PlayerDTO;
 import com.bettopia.game.model.player.SessionDAO;
+import com.bettopia.game.model.player.SessionService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,7 @@ public class GameWebSocketHandler extends TextWebSocketHandler {
 	@Autowired
 	private PlayerDAO playerDAO;
 	@Autowired
-	private SessionDAO sessionDAO;
+	private SessionService sessionService;
 
 //	@Autowired
 //	private ServletContext servletContext;
@@ -44,7 +45,7 @@ public class GameWebSocketHandler extends TextWebSocketHandler {
 			return;
 		}
 
-		sessionDAO.addSession(roomId, session);
+		sessionService.addSession(roomId, session);
 
 		// 게임방 플레이어 리스트가 없다면 새로 생성 후 어플리케이션 스코프에 저장
 //		if(roomPlayers == null) {
@@ -73,7 +74,7 @@ public class GameWebSocketHandler extends TextWebSocketHandler {
 	}
 
 	private void broadcastMessage(String type, String roomId, Map<String, Object> data) throws IOException {
-		List<WebSocketSession> sessions = sessionDAO.getSessions(roomId);
+		List<WebSocketSession> sessions = sessionService.getSessions(roomId);
 
 		ObjectMapper mapper = new ObjectMapper();
 		Map<String, Object> messageMap = new HashMap<>();
@@ -134,7 +135,7 @@ public class GameWebSocketHandler extends TextWebSocketHandler {
 		String roomId = (String) session.getAttributes().get("roomId");
 		String userId = (String) session.getAttributes().get("loginUser");
 
-		sessionDAO.removeSession(roomId, session);
+		sessionService.removeSession(roomId, session);
 		playerDAO.removePlayer(roomId, userId);
 
 		Map<String, Object> data = new HashMap<>();

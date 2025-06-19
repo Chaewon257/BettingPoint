@@ -1,6 +1,6 @@
 package com.bettopia.game.model.player;
 
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.web.socket.WebSocketSession;
 
 import java.util.ArrayList;
@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-@Component
-public class SessionDAO {
+@Service
+public class SessionService {
     private final Map<String, List<WebSocketSession>> roomSessions = new ConcurrentHashMap<>();
 
     public void addSession(String roomId, WebSocketSession session) {
