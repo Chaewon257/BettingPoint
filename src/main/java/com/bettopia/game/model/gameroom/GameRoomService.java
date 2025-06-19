@@ -2,8 +2,6 @@ package com.bettopia.game.model.gameroom;
 
 import java.util.List;
 
-import com.bettopia.game.model.player.PlayerDAO;
-import com.bettopia.game.model.player.PlayerDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,23 +12,14 @@ public class GameRoomService {
 
 	@Autowired
 	private GameRoomDAO gameRoomDAO;
-	@Autowired
-	private PlayerDAO playerDAO;
 
 	public List<GameRoomResponseDTO> selectAll() {
 		List<GameRoomResponseDTO> roomlist = gameRoomDAO.selectAll();
-
-		for(GameRoomResponseDTO room : roomlist) {
-			List<PlayerDTO> players = playerDAO.getAll(room.getUid());
-			room.setPlayers(players != null ? players.size():0);
-		}
 		return roomlist;
 	}
 
 	public GameRoomResponseDTO selectById(String roomId) {
 		GameRoomResponseDTO room = gameRoomDAO.selectById(roomId);
-		List<PlayerDTO> players = playerDAO.getAll(room.getUid());
-		room.setPlayers(players != null ? players.size():0);
 		return room;
 	}
 

@@ -11,7 +11,7 @@ public class GameDAO {
 
     @Autowired
     private SqlSession sqlSession;
-    String namespace = "com.bpoint.multi.";
+    String namespace = "com.bpoint.game.";
 
     // 게임 리스트 조회
     public List<GameResponseDTO> selectAll() {
