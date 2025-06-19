@@ -15,6 +15,7 @@
 <meta charset="UTF-8">
 <title>${pageName}</title>
 <link rel="stylesheet" href="${cpath}/resources/css/styles.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.tailwindcss.com"></script>
 <script type="text/javascript">
 	tailwind.config = {
