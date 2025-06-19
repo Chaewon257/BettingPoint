@@ -2,7 +2,6 @@ package com.bettopia.game.socket;
 
 import com.bettopia.game.model.player.PlayerDAO;
 import com.bettopia.game.model.player.PlayerDTO;
-import com.bettopia.game.model.player.SessionDAO;
 import com.bettopia.game.model.player.SessionService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -75,10 +74,12 @@ public class GameWebSocketHandler extends TextWebSocketHandler {
 
 	private void broadcastMessage(String type, String roomId, Map<String, Object> data) throws IOException {
 		List<WebSocketSession> sessions = sessionService.getSessions(roomId);
+		List<PlayerDTO> players = playerDAO.getAll(roomId);
 
 		ObjectMapper mapper = new ObjectMapper();
 		Map<String, Object> messageMap = new HashMap<>();
 		messageMap.put("type", type);
+		messageMap.put("players", players);
 
 		if (data != null) {
 			messageMap.putAll(data);
