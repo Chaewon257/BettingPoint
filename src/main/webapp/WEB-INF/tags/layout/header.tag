@@ -61,7 +61,6 @@ $(document).ready(function () {
 		});
 
 	function renderUser(user) {
-		console.log(user);
 		if (!user || !user.username) return;
 		const html = `
 			<a href="/mypage" class="text-black no-underline cursor-pointer hover:font-semibold">\${user.username} 님</a>
