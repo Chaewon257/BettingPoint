@@ -14,19 +14,19 @@ public class GameRoomDAO {
 	private SqlSession sqlSession;
 	String namespace = "com.bpoint.gameroom.";
 
-	public List<GameRoomResponseDTO.GameRoomDTO> selectAll() {
-		List<GameRoomResponseDTO.GameRoomDTO> roomlist = sqlSession.selectList(namespace + "selectAll");
+	public List<GameRoomResponseDTO> selectAll() {
+		List<GameRoomResponseDTO> roomlist = sqlSession.selectList(namespace + "selectAll");
 		return roomlist;
 	}
 
-	public GameRoomResponseDTO.GameRoomDTO selectById(String roomId) {
-		GameRoomResponseDTO.GameRoomDTO room = sqlSession.selectOne(namespace + "selectById", roomId);
+	public GameRoomResponseDTO selectById(String roomId) {
+		GameRoomResponseDTO room = sqlSession.selectOne(namespace + "selectById", roomId);
 		return room;
 	}
 
 	public int insertRoom(GameRoomRequestDTO.InsertGameRoomRequestDTO roomRequest, String userId) {
-		String uid = UUID.randomUUID().toString();
-		GameRoomResponseDTO.InsertGameRoomResponseDTO roomResponse = GameRoomResponseDTO.InsertGameRoomResponseDTO.builder()
+		String uid = UUID.randomUUID().toString().replace("-", "");
+		GameRoomResponseDTO roomResponse = GameRoomResponseDTO.builder()
 						.uid(uid)
 						.title(roomRequest.getTitle())
 						.min_bet(roomRequest.getMin_bet())
@@ -38,7 +38,7 @@ public class GameRoomDAO {
 	}
 
 	public int updateRoom(GameRoomRequestDTO.UpdateGameRoomRequestDTO roomRequest, String roomId) {
-		GameRoomResponseDTO.UpdateGameRoomResponseDTO roomResponse = GameRoomResponseDTO.UpdateGameRoomResponseDTO.builder()
+		GameRoomResponseDTO roomResponse = GameRoomResponseDTO.builder()
 				.uid(roomId)
 				.title(roomRequest.getTitle())
 				.game_uid(roomRequest.getGame_uid())
