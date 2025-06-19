@@ -36,10 +36,10 @@
 								<img src="${cpath}/resources/images/logo.png" alt="Betting Point Logo" class="h-12 md:h-16"/>
 							</a>
 						</div>
-						<button class="absolute left-6 top-1/2 -translate-y-1/2 text-2xl md:hidden">
+						<button id="hamburgerButton" class="absolute left-6 top-1/2 -translate-y-1/2 text-2xl md:hidden">
 							&#9776; <!-- ☰ -->
 						</button>
-						<nav class="hidden grow md:flex justify-between items-center">
+						<nav id="mobileMenu" class="hidden absolute top-full right-0 flex flex-col z-40 w-full py-6 gap-y-8 items-center bg-white shadow-md md:static md:py-0 md:gap-y-auto md:grow md:flex md:flex-row md:justify-between md:shadow-none">
 							<a href="/cointoss" class="text-black text-base hover:text-blue-1 hover:font-semibold">개인게임</a>
 							<a href="/gameroom" class="text-black text-base hover:text-blue-1 hover:font-semibold">단체게임</a>
 							<a href="/board" class="text-black text-base hover:text-blue-1 hover:font-semibold">게시판</a>
@@ -48,6 +48,18 @@
 						</nav>
 					</div>
 				</div>
+				<script type="text/javascript">
+					document.addEventListener("DOMContentLoaded", function () {
+					  const button = document.getElementById("hamburgerButton");
+					  const mobileMenu = document.getElementById("mobileMenu");
+
+					  if (button && mobileMenu) {
+					    button.addEventListener("click", () => {
+					      mobileMenu.classList.toggle("hidden");
+					    });
+					  }
+					});
+				</script>
 			</c:if>
 		</header>
 	</c:when>
