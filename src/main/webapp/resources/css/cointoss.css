@@ -1,26 +1,26 @@
-
-/* 전체 요소에 여백 제거, 박스 사이즈 설정 */
+/* 
+전체 요소에 여백 제거, 박스 사이즈 설정
 * {
-  margin: 0; /* 기본 마진 제거 */
-  padding: 0; /* 기본 패딩 제거 */
-  box-sizing: border-box; /* width/height에 padding과 border 포함 */
+  margin: 0; 기본 마진 제거
+  padding: 0; 기본 패딩 제거
+  box-sizing: border-box; width/height에 padding과 border 포함
 }
 .header{
- position: relative;     /* 자식 버튼의 절대 위치 기준 */
+ position: relative;     자식 버튼의 절대 위치 기준
   margin-bottom: 30px;
-  text-align: center;     /* 제목 가운데 정렬 */
+  text-align: center;     제목 가운데 정렬
 } 
 
 
-/* 바디 설정 */
+바디 설정
 body {
-  font-family: 'Noto Sans KR', sans-serif; /* 기본 글꼴 */
-  min-height: 100vh; /* 최소 높이: 화면 전체 */
-  background: #eaf6fd; /* 밝은 파란 배경 */
-  padding: 20px; /* 바디 전체 패딩 */
-  color: #1E3A5F; /* 기본 글자색 (짙은 남색) */
-  overflow-x: auto; /* 가로 스크롤 허용 (작은 기기 대응) */
-}
+  font-family: 'Noto Sans KR', sans-serif; 기본 글꼴
+  min-height: 100vh; 최소 높이: 화면 전체
+  background: #eaf6fd; 밝은 파란 배경
+  padding: 20px; 바디 전체 패딩
+  color: #1E3A5F; 기본 글자색 (짙은 남색)
+  overflow-x: auto; 가로 스크롤 허용 (작은 기기 대응)
+} */
 
 /* 가운데 정렬된 전체 레이아웃 컨테이너 */
 .container {

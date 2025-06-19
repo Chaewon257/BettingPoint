@@ -15,6 +15,11 @@
 <meta charset="UTF-8">
 <title>${pageName}</title>
 <link rel="stylesheet" href="${cpath}/resources/css/styles.css">
+
+<c:if test="${pageType eq 'ingame'}">
+  <link rel="stylesheet" href="${cpath}/resources/css/cointoss.css" />
+</c:if>
+
 <script src="https://cdn.tailwindcss.com"></script>
 <script type="text/javascript">
 	tailwind.config = {
