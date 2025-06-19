@@ -24,6 +24,7 @@ public class PlayerRestController {
         return playerService.getAllPlayers();
     }
 
+    // 게임방 플레이어 상세 조회
     @GetMapping("/detail/{roomId}")
     public List<PlayerDTO> getPlayers(@PathVariable String roomId) {
         return playerService.getPlayers(roomId);
