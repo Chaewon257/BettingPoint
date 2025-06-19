@@ -31,20 +31,18 @@ public class HttpHandshakeInterceptor implements HandshakeInterceptor {
 				attributes.put("httpSession", httpSession.getId());
 				// 유저 정보 저장
 				attributes.put("loginUser", httpSession.getAttribute("loginUser"));
+//				attributes.put("loginUser", "0");
 			}
 
 			// 입장하는 게임방 저장
 			// 쿼리 파라미터에서 roomId 추출
-			String query = servletRequest.getQueryString();
-			if (query != null) {
-				String[] params = query.split("&");
-				for (String param : params) {
-					if (param.startsWith("roomId=")) {
-						String roomId = param.split("=")[1];
-						attributes.put("roomId", roomId);
-					}
-				}
-			}
+			String requestURI = servletRequest.getRequestURI(); // 전체 URI
+
+			// 마지막 경로 부분만 추출
+			String[] parts = requestURI.split("/");
+			String roomId = parts[parts.length - 1];
+
+			attributes.put("roomId", roomId);
 		}
 		return true; // 핸드쉐이크 진행
 	}
