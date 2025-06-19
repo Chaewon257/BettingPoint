@@ -9,12 +9,9 @@
 <c:choose>
 	<c:when test="${pageType ne 'ingame'}">
 		<header class="bg-white shadow-[0_2px_10px_rgba(0,0,0,0.1)]">
-			<div class="relative w-full bg-white text-center py-3.5 border border-gray-1 flex items-center site-title-box">
+			<div class="relative w-full bg-white text-center py-2.5 border border-gray-1 flex items-center site-title-box">
 			  <!-- 사이트 제목 -->
 			  <span class="grow text-ts-18 sm:text-ts-20 md:text-ts-24 lg:text-ts-28">Betting Point</span>
-			  <button class="absolute right-4 top-1/2 -translate-y-1/2 text-2xl md:hidden">
-			    &#9776; <!-- ☰ -->
-			  </button>
 			
 			  <!-- 로그인/회원가입 or 로그아웃 (PC에서만 보임) -->
 			  <div class="hidden absolute right-5 top-1/2 -translate-y-1/2 md:flex md:justify-center md:items-center md:gap-x-6">
