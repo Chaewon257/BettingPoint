@@ -9,12 +9,12 @@
 <c:choose>
 	<c:when test="${pageType ne 'ingame'}">
 		<header class="bg-white shadow-[0_2px_10px_rgba(0,0,0,0.1)]">
-			<div class="relative w-full bg-white text-center py-2.5 border border-gray-1 flex items-center site-title-box">
+			<div class="relative w-full bg-white py-1 md:py-2.5 border border-gray-1 flex items-center justify-center site-title-box">
 			  <!-- 사이트 제목 -->
-			  <span class="grow text-ts-18 sm:text-ts-20 md:text-ts-24 lg:text-ts-28">Betting Point</span>
+			  <span class="text-ts-18 sm:text-ts-20 md:text-ts-24 lg:text-ts-28">Betting Point</span>
 			
 			  <!-- 로그인/회원가입 or 로그아웃 (PC에서만 보임) -->
-			  <div class="hidden absolute right-5 top-1/2 -translate-y-1/2 md:flex md:justify-center md:items-center md:gap-x-6">
+			  <div class="hidden md:flex md:items-center md:gap-x-6 absolute right-5 top-1/2 -translate-y-1/2 ">
 			    <c:choose>
 			      <c:when test="${not empty sessionScope.loginUser}">
 			        <a href="/signup" class="text-black no-underline cursor-pointer hover:font-semibold">${sessionScope.loginUser.username} 님</a>
