@@ -34,7 +34,7 @@
 							</a>
 						</div>
 						<nav class="grow flex justify-between items-center">
-							<a href="/solo" class="no-underline text-black text-base transition-colors duration-300 hover:text-blue-1 hover:font-semibold">개인게임</a>
+							<a href="/cointoss" class="no-underline text-black text-base transition-colors duration-300 hover:text-blue-1 hover:font-semibold">개인게임</a>
 							<a href="/team" class="no-underline text-black text-base transition-colors duration-300 hover:text-blue-1 hover:font-semibold">단체게임</a>
 							<a href="/board" class="no-underline text-black text-base transition-colors duration-300 hover:text-blue-1 hover:font-semibold">게시판</a>
 							<a href="/support" class="no-underline text-black text-base transition-colors duration-300 hover:text-blue-1 hover:font-semibold">고객지원</a>
