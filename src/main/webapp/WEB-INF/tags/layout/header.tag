@@ -29,19 +29,22 @@
 			</div>
 			
 			<c:if test="${pageType eq 'main'}">
-				<div class="bg-white transition-all duration-300 ease-in-out z-[999] shadow-none nav-bar">
-					<div class="flex justify-center items-center py-8 pl-80 pr-24">
-						<div class="absolute left-24">
+				<div class="bg-white transition-all duration-300 ease-in-out z-[999] nav-bar">
+					<div class="relative flex justify-center items-center py-1 md:py-7 md:pl-44 md:pr-16 lg:pl-60 lg:pr-24">
+						<div class="md:absolute md:left-12">
 							<a href="/">
-								<img src="${cpath}/resources/images/logo.png" alt="Betting Point Logo" class="h-16"/>
+								<img src="${cpath}/resources/images/logo.png" alt="Betting Point Logo" class="h-12 md:h-16"/>
 							</a>
 						</div>
-						<nav class="grow flex justify-between items-center">
-							<a href="/cointoss" class="no-underline text-black text-base transition-colors duration-300 hover:text-blue-1 hover:font-semibold">개인게임</a>
-							<a href="/gameroom" class="no-underline text-black text-base transition-colors duration-300 hover:text-blue-1 hover:font-semibold">단체게임</a>
-							<a href="/board" class="no-underline text-black text-base transition-colors duration-300 hover:text-blue-1 hover:font-semibold">게시판</a>
-							<a href="/support" class="no-underline text-black text-base transition-colors duration-300 hover:text-blue-1 hover:font-semibold">고객지원</a>
-							<a href="/mypage" class="no-underline text-black text-base transition-colors duration-300 hover:text-blue-1 hover:font-semibold">마이페이지</a>
+						<button class="absolute left-6 top-1/2 -translate-y-1/2 text-2xl md:hidden">
+							&#9776; <!-- ☰ -->
+						</button>
+						<nav class="hidden grow md:flex justify-between items-center">
+							<a href="/cointoss" class="text-black text-base hover:text-blue-1 hover:font-semibold">개인게임</a>
+							<a href="/gameroom" class="text-black text-base hover:text-blue-1 hover:font-semibold">단체게임</a>
+							<a href="/board" class="text-black text-base hover:text-blue-1 hover:font-semibold">게시판</a>
+							<a href="/support" class="text-black text-base hover:text-blue-1 hover:font-semibold">고객지원</a>
+							<a href="/mypage" class="text-black text-base hover:text-blue-1 hover:font-semibold">마이페이지</a>
 						</nav>
 					</div>
 				</div>
