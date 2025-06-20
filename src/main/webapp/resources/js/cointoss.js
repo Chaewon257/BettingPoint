@@ -14,9 +14,11 @@ let gameState = {
 
 // 난이도 설정
  let difficultyConfigs = {
- // 기본값 
-
-};
+   // 기본값 (서버에서 받아오기 전까지 사용)
+   easy: { name: "하", chance: 1.0, payout: 1.2 },
+   normal: { name: "중", chance: 0.5, payout: 2.0 },
+   hard: { name: "상", chance: 0.3, payout: 3.3 }
+ };
 
 // HTML 요소들
 const elements = {
@@ -37,7 +39,7 @@ const elements = {
 // 페이지 로드 시 초기 데이터 가져오기
 document.addEventListener('DOMContentLoaded', function() {
   // 먼저 기본 UI 설정 (연결 전에도 난이도 선택 가능)
-  //updateDifficultyUI();
+  updateDifficultyUI();
   setupEventListeners();
   updateUI();
   
