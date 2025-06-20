@@ -1,31 +1,3 @@
-function renderGameRooms(gamerooms, games, playerCounts) {
-    const container = $("#room-container");
-    container.empty();
-
-    gamerooms.forEach(room => {
-        const count = playerCounts[room.uid] || 0;
-
-        const roomHtml = `
-            <div class="game-room" data-room-id="${room.uid}">
-                <h3>${room.title}</h3>
-                <p><strong>게임 이름:</strong> ${games.name}</p>
-                <p><strong>게임 레벨:</strong> ${games.level}</p>
-                <p><strong>게임방 상태:</strong> ${room.status}</p>
-                <p><strong>최소 베팅 금액:</strong> ${room.min_bet} 포인트</p>
-                <p><strong>시작 예정 시간:</strong> ${room.start_at ? new Date(room.start_at).toLocaleString() : "미정"}</p>
-                <p><strong>현재 인원:</strong> ${count}명</p>
-            </div>
-        `;
-
-        container.append(roomHtml);
-    });
-
-    $(".game-room").on("click", function () {
-        const roomId = $(this).data("room-id");
-        window.location.href = `/gameroom/detail/${roomId}`;
-    });
-}
-
 // 게임방 리스트 요청
 function gameRoomList() {
     let gamerooms = []; // 게임방 리스트
@@ -53,19 +25,31 @@ function gameRoomList() {
     });
 };
 
-// 게임방 상세 정보 렌더링
-function renderGameRoomDetail(room, game, roomPlayers) {
-    $("#room-title").text(room.title);
-    $("#game-name").text(game.name);
-    $("#game-level").text(game.level);
-    $("#room-status").text(room.status);
-    $("#room-min-bet").text(room.min_bet);
+// 게임방 리스트 렌더링(임시)
+function renderGameRooms(gamerooms, games, playerCounts) {
+    const container = $("#room-container");
+    container.empty();
 
-    const $playerList = $("#player-list");
-    $playerList.empty();
-    roomPlayers.forEach(p => {
-        console.log(p.user_uid);
-        $playerList.append(`<div>${p.user_uid}</div>`);
+    gamerooms.forEach(room => {
+        const count = playerCounts[room.uid] || 0;
+
+        const roomHtml = `
+            <div class="game-room" data-room-id="${room.uid}">
+                <h3>${room.title}</h3>
+                <p><strong>게임 이름:</strong> ${games.name}</p>
+                <p><strong>게임 레벨:</strong> ${games.level}</p>
+                <p><strong>현재 인원:</strong> ${count} / 8</p>
+                <p><strong>최소 베팅 금액:</strong> ${room.min_bet} 포인트</p>
+                <p><strong>게임방 상태:</strong> ${room.status}</p>
+            </div>
+        `;
+
+        container.append(roomHtml);
+    });
+
+    $(".game-room").on("click", function () {
+        const roomId = $(this).data("room-id");
+        window.location.href = `/gameroom/detail/${roomId}`;
     });
 }
 
@@ -92,6 +76,26 @@ function gameRoomDetail (roomId) {
         }
     });
 };
+
+// 게임방 상세 정보 렌더링
+function renderGameRoomDetail(room, game, roomPlayers) {
+    const container = $("#room-detail-container");
+    container.empty();
+
+    const roomHtml = `
+        <h2 id="room-title">${room.title}</h2>
+        <div>
+            <p><strong>게임 이름:</strong> ${game.name}</p>
+            <p><strong>게임 레벨:</strong> ${game.level}</p>
+        </div>
+        <div id="player-list"></div>
+        <div id="chat-box"></div>
+    `;
+
+    container.html(roomHtml);
+
+    updatePlayerList(roomPlayers);
+}
 
 // 게임 상세 정보 요청
 function gameDetail(room, game) {
@@ -171,18 +175,36 @@ function connectGameWebSocket(roomId) {
     }
 }
 
+function updatePlayerInfo(updatedPlayer) {
+    const $playerList = $("#player-list");
+
+    // 기존 플레이어 div 삭제
+    $playerList.find(`#player-${updatedPlayer.user_uid}`).remove();
+
+    // 새로운 정보로 추가
+    const html = `
+        <div id="player-${updatedPlayer.user_uid}">
+            <div><strong>ID:</strong> ${updatedPlayer.user_uid}</div>
+            <div><strong>선택한 거북이:</strong> ${updatedPlayer.turtle_id}</div>
+            <div><strong>준비 상태:</strong> ${updatedPlayer.isReady}</div>
+        </div>
+    `;
+    $playerList.append(html);
+}
+
 // 플레이어 목록 갱신
 function updatePlayerList(players) {
     const $playerList = $("#player-list");
     $playerList.empty(); // 기존 플레이어 목록 초기화
 
-    if (!players || players.length === 0) {
-        $playerList.append("<div>현재 플레이어가 없습니다.</div>");
-        return;
-    }
-
     players.forEach(player => {
-        // 예: 플레이어 닉네임이나 ID 보여주기
-        $playerList.append(`<div>${player.user_uid}</div>`);
+        const html = `
+            <div class="player-info" id="player-${player.user_uid}">
+                <span><strong>ID:</strong> ${player.user_uid}</span>
+                <span><strong>선택한 거북이:</strong> ${player.turtle_id}</span>
+                <span><strong>준비 상태:</strong> ${player.isReady}</span>
+            </div>
+        `;
+        $playerList.append(html);
     });
 }
