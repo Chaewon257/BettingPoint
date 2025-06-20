@@ -1,4 +1,4 @@
-package com.bettopia.game.model.player;
+package com.bettopia.game.model.multi.turtle;
 
 import com.bettopia.game.model.gameroom.GameRoomResponseDTO;
 import com.bettopia.game.model.gameroom.GameRoomService;
@@ -18,9 +18,9 @@ public class PlayerService {
     @Autowired
     GameRoomService gameRoomService;
 
-    // 게임방 플레이어 상세 조회
-    public List<PlayerDTO> getPlayers(String roomId) {
-        List<PlayerDTO> players = playerDAO.getAll(roomId);
+    // 거북이 게임방 플레이어 상세 조회
+    public List<TurtlePlayerDTO> getPlayers(String roomId) {
+        List<TurtlePlayerDTO> players = playerDAO.getAll(roomId);
         return players;
     }
 
@@ -31,7 +31,7 @@ public class PlayerService {
                 .map(GameRoomResponseDTO::getUid)
                 .collect(Collectors.toList());
         for (String roomId : roomIds) {
-            List<PlayerDTO> players = playerDAO.getAll(roomId);
+            List<TurtlePlayerDTO> players = playerDAO.getAll(roomId);
             // 플레이어가 없으면 0 처리
             int count = (players != null) ? players.size() : 0;
             roomPlayers.put(roomId, count);

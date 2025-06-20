@@ -1,7 +1,7 @@
 package com.bettopia.game.controller;
 
-import com.bettopia.game.model.player.PlayerDTO;
-import com.bettopia.game.model.player.PlayerService;
+import com.bettopia.game.model.multi.turtle.TurtlePlayerDTO;
+import com.bettopia.game.model.multi.turtle.PlayerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,8 +24,9 @@ public class PlayerRestController {
         return playerService.getAllPlayers();
     }
 
+    // 게임방 플레이어 상세 조회
     @GetMapping("/detail/{roomId}")
-    public List<PlayerDTO> getPlayers(@PathVariable String roomId) {
+    public List<TurtlePlayerDTO> getPlayers(@PathVariable String roomId) {
         return playerService.getPlayers(roomId);
     }
 }

@@ -28,7 +28,7 @@ public class GameRestController {
 
     // 타입별 게임 조회
     @GetMapping("/list/{type}")
-    public List<GameResponseDTO> selectByMulti(@PathVariable String type) {
+    public List<GameResponseDTO> selectByType(@PathVariable String type) {
         return gameService.selectByType(type);
     }
 }
