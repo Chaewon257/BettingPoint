@@ -39,7 +39,17 @@
 						<button id="hamburgerButton" class="absolute left-6 top-1/2 -translate-y-1/2 text-2xl md:hidden">
 							&#9776; <!-- ☰ -->
 						</button>
-						<nav id="mobileMenu" class="hidden absolute top-full right-0 flex flex-col z-40 w-full py-6 gap-y-8 items-center bg-white shadow-md md:static md:py-0 md:gap-y-auto md:grow md:flex md:flex-row md:justify-between md:shadow-none">
+						<nav id="mobileMenu" class="hidden absolute top-full right-0 flex flex-col z-40 w-full pb-6 gap-y-8 items-center bg-white shadow-md md:static md:py-0 md:gap-y-auto md:grow md:flex md:flex-row md:justify-between md:shadow-none">
+							<div class="bg-gray-2 py-5 w-full flex items-center justify-center relative md:hidden">
+									<c:choose>
+								      	<c:when test="${not empty sessionScope.loginUser}">
+								      		<span class="text-black"><a href="/mypage" class="underline font-semibold">${sessionScope.loginUser.username}</a> 님 환영합니다</span>
+								      	</c:when>
+								      	<c:otherwise>
+								      		<a href="/login" class="text-black"><span class="underline font-semibold">로그인</span> 후 다양한 서비스를 이용해보세요</a>
+								      	</c:otherwise>
+								    </c:choose>
+							</div>
 							<a href="/cointoss" class="text-black text-base hover:text-blue-1 hover:font-semibold">개인게임</a>
 							<a href="/gameroom" class="text-black text-base hover:text-blue-1 hover:font-semibold">단체게임</a>
 							<a href="/board" class="text-black text-base hover:text-blue-1 hover:font-semibold">게시판</a>
