@@ -3,7 +3,6 @@ function renderGameRooms(gamerooms, games, playerCounts) {
     container.empty();
 
     gamerooms.forEach(room => {
-        const game = games[room.game_uid] || {};
         const count = playerCounts[room.uid] || 0;
 
         const roomHtml = `
@@ -56,8 +55,6 @@ function gameRoomList() {
 
 // 게임방 상세 정보 렌더링
 function renderGameRoomDetail(room, game, roomPlayers) {
-    // const game = games[room.game_uid];
-
     $("#room-title").text(room.title);
     $("#game-name").text(game.name);
     $("#game-level").text(game.level);
