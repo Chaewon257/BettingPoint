@@ -14,13 +14,14 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 public class WebSocketConfig implements WebSocketConfigurer {
 
 	@Autowired
-	private GameWebSocketHandler gameWebSocketHandler;
+	private TurtleGameWebSocketHandler turtleGameWebSocketHandler;
 	@Autowired
 	private HttpHandshakeInterceptor httpHandshakeInterceptor;
 
 	@Override
 	public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-		registry.addHandler(gameWebSocketHandler, "/ws/game/**")
+		registry.addHandler(turtleGameWebSocketHandler, "/ws/game/turtle/**")
+				// 다른 게임에서 사용 시 엔드포인트 추가
 			.setAllowedOrigins("*")
 			.addInterceptors(httpHandshakeInterceptor);
 	}

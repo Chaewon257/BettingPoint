@@ -1,8 +1,8 @@
 package com.bettopia.game.socket;
 
-import com.bettopia.game.model.player.PlayerDAO;
-import com.bettopia.game.model.player.PlayerDTO;
-import com.bettopia.game.model.player.SessionService;
+import com.bettopia.game.model.multi.turtle.PlayerDAO;
+import com.bettopia.game.model.multi.turtle.TurtlePlayerDTO;
+import com.bettopia.game.model.multi.turtle.SessionService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,19 +19,13 @@ import java.util.Map;
 
 // 웹소켓 메시지 처리
 @Component
-public class GameWebSocketHandler extends TextWebSocketHandler {
+public class TurtleGameWebSocketHandler extends TextWebSocketHandler {
 
 	// 스프링 빈 사용
 	@Autowired
 	private PlayerDAO playerDAO;
 	@Autowired
 	private SessionService sessionService;
-
-//	@Autowired
-//	private ServletContext servletContext;
-	// 어플리케이션 스코프에서 게임방 플레이어 리스트 가져오기
-//	Map<String, List<PlayerDTO>> roomPlayers =
-//			(Map<String, List<PlayerDTO>>) servletContext.getAttribute("roomPlayers");
 
 	@Override
 	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
@@ -46,14 +40,8 @@ public class GameWebSocketHandler extends TextWebSocketHandler {
 
 		sessionService.addSession(roomId, session);
 
-		// 게임방 플레이어 리스트가 없다면 새로 생성 후 어플리케이션 스코프에 저장
-//		if(roomPlayers == null) {
-//			roomPlayers = new ConcurrentHashMap<>();
-//			servletContext.setAttribute("roomPlayers", roomPlayers);
-//		}
-
 		// 게임방에 플레이어 추가
-		PlayerDTO player = PlayerDTO.builder()
+		TurtlePlayerDTO player = TurtlePlayerDTO.builder()
 				.user_uid(userId)
 				.room_uid(roomId)
 				// 기본값 설정
@@ -73,8 +61,9 @@ public class GameWebSocketHandler extends TextWebSocketHandler {
 	}
 
 	private void broadcastMessage(String type, String roomId, Map<String, Object> data) throws IOException {
+		// 웹소켓 메시지 전송
 		List<WebSocketSession> sessions = sessionService.getSessions(roomId);
-		List<PlayerDTO> players = playerDAO.getAll(roomId);
+		List<TurtlePlayerDTO> players = playerDAO.getAll(roomId);
 
 		ObjectMapper mapper = new ObjectMapper();
 		Map<String, Object> messageMap = new HashMap<>();
@@ -107,7 +96,7 @@ public class GameWebSocketHandler extends TextWebSocketHandler {
 		String roomId = (String) session.getAttributes().get("roomId");
 		String userId = (String) session.getAttributes().get("loginUser");
 
-		PlayerDTO player = playerDAO.getPlayer(roomId, userId);
+		TurtlePlayerDTO player = playerDAO.getPlayer(roomId, userId);
 
 		// 메시지 타입에 따라 분기
 		switch(type) {
@@ -142,14 +131,6 @@ public class GameWebSocketHandler extends TextWebSocketHandler {
 		Map<String, Object> data = new HashMap<>();
 		data.put("userId", userId);
 		broadcastMessage("exit", roomId, data);
-
-//		List<PlayerDTO> players = roomPlayers.get(roomId);
-//		if(players != null) {
-//			players.removeIf(p -> p.getUser_uid().equals(userId));
-//			if(players.isEmpty()) { // 플레이어가 없으면 방 삭제
-//				roomPlayers.remove(roomId);
-//			}
-//		}
 	}
 
 	@Override

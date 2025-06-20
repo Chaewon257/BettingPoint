@@ -30,8 +30,8 @@ public class HttpHandshakeInterceptor implements HandshakeInterceptor {
 				// HTTP 세션 아이디를 웹소켓 세션 attributes에 저장
 				attributes.put("httpSession", httpSession.getId());
 				// 유저 정보 저장
-				attributes.put("loginUser", httpSession.getAttribute("loginUser"));
-//				attributes.put("loginUser", "0");
+//				attributes.put("loginUser", httpSession.getAttribute("loginUser"));
+				attributes.put("loginUser", "0");
 			}
 
 			// 입장하는 게임방 저장
