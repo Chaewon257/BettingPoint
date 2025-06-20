@@ -3,6 +3,8 @@ package com.bettopia.game.model.gameroom;
 import java.util.List;
 import java.util.UUID;
 
+import com.bettopia.game.model.multi.turtle.PlayerDAO;
+import com.bettopia.game.model.multi.turtle.TurtlePlayerDTO;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -12,6 +14,9 @@ public class GameRoomDAO {
 
 	@Autowired
 	private SqlSession sqlSession;
+	@Autowired
+	private PlayerDAO playerDAO;
+
 	String namespace = "com.bpoint.gameroom.";
 
 	public List<GameRoomResponseDTO> selectAll() {
@@ -34,6 +39,18 @@ public class GameRoomDAO {
 						.game_uid(roomRequest.getGame_uid())
 						.build();
 		int result = sqlSession.insert(namespace + "insert", roomResponse);
+
+		// 생성자 정보를 플레이어로 추가
+		TurtlePlayerDTO player = TurtlePlayerDTO.builder()
+				.user_uid(userId)
+				.room_uid(roomResponse.getUid())
+				.isReady(false)
+				.turtle_id("first")
+				.betting_point(0)
+				.build();
+
+		playerDAO.addPlayer(roomResponse.getUid(), player);
+
 		return result;
 	}
 
