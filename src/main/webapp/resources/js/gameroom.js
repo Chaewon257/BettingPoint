@@ -154,6 +154,7 @@ function connectGameWebSocket(roomId) {
 
     socket.onclose = () => {
         console.log("웹소켓 연결 종료");
+        window.location.href = "/gameroom";
     };
 
     socket.onerror = (error) => {

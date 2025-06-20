@@ -38,6 +38,23 @@ public class TurtleGameWebSocketHandler extends TextWebSocketHandler {
 			return;
 		}
 
+		List<TurtlePlayerDTO> players = playerDAO.getAll(roomId);
+		if(players != null) {
+			// 동일 유저 중복 입장 불가 처리
+			for(TurtlePlayerDTO player : players) {
+				if(player.getUser_uid().equals(userId)) {
+					session.close(CloseStatus.BAD_DATA);
+					return;
+				}
+			}
+		}
+
+		// 인원 초과 시 입장 불가
+		if(players.size() >= 8) {
+			session.close(CloseStatus.BAD_DATA);
+			return;
+		}
+
 		sessionService.addSession(roomId, session);
 
 		// 게임방에 플레이어 추가
@@ -55,9 +72,6 @@ public class TurtleGameWebSocketHandler extends TextWebSocketHandler {
 		Map<String, Object> data = new HashMap<>();
 		data.put("userId", userId);
 		broadcastMessage("enter", roomId, data);
-
-		// 기존 방에 유저 추가, 없으면 새로 리스트 생성 후 추가
-//		roomPlayers.computeIfAbsent(roomId, k -> new ArrayList<>()).add(player);
 	}
 
 	private void broadcastMessage(String type, String roomId, Map<String, Object> data) throws IOException {
