@@ -128,7 +128,7 @@ function countPlayers(playerCounts) {
 
 // 게임방 웹소켓 연결
 function connectGameWebSocket(roomId) {
-    socket = new WebSocket(`ws://${location.host}/ws/game/${roomId}`);
+    socket = new WebSocket(`ws://${location.host}/ws/game/turtle/${roomId}`);
 
     socket.onopen = () => {
         console.log("웹소켓 연결 성공");
