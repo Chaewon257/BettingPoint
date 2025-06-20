@@ -3,6 +3,7 @@ package com.bettopia.game.model.auth;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.bettopia.game.Exception.SessionExpiredException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -57,5 +58,16 @@ public class AuthService {
 
 	public UserVO findByUid(String uid) {
 		return loginDAO.findByUid(uid);
+	}
+
+	public String validateAndGetUserId(String authHeader) {
+		if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+			throw new InvalidTokenException();
+		}
+		String token = authHeader.substring(7);
+		if (!jwtUtil.validateToken(token)) {
+			throw new SessionExpiredException();
+		}
+		return jwtUtil.getUserIdFromToken(token);
 	}
 }
