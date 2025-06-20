@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bpoint.auth">
+	<select id="findByEmail"
+		resultType="com.bettopia.game.model.auth.UserVO">
+		SELECT *
+		FROM user
+		WHERE email = #{email}
+	</select>
+	<select id="findByUid"
+		resultType="com.bettopia.game.model.auth.UserVO">
+		SELECT *
+		FROM user
+		WHERE uid = #{uid}
+	</select>
+	<insert id="updateRefreshToken" parameterType="map">
+		INSERT INTO auth_token (uid, user_uid, refresh_token, created_at)
+		VALUES (#{uid}, #{userUid}, #{refreshToken}, NOW())
+		ON DUPLICATE KEY UPDATE
+		refresh_token = #{refreshToken},
+		created_at = NOW()
+	</insert>
+</mapper>
