@@ -13,6 +13,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>${pageName}</title>
 <link rel="stylesheet" href="${cpath}/resources/css/styles.css">
 
@@ -42,7 +43,28 @@
 							ineHeight: '100%',
 		  					fontWeight: '800'
 						}
-					] 
+					],
+					'ts-24' : [
+						'1.5rem',
+						{
+							ineHeight: '100%',
+		  					fontWeight: '800'
+						}
+					],
+					'ts-20' : [
+						'1.25rem',
+						{
+							ineHeight: '100%',
+		  					fontWeight: '800'
+						}
+					],
+					'ts-18' : [
+						'1rem',
+						{
+							ineHeight: '100%',
+		  					fontWeight: '800'
+						}
+					]
 				},
 				screens : {
 					'max-1350': { 'max': '1350px' },
