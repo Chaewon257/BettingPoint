@@ -53,6 +53,7 @@ $(document).ready(function () {
 							});
 					})
 					.fail(function () {
+						localStorage.removeItem('accessToken');
 						console.warn('토큰 재발급 실패');
 					});
 			} else {
@@ -63,8 +64,8 @@ $(document).ready(function () {
 	function renderUser(user) {
 		if (!user || !user.username) return;
 		const html = `
-			<a href="/mypage" class="text-black no-underline cursor-pointer hover:font-semibold">\${user.username} 님</a>
-			<a href="/logout" class="text-black no-underline cursor-pointer py-1.5 px-[1.625rem] border-2 border-black rounded-full transition-all duration-300 ease-in-out hover:bg-gray-2">로그아웃</a>
+			<a href="/mypage" class="text-black hover:font-semibold">\${user.username} 님</a>
+			<a href="/logout" class="text-black py-1.5 px-[1.625rem] border-2 border-black rounded-full transition-all duration-300 ease-in-out hover:bg-gray-2">로그아웃</a>
 		`;
 		$('#userMenu').html(html);
 	}

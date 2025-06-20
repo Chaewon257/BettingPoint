@@ -51,7 +51,13 @@ public class AuthRestController {
 	public ResponseEntity<?> reissue(@RequestHeader("Authorization") String authHeader) {
 		try {
 			if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("토큰이 없습니다.");
+				ResponseCookie cookie = ResponseCookie.from("refreshToken", "")
+		        .path("/")
+		        .httpOnly(true)
+		        .maxAge(0) // 삭제
+		        .build();
+				
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).header("Set-Cookie", cookie.toString()).body("토큰이 없습니다.");
 			}
 
 			String refreshToken = authHeader.substring(7);
