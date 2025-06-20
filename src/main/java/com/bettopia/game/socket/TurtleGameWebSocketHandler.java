@@ -1,5 +1,7 @@
 package com.bettopia.game.socket;
 
+import com.bettopia.game.model.auth.AuthService;
+import com.bettopia.game.model.gameroom.GameRoomDAO;
 import com.bettopia.game.model.multi.turtle.PlayerDAO;
 import com.bettopia.game.model.multi.turtle.TurtlePlayerDTO;
 import com.bettopia.game.model.multi.turtle.SessionService;
@@ -26,52 +28,14 @@ public class TurtleGameWebSocketHandler extends TextWebSocketHandler {
 	private PlayerDAO playerDAO;
 	@Autowired
 	private SessionService sessionService;
+	@Autowired
+	private GameRoomDAO gameroomDAO;
+    @Autowired
+    private AuthService authService;
 
 	@Override
 	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
 		// 연결된 세션 저장, 초기 데이터 전송 등
-		String userId = (String) session.getAttributes().get("loginUser");
-		String roomId = (String) session.getAttributes().get("roomId");
-
-		if (roomId == null || userId == null) {
-			session.close(CloseStatus.BAD_DATA); // 필수값 없으면 연결 끊기
-			return;
-		}
-
-		List<TurtlePlayerDTO> players = playerDAO.getAll(roomId);
-		if(players != null) {
-			// 동일 유저 중복 입장 불가 처리
-			for(TurtlePlayerDTO player : players) {
-				if(player.getUser_uid().equals(userId)) {
-					session.close(CloseStatus.BAD_DATA);
-					return;
-				}
-			}
-		}
-
-		// 인원 초과 시 입장 불가
-		if(players.size() >= 8) {
-			session.close(CloseStatus.BAD_DATA);
-			return;
-		}
-
-		sessionService.addSession(roomId, session);
-
-		// 게임방에 플레이어 추가
-		TurtlePlayerDTO player = TurtlePlayerDTO.builder()
-				.user_uid(userId)
-				.room_uid(roomId)
-				// 기본값 설정
-				.isReady(false)
-				.turtle_id("first")
-				.betting_point(0)
-				.build();
-
-		playerDAO.addPlayer(roomId, player);
-
-		Map<String, Object> data = new HashMap<>();
-		data.put("userId", userId);
-		broadcastMessage("enter", roomId, data);
 	}
 
 	private void broadcastMessage(String type, String roomId, Map<String, Object> data) throws IOException {
@@ -107,8 +71,56 @@ public class TurtleGameWebSocketHandler extends TextWebSocketHandler {
 		JsonNode json = mapper.readTree(payload);
 
 		String type = json.get("type").asText();
+
+		// 헤더 토큰으로 유저 정보 저장 및 입장 처리
+		if("auth".equals(type)) {
+			// 유저 정보 저장
+			String token = json.get("token").asText();
+			String userId = authService.validateAndGetUserId(token);
+
+			session.getAttributes().put("userId", userId);
+			String roomId = (String) session.getAttributes().get("roomId");
+
+			List<TurtlePlayerDTO> players = playerDAO.getAll(roomId);
+			if(players != null) {
+				// 동일 유저 중복 입장 불가 처리
+				for(TurtlePlayerDTO player : players) {
+					if(player.getUser_uid().equals(userId)) {
+						session.close(CloseStatus.BAD_DATA);
+						return;
+					}
+				}
+				// 인원 초과 시 입장 불가
+				if(players.size() >= 8) {
+					session.close(CloseStatus.BAD_DATA);
+					return;
+				}
+			}
+
+			// 입장 처리
+			sessionService.addSession(roomId, session);
+
+			// 게임방에 플레이어 추가
+			TurtlePlayerDTO player = TurtlePlayerDTO.builder()
+					.user_uid(userId)
+					.room_uid(roomId)
+					// 기본값 설정
+					.isReady(false)
+					.turtle_id("first")
+					.betting_point(0)
+					.build();
+
+			playerDAO.addPlayer(roomId, player);
+
+			Map<String, Object> data = new HashMap<>();
+			data.put("userId", userId);
+			broadcastMessage("enter", roomId, data);
+
+			return;
+		}
+
 		String roomId = (String) session.getAttributes().get("roomId");
-		String userId = (String) session.getAttributes().get("loginUser");
+		String userId = (String) session.getAttributes().get("userId");
 
 		TurtlePlayerDTO player = playerDAO.getPlayer(roomId, userId);
 
@@ -137,10 +149,16 @@ public class TurtleGameWebSocketHandler extends TextWebSocketHandler {
 	public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
 		// 세션 제거, 퇴장 처리 등
 		String roomId = (String) session.getAttributes().get("roomId");
-		String userId = (String) session.getAttributes().get("loginUser");
+		String userId = (String) session.getAttributes().get("userId");
 
 		sessionService.removeSession(roomId, session);
 		playerDAO.removePlayer(roomId, userId);
+
+		// 플레이어가 0명일 때 방 삭제
+		List<TurtlePlayerDTO> players = playerDAO.getAll(roomId);
+		if (players == null || players.isEmpty()) {
+			gameroomDAO.deleteRoom(roomId);
+		}
 
 		Map<String, Object> data = new HashMap<>();
 		data.put("userId", userId);

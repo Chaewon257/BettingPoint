@@ -3,8 +3,9 @@ package com.bettopia.game.socket;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
+import com.bettopia.game.model.auth.AuthService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.http.server.ServletServerHttpRequest;
@@ -16,6 +17,9 @@ import org.springframework.web.socket.server.HandshakeInterceptor;
 @Component
 public class HttpHandshakeInterceptor implements HandshakeInterceptor {
 
+	@Autowired
+	AuthService authService;
+
 	@Override
 	public boolean beforeHandshake(ServerHttpRequest request,
 		ServerHttpResponse response,
@@ -24,15 +28,6 @@ public class HttpHandshakeInterceptor implements HandshakeInterceptor {
 
 		if (request instanceof ServletServerHttpRequest) {
 			HttpServletRequest servletRequest = ((ServletServerHttpRequest) request).getServletRequest();
-
-			HttpSession httpSession = servletRequest.getSession(false);
-			if (httpSession != null) {
-				// HTTP 세션 아이디를 웹소켓 세션 attributes에 저장
-				attributes.put("httpSession", httpSession.getId());
-				// 유저 정보 저장
-//				attributes.put("loginUser", httpSession.getAttribute("loginUser"));
-				attributes.put("loginUser", "0");
-			}
 
 			// 입장하는 게임방 저장
 			// 쿼리 파라미터에서 roomId 추출

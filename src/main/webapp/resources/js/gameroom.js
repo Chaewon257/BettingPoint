@@ -131,6 +131,11 @@ function connectGameWebSocket(roomId) {
     socket = new WebSocket(`ws://${location.host}/ws/game/turtle/${roomId}`);
 
     socket.onopen = () => {
+        const token = localStorage.getItem("accessToken");
+        socket.send(JSON.stringify({
+            type: "auth",
+            token: "Bearer " + token
+        }));
         console.log("웹소켓 연결 성공");
     };
 
