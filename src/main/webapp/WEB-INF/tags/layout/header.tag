@@ -67,7 +67,13 @@ $(document).ready(function () {
 			<a href="/mypage" class="text-black hover:font-semibold">\${user.username} 님</a>
 			<a href="/logout" class="text-black py-1.5 px-[1.625rem] border-2 border-black rounded-full transition-all duration-300 ease-in-out hover:bg-gray-2">로그아웃</a>
 		`;
+		
+		const mobileHtml = `
+			<span class="text-black"><a href="/mypage" class="underline font-semibold">\${user.username}</a> 님 환영합니다</span>
+		`;
+		
 		$('#userMenu').html(html);
+		$('#userMobileMenu').html(mobileHtml);
 	}
 });
 
@@ -80,7 +86,7 @@ $(document).ready(function () {
 			  <span class="text-ts-18 sm:text-ts-20 md:text-ts-24 lg:text-ts-28">Betting Point</span>
 			
 			  <!-- 로그인/회원가입 or 로그아웃 (PC에서만 보임) -->
-			  <div class="hidden md:flex md:items-center md:gap-x-6 absolute right-5 top-1/2 -translate-y-1/2 ">
+			  <div id="userMenu" class="hidden md:flex md:items-center md:gap-x-6 absolute right-5 top-1/2 -translate-y-1/2 ">
 			    <a href="/signup" class="text-black no-underline cursor-pointer hover:font-semibold">회원가입</a>
 			    <a href="/login" class="text-black no-underline cursor-pointer py-1.5 px-[1.625rem] border-2 border-black rounded-full transition-all duration-300 ease-in-out hover:bg-gray-2">로그인</a>
 			  </div>
@@ -98,15 +104,8 @@ $(document).ready(function () {
 							&#9776; <!-- ☰ -->
 						</button>
 						<nav id="mobileMenu" class="hidden absolute top-full right-0 flex flex-col z-40 w-full pb-6 gap-y-8 items-center bg-white shadow-md md:static md:py-0 md:gap-y-auto md:grow md:flex md:flex-row md:justify-between md:shadow-none">
-							<div class="bg-gray-2 py-5 w-full flex items-center justify-center relative md:hidden">
-									<c:choose>
-								      	<c:when test="${not empty sessionScope.loginUser}">
-								      		<span class="text-black"><a href="/mypage" class="underline font-semibold">${sessionScope.loginUser.username}</a> 님 환영합니다</span>
-								      	</c:when>
-								      	<c:otherwise>
-								      		<a href="/login" class="text-black"><span class="underline font-semibold">로그인</span> 후 다양한 서비스를 이용해보세요</a>
-								      	</c:otherwise>
-								    </c:choose>
+							<div id="userMobileMenu" class="bg-gray-2 py-5 w-full flex items-center justify-center relative md:hidden">
+								<a href="/login" class="text-black"><span class="underline font-semibold">로그인</span> 후 다양한 서비스를 이용해보세요</a>
 							</div>
 							<a href="/cointoss" class="text-black text-base hover:text-blue-1 hover:font-semibold">개인게임</a>
 							<a href="/gameroom" class="text-black text-base hover:text-blue-1 hover:font-semibold">단체게임</a>
