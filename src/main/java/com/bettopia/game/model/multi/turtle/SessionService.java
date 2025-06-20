@@ -1,4 +1,4 @@
-package com.bettopia.game.model.player;
+package com.bettopia.game.model.multi.turtle;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.WebSocketSession;
