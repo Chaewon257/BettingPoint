@@ -16,11 +16,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>${pageName}</title>
 <link rel="stylesheet" href="${cpath}/resources/css/styles.css">
-
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <c:if test="${pageType eq 'ingame'}">
   <link rel="stylesheet" href="${cpath}/resources/css/cointoss.css" />
 </c:if>
-
 <script src="https://cdn.tailwindcss.com"></script>
 <script type="text/javascript">
 	tailwind.config = {

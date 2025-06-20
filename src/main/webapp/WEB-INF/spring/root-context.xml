@@ -11,13 +11,17 @@
 
 	<!-- @Service @Component 등록 -->
 	<context:component-scan
-		base-package="com.bettopia.game.model, com.bettopia.game.socket" />
+		base-package="com.bettopia.game.model, com.bettopia.game.socket, com.bettopia.game.util" />
 
 	<!-- DB properties 등록 -->
 	<bean
-		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-		<property name="location"
-			value="/WEB-INF/spring/mysqlDB.properties" />
+		class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>/WEB-INF/spring/mysqlDB.properties</value>
+				<value>classpath:properties/application.properties</value>
+			</list>
+		</property>
 		<property name="fileEncoding" value="UTF-8" />
 	</bean>
 
@@ -48,36 +52,23 @@
 	</bean>
 
 	<!-- transaction처리 -->
-	<!-- <bean id="transactionManager"
-		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-		<property name="dataSource" ref="dataSource"></property>
-	</bean>
-	<tx:annotation-driven
+	<!-- <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager"> 
+		<property name="dataSource" ref="dataSource"></property> </bean> <tx:annotation-driven 
 		transaction-manager="transactionManager" /> -->
 
 	<!--transaction적용범위(Advice) 지정 -->
-	<!-- <tx:advice id="txAdvice"
-		transaction-manager="transactionManager">
-		<tx:attributes>
-			<tx:method name="*" /> 메서드별로 제약조건 별도설정 가능
-		</tx:attributes>
-	</tx:advice> -->
+	<!-- <tx:advice id="txAdvice" transaction-manager="transactionManager"> 
+		<tx:attributes> <tx:method name="*" /> 메서드별로 제약조건 별도설정 가능 </tx:attributes> 
+		</tx:advice> -->
 
 	<!-- transaction Pointcut지정 -->
-	<!-- <aop:config>
-		<aop:advisor advice-ref="txAdvice"
-			pointcut="execution(* aa(..))" />
-	</aop:config> -->
-	
+	<!-- <aop:config> <aop:advisor advice-ref="txAdvice" pointcut="execution(* 
+		aa(..))" /> </aop:config> -->
+
 	<!-- DB log 설정 -->
-	<!-- <bean id="dataSource"
-		class="net.sf.log4jdbc.Log4jdbcProxyDataSource">
-		<constructor-arg ref="dataSourceOriginal" />
-		<property name="logFormatter">
-			<bean class="net.sf.log4jdbc.tools.Log4JdbcCustomFormatter">
-				<property name="loggingType" value="SINGLE_LINE"></property>
-				<property name="sqlPrefix" value="[ SQL문장 ] "></property>
-			</bean>
-		</property>
-	</bean> -->
+	<!-- <bean id="dataSource" class="net.sf.log4jdbc.Log4jdbcProxyDataSource"> 
+		<constructor-arg ref="dataSourceOriginal" /> <property name="logFormatter"> 
+		<bean class="net.sf.log4jdbc.tools.Log4JdbcCustomFormatter"> <property name="loggingType" 
+		value="SINGLE_LINE"></property> <property name="sqlPrefix" value="[ SQL문장 
+		] "></property> </bean> </property> </bean> -->
 </beans>

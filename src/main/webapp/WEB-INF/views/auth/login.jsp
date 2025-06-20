@@ -1,7 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8"%>
 <%@ taglib prefix="ui" tagdir="/WEB-INF/tags"%>
 
-
 <ui:layout pageName="Betting Poing 로그인" pageType="lobby">
 	<jsp:attribute name="bodyContent">
 	  	<div class="fixed top-0 left-0 flex items-center justify-center h-screen w-full">
@@ -15,11 +14,11 @@
 						</a>
 		  			</div>
 		  			<div class="grow px-[3.75rem] pt-12 flex flex-col">
-		  				<form action="/login" method="post" class=" flex flex-col justify-items-start mb-4">
+		  				<form id="loginForm" class=" flex flex-col justify-items-start mb-4">
 		  					<span class="text-ts-28 pl-1.5 mb-16">로그인</span>
-		  					<input type="email" name="userid" class="w-full px-10 py-4 outline-none bg-gray-4 rounded-full border border-gray-5 mb-2" placeholder="사용자 ID">
-		  					<input type="password" name="userpw" class="w-full px-10 py-4 outline-none bg-gray-4 rounded-full border border-gray-5 mb-4" placeholder="비밀번호">
-		  					<input type="submit" class="w-full px-10 py-3 outline-none bg-blue-2 rounded-full border border-blue-2 text-white text-lg hover:bg-blue-1" value="로그인">
+		  					<input type="email" id="email" name="userid" class="w-full px-10 py-4 outline-none bg-gray-4 rounded-full border border-gray-5 mb-2" placeholder="사용자 ID" required>
+		  					<input type="password" id="password" name="userpw" class="w-full px-10 py-4 outline-none bg-gray-4 rounded-full border border-gray-5 mb-4" placeholder="비밀번호" required>
+		  					<button type="submit" class="w-full px-10 py-3 outline-none bg-blue-2 rounded-full border border-blue-2 text-white text-lg hover:bg-blue-1">로그인</button>
 		  				</form>
 		  				<div class="flex gap-x-8 text-gray-3 justify-end px-4 mb-8">
 		  					<a href="/signup" class="hover:text-gray-6">회원가입</a>
@@ -34,5 +33,6 @@
 	  			<img class="w-[14rem] max-1350:w-[12.5rem] max-1300:w-[11.25rem] max-1250:w-[9.375rem] max-1200:hidden" src="${cpath}/resources/images/auth_turtle.png" alt="Turtle Character" width="220" />	  			
 	  		</div>
 	  	</div>
+	  	<script src="${cpath}/resources/js/login.js"></script>
 	</jsp:attribute>
 </ui:layout>
