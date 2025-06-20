@@ -1,13 +1,10 @@
 $(document).ready(function() {
-
-	var cpath = "/game";
-	
 	// 카테고리 선택 시 질문 목록 불러오기
     $("#categorySelect").change(function() {
         const selectedCategory = $(this).val();
 
         $.ajax({
-            url: `${cpath}/chat/questionByCate.do`,
+            url: `/api/chat/questionByCate`,
             method: "GET",
             data: { category: selectedCategory },
             success: function(data) {
@@ -27,7 +24,7 @@ $(document).ready(function() {
     // 전체 질문 리스트 불러오기
     $("#questionAll").on("click", function(e) {
 	    $.ajax({
-	        url: `${cpath}/chat/quesiton.do`,
+	        url: `/api/chat/question`,
 	        method: "GET",
 	        success: function(data) {
 	        	//console.log("받은 데이터:", data);
@@ -50,7 +47,7 @@ $(document).ready(function() {
         const uid = $(this).data("uid");
         
         $.ajax({
-            url: `${cpath}/chat/answer.do`,
+            url: `/api/chat/answer`,
             method: "GET",
             data: { uid: uid },
             success: function(answer) {
