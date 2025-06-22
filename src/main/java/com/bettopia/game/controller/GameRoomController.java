@@ -17,6 +17,11 @@ public class GameRoomController {
     @GetMapping("/detail/{roomId}")
     public String gameroomDetail(@PathVariable String roomId, Model model) {
         model.addAttribute("roomId", roomId);
-        return "gameroom/gameroomdetail";
+        return "gameroom/turtleroomdetail";
+    }
+
+    @GetMapping("/insert")
+    public String gameroomInsert() {
+        return "gameroom/gameinsert";
     }
 }
