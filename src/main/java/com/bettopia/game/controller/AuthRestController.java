@@ -53,6 +53,12 @@ public class AuthRestController {
 		return ResponseEntity.ok(Map.of("duplicate", false));
 	}
 	
+	@GetMapping("/check-nickname")
+  public ResponseEntity<?> checkNicknameDuplicate(@RequestParam("nickname") String nickname) {
+		System.out.println(nickname);
+		
+		return ResponseEntity.ok(Map.of("duplicate", false));
+	}
 
 	// 리프레시 토큰을 통한 액세스 토큰 재발급 API
 	@PostMapping("/reissue")
