@@ -23,25 +23,24 @@ public class GameRoomService {
 		return room;
 	}
 
-	public int insertRoom(GameRoomRequestDTO.InsertGameRoomRequestDTO roomRequest, String userId) {
+	public String insertRoom(GameRoomRequestDTO.InsertGameRoomRequestDTO roomRequest, String userId) {
 		return gameRoomDAO.insertRoom(roomRequest, userId);
 	}
 
-	public int updateRoom(GameRoomRequestDTO.UpdateGameRoomRequestDTO roomRequest, String userId, String roomId) {
+	public String updateRoom(GameRoomRequestDTO.UpdateGameRoomRequestDTO roomRequest, String userId, String roomId) {
 		GameRoomResponseDTO room = gameRoomDAO.selectById(roomId);
 		// 게임방 존재 여부 && 현재 유저와 방장이 같은지 확인
 		if(room != null && room.getHost_uid().equals(userId)) {
 			return gameRoomDAO.updateRoom(roomRequest, roomId);
 		}
-		return 0;
+		return null;
 	}
 
-	public int deleteRoom(String roomId, String userId) {
+	public void deleteRoom(String roomId, String userId) {
 		GameRoomResponseDTO room = gameRoomDAO.selectById(roomId);
 		// 게임방 존재 여부 && 현재 유저와 방장이 같은지 확인
 		if (room != null && room.getHost_uid().equals(userId)) {
-			return gameRoomDAO.deleteRoom(roomId);
+			gameRoomDAO.deleteRoom(roomId);
 		}
-		return 0;
 	}
 }

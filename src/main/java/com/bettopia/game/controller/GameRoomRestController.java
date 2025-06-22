@@ -38,7 +38,7 @@ public class GameRoomRestController {
 	public String insertRoom(@RequestBody GameRoomRequestDTO.InsertGameRoomRequestDTO roomRequest,
 							 @RequestHeader("Authorization") String authHeader) {
 		String userId = authService.validateAndGetUserId(authHeader);
-		return gameRoomService.insertRoom(roomRequest, userId)>0?"방이 생성되었습니다.":"다시 시도해주세요.";
+		return gameRoomService.insertRoom(roomRequest, userId);
 	}
 
 	// 게임방 수정
@@ -46,13 +46,13 @@ public class GameRoomRestController {
 	public String updateRoom(@RequestBody GameRoomRequestDTO.UpdateGameRoomRequestDTO roomRequest,
 							 @RequestHeader("Authorization") String authHeader, @PathVariable String roomId) {
 		String userId = authService.validateAndGetUserId(authHeader);
-		return gameRoomService.updateRoom(roomRequest, userId, roomId)>0?"방이 수정되었습니다.":"다시 시도해주세요.";
+		return gameRoomService.updateRoom(roomRequest, userId, roomId);
 	}
 
 	// 게임방 삭제
 	@DeleteMapping(value = "/delete/{roomId}", produces = "text/plain;charset=utf-8")
-	public String deleteRoom(@PathVariable String roomId, @RequestHeader("Authorization") String authHeader) {
+	public void deleteRoom(@PathVariable String roomId, @RequestHeader("Authorization") String authHeader) {
 		String userId = authService.validateAndGetUserId(authHeader);
-		return gameRoomService.deleteRoom(roomId, userId) > 0 ? "방이 삭제되었습니다." : "다시 시도해주세요.";
+		gameRoomService.deleteRoom(roomId, userId);
 	}
 }

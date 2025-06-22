@@ -29,7 +29,7 @@ public class GameRoomDAO {
 		return room;
 	}
 
-	public int insertRoom(GameRoomRequestDTO.InsertGameRoomRequestDTO roomRequest, String userId) {
+	public String insertRoom(GameRoomRequestDTO.InsertGameRoomRequestDTO roomRequest, String userId) {
 		String uid = UUID.randomUUID().toString().replace("-", "");
 		GameRoomResponseDTO roomResponse = GameRoomResponseDTO.builder()
 						.uid(uid)
@@ -38,7 +38,7 @@ public class GameRoomDAO {
 						.host_uid(userId)
 						.game_uid(roomRequest.getGame_uid())
 						.build();
-		int result = sqlSession.insert(namespace + "insert", roomResponse);
+		sqlSession.insert(namespace + "insert", roomResponse);
 
 		// 생성자 정보를 플레이어로 추가
 		TurtlePlayerDTO player = TurtlePlayerDTO.builder()
@@ -51,21 +51,20 @@ public class GameRoomDAO {
 
 		playerDAO.addPlayer(roomResponse.getUid(), player);
 
-		return result;
+		return uid;
 	}
 
-	public int updateRoom(GameRoomRequestDTO.UpdateGameRoomRequestDTO roomRequest, String roomId) {
+	public String updateRoom(GameRoomRequestDTO.UpdateGameRoomRequestDTO roomRequest, String roomId) {
 		GameRoomResponseDTO roomResponse = GameRoomResponseDTO.builder()
 				.uid(roomId)
 				.title(roomRequest.getTitle())
 				.game_uid(roomRequest.getGame_uid())
 				.build();
-		int result = sqlSession.update(namespace + "update", roomResponse);
-		return result;
+		sqlSession.update(namespace + "update", roomResponse);
+		return roomId;
 	}
 
-	public int deleteRoom(String roomId) {
-		int result = sqlSession.delete(namespace + "delete", roomId);
-		return result;
+	public void deleteRoom(String roomId) {
+		sqlSession.delete(namespace + "delete", roomId);
 	}
 }
