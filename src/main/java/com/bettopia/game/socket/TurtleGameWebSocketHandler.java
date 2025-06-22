@@ -36,12 +36,67 @@ public class TurtleGameWebSocketHandler extends TextWebSocketHandler {
 	@Override
 	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
 		// 연결된 세션 저장, 초기 데이터 전송 등
+		String userId = (String) session.getAttributes().get("userId");
+		String roomId = (String) session.getAttributes().get("roomId");
+		System.out.println("userId = " + userId);
+		System.out.println("roomId = " + roomId);
+
+		if(roomId == null || userId == null) {
+			System.out.printf("Id null");
+			session.close(CloseStatus.BAD_DATA);
+			return;
+		}
+
+		// 플레이어 리스트 조회
+		List<TurtlePlayerDTO> players = playerDAO.getAll(roomId);
+
+		if(players != null) {
+			// 중복 입장 검사
+			for(TurtlePlayerDTO player : players) {
+				if(player.getUser_uid().equals(userId)) {
+					System.out.println("player is already in room");
+					session.close(CloseStatus.BAD_DATA);
+					return;
+				}
+			}
+			// 최대 인원 초과 검사
+			if(players.size() >= 8) {
+				session.close(CloseStatus.BAD_DATA);
+				return;
+			}
+		}
+
+		// 세션 등록
+		sessionService.addSession(roomId, session);
+
+		// 플레이어 추가
+		TurtlePlayerDTO player = TurtlePlayerDTO.builder()
+			.user_uid(userId)
+			.room_uid(roomId)
+			.isReady(false)
+			.turtle_id("1")
+			.betting_point(0)
+			.build();
+
+		playerDAO.addPlayer(roomId, player);
+
+		// 입장 메시지 방송
+		Map<String, Object> data = new HashMap<>();
+		data.put("userId", userId);
+		broadcastMessage("enter", roomId, data);
+
+		System.out.println("success");
 	}
 
 	private void broadcastMessage(String type, String roomId, Map<String, Object> data) throws IOException {
 		// 웹소켓 메시지 전송
 		List<WebSocketSession> sessions = sessionService.getSessions(roomId);
 		List<TurtlePlayerDTO> players = playerDAO.getAll(roomId);
+
+		if (sessions == null || sessions.isEmpty()) {
+			// 더 이상 메시지 보낼 대상이 없음
+			return;
+		}
 
 		ObjectMapper mapper = new ObjectMapper();
 		Map<String, Object> messageMap = new HashMap<>();
@@ -72,53 +127,6 @@ public class TurtleGameWebSocketHandler extends TextWebSocketHandler {
 
 		String type = json.get("type").asText();
 
-		// 헤더 토큰으로 유저 정보 저장 및 입장 처리
-		if("auth".equals(type)) {
-			// 유저 정보 저장
-			String token = json.get("token").asText();
-			String userId = authService.validateAndGetUserId(token);
-
-			session.getAttributes().put("userId", userId);
-			String roomId = (String) session.getAttributes().get("roomId");
-
-			List<TurtlePlayerDTO> players = playerDAO.getAll(roomId);
-			if(players != null) {
-				// 동일 유저 중복 입장 불가 처리
-				for(TurtlePlayerDTO player : players) {
-					if(player.getUser_uid().equals(userId)) {
-						session.close(CloseStatus.BAD_DATA);
-						return;
-					}
-				}
-				// 인원 초과 시 입장 불가
-				if(players.size() >= 8) {
-					session.close(CloseStatus.BAD_DATA);
-					return;
-				}
-			}
-
-			// 입장 처리
-			sessionService.addSession(roomId, session);
-
-			// 게임방에 플레이어 추가
-			TurtlePlayerDTO player = TurtlePlayerDTO.builder()
-					.user_uid(userId)
-					.room_uid(roomId)
-					// 기본값 설정
-					.isReady(false)
-					.turtle_id("first")
-					.betting_point(0)
-					.build();
-
-			playerDAO.addPlayer(roomId, player);
-
-			Map<String, Object> data = new HashMap<>();
-			data.put("userId", userId);
-			broadcastMessage("enter", roomId, data);
-
-			return;
-		}
-
 		String roomId = (String) session.getAttributes().get("roomId");
 		String userId = (String) session.getAttributes().get("userId");
 
@@ -140,8 +148,10 @@ public class TurtleGameWebSocketHandler extends TextWebSocketHandler {
 				break;
 		}
 
+		List<TurtlePlayerDTO> players = playerDAO.getAll(roomId);
+
 		Map<String, Object> data = new HashMap<>();
-		data.put("player", player);
+		data.put("players", players);
 		broadcastMessage("update", roomId, data);
 	}
 
