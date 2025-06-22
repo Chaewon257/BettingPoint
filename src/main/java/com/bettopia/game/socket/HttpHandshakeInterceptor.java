@@ -38,6 +38,12 @@ public class HttpHandshakeInterceptor implements HandshakeInterceptor {
 			String roomId = parts[parts.length - 1];
 
 			attributes.put("roomId", roomId);
+
+			// 토큰 추출
+			String authHeader = "Bearer " + servletRequest.getParameter("token");
+			String userId = authService.validateAndGetUserId(authHeader);
+
+			attributes.put("userId", userId);
 		}
 		return true; // 핸드쉐이크 진행
 	}
