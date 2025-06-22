@@ -87,7 +87,7 @@ $(document).ready(function () {
 			
 			  <!-- 로그인/회원가입 or 로그아웃 (PC에서만 보임) -->
 			  <div id="userMenu" class="hidden md:flex md:items-center md:gap-x-6 absolute right-5 top-1/2 -translate-y-1/2 ">
-			    <a href="/signup" class="text-black no-underline cursor-pointer hover:font-semibold">회원가입</a>
+			    <a href="/register" class="text-black no-underline cursor-pointer hover:font-semibold">회원가입</a>
 			    <a href="/login" class="text-black no-underline cursor-pointer py-1.5 px-[1.625rem] border-2 border-black rounded-full transition-all duration-300 ease-in-out hover:bg-gray-2">로그인</a>
 			  </div>
 			</div>
