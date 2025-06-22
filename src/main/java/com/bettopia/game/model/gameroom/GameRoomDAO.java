@@ -39,18 +39,6 @@ public class GameRoomDAO {
 						.game_uid(roomRequest.getGame_uid())
 						.build();
 		sqlSession.insert(namespace + "insert", roomResponse);
-
-		// 생성자 정보를 플레이어로 추가
-		TurtlePlayerDTO player = TurtlePlayerDTO.builder()
-				.user_uid(userId)
-				.room_uid(roomResponse.getUid())
-				.isReady(false)
-				.turtle_id("first")
-				.betting_point(0)
-				.build();
-
-		playerDAO.addPlayer(roomResponse.getUid(), player);
-
 		return uid;
 	}
 
