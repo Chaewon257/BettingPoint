@@ -53,13 +53,14 @@
 		  						<span class="text-xs text-gray-6 pl-1">전화번호</span>
 		  						<input type="text" id="phoneNumber" name="phoneNumber" class="w-full px-4 py-2 text-xs outline-none bg-gray-4 rounded-full border border-gray-5 mb-2" placeholder="전화번호(010-0000-0000)" required>
 		  					</div>
-		  					<div class="flex items-center justify-between px-2">
-			  					<span id="errorMessage" class="text-xs h-5 text-red-600 text-base"></span>
-			  					<div id="fakeCheckBox" class="flex items-center justify-end mb-2 gap-x-2 text-gray-6">
+		  					<div class="flex items-center justify-end px-2 mb-2">
+			  					<span id="errorMessage" class="grow text-xs h-5 text-red-600 text-base"></span>
+			  					<div id="fakeCheckBox" class="flex items-center justify-end gap-x-2 text-gray-6">
 			  						<div id="fakeCheckIcon" class="w-4 h-4 border border-gray-6 rounded-full flex items-center justify-center">&#x2713;</div>
 			  						<span>개인정보 수집 및 이용 동의</span>
 			  						<input id="agreePrivacy" type="checkbox" class="w-0 h-0" >
 			  					</div>
+			  					<button class="text-sm underline text-gray-6" onclick="document.getElementById('agreePrivacyInfoModal').classList.remove('hidden')">보기</button>
 		  					</div>
 		  					<button id="registerSubmit" type="submit" class="w-full py-2 outline-none bg-blue-2 rounded-full border border-blue-2 text-white text-md hover:bg-blue-1">회원가입</button>
 		  				</div>
@@ -68,6 +69,43 @@
 	  			<img class="hidden md:block max-w-[14rem] min-w-[8rem]" src="${cpath}/resources/images/auth_turtle.png" alt="Turtle Character" />  			
 	  		</div>
 	  	</div>
+	  	<ui:modal modalId="agreePrivacyInfoModal" title="개인정보 수집 및 이용 안내">
+	  		<jsp:attribute name="content">
+	  			<div class="max-h-[35rem] overflow-y-scroll max-w-[25rem] text-xs">
+	  				개인정보보호법에 따라 베팅포인트에 회원가입 신청하시는 분께 수집하는 개인정보의 항목, 개인정보의 수집 및 이용목적, 개인정보의 보유 및 이용기간, 동의 거부권 및 동의 거부 시 불이익에 관한 사항을 안내 드리오니 자세히 읽은 후 동의하여 주시기 바랍니다.<br/>
+				    <br/>
+				    <span class="text-xl font-semibold">1. 수집하는 개인정보</span><br/>
+				    <br/>
+				    이용자는 회원가입을 하지 않아도 게시글 보기 등 대부분의 베팅포인트 서비스를 회원과 동일하게 이용할 수 있습니다. 이용자가 게임 등 개인화 혹은 회원제 서비스를 이용하기 위해 회원가입을 할 경우, 베팅포인트는 서비스 이용을 위해 필요한 최소한의 개인정보를 수집합니다.<br/>
+				    <strong>회원가입 시점에 베팅포인트가 이용자로부터 수집하는 개인정보는 아래와 같습니다.</strong><br/>
+				    <br/>
+				    - 회원 가입 시 필수항목으로 이메일, 비밀번호, 이름, 생년월일, 휴대전화번호를 수집합니다.<br/>
+				    <br/>
+				    <strong>서비스 이용 과정에서 이용자로부터 수집하는 개인정보는 아래와 같습니다.</strong><br/>
+				    - 서비스 이용 과정에서 IP 주소, 쿠키, 서비스 이용 기록, 기기정보가 생성되어 수집될 수 있습니다.<br/>
+				    <br/>
+				    <span class="text-xl font-semibold">2. 수집한 개인정보의 이용</span><br/>
+				    <br/>
+				    베팅포인트는 회원관리, 서비스 제공 및 향상, 안전한 인터넷 이용환경 구축 등 아래의 목적으로만 개인정보를 이용합니다.<br/>
+				    - 회원 가입 의사 확인, 이용자 본인 확인, 이용자 식별, 회원탈퇴 의사의 확인 등 회원관리를 위하여 개인정보를 이용합니다.<br/>
+				    - 콘텐츠 등 기존 서비스 제공(광고 포함), 신규 서비스 개발 및 맞춤 서비스 제공을 위하여 개인정보를 이용합니다.<br/>
+				    - 법령 및 이용약관을 위반하는 회원에 대한 제재, 계정도용 및 부정거래 방지 등 서비스 운영을 위하여 개인정보를 이용합니다.<br/>
+				    - 유료 서비스 제공에 따른 본인인증, 구매 및 요금 결제, 상품 및 서비스의 배송을 위하여 개인정보를 이용합니다.<br/>
+				    <br/>
+				    <span class="text-xl font-semibold">3. 개인정보 보관기간</span><br/>
+				    <br/>
+				    베팅포인트는 원칙적으로 이용자의 개인정보를 회원 탈퇴 시 지체없이 파기하고 있습니다. 단, 법령에서 일정 기간 정보보관 의무를 부과하는 경우에는 해당 기간 동안 개인정보를 안전하게 보관합니다.<br/>
+				    - 계약 또는 청약철회 등에 관한 기록: 5년 보관<br/>
+				    - 대금결제 및 재화 등의 공급에 관한 기록: 5년 보관<br/>
+				    - 소비자의 불만 또는 분쟁처리에 관한 기록: 3년 보관<br/>
+				    - 로그인 기록: 3개월 보관<br/>
+				    <br/>
+				    <span class="text-xl font-semibold">4. 개인정보 수집 및 이용 동의를 거부할 권리</span><br/>
+				    <br/>
+				    이용자는 개인정보의 수집 및 이용 동의를 거부할 권리가 있습니다. 회원가입 시 수집하는 필수 항목에 대한 수집 및 이용 동의를 거부하실 경우, 회원가입이 어려울 수 있습니다.
+	  			</div>
+	  		</jsp:attribute>
+	  	</ui:modal>
 	  	<script type="text/javascript">
 	  		/* 개인정보 수집 및 이용 동의 스타일 이벤트 JS */
 		  	const realCheckBox = document.getElementById('agreePrivacy');
