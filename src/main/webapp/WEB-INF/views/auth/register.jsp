@@ -104,7 +104,7 @@
 				
 		    	const emailCheck = false;
 		    	
-		    	if (!emailCheck) {
+		    	if (emailCheck) {
 		    		email.classList.remove("border-gray-5");
 		    		email.classList.add("border-red-600");
 		    		
@@ -129,7 +129,7 @@
 				
 		    	const nicknameCheck = false;
 		    	
-		    	if (!nicknameCheck) {
+		    	if (nicknameCheck) {
 		    		nickname.classList.remove("border-gray-5");
 		    		nickname.classList.add("border-red-600");
 		    		
