@@ -133,28 +133,44 @@
 		    });
 		    
 		    /* 이메일 중복 확인 이벤트 */
-		    document.getElementById('verifyEmailbtn').addEventListener('click', function (e) {
-		    	const error = document.getElementById('errorMessage');
-			    error.textContent = "";
-			    
-		    	const email = document.getElementById('email');
-		    	const verifyEmail = document.getElementById('verifyEmail');
-				
-		    	const emailCheck = false;
-		    	
-		    	if (emailCheck) {
-		    		email.classList.remove("border-gray-5");
-		    		email.classList.add("border-red-600");
-		    		
-		    		error.textContent = "이미 사용 중인 이메일입니다.";
-		    		
-		        	return;
-		    	} else {
-		    		verifyEmail.checked = true;
-		    		email.classList.remove("border-red-600");
-		    		email.classList.add("border-gray-5");
-		    		return;
-		    	};
+		   	document.getElementById('verifyEmailbtn').addEventListener('click', function (e) {
+		        const error = document.getElementById('errorMessage');
+		        error.textContent = "";
+
+		        const email = document.getElementById('email');
+		        const verifyEmail = document.getElementById('verifyEmail');
+
+		        const emailVal = email.value.trim();
+
+		        if (!emailVal) {
+		            error.textContent = "이메일을 입력해주세요.";
+		            email.classList.add("border-red-600");
+		            return;
+		        }
+
+		        $.ajax({
+		            url: '/api/auth/check-email',
+		            method: 'GET',
+		            data: { email: emailVal },
+		            success: function (res) {
+		                if (res.duplicate) {
+		                    // 중복된 이메일
+		                    email.classList.remove("border-gray-5");
+		                    email.classList.add("border-red-600");
+		                    error.textContent = "이미 사용 중인 이메일입니다.";
+		                    verifyEmail.checked = false;
+		                } else {
+		                    // 사용 가능한 이메일
+		                    email.classList.remove("border-red-600");
+		                    email.classList.add("border-gray-5");
+		                    verifyEmail.checked = true;
+		                    alert("사용 가능한 이메일입니다.");
+		                }
+		            },
+		            error: function () {
+		                error.textContent = "이메일 확인 중 오류가 발생했습니다.";
+		            }
+		        });
 		    });
 		    
 		    /* 닉네임 중복 확인 이벤트 */

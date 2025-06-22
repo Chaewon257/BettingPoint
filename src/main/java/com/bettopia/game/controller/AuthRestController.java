@@ -6,10 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bettopia.game.Exception.AuthException;
@@ -45,6 +47,12 @@ public class AuthRestController {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error.getMessage());
 		}
 	}
+	
+	@GetMapping("/check-email")
+  public ResponseEntity<?> checkEmailDuplicate(@RequestParam("email") String email) {
+		return ResponseEntity.ok(Map.of("duplicate", false));
+	}
+	
 
 	// 리프레시 토큰을 통한 액세스 토큰 재발급 API
 	@PostMapping("/reissue")
