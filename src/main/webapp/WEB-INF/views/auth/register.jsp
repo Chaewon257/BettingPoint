@@ -143,6 +143,96 @@
 		    		return;
 		    	};
 		    });
+		    
+		    /* 회원가입 입력 유효성 검사 */
+		    document.getElementById('registerSubmit').addEventListener('click', function (e) {
+			    e.preventDefault();
+			    const error = document.getElementById('errorMessage');
+			    error.textContent = "";
+		
+			    const email = document.getElementById('email').value;
+		    	const verifyEmail = document.getElementById('verifyEmail').checked;
+			    const password = document.getElementById('password');
+			    const passwordCheck = document.getElementById('passwordCheck');
+			    const name = document.getElementById('name');
+			    const nickname = document.getElementById('nickname').value;
+			    const verifyNickname = document.getElementById('verifyNickname').checked;
+			    const birthDate = document.getElementById('birthDate');
+			    const birthDateVal = new Date(birthDate.value);
+			    const phoneNumber = document.getElementById('phoneNumber');
+			    const agreePrivacy = document.getElementById('agreePrivacy').checked;
+				const age = new Date().getFullYear() - birthDate.getFullYear();
+
+				if (!verifyEmail) {
+		        	error.textContent = "이메일 중복 검사를 해야합니다.";
+		        	return;
+		        }
+
+				if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{6,}$/.test(password.value)) {
+					password.classList.remove("border-gray-5");
+					password.classList.add("border-red-600");
+		    		
+		        	error.textContent = "비밀번호는 6자 이상, 대소문자, 특수문자를 포함해야 합니다.";
+		        	return;
+		        } else {
+		        	password.classList.remove("border-red-600");
+		        	password.classList.add("border-gray-5");
+		    	};
+		
+		        if (password.value !== passwordCheck.value) {
+		        	passwordCheck.classList.remove("border-gray-5");
+		        	passwordCheck.classList.add("border-red-600");
+		        	
+		        	error.textContent = "비밀번호가 일치하지 않습니다.";
+		        	return;
+		        } else {
+		        	passwordCheck.classList.remove("border-red-600");
+		        	passwordCheck.classList.add("border-gray-5");
+		        }
+		        
+		        if(name.value === '') {
+		        	name.classList.remove("border-gray-5");
+		        	name.classList.add("border-red-600");
+		        	
+		        	error.textContent = "이름을 입력해야합니다.";
+		        	return;
+		        } else {
+		        	name.classList.remove("border-red-600");
+		        	name.classList.add("border-gray-5");
+		        }
+		        
+		        if (!verifyNickname) {
+		        	error.textContent = "닉네임 중복 검사를 해야합니다.";
+		        	return;
+		        }
+		
+		      	if (age < 19) {
+		      		birthDate.classList.remove("border-gray-5");
+		      		birthDate.classList.add("border-red-600");
+		      		
+		        	error.textContent = "만 19세 이상만 가입할 수 있습니다.";
+		        	return;
+		        } else {
+		        	birthDate.classList.remove("border-red-600");
+		        	birthDate.classList.add("border-gray-5");
+		        }
+		
+		        if (!/^010-\d{4}-\d{4}$/.test(phoneNumber.value)) {
+		        	phoneNumber.classList.remove("border-gray-5");
+		        	phoneNumber.classList.add("border-red-600");
+		        	
+		        	error.textContent = "전화번호 형식이 올바르지 않습니다.";
+		        	return;
+		        }  else {
+		        	phoneNumber.classList.remove("border-red-600");
+		        	phoneNumber.classList.add("border-gray-5");
+		        }
+		
+		        if (!agreePrivacy) {
+		        	error.textContent = "개인정보 수집에 동의해야 합니다.";
+		        	return;
+		        }
+		    });
 	  	</script>
 	</jsp:attribute>
 </ui:layout>
