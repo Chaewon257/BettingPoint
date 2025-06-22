@@ -119,6 +119,30 @@
 		    	};
 		    });
 		    
+		    /* 닉네임 중복 확인 이벤트 */
+		    document.getElementById('verifyNicknamebtn').addEventListener('click', function (e) {
+		    	const error = document.getElementById('errorMessage');
+			    error.textContent = "";
+			    
+		    	const nickname = document.getElementById('nickname');
+		    	const verifyNickname = document.getElementById('verifyNickname');
+				
+		    	const nicknameCheck = false;
+		    	
+		    	if (!nicknameCheck) {
+		    		nickname.classList.remove("border-gray-5");
+		    		nickname.classList.add("border-red-600");
+		    		
+		    		error.textContent = "이미 사용 중인 닉네임입니다.";
+		        	
+		    		return;
+		    	} else {
+		    		verifyNickname.checked = true;
+		    		nickname.classList.remove("border-red-600");
+		    		nickname.classList.add("border-gray-5");
+		    		return;
+		    	};
+		    });
 	  	</script>
 	</jsp:attribute>
 </ui:layout>
