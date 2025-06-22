@@ -4,11 +4,11 @@
 
 <ui:layout pageName="Betting Poing 회원가입" pageType="lobby">
 	<jsp:attribute name="bodyContent">
-		<div class="fixed top-0 left-0 flex items-center justify-center h-screen w-full pt-11 px-5 md:pt-16 lg:pt-20">
-	  		<div class="w-full flex items-end justify-center gap-x-10">
-	  			<img class="hidden md:block w-[14rem]" src="${cpath}/resources/images/auth_fox.png" alt="Fox Character" />
+		<div class="fixed top-0 left-0 flex items-center justify-center h-screen w-full px-10 md:px-0 pt-11 md:pt-16 lg:pt-20">
+	  		<div class="w-full flex items-end justify-center gap-x-5">
+	  			<img class="hidden md:block max-w-[14rem] min-w-[8rem]" src="${cpath}/resources/images/auth_fox.png" alt="Fox Character" />
 	  			<div class="flex min-w-[22rem] max-w-[56.063rem] grow bg-white rounded-3xl shadow-[2px_2px_8px_rgba(0,0,0,0.15)]">
-	  				<div class="relative hidden lg:block w-[17.125rem] overflow-hidden">
+	  				<div class="relative hidden xl:block w-[17.125rem] overflow-hidden">
 		  				<img alt="Login Side Background" src="${cpath}/resources/images/login-side-bg.png" class="h-full max-w-[274px]"/>
 		  				<a href="/" class="absolute top-10 end-1/2 translate-x-1/2">
 		  					<img src="${cpath}/resources/images/logo.png" alt="Betting Point Logo" width="178" />
@@ -16,7 +16,7 @@
 		  			</div>
 		  			<div class="flex flex-col min-w-[22rem] grow items-center justify-center p-4">
 	  				<div class="text-ts-24 mb-4">회원가입</div>
-		  				<form id="registerForm" class="w-full flex flex-col mb-4">
+		  				<div id="registerForm" class="w-full flex flex-col mb-4">
 		  					<div class="flex flex-col items-start gap-y-1">
 		  						<label class="text-xs text-gray-6 pl-1">이메일</label>
 		  						<input type="email" id="email" name="email" class="w-full px-4 py-2 text-xs outline-none bg-gray-4 rounded-full border border-gray-5 mb-2" placeholder="사용자 ID(Email)" required>
@@ -57,7 +57,7 @@
 		  				</form>
 		  			</div>
 	  			</div>
-	  			<img class="hidden md:block w-[14rem]" src="${cpath}/resources/images/auth_turtle.png" alt="Turtle Character" width="220" />  			
+	  			<img class="hidden md:block max-w-[14rem] min-w-[8rem]" src="${cpath}/resources/images/auth_turtle.png" alt="Turtle Character" />  			
 	  		</div>
 	  	</div>
 	  	<script type="text/javascript">
