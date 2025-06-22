@@ -93,6 +93,32 @@
 		    		fakeCheckIcon.classList.add("border-gray-6");
 		    	}
 		    });
+		    
+		    /* 이메일 중복 확인 이벤트 */
+		    document.getElementById('verifyEmailbtn').addEventListener('click', function (e) {
+		    	const error = document.getElementById('errorMessage');
+			    error.textContent = "";
+			    
+		    	const email = document.getElementById('email');
+		    	const verifyEmail = document.getElementById('verifyEmail');
+				
+		    	const emailCheck = false;
+		    	
+		    	if (!emailCheck) {
+		    		email.classList.remove("border-gray-5");
+		    		email.classList.add("border-red-600");
+		    		
+		    		error.textContent = "이미 사용 중인 이메일입니다.";
+		    		
+		        	return;
+		    	} else {
+		    		verifyEmail.checked = true;
+		    		email.classList.remove("border-red-600");
+		    		email.classList.add("border-gray-5");
+		    		return;
+		    	};
+		    });
+		    
 	  	</script>
 	</jsp:attribute>
 </ui:layout>
