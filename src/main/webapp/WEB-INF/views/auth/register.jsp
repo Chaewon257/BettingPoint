@@ -194,7 +194,6 @@
 		            method: 'GET',
 		            data: { nickname: nicknameVal },
 		            success: function (res) {
-		            	console.log(res.duplicate);
 		                if (res.duplicate) {
 		                    // 중복된 닉네임
 		                    nickname.classList.remove("border-gray-5");
