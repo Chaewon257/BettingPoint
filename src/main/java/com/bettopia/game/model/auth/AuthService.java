@@ -75,4 +75,9 @@ public class AuthService {
 	public boolean isEmailExists(String email) {
 		return loginDAO.countByEmail(email) > 0;
 	}
+	
+	// 닉네임 중복 검사
+	public boolean isNicknameExists(String nickname) {
+		return loginDAO.countByNickname(nickname) > 0;
+	}
 }
