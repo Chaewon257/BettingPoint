@@ -34,4 +34,8 @@ public class LoginDAO {
 	public int countByEmail(String email) {
     return sqlSession.selectOne(NAMESPACE + "countByEmail", email);
 	}
+
+	public int countByNickname(String nickname) {
+		return sqlSession.selectOne(NAMESPACE + "countByNickname", nickname);
+	}
 }
