@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.bettopia.game.Exception.AuthException;
 import com.bettopia.game.model.auth.AuthService;
 import com.bettopia.game.model.auth.LoginRequestDTO;
+import com.bettopia.game.model.auth.UserRegisterDTO;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -56,6 +57,12 @@ public class AuthRestController {
 	@GetMapping("/check-nickname")
   public ResponseEntity<?> checkNicknameDuplicate(@RequestParam("nickname") String nickname) {
 		return ResponseEntity.ok(Map.of("duplicate", false));
+	}
+	
+	@PostMapping("/register")
+  public ResponseEntity<?> registerUser(@RequestBody UserRegisterDTO dto) {
+		
+		return ResponseEntity.ok("회원가입이 완료되었습니다.");
 	}
 
 	// 리프레시 토큰을 통한 액세스 토큰 재발급 API

@@ -302,6 +302,32 @@
 		        	error.textContent = "개인정보 수집에 동의해야 합니다.";
 		        	return;
 		        }
+		        
+		     	// 요청 객체 구성
+		    	const requestBody = {
+		    		user_name: name.value,
+		    		password: password.value,
+		    		password_check: passwordCheck.value,
+		    		nickname: nickname.value,
+		    		email: email.value,
+		    		birth_date: birthDateVal,
+		    		phone_number: phoneNumber.value,
+		    		agree_privacy: agreePrivacy.checked
+		    	};
+		        
+		        $.ajax({
+		        	url: '/api/auth/register',
+		        	type: 'POST',
+		        	contentType: 'application/json; charset=utf-8',
+		        	data: JSON.stringify(requestBody),
+		        	success: function (response) {
+		            	window.location.href = '/'; // 성공 시 이동
+		          	},
+		          	error: function (xhr) {
+		    			const message = xhr.responseText || '회원가입 실패';
+		    			error.textContent = message;
+		    		}
+		        });
 		    });
 	  	</script>
 	</jsp:attribute>
