@@ -34,4 +34,20 @@ public class LoginDAO {
 	public UserVO findByUid(String uid) {
 		return sqlSession.selectOne(NAMESPACE + "findByUid", uid);
 	}
+
+	public int countByEmail(String email) {
+    return sqlSession.selectOne(NAMESPACE + "countByEmail", email);
+	}
+
+	public int countByNickname(String nickname) {
+		return sqlSession.selectOne(NAMESPACE + "countByNickname", nickname);
+	}
+
+	public void insertUser(UserVO user) {
+		sqlSession.selectOne(NAMESPACE + "insertUser", user);
+	}
+
+	public int countByPhoneNumber(String phone_number) {
+		return sqlSession.selectOne(NAMESPACE + "countByPhoneNumber", phone_number);
+	}
 }

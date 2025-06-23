@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class ChatController {
 	@GetMapping("")
     public String moveToChatView() {
-		System.out.println("진입성공");
         return "chatbot/chatView";
     }
 
