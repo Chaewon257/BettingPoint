@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" language="java"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+
 <c:set var="cpath" value="${pageContext.servletContext.contextPath}" />
 
 <!DOCTYPE html>
@@ -89,10 +90,35 @@ th, td {
 	color: white;
 	border-color: #007bff;
 }
+
+.
+.board-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin: 20px 40px;
+}
+
+.write-btn {
+	background-color: #4CAF50;
+	color: white;
+	border: none;
+	border-radius: 20px;
+	padding: 10px 20px;
+	font-size: 14px;
+	cursor: pointer;
+	box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+	transition: background-color 0.3s ease;
+}
+
+.write-btn:hover {
+	background-color: #45a049;
+}
 </style>
 </head>
 <body>
 
+	<!-- 게시판 제목 + 등록 버튼 -->
 	<h1 style="text-align: center;">게시판</h1>
 
 	<!-- 카테고리 버튼 영역 -->
@@ -102,11 +128,17 @@ th, td {
 		<button onclick="filterByCategory('idea')">제안/아이디어</button>
 	</div>
 
-	<!-- 조회순, 좋아요순 정렬 -->
-	<div id="sortButtons">
-		<button class="sort-btn" data-sort="like_count">👍좋아요</button>
-		<button class="sort-btn" data-sort="view_count">👀조회수</button>
+	<!-- 등록 버튼 + 정렬 버튼 한 줄 배치 -->
+	<div class="button-row">
+		<button class="write-btn"
+			onclick="location.href='${cpath}/board/insert'">게시글
+			등록</button>
+		<div id="sortButtons">
+			<button class="sort-btn" data-sort="like_count">👍좋아요</button>
+			<button class="sort-btn" data-sort="view_count">👀조회수</button>
+		</div>
 	</div>
+
 
 	<!-- 게시글 목록 테이블 -->
 	<table>
@@ -126,6 +158,6 @@ th, td {
 
 	<!-- 페이징 영역 -->
 	<div id="paging"></div>
-<script src="${cpath}/resources/js/board.js"></script>
+	<script src="${cpath}/resources/js/board.js"></script>
 </body>
 </html>
