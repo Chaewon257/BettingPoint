@@ -30,4 +30,8 @@ public class LoginDAO {
 	public UserVO findByUid(String uid) {
 		return sqlSession.selectOne(NAMESPACE + "findByUid", uid);
 	}
+
+	public int countByEmail(String email) {
+    return sqlSession.selectOne(NAMESPACE + "countByEmail", email);
+	}
 }
