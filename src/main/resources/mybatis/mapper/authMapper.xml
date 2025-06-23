@@ -23,4 +23,9 @@
 		refresh_token = #{refreshToken},
 		created_at = NOW()
 	</insert>
+	<update id="updateLastLoginAt" parameterType="String">
+	    UPDATE user
+	    SET last_login_at = NOW()
+	    WHERE uid = #{uid}
+	</update>
 </mapper>
