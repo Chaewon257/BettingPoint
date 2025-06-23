@@ -40,6 +40,7 @@ public class AuthService {
 		String refreshToken = jwtUtil.generateRefreshToken(user.getUid());
 
 		loginDAO.updateRefreshToken(user.getUid(), refreshToken);
+		loginDAO.updateLastLoginAt(user.getUid());
 		
 		responseToken.put("accessToken", accessToken);
 		responseToken.put("refreshToken", refreshToken);
