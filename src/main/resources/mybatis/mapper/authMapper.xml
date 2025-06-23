@@ -27,4 +27,8 @@
 	    SELECT COUNT(*) FROM user
 	    WHERE email = #{email}
  	</select>
+	<select id="countByNickname" resultType="int">
+	    SELECT COUNT(*) FROM user
+	    WHERE nickname = #{nickname}
+ 	</select>
 </mapper>
