@@ -23,4 +23,8 @@
 		refresh_token = #{refreshToken},
 		created_at = NOW()
 	</insert>
+	<select id="countByEmail" resultType="int">
+	    SELECT COUNT(*) FROM user
+	    WHERE email = #{email}
+ 	</select>
 </mapper>
