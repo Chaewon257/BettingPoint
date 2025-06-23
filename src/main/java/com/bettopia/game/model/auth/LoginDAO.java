@@ -27,6 +27,10 @@ public class LoginDAO {
 		sqlSession.update(NAMESPACE + "updateRefreshToken", param);
 	}
 
+	public void updateLastLoginAt(String uid) {
+		sqlSession.selectOne(NAMESPACE + "updateLastLoginAt", uid);		
+	}
+
 	public UserVO findByUid(String uid) {
 		return sqlSession.selectOne(NAMESPACE + "findByUid", uid);
 	}
