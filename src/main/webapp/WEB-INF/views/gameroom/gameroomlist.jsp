@@ -21,6 +21,12 @@
 <body>
 
 <h2>게임 방 리스트</h2>
+<button id="create-room-btn">게임방 생성</button>
+<script>
+    $('#create-room-btn').on('click', function() {
+        location.href = '/gameroom/insert'; // 경로에 맞게 수정
+    });
+</script>
 <div id="room-container">로딩 중...</div>
 
 <script>
