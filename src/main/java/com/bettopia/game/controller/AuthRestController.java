@@ -55,8 +55,6 @@ public class AuthRestController {
 	
 	@GetMapping("/check-nickname")
   public ResponseEntity<?> checkNicknameDuplicate(@RequestParam("nickname") String nickname) {
-		System.out.println(nickname);
-		
 		return ResponseEntity.ok(Map.of("duplicate", false));
 	}
 
