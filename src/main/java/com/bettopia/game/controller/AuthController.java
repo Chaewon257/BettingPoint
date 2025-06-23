@@ -10,4 +10,9 @@ public class AuthController {
 	public String goLoginPage() {
 		return "/auth/login";
 	}
+	
+	@GetMapping("/register")
+	public String goRegisterPage() {
+		return "/auth/register";
+	}
 }

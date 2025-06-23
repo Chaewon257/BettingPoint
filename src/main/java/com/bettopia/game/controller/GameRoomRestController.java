@@ -2,6 +2,7 @@ package com.bettopia.game.controller;
 
 import java.util.List;
 
+import com.bettopia.game.model.auth.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,6 +18,8 @@ public class GameRoomRestController {
 
 	@Autowired
 	GameRoomService gameRoomService;
+	@Autowired
+	AuthService authService;
 
 	// 게임방 리스트 조회
 	@GetMapping("/list")
@@ -33,20 +36,23 @@ public class GameRoomRestController {
 	// 게임방 생성
 	@PostMapping(value = "/insert", produces = "text/plain;charset=utf-8")
 	public String insertRoom(@RequestBody GameRoomRequestDTO.InsertGameRoomRequestDTO roomRequest,
-							 HttpSession session) {
-		return gameRoomService.insertRoom(roomRequest, session)>0?"방이 생성되었습니다.":"다시 시도해주세요.";
+							 @RequestHeader("Authorization") String authHeader) {
+		String userId = authService.validateAndGetUserId(authHeader);
+		return gameRoomService.insertRoom(roomRequest, userId);
 	}
 
 	// 게임방 수정
 	@PutMapping(value = "/update/{roomId}", produces = "text/plain;charset=utf-8")
 	public String updateRoom(@RequestBody GameRoomRequestDTO.UpdateGameRoomRequestDTO roomRequest,
-							 HttpSession session, @PathVariable String roomId) {
-		return gameRoomService.updateRoom(roomRequest, session, roomId)>0?"방이 수정되었습니다.":"다시 시도해주세요.";
+							 @RequestHeader("Authorization") String authHeader, @PathVariable String roomId) {
+		String userId = authService.validateAndGetUserId(authHeader);
+		return gameRoomService.updateRoom(roomRequest, userId, roomId);
 	}
 
 	// 게임방 삭제
 	@DeleteMapping(value = "/delete/{roomId}", produces = "text/plain;charset=utf-8")
-	public String deleteRoom(@PathVariable String roomId, HttpSession session) {
-		return gameRoomService.deleteRoom(roomId, session) > 0 ? "방이 삭제되었습니다." : "다시 시도해주세요.";
+	public void deleteRoom(@PathVariable String roomId, @RequestHeader("Authorization") String authHeader) {
+		String userId = authService.validateAndGetUserId(authHeader);
+		gameRoomService.deleteRoom(roomId, userId);
 	}
 }

@@ -3,8 +3,9 @@ package com.bettopia.game.socket;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
+import com.bettopia.game.model.auth.AuthService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.http.server.ServletServerHttpRequest;
@@ -16,6 +17,9 @@ import org.springframework.web.socket.server.HandshakeInterceptor;
 @Component
 public class HttpHandshakeInterceptor implements HandshakeInterceptor {
 
+	@Autowired
+	AuthService authService;
+
 	@Override
 	public boolean beforeHandshake(ServerHttpRequest request,
 		ServerHttpResponse response,
@@ -25,26 +29,21 @@ public class HttpHandshakeInterceptor implements HandshakeInterceptor {
 		if (request instanceof ServletServerHttpRequest) {
 			HttpServletRequest servletRequest = ((ServletServerHttpRequest) request).getServletRequest();
 
-			HttpSession httpSession = servletRequest.getSession(false);
-			if (httpSession != null) {
-				// HTTP 세션 아이디를 웹소켓 세션 attributes에 저장
-				attributes.put("httpSession", httpSession.getId());
-				// 유저 정보 저장
-				attributes.put("loginUser", httpSession.getAttribute("loginUser"));
-			}
-
 			// 입장하는 게임방 저장
 			// 쿼리 파라미터에서 roomId 추출
-			String query = servletRequest.getQueryString();
-			if (query != null) {
-				String[] params = query.split("&");
-				for (String param : params) {
-					if (param.startsWith("roomId=")) {
-						String roomId = param.split("=")[1];
-						attributes.put("roomId", roomId);
-					}
-				}
-			}
+			String requestURI = servletRequest.getRequestURI(); // 전체 URI
+
+			// 마지막 경로 부분만 추출
+			String[] parts = requestURI.split("/");
+			String roomId = parts[parts.length - 1];
+
+			attributes.put("roomId", roomId);
+
+			// 토큰 추출
+			String authHeader = "Bearer " + servletRequest.getParameter("token");
+			String userId = authService.validateAndGetUserId(authHeader);
+
+			attributes.put("userId", userId);
 		}
 		return true; // 핸드쉐이크 진행
 	}

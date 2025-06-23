@@ -1,4 +1,4 @@
-package com.bettopia.game.model.player;
+package com.bettopia.game.model.multi.turtle;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PlayerDTO {
+public class TurtlePlayerDTO {
     private String user_uid;
     private String room_uid;
     private boolean isReady;

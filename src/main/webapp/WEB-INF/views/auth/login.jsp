@@ -21,7 +21,7 @@
 		  					<button type="submit" class="w-full px-10 py-3 outline-none bg-blue-2 rounded-full border border-blue-2 text-white text-lg hover:bg-blue-1">로그인</button>
 		  				</form>
 		  				<div class="flex gap-x-8 text-gray-3 justify-end px-4 mb-8">
-		  					<a href="/signup" class="hover:text-gray-6">회원가입</a>
+		  					<a href="/register" class="hover:text-gray-6">회원가입</a>
 		  					|
 		  					<a href="/" class="hover:text-gray-6">ID/PW찾기</a>
 		  				</div>
