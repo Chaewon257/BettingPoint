@@ -80,4 +80,8 @@ public class AuthService {
 	public boolean isNicknameExists(String nickname) {
 		return loginDAO.countByNickname(nickname) > 0;
 	}
+
+	public boolean isPhoneNumberExists(String phone_number) {
+		return loginDAO.countByPhoneNumber(phone_number) > 0;
+	}
 }
