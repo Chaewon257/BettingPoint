@@ -1,7 +1,11 @@
 package com.bettopia.game.model.auth;
 
+import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import com.bettopia.game.Exception.SessionExpiredException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,5 +73,43 @@ public class AuthService {
 			throw new SessionExpiredException();
 		}
 		return jwtUtil.getUserIdFromToken(token);
+	}
+	
+	// 이메일 중복 검사
+	public boolean isEmailExists(String email) {
+		return loginDAO.countByEmail(email) > 0;
+	}
+	
+	// 닉네임 중복 검사
+	public boolean isNicknameExists(String nickname) {
+		return loginDAO.countByNickname(nickname) > 0;
+	}
+
+	public boolean isPhoneNumberExists(String phone_number) {
+		return loginDAO.countByPhoneNumber(phone_number) > 0;
+	}
+
+	public void register(UserRegisterDTO dto) {
+	// String → java.sql.Date 변환
+    Date birthDate = null;
+    try {
+        java.util.Date utilDate = new SimpleDateFormat("yyyy-MM-dd").parse(dto.getBirth_date());
+        birthDate = new Date(utilDate.getTime());
+    } catch (ParseException e) {
+        throw new IllegalArgumentException("생년월일 형식이 올바르지 않습니다. (yyyy-MM-dd)", e);
+    }
+    
+		UserVO user = UserVO.builder()
+				.uid(UUID.randomUUID().toString().replace("-", ""))
+				.user_name(dto.getUser_name())
+				.password(passwordEncoder.encode(dto.getPassword()))
+				.nickname(dto.getNickname())
+				.email(dto.getEmail())
+				.birth_date(birthDate)
+				.phone_number(dto.getPhone_number())
+				.agree_privacy(dto.isAgree_privacy())
+				.build();
+		
+		loginDAO.insertUser(user);
 	}
 }
