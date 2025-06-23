@@ -106,6 +106,8 @@ function connectGameWebSocket(roomId) {
     }
 }
 
+let minBet = 0;
+
 // 게임방 상세 정보 요청
 function gameRoomDetail (roomId) {
     let games = {};
@@ -116,6 +118,8 @@ function gameRoomDetail (roomId) {
         url: `/api/gameroom/detail/${roomId}`,
         method: "GET",
         success: function (room) {
+            minBet = room.min_bet;
+
             // 게임 상세 정보 요청
             let detailReq = gameDetail(room, games);
 
@@ -150,9 +154,15 @@ function bindGameEvents() {
             alert('베팅 포인트를 입력하세요.');
             return;
         }
+
+        if(point < minBet) {
+            alert(`최소 베팅은 ${minBet} 포인트 입니다.`);
+            return;
+        }
+
         socket.send(JSON.stringify({
             type: "betting",
-            betting_point: parseInt(point, 10)
+            betting_point: parseInt(point)
         }));
     });
 
