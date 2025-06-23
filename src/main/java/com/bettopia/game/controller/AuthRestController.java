@@ -35,9 +35,9 @@ public class AuthRestController {
 			String refreshToken = responseToken.get("refreshToken");
 
 			// HttpOnly 쿠키 생성
-			ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken)
-					.httpOnly(true) 
-					.secure(false) // HTTPS 사용하는 경우 true
+			ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken).httpOnly(true).secure(false) // HTTPS
+																																																							// 사용하는 경우
+																																																							// true
 					.path("/") // 모든 경로에 대해 쿠키 적용
 					.maxAge(14 * 24 * 60 * 60) // 14일 (초 단위)
 					.sameSite("Strict") // 또는 "Lax" / "None" (크로스 도메인 필요 시)
@@ -48,22 +48,24 @@ public class AuthRestController {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error.getMessage());
 		}
 	}
-	
+
 	@GetMapping("/check-email")
-  public ResponseEntity<?> checkEmailDuplicate(@RequestParam("email") String email) {
+	public ResponseEntity<?> checkEmailDuplicate(@RequestParam("email") String email) {
 		boolean isDuplicate = authService.isEmailExists(email);
-		
-    return ResponseEntity.ok(Map.of("duplicate", isDuplicate));
+
+		return ResponseEntity.ok(Map.of("duplicate", isDuplicate));
 	}
-	
+
 	@GetMapping("/check-nickname")
-  public ResponseEntity<?> checkNicknameDuplicate(@RequestParam("nickname") String nickname) {
-		return ResponseEntity.ok(Map.of("duplicate", false));
+	public ResponseEntity<?> checkNicknameDuplicate(@RequestParam("nickname") String nickname) {
+		boolean isDuplicate = authService.isNicknameExists(nickname);
+
+		return ResponseEntity.ok(Map.of("duplicate", isDuplicate));
 	}
-	
+
 	@PostMapping("/register")
-  public ResponseEntity<?> registerUser(@RequestBody UserRegisterDTO dto) {
-		
+	public ResponseEntity<?> registerUser(@RequestBody UserRegisterDTO dto) {
+
 		return ResponseEntity.ok("회원가입이 완료되었습니다.");
 	}
 
@@ -72,13 +74,10 @@ public class AuthRestController {
 	public ResponseEntity<?> reissue(@RequestHeader("Authorization") String authHeader) {
 		try {
 			if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-				ResponseCookie cookie = ResponseCookie.from("refreshToken", "")
-		        .path("/")
-		        .httpOnly(true)
-		        .maxAge(0) // 삭제
-		        .build();
-				
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).header("Set-Cookie", cookie.toString()).body("토큰이 없습니다.");
+				ResponseCookie cookie = ResponseCookie.from("refreshToken", "").path("/").httpOnly(true).maxAge(0) // 삭제
+						.build();
+
+				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).header("Set-Cookie", cookie.toString()).body("토큰이 없습니다.");
 			}
 
 			String refreshToken = authHeader.substring(7);
