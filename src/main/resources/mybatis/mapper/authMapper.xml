@@ -31,4 +31,8 @@
 	    SELECT COUNT(*) FROM user
 	    WHERE nickname = #{nickname}
  	</select>
+ 	<select id="countByPhoneNumber" resultType="int">
+	    SELECT COUNT(*) FROM user
+	    WHERE phone_number = #{phone_number}
+ 	</select>
 </mapper>
