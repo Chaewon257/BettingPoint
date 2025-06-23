@@ -51,7 +51,9 @@ public class AuthRestController {
 	
 	@GetMapping("/check-email")
   public ResponseEntity<?> checkEmailDuplicate(@RequestParam("email") String email) {
-		return ResponseEntity.ok(Map.of("duplicate", false));
+		boolean isDuplicate = authService.isEmailExists(email);
+		
+    return ResponseEntity.ok(Map.of("duplicate", isDuplicate));
 	}
 	
 	@GetMapping("/check-nickname")
