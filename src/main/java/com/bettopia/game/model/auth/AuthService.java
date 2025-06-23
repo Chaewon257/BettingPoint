@@ -70,4 +70,9 @@ public class AuthService {
 		}
 		return jwtUtil.getUserIdFromToken(token);
 	}
+	
+	// 이메일 중복 검사
+	public boolean isEmailExists(String email) {
+		return loginDAO.countByEmail(email) > 0;
+	}
 }
