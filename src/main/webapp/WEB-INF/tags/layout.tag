@@ -34,6 +34,7 @@
 					'gray-6' : '#757575',
 					'blue-1' : '#4A90E2',
 					'blue-2' : '#3F7AB6',
+					'blue-3' : '#A2C8E6',
 				},
 				fontSize : {
 					'ts-28' : [
