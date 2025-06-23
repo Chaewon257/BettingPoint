@@ -265,6 +265,31 @@ function gameList() {
     });
 }
 
+let userPoint = 0;
+
+// 보유 포인트 요청
+function userPointBalance() {
+    const token = localStorage.getItem("accessToken");
+    if (!token) {
+        alert("로그인이 필요합니다.");
+        return;
+    }
+
+    $.ajax({
+        url: '/api/user/me',
+        type: 'GET',
+        headers: {
+            'Authorization': 'Bearer ' + token
+        },
+        success: function(user) {
+            userPoint = user.point_balance;
+            $('#min_bet').attr('max', userPoint); // 최대값 제한
+            $('#user-point-info').text(`보유 포인트: ${userPoint}P`);
+        }
+    });
+
+}
+
 // 게임방 생성 요청
 function createRoom() {
     $('#create-room-form').on('submit', function(e) {
@@ -276,9 +301,16 @@ function createRoom() {
             return;
         }
 
+        minBet = parseInt($('#min_bet').val());
+
+        if(minBet > userPoint) {
+            alert(`최소 베팅 금액은 보유 포인트(${userPoint}P)를 초과할 수 없습니다.`);
+            return;
+        }
+
         const payload = {
             title: $('#title').val(),
-            min_bet: parseInt($('#min_bet').val()),
+            min_bet: minBet,
             game_uid: $('#game_uid').val()
         };
 
