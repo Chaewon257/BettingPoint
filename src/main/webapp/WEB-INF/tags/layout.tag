@@ -78,12 +78,14 @@
 </script>
 </head>
 <body>
-	<layout:header pageType="${pageType}" />
-	
-	<main class="main-container">
-		<jsp:invoke fragment="bodyContent" />
-	</main>
-	
-	<layout:footer pageType="${pageType}" />
+	<div class="min-h-screen flex flex-col">
+		<layout:header pageType="${pageType}" />
+		
+		<main class="main-container grow flex">
+			<jsp:invoke fragment="bodyContent" />
+		</main>
+		
+		<layout:footer pageType="${pageType}" />
+	</div>
 </body>
 </html>

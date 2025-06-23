@@ -3,7 +3,7 @@
 
 <ui:layout pageName="Betting Poing 로그인" pageType="lobby">
 	<jsp:attribute name="bodyContent">
-	  	<div class="fixed top-0 left-0 flex items-center justify-center h-screen w-full">
+	  	<div class="grow flex items-center justify-center w-full">
 	  		<div class="w-full h-[32.813rem] flex items-end justify-center gap-x-2.5">
 	  			<img class="w-[14rem] max-1350:w-[12.5rem] max-1300:w-[11.25rem] max-1250:w-[9.375rem] max-1200:hidden" src="${cpath}/resources/images/auth_fox.png" alt="Fox Character" />
 	  			<div class="h-full min-w-[56.063rem] bg-white rounded-3xl shadow-[2px_2px_8px_rgba(0,0,0,0.15)] flex">

@@ -4,7 +4,7 @@
 
 <ui:layout pageName="Betting Poing 회원가입" pageType="lobby">
 	<jsp:attribute name="bodyContent">
-		<div class="fixed top-0 left-0 flex items-center justify-center h-screen w-full px-10 md:px-0 pt-11 md:pt-16 lg:pt-20">
+		<div class="grow flex items-center justify-center w-full px-10 md:px-0 ">
 	  		<div class="w-full flex items-end justify-center gap-x-5">
 	  			<img class="hidden md:block max-w-[14rem] min-w-[8rem]" src="${cpath}/resources/images/auth_fox.png" alt="Fox Character" />
 	  			<div class="flex min-w-[22rem] max-w-[56.063rem] grow bg-white rounded-3xl shadow-[2px_2px_8px_rgba(0,0,0,0.15)]">
