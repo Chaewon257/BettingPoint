@@ -60,12 +60,19 @@ public class BoardController {
 		return "board/boardInsert";
 	}
 
-	//
+	// 좋아요 
 	@PostMapping("/like/{boardId}")
 	@ResponseBody
 	public String likeBoard(@PathVariable String boardId) {
 		boardService.incrementLikeCount(boardId);
 		return "success";
 	}
+	
+	// 게시글 수정 페이지로 이동
+	@GetMapping("/update")
+	public String showUpdatePage() {
+	    return "board/boardUpdate";
+	}
+
 
 }
