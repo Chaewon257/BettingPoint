@@ -39,8 +39,6 @@ public class BoardRestController {
 		response.put("currentPage", page);
 		response.put("totalPages", totalPages);
 		
-		
-
 		return response;
 	}
 
