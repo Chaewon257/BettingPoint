@@ -21,7 +21,7 @@ public class ChatQAService {
 		return chatDAO.questiontByUid(uid);
 	}
 	
-	public List<ChatQADTO> selectByCate(String category) {
-		return chatDAO.selectByCate(category);
+	public List<ChatQADTO> selectByCate(String main_category) {
+		return chatDAO.selectByCate(main_category);
 	}
 }
