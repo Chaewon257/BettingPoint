@@ -220,20 +220,20 @@
 			    const error = document.getElementById('errorMessage');
 			    error.textContent = "";
 		
-			    const email = document.getElementById('email').value;
-		    	const verifyEmail = document.getElementById('verifyEmail').checked;
+			    const email = document.getElementById('email');
+		    	const verifyEmail = document.getElementById('verifyEmail');
 			    const password = document.getElementById('password');
 			    const passwordCheck = document.getElementById('passwordCheck');
 			    const name = document.getElementById('name');
-			    const nickname = document.getElementById('nickname').value;
-			    const verifyNickname = document.getElementById('verifyNickname').checked;
+			    const nickname = document.getElementById('nickname');
+			    const verifyNickname = document.getElementById('verifyNickname');
 			    const birthDate = document.getElementById('birthDate');
 			    const birthDateVal = new Date(birthDate.value);
 			    const phoneNumber = document.getElementById('phoneNumber');
-			    const agreePrivacy = document.getElementById('agreePrivacy').checked;
-				const age = new Date().getFullYear() - birthDate.getFullYear();
+			    const agreePrivacy = document.getElementById('agreePrivacy');
+				const age = new Date().getFullYear() - birthDateVal.getFullYear();
 
-				if (!verifyEmail) {
+				if (!verifyEmail.checked) {
 		        	error.textContent = "이메일 중복 검사를 해야합니다.";
 		        	return;
 		        }
@@ -271,7 +271,7 @@
 		        	name.classList.add("border-gray-5");
 		        }
 		        
-		        if (!verifyNickname) {
+		        if (!verifyNickname.checked) {
 		        	error.textContent = "닉네임 중복 검사를 해야합니다.";
 		        	return;
 		        }
