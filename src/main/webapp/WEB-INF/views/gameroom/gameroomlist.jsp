@@ -19,6 +19,9 @@
 						<div class="min-h-36 bg-blue-6 rounded-lg"></div>
 						<div class="min-h-36 bg-blue-6 rounded-lg"></div>
 					</div>
+					<div id="room-container" class="absolute top-0 right-0 w-full h-full grid grid-cols-1 md:grid-cols-2 grid-rows-6 md:grid-rows-3 gap-4">
+						<!-- 방 리스트 목록 들어가는 자리 -->						
+					</div>
 				</div>
 				</div>
 			</div>
