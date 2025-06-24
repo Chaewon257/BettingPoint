@@ -7,7 +7,7 @@
 
     <!-- 게임방 리스트 조회 -->
     <select id="selectAll" resultType="gameRoomDTO">
-        select * from game_room order by created_at
+        select * from game_room order by status desc, created_at desc
     </select>
 
     <!-- 게임방 상세 조회 -->
