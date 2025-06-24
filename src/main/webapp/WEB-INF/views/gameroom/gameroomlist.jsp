@@ -152,6 +152,15 @@
 			        }
 			    });
 			});
+					
+			document.getElementById('createGameRoomBtn').addEventListener('click', function (e) {
+				const error = document.getElementById('errorMessage');
+		        error.textContent = "";
+		        
+			    const roomName = document.getElementById('roomName');
+			    const min_bet = document.getElementById('min_bet');
+						
+			});
 		</script>
 	</jsp:attribute>
 </ui:layout>
