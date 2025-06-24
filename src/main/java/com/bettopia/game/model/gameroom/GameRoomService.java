@@ -13,8 +13,10 @@ public class GameRoomService {
 	@Autowired
 	private GameRoomDAO gameRoomDAO;
 
-	public List<GameRoomResponseDTO> selectAll() {
-		List<GameRoomResponseDTO> roomlist = gameRoomDAO.selectAll();
+	public List<GameRoomResponseDTO> selectAll(int page) {
+		int size = 6;
+		int offset = (page-1) * size;
+		List<GameRoomResponseDTO> roomlist = gameRoomDAO.selectAll(offset, size);
 		return roomlist;
 	}
 

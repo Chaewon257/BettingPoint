@@ -6,8 +6,10 @@
 <mapper namespace="com.bpoint.gameroom">
 
     <!-- 게임방 리스트 조회 -->
-    <select id="selectAll" resultType="gameRoomDTO">
-        select * from game_room order by status desc, created_at desc
+    <select id="selectAll" parameterType="map" resultType="gameRoomDTO">
+        select * from game_room
+        order by status desc, created_at desc
+        limit #{size} offset #{offset}
     </select>
 
     <!-- 게임방 상세 조회 -->
