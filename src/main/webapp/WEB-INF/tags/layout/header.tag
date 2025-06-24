@@ -62,14 +62,14 @@ $(document).ready(function () {
 		});
 
 	function renderUser(user) {
-		if (!user || !user.username) return;
+		if (!user || !user.user_name) return;
 		const html = `
-			<a href="/mypage" class="text-black hover:font-semibold">\${user.username} 님</a>
+			<a href="/mypage" class="text-black hover:font-semibold">\${user.user_name} 님</a>
 			<a href="/logout" class="text-black py-1.5 px-[1.625rem] border-2 border-black rounded-full transition-all duration-300 ease-in-out hover:bg-gray-2">로그아웃</a>
 		`;
 		
 		const mobileHtml = `
-			<span class="text-black"><a href="/mypage" class="underline font-semibold">\${user.username}</a> 님 환영합니다</span>
+			<span class="text-black"><a href="/mypage" class="underline font-semibold">\${user.user_name}</a> 님 환영합니다</span>
 		`;
 		
 		$('#userMenu').html(html);
@@ -107,7 +107,7 @@ $(document).ready(function () {
 							<div id="userMobileMenu" class="bg-gray-2 py-5 w-full flex items-center justify-center relative md:hidden">
 								<a href="/login" class="text-black"><span class="underline font-semibold">로그인</span> 후 다양한 서비스를 이용해보세요</a>
 							</div>
-							<a href="/cointoss" class="text-black text-base hover:text-blue-1 hover:font-semibold">개인게임</a>
+							<a href="solo/cointoss" class="text-black text-base hover:text-blue-1 hover:font-semibold">개인게임</a>
 							<a href="/gameroom" class="text-black text-base hover:text-blue-1 hover:font-semibold">단체게임</a>
 							<a href="/board" class="text-black text-base hover:text-blue-1 hover:font-semibold">게시판</a>
 							<a href="/support" class="text-black text-base hover:text-blue-1 hover:font-semibold">고객지원</a>

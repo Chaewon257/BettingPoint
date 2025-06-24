@@ -2,7 +2,7 @@
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="ui" tagdir="/WEB-INF/tags" %>
 
-<ui:layout pageName="Coin Toss" pageType="ingame">
+ <ui:layout pageName="Coin Toss" pageType="ingame"> 
 	<jsp:attribute name="bodyContent">
 		<script src="${cpath}/resources/js/cointoss.js" defer></script>
 		<div class="container">

@@ -1,0 +1,345 @@
+/* ----------- 반응형 SCALE ----------- */
+#gameRoot {
+	transform: scale(0.75);
+	transform-origin: center center;
+	transition: transform 0.3s;
+}
+
+@media ( max-width :1024px) {
+	#gameRoot {
+		transform: scale(0.9);
+	}
+}
+
+@media ( max-width :640px) {
+	#gameRoot {
+		transform: scale(1);
+	}
+}
+
+#gameRoot {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  border-radius: 36px;
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+#countdownOverlay, .countdown-overlay {
+  position: absolute;
+  left: 0; top: 0;
+  width: 100%; height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  background: rgba(20,18,25,0.17); /* 필요시 투명도, 색상 변경 */
+  font-size: 8vw;
+  color: #fff;
+  font-weight: bold;
+  letter-spacing: 0.6vw;
+  text-shadow: 0 2px 8px #2228;
+  pointer-events: none;
+  border-radius: 36px;   /* 필요시 게임화면과 동일하게 */
+  overflow: hidden;
+  transition: font-size 0.2s, letter-spacing 0.2s;
+}
+
+/* 태블릿에서 더 크게, 간격도 조금 더 넓게 */
+@media (max-width: 1024px) {
+  #countdownOverlay, .countdown-overlay {
+    font-size: 12vw;
+    letter-spacing: 1vw;
+    border-radius: 18px;      /* 태블릿은 라운드도 약간 줄일 수 있음 */
+  }
+}
+
+/* 모바일에서 제일 크게, 간격은 1.5vw, 라운드 제거 */
+@media (max-width: 640px) {
+  #countdownOverlay, .countdown-overlay {
+    font-size: 16vw;
+    letter-spacing: 1.5vw;
+    border-radius: 0;         /* 모바일은 라운드 없이 꽉 채우기 */
+  }
+}
+
+body {
+  font-family: 'Arial', sans-serif;
+  background: #eef;
+  margin: 0;
+  text-align: center;
+}
+
+body, html {
+  width: 100vw; height: 100vh; margin: 0; padding: 0;
+  border: 0; outline: 0;
+  background-color: #eaf6fd;
+}
+
+#trackViewport.track-viewport-stack {
+  display: flex;
+  flex-direction: column;
+  width: 100vw;
+  height: 100vh;
+  min-width: 600px;
+  margin: 0 auto;
+  overflow: hidden;
+  border-radius: 22px;
+  box-sizing: border-box;
+}
+
+/* 관중석 PNG 트랙 상단 */
+.crowd-repeat {
+  width: 100%;
+  height: 16vh; /* PNG 관중석 크기(상단에서 고정) */
+  min-height: 56px; /* 최소 높이 */
+  background-image: url('/resources/images/crowd.png'); /* 업로드 PNG */
+  background-repeat: repeat-x;
+  background-size: auto 100%;
+  background-position: bottom left;
+  z-index: 2;
+  pointer-events: none;
+  flex: 0 0 16vh;
+  padding: 0; /* 패딩 제거 */
+  transition: transform 0.08s linear;
+  will-change: transform;
+}
+.crowd-stand {
+  width: 100%; height: 2vh; /* 관중석 아래 줄 높이 */
+  min-height: 10px; /* 최소 높이 */
+  background: repeating-linear-gradient(-45deg, #e9e9ef 0 7px, #636c92 7px 12px, #b99a83 12px 18px);
+  background-repeat: repeat-x;
+  background-size: auto 100%;
+  background-position: bottom left;
+  border-bottom: 4px solid #bbb;
+  padding: 0; /* 패딩 제거 */
+  z-index: 2;
+  flex: 0 0 2vh; 
+  transition: transform 0.08s linear;
+  will-change: transform;
+}
+
+#trackContainer {
+  flex: 1 1 0%;    /* 트랙이 전체 영역을 자동으로 채움 */
+  position: relative;
+  width: 100vw;
+  min-height: 0;
+  padding: 0; border: none;
+}
+
+#trackViewport {
+  display: flex;
+  flex-direction: column;
+  width: 100vw;
+  height: 100vh;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  border-radius: 36px;
+  box-sizing: border-box;
+}
+
+/* 트랙 */
+.track-container {
+  position: relative;
+  width: 100%;  /* JS에서 width 설정 */
+  /* height는 JS에서 자동 할당됨 */
+  display: block;
+}
+
+.track-line {
+  position: absolute;
+  width: 100%;
+  background: #e1764e; /* 실제 트랙 색상 */
+  box-shadow: 0 1.5px 7px #652a1524, 0 0.5px 0 #fff5 inset;
+  position: absolute;
+  left: 0;
+  border-top: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  overflow: visible;
+}
+
+.lane-number {
+  font-weight: bold;
+  font-size: 1.8em;
+  color: #fffbe6;
+  text-shadow: 0 2px 10px #000a;
+  width: 32px; text-align: right;
+  left: 16px;
+  position: absolute;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.start-line {
+  position: absolute;
+  top: 0;
+  width: 38px;         /* 선 굵기 맞추려면 (24~38 등 원하는 만큼) */
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center; /* 수직정렬 */
+  z-index: 15;
+  border-radius: 6px;
+  /* 세로 줄무늬 및 배경색상 지정 */
+  background: repeating-linear-gradient(
+   90deg, #fff 0 19px, #2196f3 19px 38px
+  ); /* 파랑/흰색 줄무늬, 두칸마다 반복 */
+  box-shadow: 1px 0 6px #2196f377;
+}
+
+.finish-line {
+  position: absolute;
+  top: 0;
+  width: 38px;         /* 선 굵기 맞추려면 (24~38 등 원하는 만큼) */
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center; /* 수직정렬 */
+  z-index: 15;
+  border-radius: 6px;
+  /* 세로 줄무늬 및 배경색상 지정 */
+  background: repeating-linear-gradient(
+   90deg, #fff 0 19px, #d62c16 19px 38px
+  ); /* 빨강/흰색 줄무늬 */
+  box-shadow: 1px 0 6px #c1141477;
+}
+
+.start-line-label, .finish-line-label {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;  /* 수직! */
+  align-items: center;
+  height: 100%;      /* 선 전체 높이에 맞춤 */
+  font-size: 2.1em;
+  font-weight: bold;
+  letter-spacing: 0.12em;
+  line-height: 1.0;
+  margin: 0 auto;
+  user-select: none;
+  padding: 0;
+}
+.start-line-label span, .finish-line-label span {
+  display: block;
+  /* 각 줄 정렬/동일 크기 원할 때 flex: 1 부여 */
+}
+
+.start-line-label {
+  color: #0b0a0a;
+}
+.finish-line-label {
+  color: #0b0a0a;
+  text-shadow: 0 2px 12px #fff9;
+}
+
+/* 거북이 이미지 애니메이션 */
+.turtle {
+  position: absolute;
+  top: 10px;
+  border-radius: 15px;
+  transition: left 0.1s linear;
+  z-index: 50;
+  object-fit: contain;
+}
+
+.turtle.selected {
+  border: 3px solid gold;
+}
+
+.turtle.winner-highlight {
+  filter: drop-shadow(0 0 14px gold);
+  transform: scale(1.13) rotate(-7deg);
+  z-index: 50;
+}
+
+@keyframes turtle-run {
+  0%   { transform: translateY(0) rotate(-2deg);}
+  20%  { transform: translateY(-8px) rotate(1deg);}
+  50%  { transform: translateY(0) rotate(-2deg);}
+  70%  { transform: translateY(8px) rotate(1deg);}
+  100% { transform: translateY(0) rotate(-2deg);}
+}
+.turtle.racing {
+  animation: turtle-run 0.37s infinite linear;
+}
+
+/* #resultModal {
+    position: fixed !important;
+    left: 0; top: 0;
+    width: 100vw; height: 100vh;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10001;
+}
+ */
+/* 결과 모달 오버레이/팝업 스타일 */
+.modal {
+  /* display: none;                기본은 안보임 */
+  position: absolute;
+  z-index: 1001;                /* 최상단보다 위 */
+  left: 0; top: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.5);  /* 반투명 검정 배경 */
+  justify-content: center;      /* Flex 수평정렬 */
+  align-items: center;
+}
+
+/* 모달 내부 컨텐츠 */
+.modal-content {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  position: relative;
+  max-width: 90%;
+  width: 400px;
+}
+
+/* 모달 내부의 결과 이미지 크기 조정 */
+#resultImage img {
+  max-width: 180px;  /* 원하는 최대 크기 */
+  width: 100%;       /* 컨테이너 넓이까지 늘어나면 100% */
+  height: auto;      /* 비율 유지 */
+  display: block;
+  margin: 0 auto;    /* 가운데 정렬 */
+}
+
+.result-turtle-img {
+  width: 200px;
+  height: auto;
+  display: block;
+  margin: 0;
+}
+
+.point-summary {
+  font-weight: bold;
+  font-size: 18px;
+  margin-top: 10px;
+}
+
+/* 닫기 버튼 */
+.modal-close {
+  position: absolute;
+  top: 8px; right: 12px;
+  font-size: 24px;
+  cursor: pointer;
+  color: #555;
+}
+.modal-close:hover {
+  color: #000;
+}
+
+/* 모달 내부 카운트다운 텍스트 */
+.countdown-text {
+  margin-top: 12px;
+  font-size: 14px;
+  color: #555;
+  text-align: center;
+  width: 100%;
+  height: 100%;
+}

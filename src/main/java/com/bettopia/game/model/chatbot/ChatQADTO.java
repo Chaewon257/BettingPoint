@@ -11,8 +11,8 @@ import lombok.NoArgsConstructor;
 @Data
 public class ChatQADTO {
 	private String uid;
+	private String main_category;
+	private String sub_category;	
 	private String question_text;
-	private String answer_text;
-	private String category;
-	
+	private String answer_text;	
 }

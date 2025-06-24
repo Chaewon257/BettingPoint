@@ -19,5 +19,9 @@
     <select id="selectById" parameterType="String" resultType="gameDTO">
         select * from game where uid = #{gameId}
     </select>
-
+	
+	<!-- 이름으로 게임리스트 조회 -->
+	<select id="selectByName" parameterType="String" resultType="gameDTO">
+		SELECT * FROM game where name =#{name}
+	</select> 
 </mapper>

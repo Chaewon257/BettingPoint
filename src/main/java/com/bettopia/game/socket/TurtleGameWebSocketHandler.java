@@ -1,7 +1,10 @@
 package com.bettopia.game.socket;
 
 import com.bettopia.game.model.auth.AuthService;
+import com.bettopia.game.model.auth.UserVO;
 import com.bettopia.game.model.gameroom.GameRoomDAO;
+import com.bettopia.game.model.gameroom.GameRoomResponseDTO;
+import com.bettopia.game.model.gameroom.GameRoomService;
 import com.bettopia.game.model.multi.turtle.PlayerDAO;
 import com.bettopia.game.model.multi.turtle.TurtlePlayerDTO;
 import com.bettopia.game.model.multi.turtle.SessionService;
@@ -30,6 +33,8 @@ public class TurtleGameWebSocketHandler extends TextWebSocketHandler {
 	private SessionService sessionService;
 	@Autowired
 	private GameRoomDAO gameroomDAO;
+	@Autowired
+	private GameRoomService gameRoomService;
     @Autowired
     private AuthService authService;
 
@@ -38,11 +43,8 @@ public class TurtleGameWebSocketHandler extends TextWebSocketHandler {
 		// 연결된 세션 저장, 초기 데이터 전송 등
 		String userId = (String) session.getAttributes().get("userId");
 		String roomId = (String) session.getAttributes().get("roomId");
-		System.out.println("userId = " + userId);
-		System.out.println("roomId = " + roomId);
 
 		if(roomId == null || userId == null) {
-			System.out.printf("Id null");
 			session.close(CloseStatus.BAD_DATA);
 			return;
 		}
@@ -54,13 +56,21 @@ public class TurtleGameWebSocketHandler extends TextWebSocketHandler {
 			// 중복 입장 검사
 			for(TurtlePlayerDTO player : players) {
 				if(player.getUser_uid().equals(userId)) {
-					System.out.println("player is already in room");
 					session.close(CloseStatus.BAD_DATA);
 					return;
 				}
 			}
 			// 최대 인원 초과 검사
 			if(players.size() >= 8) {
+				session.close(CloseStatus.BAD_DATA);
+				return;
+			}
+
+			// 보유 포인트 검사
+			// 최소 베팅 포인트 미만 입장 불가
+			UserVO user = authService.findByUid(userId);
+			GameRoomResponseDTO gameroom = gameRoomService.selectById(roomId);
+			if(user.getPoint_balance() < gameroom.getMin_bet()) {
 				session.close(CloseStatus.BAD_DATA);
 				return;
 			}
@@ -84,8 +94,6 @@ public class TurtleGameWebSocketHandler extends TextWebSocketHandler {
 		Map<String, Object> data = new HashMap<>();
 		data.put("userId", userId);
 		broadcastMessage("enter", roomId, data);
-
-		System.out.println("success");
 	}
 
 	private void broadcastMessage(String type, String roomId, Map<String, Object> data) throws IOException {
