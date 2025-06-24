@@ -23,6 +23,9 @@
 						<!-- 방 리스트 목록 들어가는 자리 -->						
 					</div>
 				</div>
+				<div class="flex items-center justify-center gap-x-12 sm:gap-x-20 md:gap-x-28 lg:gap-x-36">
+					<button class="w-8 h-8 rounded-md text-blue-2 border border-blue-3 hover:bg-blue-3"><</button>
+					<button class="w-8 h-8 rounded-md text-blue-2 border border-blue-3 hover:bg-blue-3">></button>
 				</div>
 			</div>
 		</div>
