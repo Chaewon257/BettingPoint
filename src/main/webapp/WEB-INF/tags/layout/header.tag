@@ -62,14 +62,14 @@ $(document).ready(function () {
 		});
 
 	function renderUser(user) {
-		if (!user || !user.username) return;
+		if (!user || !user.user_name) return;
 		const html = `
-			<a href="/mypage" class="text-black hover:font-semibold">\${user.username} 님</a>
+			<a href="/mypage" class="text-black hover:font-semibold">\${user.user_name} 님</a>
 			<a href="/logout" class="text-black py-1.5 px-[1.625rem] border-2 border-black rounded-full transition-all duration-300 ease-in-out hover:bg-gray-2">로그아웃</a>
 		`;
 		
 		const mobileHtml = `
-			<span class="text-black"><a href="/mypage" class="underline font-semibold">\${user.username}</a> 님 환영합니다</span>
+			<span class="text-black"><a href="/mypage" class="underline font-semibold">\${user.user_name}</a> 님 환영합니다</span>
 		`;
 		
 		$('#userMenu').html(html);
