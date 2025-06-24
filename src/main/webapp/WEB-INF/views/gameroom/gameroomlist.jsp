@@ -29,8 +29,98 @@
 				</div>
 			</div>
 		</div>
+		<script type="text/javascript">
+			$(function () {
+				let gameRooms = []; // 게임방 리스트
+				let games = {}; // 게임 정보
+				let playerCounts = {}; // 각 게임방 플레이어 수
+						
+				function getLevelText(level) {
+					switch (level) {
+						case 'HARD':
+					    	return '상';
+					    case 'NORMAL':
+					      	return '중';
+					    case 'EASY':
+					      	return '하';
+					    default:
+					      	return '-';
+					}
+				}
+						
+				// 게임 상세 정보 요청
+				function gameDetail(room, games) {
+				    return $.ajax({
+				        url: `/api/game/detail/\${room.game_uid}`,
+				        method: "GET",
+				        success: function (gameData) {
+				            games[room.game_uid] = gameData;
+				        }
+				    });
+				}
+						
+				// 전체 플레이어 수 요청
+				function countPlayers(playerCounts) {
+				    return $.ajax({
+				        url: "/api/player/count",
+				        method: "GET",
+				        success: function (countData) {
+				            Object.assign(playerCounts, countData);
+				        }
+				    });
+				}
+						
+				// 게임방 리스트 요청
+			    $.ajax({
+			        url: "/api/gameroom/list",
+			        method: "GET",
+			        success: function (responseData) {
+			        	gameRooms = responseData;
+								
+			            // 게임 상세 정보 요청
+			            let detailReq = gameRooms.map(room => gameDetail(room, games));
 
+			            // 플레이어 수 요청
+			            let countReq = countPlayers(playerCounts);
 
+			            Promise.all([...detailReq, countReq]).then(() => {
+			                const container = $("#room-container");
+			                container.empty();
 
+			                gameRooms.forEach(room => {
+			                    const count = playerCounts[room.uid] || 0;
+			                    const game = games[room.game_uid];
+					                    
+			                    const roomHtml = `
+			                    	<div data-room-id="\${room.uid}" class="game-room min-h-36 flex flex-col justify-between p-4 bg-gray-8 rounded-lg hover:shadow-[2px_2px_8px_rgba(0,0,0,0.15)]">
+										<div class="flex items-center justify-between gap-x-4">
+											<div class="w-7 sm:w-8 md:w-9 lg:w-10 h-7 sm:h-8 md:h-9 lg:h-10 rounded-full bg-blue-3 flex items-center justify-center text-ts-18 sm:text-ts-20 md:text-ts-24 text-red-1">\${getLevelText(game.level)}</div>
+											<div class="grow text-ts-18 sm:text-ts-20 md:text-ts-24 lg:text-ts-28 font-bold truncate">\${room.title}</div>
+											<div class="min-w-12 text-ts-14 sm:text-ts-18 md:text-ts-20 lg:text-ts-24 font-bold text-gray-9">\${count} / 8</div>
+										</div>
+										<div class="w-full text-start text-xl md:text-2xl text-blue-2 font-bold">\${game.name}</div>
+										<div class="w-full grid grid-cols-2 items-center">
+											<div class="flex items-center sm:min-w-56 justify-between text-gray-7 text-base md:text-lg">
+												<span>최소 베팅 금액</span>
+												<span class="text-black">\${room.min_bet}</span>
+												<span>point</span>
+											</div>
+											<div class="w-full text-end text-lg md:text-xl text-blue-2 font-bold">\${room.status}</div>
+										</div>
+									</div>
+			                    `;
+
+			                    container.append(roomHtml);
+			                });
+
+			                $(".game-room").on("click", function () {
+			                    const roomId = $(this).data("room-id");
+			                    window.location.href = `/gameroom/detail/\${roomId}`;
+			                });
+			            });
+			        }
+			    });
+			});
+		</script>
 	</jsp:attribute>
 </ui:layout>
