@@ -14,11 +14,9 @@ let gameState = {
 
 // 난이도 설정
  let difficultyConfigs = {
-   // 기본값 (서버에서 받아오기 전까지 사용)
-   easy: { name: "하", chance: 1.0, payout: 1.2 },
-   normal: { name: "중", chance: 0.5, payout: 2.0 },
-   hard: { name: "상", chance: 0.3, payout: 3.3 }
  };
+
+
 
 // HTML 요소들
 const elements = {
@@ -47,6 +45,7 @@ document.addEventListener('DOMContentLoaded', function() {
   initializeGame();
 });
 
+
 // 게임 초기화 함수
 function initializeGame() {
   setLoadingState(true);
@@ -66,31 +65,66 @@ function initializeGame() {
     });
 }
 
-// 난이도 설정 로드 (Ajax)
 function loadDifficultySettings() {
-  $.get('/api/game/difficulty-settings')
-    .done(function(response) {
-      difficultyConfigs = response.difficulties;
-      
-      // UI 업데이트 (서버에서 받은 설정으로 덮어쓰기)
-      updateDifficultyUI();
-      updateUI();
-      setLoadingState(false);
-      
-      // 서버 연결 완료 후 현재 선택된 난이도 정보 다시 표시
-      const config = difficultyConfigs[gameState.difficulty];
-      showResult(`서버 연결 완료! 현재 선택: "${config.name}" (성공확률: ${Math.round(config.chance * 100)}%, 배당: ${config.payout}배)`, "info");
-    })
-    .fail(function(xhr) {
-      console.warn('난이도 설정 로드 실패, 기본값 사용:', xhr.status);
-      updateDifficultyUI();
-      updateUI();
-      setLoadingState(false);
-      
-      const config = difficultyConfigs[gameState.difficulty];
-      showResult(`서버 연결 실패! 기본값 사용: "${config.name}" (성공확률: ${Math.round(config.chance * 100)}%, 배당: ${config.payout}배)`, "info");
+    $.ajax({
+        url: '/api/game/by-name/CoinToss',
+        type: 'GET',
+        dataType: 'json',
+        success: function(gameData) {
+            console.log('게임 데이터:', gameData);
+            
+            // 기존 difficultyConfigs 설정
+            $.each(gameData, function(index, game) {
+                difficultyConfigs[game.level] = {
+                    chance: game.probability,
+                    payout: game.reward
+                };
+            });
+           
+            // JSP 화면에 데이터 표시
+            updateDifficultyDisplay(gameData);
+            
+            updateDifficultyUI();
+            updateUI();
+            setLoadingState(false);
+            
+            const config = difficultyConfigs[gameState.difficulty];
+          
+        },
+        error: function(xhr, status, error) {
+            console.error('게임 설정 로딩 실패:', error);
+            updateDifficultyUI();
+            updateUI();
+            setLoadingState(false);
+        }
     });
 }
+
+// JSP 화면에 난이도 데이터 표시하는 함수
+function updateDifficultyDisplay(gameData) {
+    
+    $.each(gameData, function(index, game) {
+        let difficultyKey;
+        
+        // DB의 level을 JSP의 data-difficulty와 매핑
+        if (game.level === 'HARD') {
+            difficultyKey = 'hard';
+        } else if (game.level === 'MEDIUM') {
+            difficultyKey = 'normal'; // JSP에서는 normal로 되어있음
+        } else if (game.level === 'EASY') {
+            difficultyKey = 'easy';
+        }
+        
+        // 해당 난이도 옵션 찾아서 데이터 업데이트
+        const $difficultyOption = $(`.difficulty-option[data-difficulty="${difficultyKey}"]`);
+        if ($difficultyOption.length > 0) {
+            $difficultyOption.find('.difficulty-chance').text(`성공률: ${game.probability}%`);
+            $difficultyOption.find('.difficulty-payout').text(`배당: ${game.reward}배`);
+        }
+    });
+}
+
+
 
 // 난이도 UI 업데이트
 function updateDifficultyUI() {
@@ -409,3 +443,8 @@ function updateUI() {
     ? gameState.accumulatedWin.toLocaleString()  
     : "0";
 }
+
+
+$(document).ready(function() {
+    loadDifficultySettings();
+});
