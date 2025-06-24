@@ -71,7 +71,7 @@
 	  	</div>
 	  	<ui:modal modalId="agreePrivacyInfoModal" title="개인정보 수집 및 이용 안내">
 	  		<jsp:attribute name="content">
-	  			<div class="max-h-[35rem] overflow-y-scroll max-w-[25rem] text-xs">
+	  			<div class="overflow-y-scroll max-w-[25rem] text-xs">
 	  				개인정보보호법에 따라 베팅포인트에 회원가입 신청하시는 분께 수집하는 개인정보의 항목, 개인정보의 수집 및 이용목적, 개인정보의 보유 및 이용기간, 동의 거부권 및 동의 거부 시 불이익에 관한 사항을 안내 드리오니 자세히 읽은 후 동의하여 주시기 바랍니다.<br/>
 				    <br/>
 				    <span class="text-xl font-semibold">1. 수집하는 개인정보</span><br/>
