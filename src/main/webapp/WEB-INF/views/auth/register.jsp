@@ -54,7 +54,7 @@
 		  						<input type="text" id="phoneNumber" name="phoneNumber" class="w-full px-4 py-2 text-xs outline-none bg-gray-4 rounded-full border border-gray-5 mb-2" placeholder="전화번호(010-0000-0000)" required>
 		  					</div>
 		  					<div class="flex items-center justify-end px-2 mb-2">
-			  					<span id="errorMessage" class="grow text-xs h-5 text-red-600 text-base"></span>
+			  					<span id="errorMessage" class="grow text-xs h-5 text-red-600"></span>
 			  					<div id="fakeCheckBox" class="flex items-center justify-end gap-x-2 text-gray-6">
 			  						<div id="fakeCheckIcon" class="w-4 h-4 border border-gray-6 rounded-full flex items-center justify-center">&#x2713;</div>
 			  						<span>개인정보 수집 및 이용 동의</span>
