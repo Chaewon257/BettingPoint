@@ -25,7 +25,12 @@ public class GameRoomDAO {
 		Map<String, Integer> params = new HashMap<>();
 		params.put("offset", offset);
 		params.put("size", size);
-		List<GameRoomResponseDTO> roomlist = sqlSession.selectList(namespace + "selectAll", params);
+		List<GameRoomResponseDTO> roomlist = sqlSession.selectList(namespace + "selectAllWithPaging", params);
+		return roomlist;
+	}
+
+	public List<GameRoomResponseDTO> selectAll() {
+		List<GameRoomResponseDTO> roomlist = sqlSession.selectList(namespace + "selectAll");
 		return roomlist;
 	}
 

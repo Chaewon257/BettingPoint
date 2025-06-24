@@ -20,6 +20,11 @@ public class GameRoomService {
 		return roomlist;
 	}
 
+	public List<GameRoomResponseDTO> selectAll() {
+		List<GameRoomResponseDTO> roomlist = gameRoomDAO.selectAll();
+		return roomlist;
+	}
+
 	public GameRoomResponseDTO selectById(String roomId) {
 		GameRoomResponseDTO room = gameRoomDAO.selectById(roomId);
 		return room;
