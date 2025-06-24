@@ -1,6 +1,8 @@
 package com.bettopia.game.model.gameroom;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import com.bettopia.game.model.multi.turtle.PlayerDAO;
@@ -18,6 +20,14 @@ public class GameRoomDAO {
 	private PlayerDAO playerDAO;
 
 	String namespace = "com.bpoint.gameroom.";
+
+	public List<GameRoomResponseDTO> selectAll(int offset, int size) {
+		Map<String, Integer> params = new HashMap<>();
+		params.put("offset", offset);
+		params.put("size", size);
+		List<GameRoomResponseDTO> roomlist = sqlSession.selectList(namespace + "selectAllWithPaging", params);
+		return roomlist;
+	}
 
 	public List<GameRoomResponseDTO> selectAll() {
 		List<GameRoomResponseDTO> roomlist = sqlSession.selectList(namespace + "selectAll");
