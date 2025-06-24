@@ -29,6 +29,37 @@
 				</div>
 			</div>
 		</div>
+		<ui:modal modalId="createGameRoomModal" title="방 만들기">
+			<jsp:attribute name="content">
+				<div class="py-4 sm:w-[36rem] md:w-[48rem] min-w-72 overflow-y-scroll flex flex-col gap-y-4">
+					<input type="text" id="roomName" name="roomName" class="w-full px-4 py-2 text-xs outline-none bg-gray-4 rounded-full border border-gray-5" placeholder="방 이름" required>
+					<div class="grid grid-cols-3 gap-x-2">
+						<div class="aspect-square bg-blue-4 rounded-md overflow-hidden hover:shadow-[2px_2px_8px_rgba(0,0,0,0.2)]">
+							<img alt="turtle game" src="${cpath}/resources/images/turtle_game.png">
+						</div>
+						<div class="aspect-square bg-blue-4 rounded-md"></div>
+						<div class="aspect-square bg-blue-4 rounded-md"></div>
+					</div>
+					<div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-0">
+						<div class="grow grid grid-cols-3 gap-4">
+							<button class="bg-gray-4 rounded-full border-2 border-gray-5 text-xs py-1.5 md:py-0.5">상</button>
+							<button class="bg-gray-4 rounded-full border-2 border-gray-5 text-xs py-1.5 md:py-0.5">중</button>
+							<button class="bg-gray-4 rounded-full border-2 border-gray-5 text-xs py-1.5 md:py-0.5">하</button>
+						</div>
+						<div class="grow flex items-center justify-end text-gray-7 text-xl font-bold md:ml-4">
+							<span>배당률:</span>
+							<span class="w-36 text-center text-black">500</span>
+							<span>%</span>
+						</div>
+					</div>
+					<input type="number" id="min_bet" name="min_bet" class="w-full px-4 py-2 text-xs outline-none bg-gray-4 rounded-full border border-gray-5" placeholder="최소 베팅 금액" required>
+					<div class="flex justify-end">
+						<span id="errorMessage" class="grow text-xs h-5 text-red-600"></span>
+						<button id="createGameRoomBtn" class="h-full py-1 bg-blue-2 hover:bg-blue-5 rounded-lg text-white shadow-[2px_2px_8px_rgba(0,0,0,0.1)] text-ts-14 sm:text-ts-18 md:text-ts-20 lg:text-ts-24 w-24 sm:w-32 md:w-48 lg:w-60">방만들기</button>
+					</div>
+				</div>
+			</jsp:attribute>
+		</ui:modal>
 		<script type="text/javascript">
 			$(function () {
 				let gameRooms = []; // 게임방 리스트
