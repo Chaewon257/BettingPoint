@@ -24,15 +24,15 @@
 
     <!-- 게임방 생성 -->
     <insert id="insert" parameterType="gameRoomDTO">
-        insert into game_room(uid, title, min_bet, host_uid, game_uid)
-        values(#{uid}, #{title}, #{min_bet}, #{host_uid}, #{game_uid})
+        insert into game_room(uid, title, min_bet, host_uid, game_level_uid)
+        values(#{uid}, #{title}, #{min_bet}, #{host_uid}, #{game_level_uid})
     </insert>
 
     <!-- 게임방 수정 -->
     <update id="update" parameterType="gameRoomDTO">
         update game_room set
         title = #{title},
-        game_uid = #{game_uid}
+        game_uid = #{game_level_uid}
         where uid = #{uid}
     </update>
 

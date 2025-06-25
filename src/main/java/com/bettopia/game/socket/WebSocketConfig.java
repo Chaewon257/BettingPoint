@@ -16,13 +16,17 @@ public class WebSocketConfig implements WebSocketConfigurer {
 	@Autowired
 	private TurtleGameWebSocketHandler turtleGameWebSocketHandler;
 	@Autowired
-	private HttpHandshakeInterceptor httpHandshakeInterceptor;
+	private TurtleHandshakeInterceptor turtleHandshakeInterceptor;
+	@Autowired
+	private GameRoomListWebSocket gameRoomListWebSocket;
 
 	@Override
 	public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
 		registry.addHandler(turtleGameWebSocketHandler, "/ws/game/turtle/**")
-				// 다른 게임에서 사용 시 엔드포인트 추가
-			.setAllowedOrigins("*")
-			.addInterceptors(httpHandshakeInterceptor);
+				.setAllowedOrigins("*")
+				.addInterceptors(turtleHandshakeInterceptor);
+
+		registry.addHandler(gameRoomListWebSocket, "/ws/gameroom")
+				.setAllowedOrigins("*");
 	}
 }

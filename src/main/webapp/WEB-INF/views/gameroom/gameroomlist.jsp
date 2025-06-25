@@ -5,7 +5,7 @@
 <head>
     <title>게임방 리스트</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="${cpath}/resources/js/turtlegameroom.js"></script>
+    <script src="${cpath}/resources/js/gameroomlist.js"></script>
     <style>
         .game-room {
             border: 1px solid #ccc;

@@ -33,10 +33,12 @@ public class TurtleGameWebSocketHandler extends TextWebSocketHandler {
 	private SessionService sessionService;
 	@Autowired
 	private GameRoomDAO gameroomDAO;
-	@Autowired
-	private GameRoomService gameRoomService;
+    @Autowired
+    private GameRoomService gameRoomService;
     @Autowired
     private AuthService authService;
+	@Autowired
+	private GameRoomListWebSocket gameRoomListWebSocket;
 
 	@Override
 	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
@@ -66,14 +68,14 @@ public class TurtleGameWebSocketHandler extends TextWebSocketHandler {
 				return;
 			}
 
-			// 보유 포인트 검사
-			// 최소 베팅 포인트 미만 입장 불가
-			UserVO user = authService.findByUid(userId);
-			GameRoomResponseDTO gameroom = gameRoomService.selectById(roomId);
-			if(user.getPoint_balance() < gameroom.getMin_bet()) {
-				session.close(CloseStatus.BAD_DATA);
-				return;
-			}
+            // 보유 포인트 검사
+            // 최소 베팅 포인트 미만 입장 불가
+            UserVO user = authService.findByUid(userId);
+            GameRoomResponseDTO gameroom = gameRoomService.selectById(roomId);
+            if(user.getPoint_balance() < gameroom.getMin_bet()) {
+                session.close(CloseStatus.BAD_DATA);
+                return;
+            }
 		}
 
 		// 세션 등록
@@ -89,6 +91,7 @@ public class TurtleGameWebSocketHandler extends TextWebSocketHandler {
 			.build();
 
 		playerDAO.addPlayer(roomId, player);
+		gameRoomListWebSocket.broadcastMessage("enter");
 
 		// 입장 메시지 방송
 		Map<String, Object> data = new HashMap<>();
@@ -171,6 +174,7 @@ public class TurtleGameWebSocketHandler extends TextWebSocketHandler {
 
 		sessionService.removeSession(roomId, session);
 		playerDAO.removePlayer(roomId, userId);
+		gameRoomListWebSocket.broadcastMessage("exit");
 
 		// 플레이어가 0명일 때 방 삭제
 		List<TurtlePlayerDTO> players = playerDAO.getAll(roomId);

@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import com.bettopia.game.model.multi.turtle.PlayerDAO;
-import com.bettopia.game.model.multi.turtle.TurtlePlayerDTO;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -16,18 +14,16 @@ public class GameRoomDAO {
 
 	@Autowired
 	private SqlSession sqlSession;
-	@Autowired
-	private PlayerDAO playerDAO;
 
-	String namespace = "com.bpoint.gameroom.";
+    String namespace = "com.bpoint.gameroom.";
 
-	public List<GameRoomResponseDTO> selectAll(int offset, int size) {
-		Map<String, Integer> params = new HashMap<>();
-		params.put("offset", offset);
-		params.put("size", size);
-		List<GameRoomResponseDTO> roomlist = sqlSession.selectList(namespace + "selectAllWithPaging", params);
-		return roomlist;
-	}
+    public List<GameRoomResponseDTO> selectAll(int offset, int size) {
+        Map<String, Integer> params = new HashMap<>();
+        params.put("offset", offset);
+        params.put("size", size);
+        List<GameRoomResponseDTO> roomlist = sqlSession.selectList(namespace + "selectAllWithPaging", params);
+        return roomlist;
+    }
 
 	public List<GameRoomResponseDTO> selectAll() {
 		List<GameRoomResponseDTO> roomlist = sqlSession.selectList(namespace + "selectAll");
@@ -42,13 +38,13 @@ public class GameRoomDAO {
 	public String insertRoom(GameRoomRequestDTO.InsertGameRoomRequestDTO roomRequest, String userId) {
 		String uid = UUID.randomUUID().toString().replace("-", "");
 		GameRoomResponseDTO roomResponse = GameRoomResponseDTO.builder()
-						.uid(uid)
+                		.uid(uid)
 						.title(roomRequest.getTitle())
 						.min_bet(roomRequest.getMin_bet())
 						.host_uid(userId)
-						.game_uid(roomRequest.getGame_uid())
-						.build();
-		sqlSession.insert(namespace + "insert", roomResponse);
+                		.game_level_uid(roomRequest.getGame_level_uid())
+                		.build();
+        sqlSession.insert(namespace + "insert", roomResponse);
 		return uid;
 	}
 
@@ -56,7 +52,7 @@ public class GameRoomDAO {
 		GameRoomResponseDTO roomResponse = GameRoomResponseDTO.builder()
 				.uid(roomId)
 				.title(roomRequest.getTitle())
-				.game_uid(roomRequest.getGame_uid())
+                .game_level_uid(roomRequest.getGame_level_uid())
 				.build();
 		sqlSession.update(namespace + "update", roomResponse);
 		return roomId;
