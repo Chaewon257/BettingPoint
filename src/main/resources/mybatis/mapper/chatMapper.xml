@@ -4,7 +4,7 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.bpoint.chat">
-	
+	  
 	<select id="selectAll" resultType="chatDTO">
 		SELECT * FROM chatbot_qa;
 	</select> 
@@ -15,10 +15,10 @@
 	    WHERE uid = #{uid}
 	</select> 
 	
-	<select id="questiontByCate" parameterType="String" resultType="chatDTO">
+	<select id="questiontByMainCate" parameterType="String" resultType="chatDTO">
 		SELECT * 
 		FROM chatbot_qa
-    	WHERE TRIM(category) = #{category}
+    	WHERE TRIM(main_category) = #{main_category}
 	</select> 
 	
 	

@@ -16,9 +16,9 @@
 <body>
     <h2>🤖 반갑습니다. 아래 질문을 선택해주세요.</h2>
     <select id="categorySelect">
-		<option value="game">게임</option>
-		<option value="point">포인트</option>
-		<option value="etc">기타</option>
+		<option value="게임">게임</option>
+		<option value="포인트">포인트</option>
+		<option value="기타">기타</option>
 	</select>
 	<button id="questionAll">전체조회</button>
 	

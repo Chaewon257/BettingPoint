@@ -11,18 +11,26 @@ public class GameService {
     @Autowired
     private GameDAO gameDAO;
 
-    // 게임 리스트 조회
+    // 寃뚯엫 由ъ뒪�듃 議고쉶
     public List<GameResponseDTO> selectAll() {
         return gameDAO.selectAll();
     }
 
-    // 타입별 게임 조회
+    // ���엯蹂� 寃뚯엫 議고쉶
     public List<GameResponseDTO> selectByType(String type) {
         return gameDAO.selectByType(type);
     }
 
-    // 게임 상세 조회
+    // 寃뚯엫 �긽�꽭 議고쉶
     public GameResponseDTO selectById(String gameId) {
         return gameDAO.selectById(gameId);
     }
+    
+    // 寃뚯엫 �씠由꾩쑝濡� 議고쉶
+
+	  public List<GameResponseDTO> selectByName(String name) { 
+		  return gameDAO.selectByName(name);
+	  }
 }
+	 
+

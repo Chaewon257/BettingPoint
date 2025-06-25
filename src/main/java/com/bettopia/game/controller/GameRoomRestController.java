@@ -23,8 +23,8 @@ public class GameRoomRestController {
 
 	// 게임방 리스트 조회
 	@GetMapping("/list")
-	public List<GameRoomResponseDTO> selectAll() {
-		return gameRoomService.selectAll();
+	public List<GameRoomResponseDTO> selectAll(@RequestParam(defaultValue = "1") int page) {
+		return gameRoomService.selectAll(page);
 	}
 
 	// 게임방 상세 조회

@@ -37,6 +37,14 @@ public class UserRestController {
 		String userId = jwtUtil.getUserIdFromToken(token);
 		UserVO user = authService.findByUid(userId); // 또는 getUserByUid(userId)
 
-		return ResponseEntity.ok(Map.of("username", user.getUser_name()));
+		return ResponseEntity.ok(Map.of(
+									"user_name", user.getUser_name(),
+									"nickname", user.getNickname(),
+									"email", user.getEmail(),
+									"birth_date", user.getBirth_date(),
+									"phone_number", user.getPhone_number(),
+									"point_balance", user.getPoint_balance(),
+									"profile_img", user.getProfile_img()
+								));
 	}
 }

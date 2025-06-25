@@ -19,6 +19,7 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <c:if test="${pageType eq 'ingame'}">
   <link rel="stylesheet" href="${cpath}/resources/css/cointoss.css" />
+  <link rel="stylesheet" href="${cpath}/resources/css/turtlerun.css" />
 </c:if>
 <script src="https://cdn.tailwindcss.com"></script>
 <script type="text/javascript">
@@ -34,7 +35,6 @@
 					'gray-6' : '#757575',
 					'blue-1' : '#4A90E2',
 					'blue-2' : '#3F7AB6',
-					'blue-3' : '#A2C8E6',
 				},
 				fontSize : {
 					'ts-28' : [
