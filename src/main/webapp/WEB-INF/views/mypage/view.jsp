@@ -6,8 +6,8 @@
 <ui:layout pageName="Betting Point 마이페이지" pageType="main">
 	<jsp:attribute name="bodyContent">
 		<div class="grow flex flex-col items-center py-10">
-			<div class="w-full md:w-[90%] flex flex-col items-center gap-y-4">
-				<div class="w-full flex items-end gap-x-4 border-b-2 border-gray-1">
+			<div class="w-full md:w-[90%] flex flex-col items-center">
+				<div class="w-full flex items-end gap-x-4 mb-4">
 					<img alt="service image" src="${cpath}/resources/images/service_image_1.png" class="h-80">
 					<div class="grow mb-8 flex flex-col gap-4">
 						<div class="text-ts-18 sm:text-ts-20 md:text-ts-24 lg:text-ts-28 md:ml-2">마이페이지</div>
@@ -19,6 +19,7 @@
 						</div>
 					</div>
 				</div>
+				<div class="w-full h-[2px] bg-gray-1"></div>
 				<div id="mypage-tab-content" class="w-full">
 					<mypage:info></mypage:info>
 				</div>
