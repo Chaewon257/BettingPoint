@@ -11,7 +11,7 @@
 
 <script>
 	const cpath = "${cpath}";
-	const uid = "${board.uid}";
+	const boardId = "${boardId}";
 </script>
 
 <script src="${cpath}/resources/js/board.js"></script>
@@ -52,6 +52,8 @@ table.detail-table {
 }
 
 #likeBtn {
+	display: block;
+    margin: 20px auto;
 	background-color: #ff6b81;
 	color: white;
 	border: none;
@@ -71,11 +73,40 @@ table.detail-table {
 	margin-left: 8px;
 	font-weight: bold;
 }
+/* 수정 & 삭제 버튼 공통 스타일 */
+#btnEdit, #btnDelete {
+	background-color: #4a90e2;
+	color: white;
+	border: none;
+	padding: 12px 24px;
+	font-size: 16px;
+	border-radius: 30px;
+	cursor: pointer;
+	margin: 0 10px;
+	transition: background-color 0.3s ease, transform 0.1s ease;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+#btnEdit:hover, #btnDelete:hover {
+	background-color: #357ab8;
+	transform: translateY(-2px);
+}
+
+#btnDelete {
+	background-color: #ff4d4f;
+}
+
+#btnDelete:hover {
+	background-color: #d9363e;
+}
+
+#detailContent ul, #detailContent ol {
+  list-style-position: inside;
+}
 </style>
 </head>
 <body>
 	<h1 style="text-align: center;">게시글 상세보기</h1>
-
 
 	<!-- 상세정보 테이블 -->
 	<table class="detail-table">
@@ -113,18 +144,22 @@ table.detail-table {
 		</tr>
 	</table>
 
-	<!-- 좋아요 -->
-	<button id="likeBtn">좋아요</button>
-	<span id="likeCount">${board.like_count}</span>
-
 	<!-- 버튼 -->
+	<button id="likeBtn">좋아요</button>
 	<div id="actionButtons">
-		<button id="btnEdit">수정하기</button>
-		<button id="btnDelete">삭제하기</button>
+		<button id="btnEdit" style="display:none;">수정하기</button>
+		<button id="btnDelete" style="display:none;">삭제하기</button>
 	</div>
 
 	<div id="backButton">
 		<button onclick="location.href='${cpath}/board/list'">목록으로</button>
 	</div>
+<script>
+	$(function () {
+		
+		loadBoardDetail(boardId);
+	})
+	
+</script>
 </body>
 </html>
