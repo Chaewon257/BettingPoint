@@ -12,7 +12,7 @@
 
 <script>
 	const cpath = "${cpath}";
-	let currentPage= "${page}";
+	let currentPage = "${page}";
 	let totalPages = "${totalPages}";
 	let category = "${category}";
 	let sort = "${sort}";
@@ -120,8 +120,6 @@ th, td {
 </style>
 </head>
 <body>
-
-
 	<!-- 게시판 제목 + 등록 버튼 -->
 	<h1 style="text-align: center;">게시판</h1>
 
@@ -134,7 +132,8 @@ th, td {
 
 	<!-- 등록 버튼 + 정렬 버튼 한 줄 배치 -->
 	<div class="button-row">
-		<button class="write-btn" onclick="location.href='/board/insert'">게시글 등록</button>
+		<button class="write-btn" onclick="location.href='/board/insert'">게시글
+			등록</button>
 		<div id="sortButtons">
 			<button class="sort-btn" data-sort="like_count">👍좋아요</button>
 			<button class="sort-btn" data-sort="view_count">👀조회수</button>
