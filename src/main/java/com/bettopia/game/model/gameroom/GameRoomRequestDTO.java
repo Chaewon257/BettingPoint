@@ -14,7 +14,7 @@ public class GameRoomRequestDTO {
 	public static class InsertGameRoomRequestDTO {
 		private String title;
 		private int min_bet;
-		private String game_uid;
+		private String game_level_uid;
 	}
 
 	@Data
@@ -23,6 +23,6 @@ public class GameRoomRequestDTO {
 	@AllArgsConstructor
 	public static class UpdateGameRoomRequestDTO {
 		private String title;
-		private String game_uid;
+		private String game_level_uid;
 	}
 }
