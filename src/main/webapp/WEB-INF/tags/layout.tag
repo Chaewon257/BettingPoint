@@ -39,6 +39,7 @@
 					'blue-2' : '#3F7AB6',
 					'blue-3' : '#A2C8E6',
 					'blue-4' : '#D9E8F2',
+					'red-1' : '#EC6F6F',
 				},
 				fontSize : {
 					'ts-28' : [
