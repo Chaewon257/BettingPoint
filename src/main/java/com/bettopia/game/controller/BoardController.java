@@ -1,7 +1,5 @@
 package com.bettopia.game.controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.bettopia.game.model.board.BoardDTO;
 import com.bettopia.game.model.board.BoardService;
 
 @Controller
@@ -33,24 +30,18 @@ public class BoardController {
 		int totalCount = boardService.getCountByCategory(category);
 		int totalPages = (int) Math.ceil((double) totalCount / size);
 
-		// 카테고리 기준으로 게시글 목록 조회
-		List<BoardDTO> boards = boardService.getBoards(offset, size, category, sort);
-
-		model.addAttribute("boards", boards);
 		model.addAttribute("currentPage", page);
 		model.addAttribute("totalPages", totalPages);
 		model.addAttribute("category", category);
 		model.addAttribute("sort", sort);
 
-		return "board/boardList"; // JSP 경로
+		return "board/boardList"; 
 	}
 
 	// 게시글 상세 페이지로 이동
-	@GetMapping("/detail")
-	public String getBoardDetail(@RequestParam("uid") String uid, Model model) {
-
-		BoardDTO board = boardService.getBoardByUid(uid);
-		model.addAttribute("board", board);
+	@GetMapping("/detail/{boardId}")
+	public String getBoardDetail(@PathVariable("boardId") String boardId, Model model) {
+		model.addAttribute("boardId", boardId);
 		return "board/boardDetail";
 	}
 
@@ -60,19 +51,18 @@ public class BoardController {
 		return "board/boardInsert";
 	}
 
-	// 좋아요 
+	// 좋아요
 	@PostMapping("/like/{boardId}")
 	@ResponseBody
 	public String likeBoard(@PathVariable String boardId) {
 		boardService.incrementLikeCount(boardId);
 		return "success";
 	}
-	
+
 	// 게시글 수정 페이지로 이동
-	@GetMapping("/update")
-	public String showUpdatePage() {
+	@GetMapping("/update/{boardId}")
+	public String showUpdatePage(@PathVariable("boardId") String boardId, Model model) {
+	    model.addAttribute("boardId", boardId);
 	    return "board/boardUpdate";
 	}
-
-
 }
