@@ -14,7 +14,7 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 public class WebSocketConfig implements WebSocketConfigurer {
 
 	@Autowired
-	private TurtleGameWebSocketHandler turtleGameWebSocketHandler;
+	private GameRoomWebSocketHandler gameRoomWebSocketHandler;
 	@Autowired
 	private TurtleHandshakeInterceptor turtleHandshakeInterceptor;
 	@Autowired
@@ -22,7 +22,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
 
 	@Override
 	public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-		registry.addHandler(turtleGameWebSocketHandler, "/ws/game/turtle/**")
+		registry.addHandler(gameRoomWebSocketHandler, "/ws/game/turtle/**")
 				.setAllowedOrigins("*")
 				.addInterceptors(turtleHandshakeInterceptor);
 

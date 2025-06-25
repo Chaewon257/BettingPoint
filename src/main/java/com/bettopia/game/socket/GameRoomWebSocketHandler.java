@@ -24,7 +24,7 @@ import java.util.Map;
 
 // 웹소켓 메시지 처리
 @Component
-public class TurtleGameWebSocketHandler extends TextWebSocketHandler {
+public class GameRoomWebSocketHandler extends TextWebSocketHandler {
 
 	// 스프링 빈 사용
 	@Autowired
