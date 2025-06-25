@@ -1,10 +1,10 @@
 <%@ tag language="java" pageEncoding="UTF-8"%>
 
-<div data-content="info" class="tab-content w-full flex flex-col gap-y-8">
+<div data-content="info" class="tab-content w-full flex flex-col gap-y-8 my-4">
 	<div class="w-full flex flex-row gap-10 rounded-lg bg-gray-10 p-10">
 		<div class="flex flex-col gap-y-10">
 			<div class="w-72 h-72 rounded-full bg-white flex justify-center overflow-hidden">
-				<img id="profileImage" alt="default profile image" src="">
+				<img id="profileImage" alt="default profile image" src="/resources/images/profile_default_image.png">
 			</div>
 			<div class="grow flex flex-col items-center gap-y-2 rounded-xl bg-blue-4 p-4">
 				<div class="w-full flex items-center justify-between text-gray-6 text-ts-18 sm:text-ts-20 md:text-ts-24 lg:text-ts-28">
@@ -85,37 +85,40 @@
 		}
 	
 		getUserInfo(token)
-			.done(function (user) {
-				renderUserInfo(user);
-			})
+			.done(renderUserInfo)
 			.fail(function (xhr) {
 				if (xhr.status === 401) {
-					// accessToken 만료 → refreshToken으로 재발급
-					reissueToken(token)
-						.done(function (data) {
+					// 401일 경우, GlobalExceptionHandler에서 보낸 에러 메시지를 확인
+					const error = xhr.responseJSON?.error || "";
+					const message = xhr.responseJSON?.message || "로그인이 필요합니다.";
+						
+					console.warn(`[${error}] ${message}`);
+						
+					if (error === "SESSION_EXPIRED" || error === "INVALID_TOKEN") {
+						// 재발급 시도
+						reissueToken(token)
+							.done(function (data) {
 							localStorage.setItem('accessToken', data.accessToken);
-							// 새 토큰으로 다시 사용자 정보 요청
+							// 재요청
 							getUserInfo(data.accessToken)
-								.done(function (user) {
-									renderUserInfo(user);
-								})
+								.done(renderUserInfo)
 								.fail(function () {
-									alert("로그인이 필요합니다.");
-									console.error("토큰 발급 실패");
-							        window.location.href = "/"
-							        return;
-								});
+								alert("다시 로그인해주세요.");
+								window.location.href = "/";
+							});
 						})
 						.fail(function () {
+							alert("세션이 만료되었습니다. 다시 로그인해주세요.");
 							localStorage.removeItem('accessToken');
-							alert("로그인이 필요합니다.");
-					        window.location.href = "/"
-					        return;
+							window.location.href = "/";
 						});
+					} else {
+						alert(message);
+						window.location.href = "/";
+					}
 				} else {
-					alert("사용자 정보를 불러오는 것을 실패했습니다.");
-			        window.location.href = "/"
-			        return;
+						alert("사용자 정보를 불러오는 데 실패했습니다.");
+						window.location.href = "/";
 				}
 			});
 	
