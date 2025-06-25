@@ -16,4 +16,19 @@ public class MyPageController {
 	public String myPageInfo() {
 		return "/mypage/info";
 	}
+	
+	@GetMapping("/points")
+	public String myPoints() {
+		return "/mypage/points";
+	}
+	
+	@GetMapping("/games")
+	public String myGames() {
+		return "/mypage/games";
+	}
+	
+	@GetMapping("/questions")
+	public String myQuestions() {
+		return "/mypage/questions";
+	}
 }
