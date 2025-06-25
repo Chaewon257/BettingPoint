@@ -129,6 +129,12 @@ button[type="button"]:hover {
 			<button type="button" onclick="location.href='${cpath}/board/list'">목록으로</button>
 		</p>
 	</form>
-	<script>insertBoard();</script>
+<script>
+	$(function() {
+
+		setupInsertForm();
+	});
+</script>
+
 </body>
 </html>
