@@ -18,4 +18,8 @@
     WHERE game_uid = #{value}
   </select>
 
+  <select id="selectByRoomUid" resultType="GameLevelDTO" parameterType="String">
+    select * from game_level where uid = #{uid}
+  </select>
+
 </mapper>

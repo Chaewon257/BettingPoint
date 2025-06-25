@@ -17,4 +17,8 @@ public class GameLevelDAO {
     public List<GameLevelDTO> selectByGameUid(String gameUid) {
         return sqlSession.selectList(namespace + "selectByGameUid", gameUid);
     }
+
+    public GameLevelDTO selectByRoomUid(String levelId) {
+        return sqlSession.selectOne(namespace + "selectByRoomUid", levelId);
+    }
 }
