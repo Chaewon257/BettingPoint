@@ -20,8 +20,34 @@
 					</div>
 				</div>
 				<div id="mypage-tab-content" class="w-full">
+					<mypage:info></mypage:info>
 				</div>
 			</div>
 		</div>
+		<script type="text/javascript">
+			$(".tab-btn").on("click", function () {
+				const selectedTab = $(this).data("tab");
+				
+				// 버튼 스타일 업데이트
+				$(".tab-btn").removeClass("bg-blue-3").addClass("bg-blue-4 hover:bg-blue-3");
+				$(this).removeClass("bg-blue-4 hover:bg-blue-3").addClass("bg-blue-3");
+				
+				// 콘텐츠 영역 비우고 로딩
+				const contentContainer = $("#mypage-tab-content");
+				contentContainer.html('<div class="text-center py-8 text-gray-5">로딩 중...</div>');
+
+				// 선택된 탭에 따라 콘텐츠 요청
+				$.ajax({
+					url: `/mypage/\${selectedTab}`,
+					type: 'GET',
+					success: function (html) {
+						contentContainer.html(html);
+					},
+					error: function () {
+						contentContainer.html('<div class="text-red-500">콘텐츠 로딩 실패</div>');
+					}
+				});
+			});
+		</script>
 	</jsp:attribute>
 </ui:layout>
