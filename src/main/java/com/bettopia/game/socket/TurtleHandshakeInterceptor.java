@@ -15,7 +15,7 @@ import org.springframework.web.socket.server.HandshakeInterceptor;
 
 // HttpSession의 정보 WebSocketSession에 저장
 @Component
-public class HttpHandshakeInterceptor implements HandshakeInterceptor {
+public class TurtleHandshakeInterceptor implements HandshakeInterceptor {
 
 	@Autowired
 	AuthService authService;
