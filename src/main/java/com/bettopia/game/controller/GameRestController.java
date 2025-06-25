@@ -1,5 +1,7 @@
 package com.bettopia.game.controller;
 
+import com.bettopia.game.model.game.GameLevelDTO;
+import com.bettopia.game.model.game.GameLevelService;
 import com.bettopia.game.model.game.GameResponseDTO;
 import com.bettopia.game.model.game.GameService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,10 @@ public class GameRestController {
 	@Autowired
 	private GameService gameService;
 
+	
+	@Autowired
+	private GameLevelService gameLevelService;
+	
 	// 게임 리스트 조회
 	@GetMapping("/list")
 	public List<GameResponseDTO> selectAll() {
@@ -36,6 +42,11 @@ public class GameRestController {
 	@GetMapping("/by-name/{name}")
 	public List<GameResponseDTO> selectByName(@PathVariable String name) {
 		return gameService.selectByName(name);
+	}
+	
+	@GetMapping("/levels/by-game/{uid}")
+	public List<GameLevelDTO> selectLevelsByGame(@PathVariable String uid) {
+	    return gameLevelService.selectByGameUid(uid);
 	}
 
 }

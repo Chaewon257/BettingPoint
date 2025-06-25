@@ -4,11 +4,13 @@
 
  <ui:layout pageName="Coin Toss" pageType="ingame"> 
 	<jsp:attribute name="bodyContent">
+		<input type="hidden" id="gameUid"  value="${gameUid}"> 
 		<script src="${cpath}/resources/js/cointoss.js" defer></script>
-		<div class="container">
+		<div class="custom-container">
 			<div class="header">
 				<h1 class="title">🪙 Coin Toss</h1>
-				<button class="move-page">홈으로 이동하기</button>
+				<button class="move-home" onclick="location.href='/'">홈으로 이동하기
+				</button>
 			</div>
 	
 			<div class="card horizontal-layout">

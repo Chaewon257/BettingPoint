@@ -17,5 +17,6 @@
 		<typeAlias type="com.bettopia.game.model.chatbot.ChatQADTO" alias="chatDTO" />
 		<typeAlias type="com.bettopia.game.model.board.BoardDTO" alias="boardDTO" />
 		<typeAlias type="com.bettopia.game.model.game.GameResponseDTO" alias="gameDTO" />
+		<typeAlias type="com.bettopia.game.model.game.GameLevelDTO" alias="gamelevelDTO" />
   </typeAliases>
 </configuration>
