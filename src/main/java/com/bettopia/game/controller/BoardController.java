@@ -35,7 +35,7 @@ public class BoardController {
 		model.addAttribute("category", category);
 		model.addAttribute("sort", sort);
 
-		return "board/boardList"; 
+		return "board/boardList";
 	}
 
 	// 게시글 상세 페이지로 이동
@@ -62,7 +62,7 @@ public class BoardController {
 	// 게시글 수정 페이지로 이동
 	@GetMapping("/update/{boardId}")
 	public String showUpdatePage(@PathVariable("boardId") String boardId, Model model) {
-	    model.addAttribute("boardId", boardId);
-	    return "board/boardUpdate";
+		model.addAttribute("boardId", boardId);
+		return "board/boardUpdate";
 	}
 }
