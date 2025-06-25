@@ -17,6 +17,7 @@
 
 <script>
 	const cpath = "${cpath}";
+	const boardId = "${boardId}";
 </script>
 <script src="${cpath}/resources/js/board.js"></script>
 
@@ -129,6 +130,13 @@ button[type="button"]:hover {
 			<button type="button" onclick="location.href='${cpath}/board/list'">목록으로</button>
 		</p>
 	</form>
-	
+
+<script> 
+	$(function() {
+		
+		setupUpdateForm(boardId);
+	});
+</script>
+
 </body>
 </html>
