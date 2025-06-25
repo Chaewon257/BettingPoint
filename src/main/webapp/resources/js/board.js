@@ -1,42 +1,19 @@
-let currentPage = 1;
-let totalPages = 1;
 let currentCategory = "";  // 기본값은 페이지마다 다름
 let currentBoardUid = "";
 let currentSort = "";
 
 // ✅ 문서 로드 완료 시 페이지 종류에 따라 처리
 $(document).ready(function () {
-  const isListPage = $("#boardList").length > 0;
-  const isInsertPage = $("#insertForm").length > 0;
-  const isDetailPage = $("#detailTitle").length > 0;
-  const isUpdatePage = $("#updateForm").length > 0;
 
+  const isListPage = $("#boardList").length > 0;
+ 
   // 목록 페이지
   if (isListPage) {
     currentCategory = "free"; // 기본 카테고리
     filterByCategory(currentCategory);  // 게시글 목록 로딩
   }
 
-  // 등록 페이지
-  if (isInsertPage) {
-    setupInsertForm(); // 등록 관련 초기화
-  }
-
-  // 상세 페이지
-  if (isDetailPage) {
-    const params = new URLSearchParams(window.location.search);
-    const uid = params.get("uid");
-    if (uid) {
-      loadBoardDetail(uid); // 상세 정보 로딩
-    }
-   }
-   
-   // 수정 페이지
-   if (isUpdatePage) {
-    setupUpdateForm();
-    }
 });
-
 
 // ✅ 게시글 등록 페이지 전용 초기화
 function setupInsertForm() {
@@ -44,13 +21,47 @@ function setupInsertForm() {
     $('#summernote').summernote({
       height: 300,
       lang: "ko-KR",
-      placeholder: '최대 2048자까지 쓸 수 있습니다'
+      placeholder: '최대 2048자까지 쓸 수 있습니다',
+      // 이미지 첨부
+      callbacks: {	
+					onImageUpload : function(files) {
+						uploadSummernoteImageFile(files[0],this);
+					},
+					//이미지 복붙 처리
+					onPaste: function (e) {
+						var clipboardData = e.originalEvent.clipboardData;
+						if (clipboardData && clipboardData.items && clipboardData.items.length) {
+							var item = clipboardData.items[0];
+							if (item.kind === 'file' && item.type.indexOf('image/') !== -1) {
+								e.preventDefault();
+							}
+						}
+					}
+				}
+	
     });
+    //이미지 파일 업로드
+    function uploadSummernoteImageFile(file, editor) {
+		let data = new FormData();
+		data.append("image", file);
+		$.ajax({
+			data : data,
+			type : "POST",
+			url : "/api/board/image-upload",
+			contentType : false,
+			processData : false,
+			success : function(data) {
+            	//항상 업로드된 파일의 url이 있어야 한다.
+				$(editor).summernote('insertImage', data.url);
+			}
+		});
+	}
   }
 
   const token = localStorage.getItem("accessToken");
   if (!token) {
     alert("로그인이 필요합니다.");
+    location.href = "/board/list";
     return;
   }
 
@@ -63,7 +74,7 @@ function setupInsertForm() {
     };
 
     $.ajax({
-      url: cpath + "/api/board/boardinsert",
+      url: "/api/board/boardinsert",
       method: "POST",
       contentType: "application/json",
       headers: {
@@ -72,7 +83,7 @@ function setupInsertForm() {
       data: JSON.stringify(dto),
       success: function () {
         alert("게시글 등록 성공");
-        location.href = cpath + "/board/list";
+        location.href = "/board/list";
       },
       error: function () {
         alert("게시글 등록 실패");
@@ -89,24 +100,14 @@ function filterByCategory(category) {
   loadBoardList(currentPage, currentCategory);
 }
 
-// ✅ 선택된 카테고리 버튼에 active 클래스
+// ✅ 선택된 카테고리 버튼에 active 
 function setActiveCategoryButton(category) {
   $('#categoryButtons button').removeClass('active');
   $('#categoryButtons button').each(function () {
-    if ($(this).text().includes(categoryToKorean(category))) {
+    if ($(this).text().includes(translateCategory(category))) {
       $(this).addClass('active');
     }
   });
-}
-
-// ✅ 카테고리 영문 → 한글 변환
-function categoryToKorean(category) {
-  switch (category) {
-    case 'free': return '자유';
-    case 'info': return '정보';
-    case 'idea': return '아이디어';
-    default: return '';
-  }
 }
 
 // ✅ 게시글 목록 로드
@@ -117,26 +118,25 @@ function loadBoardList(page, category) {
   }
 
   $.ajax({
-    url: cpath + "/api/board/boardlist",
+    url: "/api/board/boardlist",
     type: "GET",
     data: {
       page: page,
       category: currentCategory,
       sort: currentSort
     },
-    success: function (response) {
-      totalPages = response.totalPages;
+    success: function (boards) {
       let listHtml = "";
       const startNo = (currentPage - 1) * 10 + 1;
 
-      response.boards.forEach(function (board, index) {
+      boards.forEach(function (board, index) {
         const createdDate = new Date(board.created_at);
         const formattedDate = createdDate.toLocaleDateString("ko-KR");
 
         listHtml += `
           <tr>
             <td>${startNo + index}</td>
-            <td><a href="${cpath}/board/detail?uid=${board.uid}">${board.title}</a></td>
+            <td><a href="${cpath}/board/detail/${board.uid}">${board.title}</a></td>
             <td>${translateCategory(board.category)}</td>
             <td>${board.user_uid}</td>
             <td>${board.view_count}</td>
@@ -178,28 +178,45 @@ function translateCategory(category) {
   }
 }
 
-// ✅ 게시글 상세 로딩
-function loadBoardDetail(uid) {
-  $.ajax({
-    url: cpath + "/api/board/boarddetail/" + uid,
-    type: "GET",
-    success: function (board) {
-      currentBoardUid = board.uid;
+// ✅ 게시글 상세 보기
+function loadBoardDetail(boardId) {
+const token = localStorage.getItem("accessToken");
 
+  $.ajax({
+    url: `/api/board/boarddetail/${boardId}`,
+    type: "GET",
+    headers: {
+          "Authorization": "Bearer " + token
+        },
+    success: function (board) {
+    	currentBoardUid = board.uid;
       $("#detailTitle").text(board.title);
       $("#detailAuthor").text(board.user_uid);
       $("#detailCategory").text(translateCategory(board.category));
       $("#detailContent").html(board.content);
       $("#detailViewCount").text(board.view_count);
       $("#detailLikeCount").text(board.like_count);
-
+	
       const createdDate = new Date(board.created_at);
       $("#detailCreatedAt").text(createdDate.toLocaleString("ko-KR"));
-
-      if (board.board_img) {
-        $("#detailImg").attr("src", board.board_img);
+		
+	
+	  // 2. 로그인한 사용자 토큰 확인
+      const token = localStorage.getItem("accessToken");
+      if (!token) {
+      // 로그인 안 한 경우 수정, 삭제 버튼 숨기기
+        $("#btnEdit").hide();
+        $("#btnDelete").hide();
+        return;
+      }
+      
+      // 3. 작성자와 로그인 사용자 비교
+      if (board.oner === true) {
+        $("#btnEdit").show();
+        $("#btnDelete").show();
       } else {
-        $("#detailImg").attr("alt", "이미지 없음");
+        $("#btnEdit").hide();
+        $("#btnDelete").hide();
       }
     },
     error: function () {
@@ -210,19 +227,23 @@ function loadBoardDetail(uid) {
 
 // ✅ 좋아요 버튼 이벤트
 $(document).on("click", "#likeBtn", function () {
+  
   if (!currentBoardUid) {
     alert("게시글 정보가 없습니다.");
     return;
   }
 
   $.ajax({
-    url: cpath + "/api/board/like/" + currentBoardUid,
+    url: "/api/board/like/" + currentBoardUid,
     method: "POST",
     success: function (res) {
       if (res === "success" || res === "") {
         let likeSpan = $("#likeCount");
-        let current = parseInt(likeSpan.text());
+        let likeSpan2 = $("#detailLikeCount");
+        let current = parseInt(likeSpan.text()) || 0;
+        let current2 = parseInt(likeSpan2.text()) || 0;
         likeSpan.text(current + 1);
+        likeSpan2.text(current2 + 1);
       }
     },
     error: function () {
@@ -249,53 +270,39 @@ $("#sortButtons").on("click", ".sort-btn", function () {
 
 // ✅ 수정하기 버튼, 수정 페이지로 이동
 $(document).on("click", "#btnEdit", function () {
-  const params = new URLSearchParams(window.location.search);
-  const uid = params.get("uid");
-
-  if (!uid) {
-    alert("잘못된 접근입니다.");
-    return;
-  }
-
-  location.href = cpath + "/board/update?uid=" + uid;
+  
+  location.href = `/board/update/${boardId}`;
 });
 
 // ✅ 수정 페이지 전용 초기화 함수
-function setupUpdateForm() {
+function setupUpdateForm(boardId) {
   // 1. summernote 초기화
   $('#summernote').summernote({
     height: 300,
     lang: 'ko-KR',
     placeholder: '최대 2048자까지 작성할 수 있습니다'
   });
-
-  // 2. URL에서 uid 파라미터 추출
-  const params = new URLSearchParams(window.location.search);
-  const uid = params.get("uid");
-
-  if (!uid) {
-    alert("잘못된 접근입니다.");
-    location.href = cpath + "/board/list";
-    return;
-  }
-
-  // 3. 기존 게시글 데이터 조회 (GET)
+  const token = localStorage.getItem("accessToken");
+  // 2. 기존 게시글 데이터 조회 (GET)
   $.ajax({
-    url: cpath + "/api/board/boarddetail/" + uid,
+    url: `/api/board/boarddetail/${boardId}`,
     method: "GET",
+    headers: {
+        'Authorization': 'Bearer ' + token
+      },
     success: function (board) {
-      // 4. 폼에 값 채워넣기
+      // 3. 폼에 값 채워넣기
       $("#title").val(board.title);
       $("#category").val(board.category);
       $("#summernote").summernote('code', board.content); // Summernote에는 HTML로 넣기
     },
     error: function () {
       alert("게시글 정보를 불러오지 못했습니다.");
-      location.href = cpath + "/board/list";
+      location.href = "/board/list";
     }
   });
 
-  // 5. 폼 제출 처리 (PUT)
+  // 4. 폼 제출 처리 (PUT)
   $("#updateForm").on("submit", function (e) {
     e.preventDefault();
 
@@ -306,14 +313,14 @@ function setupUpdateForm() {
     }
 
     const dto = {
-      uid: uid,
+      uid: boardId,
       title: $("#title").val(),
       category: $("#category").val(),
       content: $("#summernote").summernote("code")  // HTML 문자열
     };
 
     $.ajax({
-      url: cpath + "/api/board/boardupdate/" + uid,
+      url: cpath + "/api/board/boardupdate/" + boardId,
       method: "PUT",
       contentType: "application/json",
       headers: {
@@ -322,7 +329,7 @@ function setupUpdateForm() {
       data: JSON.stringify(dto),
       success: function () {
         alert("수정 성공!");
-        location.href = cpath + "/board/detail?uid=" + uid;
+        location.href = `/board/detail/${boardId}`;
       },
       error: function () {
         alert("수정 실패!");
@@ -333,9 +340,8 @@ function setupUpdateForm() {
 
 // ✅ 삭제 버튼 클릭 이벤트 등록
 $(document).on("click", "#btnDelete", function () {
-  // URL에서 uid 파라미터 추출 (예: 게시글 고유 ID)
-  const params = new URLSearchParams(window.location.search);
-  const uid = params.get("uid");
+  const pathSegments = window.location.pathname.split("/");
+  const uid = pathSegments[pathSegments.length - 1];
 
   // uid가 없으면 게시글 정보가 없다는 경고 후 종료
   if (!uid) {
@@ -358,7 +364,7 @@ $(document).on("click", "#btnDelete", function () {
 
   // ✅ 게시글 삭제 API 호출
   $.ajax({
-    url: cpath + "/api/board/boarddelete/" + uid, 
+    url: "/api/board/boarddelete/" + uid, 
     method: "DELETE",
     headers: {
       "Authorization": "Bearer " + token 
@@ -380,6 +386,15 @@ $(document).on("click", "#btnDelete", function () {
     }
   });
 });
+
+
+
+
+
+
+
+
+  
 
 
 
