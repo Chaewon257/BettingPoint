@@ -6,7 +6,7 @@
 <mapper namespace="com.bpoint.gameLevel">
 
   <select id="selectByGameUid"
-          resultType="com.bettopia.game.model.game.GameLevelDTO"
+          resultType="GameLevelDTO"
           parameterType="String">
     SELECT
       uid,
@@ -15,7 +15,7 @@
       probability,
       reward
     FROM game_level
-    WHERE game_uid = #{gameUidzd}
+    WHERE game_uid = #{value}
   </select>
 
 </mapper>

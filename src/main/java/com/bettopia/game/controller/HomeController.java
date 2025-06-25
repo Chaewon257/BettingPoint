@@ -34,9 +34,6 @@ public class HomeController {
 		
 		model.addAttribute("serverTime", formattedDate );
 		
-	    String gameUid = "f47ac10b58cc4372a5670e02b2c3d479"; 
-	    model.addAttribute("gameUid", gameUid);
-
 		return "home";
 	}
 	

@@ -120,8 +120,15 @@ $(document).ready(function () {
 								<a href="/login" class="text-black"><span
 									class="underline font-semibold">로그인</span> 후 다양한 서비스를 이용해보세요</a>
 							</div>
-							<a href="/solo/cointoss?gameUid=${gameUid}"
-								class="text-black text-base hover:text-blue-1 hover:font-semibold">
+							<form id="gameForm" action="/solo/cointoss" method="POST"
+								style="display: none;">
+								<input type="hidden" name="gameId"
+									value="f47ac10b58cc4372a5670e02b2c3d479" />
+							</form>
+
+							<a href="#"
+								class="text-black text-base hover:text-blue-1 hover:font-semibold"
+								onclick="document.getElementById('gameForm').submit(); return false;">
 								개인게임 </a> <a href="/gameroom"
 								class="text-black text-base hover:text-blue-1 hover:font-semibold">단체게임</a>
 							<a href="/board"

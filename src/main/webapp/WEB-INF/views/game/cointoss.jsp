@@ -4,7 +4,7 @@
 
  <ui:layout pageName="Coin Toss" pageType="ingame"> 
 	<jsp:attribute name="bodyContent">
-		<input type="hidden" id="gameUid"  value="${param.gameUid}"> 
+		<input type="hidden" id="gameUid"  value="${gameUid}"> 
 		<script src="${cpath}/resources/js/cointoss.js" defer></script>
 		<div class="custom-container">
 			<div class="header">

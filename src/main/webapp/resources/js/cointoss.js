@@ -54,16 +54,18 @@ function initializeGame() {
   
 }
 
+// 난이도 설정 데이터를 서버에서 불러옴
 function loadDifficultySettings() {
   const gameUid = document.getElementById("gameUid").value;
-
-  $.ajax({
+  console.log("받아온 데이터:", gameUid); 
+ 
+ $.ajax({
     url: '/api/game/levels/by-game/' + gameUid,
     type: 'GET',
     dataType: 'json',
     success: function(gameLevels) {
     
-    console.log("받아온 데이터:", gameLevels); //여기 반드시 확인!
+    console.log("받아온 데이터:", gameLevels); 
     
       updateDifficultyDisplay(gameLevels);
     
@@ -72,6 +74,7 @@ function loadDifficultySettings() {
       showErrorMessage('난이도 정보를 불러올 수 없습니다');
     }
   });
+ 
 }
 
 
@@ -85,7 +88,7 @@ function updateDifficultyDisplay(gameData) {
         if (game.level === 'HARD') {
             difficultyKey = 'hard';
         } else if (game.level === 'NORMAL') {
-            difficultyKey = 'normal'; // JSP에서는 normal로 되어있음
+            difficultyKey = 'normal'; 
         } else if (game.level === 'EASY') {
             difficultyKey = 'easy';
         }
