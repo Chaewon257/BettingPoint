@@ -11,4 +11,9 @@ public class MyPageController {
 	public String goLoginPage() {
 		return "/mypage/view";
 	}
+	
+	@GetMapping("/info")
+	public String myPageInfo() {
+		return "/mypage/info";
+	}
 }
