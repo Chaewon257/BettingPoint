@@ -51,3 +51,92 @@
 		<button class="h-full bg-blue-2 hover:bg-blue-5 rounded-lg text-white shadow-[2px_2px_8px_rgba(0,0,0,0.1)] text-ts-14 sm:text-ts-18 md:text-ts-20 lg:text-ts-24 w-24 sm:w-32 md:w-48 lg:w-60 py-2">수정하기</button>
 	</div>
 </div>
+
+<script type="text/javascript">
+	$(document).ready(function () {
+		const token = localStorage.getItem('accessToken');
+		
+		if (!token) {
+	        alert("로그인이 필요합니다.");
+	        window.location.href = "/"
+	        return;
+	    }
+	
+		function getUserInfo(accessToken) {
+			return $.ajax({
+				url: '/api/user/me',
+				method: 'GET',
+				headers: {
+					'Authorization': 'Bearer ' + accessToken
+				},
+				xhrFields: { withCredentials: true }
+			});
+		}
+	
+		function reissueToken(oldAccessToken) {
+			return $.ajax({
+				url: '/api/auth/reissue',
+				method: 'POST',
+				headers: {
+					'Authorization': 'Bearer ' + oldAccessToken
+				},
+				xhrFields: { withCredentials: true }
+			});
+		}
+	
+		getUserInfo(token)
+			.done(function (user) {
+				renderUserInfo(user);
+			})
+			.fail(function (xhr) {
+				if (xhr.status === 401) {
+					// accessToken 만료 → refreshToken으로 재발급
+					reissueToken(token)
+						.done(function (data) {
+							localStorage.setItem('accessToken', data.accessToken);
+							// 새 토큰으로 다시 사용자 정보 요청
+							getUserInfo(data.accessToken)
+								.done(function (user) {
+									renderUserInfo(user);
+								})
+								.fail(function () {
+									alert("로그인이 필요합니다.");
+									console.error("토큰 발급 실패");
+							        window.location.href = "/"
+							        return;
+								});
+						})
+						.fail(function () {
+							localStorage.removeItem('accessToken');
+							alert("로그인이 필요합니다.");
+					        window.location.href = "/"
+					        return;
+						});
+				} else {
+					alert("사용자 정보를 불러오는 것을 실패했습니다.");
+			        window.location.href = "/"
+			        return;
+				}
+			});
+	
+		function renderUserInfo(user) {
+			if (!user) return;
+			
+			const birthDate = new Date(user.birth_date);
+
+			// yyyy-MM-dd 포맷으로 변환
+			const yyyy = birthDate.getFullYear();
+			const mm = String(birthDate.getMonth() + 1).padStart(2, '0');
+			const dd = String(birthDate.getDate()).padStart(2, '0');
+			const formattedDate = `\${yyyy}-\${mm}-\${dd}`;
+			
+			$("#email").val(user.email);
+            $("#name").val(user.user_name);
+            $("#nickname").val(user.nickname);
+            $("#birthDate").val(formattedDate);
+            $("#phoneNumber").val(user.phone_number);
+            $("#pointBalance").text(user.point_balance || "0");
+            $("#profileImage").attr("src", user.profile_img || "/resources/images/profile_default_image.png");
+		}
+	});
+</script>
