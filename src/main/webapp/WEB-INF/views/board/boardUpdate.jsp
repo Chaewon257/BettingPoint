@@ -131,12 +131,12 @@ button[type="button"]:hover {
 		</p>
 	</form>
 
-<script> 
-	$(function() {
-		
-		setupUpdateForm(boardId);
-	});
-</script>
+	<script>
+		$(function() {
+
+			setupUpdateForm(boardId);
+		});
+	</script>
 
 </body>
 </html>
