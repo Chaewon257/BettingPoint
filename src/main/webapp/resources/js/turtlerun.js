@@ -31,43 +31,54 @@ document.getElementById('trackContainer').style.height = trackHeight + 'px';
 let turtleGame = null;
 
 function connectWebSocket() {
-    // WebSocket 연결 및 메시지 핸들러 등록 (초기화 시)
-    ws = new WebSocket(`ws://${location.host}/ws/game/turtle/${roomId}?token=${encodeURIComponent(token)}`);
+    
+    fetch(`/api/multi/${roomId}/info`)
+        .then(response => response.json())
+        .then(data => {
+            const roomId = data.roomId;
+            const token = data.token;
+            console.log("roomId : ", roomId, "token : ", token);
+    
+        // WebSocket 연결 및 메시지 핸들러 등록 (초기화 시)
+        ws = new WebSocket(`ws://${location.host}/ws/game/turtle/${roomId}?token=${encodeURIComponent(token)}`);
 
-    ws.onopen = function() {
-        console.log("WS 연결 성공")
-    };
+        ws.onopen = function() {
+            console.log("WS 연결 성공")
+        };
 
-    ws.onmessage = function(event) {
-        const msg = JSON.parse(event.data);
+        ws.onmessage = function(event) {
+            const msg = JSON.parse(event.data);
 
-        if (msg.type === "init") {
-            // 게임 생성
-            if(!turtleGame) {
-                turtleGame = new TurtleRacingGame(msg);
+            if (msg.type === "init") {
+                // 게임 생성
+                if(!turtleGame) {
+                    turtleGame = new TurtleRacingGame(msg);
+                }
             }
-        }
-        // 경기 중 위치 업데이트
-        if(msg.type === "race_update" && turtleGame) {
-            turtleGame.setPositions(msg.positions);
-        }
-        // 경기 종료
-        if(msg.type === "race_finish" && turtleGame) {
-            turtleGame.finishRace(msg);
-        }
-        // 결과 메세지
-        if(msg.type === "race_result") {
-            // 1. 결과 모달에 필요한 정보
-            showResultModal({
-                winner: msg.winner,
-                didwin: msg.yourResult.didwin,
-                pointChange: msg.yourResult.pointChange,
-                points: msg.yourResult.points,
-                bet: msg.yourResult.bet,
-                selectedTurtle: msg.yourResult.selectedTurtle
-            });
-        }
-    };
+            // 경기 중 위치 업데이트
+            if(msg.type === "race_update" && turtleGame) {
+                turtleGame.setPositions(msg.positions);
+            }
+            // 경기 종료
+            if(msg.type === "race_finish" && turtleGame) {
+                turtleGame.finishRace(msg);
+            }
+            // 결과 메세지
+            if(msg.type === "race_result") {
+                // 1. 결과 모달에 필요한 정보
+                showResultModal({
+                    winner: msg.winner,
+                    didwin: msg.yourResult.didwin,
+                    pointChange: msg.yourResult.pointChange,
+                    points: msg.yourResult.points,
+                    bet: msg.yourResult.bet,
+                    selectedTurtle: msg.yourResult.selectedTurtle
+                });
+            }
+
+            // ... (race_update, race_finish 등 다른 메시지도 같이 처리)
+        };
+    });
 }
 
 function showCountdownOverlay(startNum, callback) {
