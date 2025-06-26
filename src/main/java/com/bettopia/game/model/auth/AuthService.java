@@ -26,6 +26,9 @@ public class AuthService {
 	@Autowired
 	private JWTUtil jwtUtil;
 
+	@Autowired
+	private UserDAO userDAO;
+
 	private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 	
 	// 로그인 요청 검증
@@ -112,5 +115,13 @@ public class AuthService {
 				.build();
 		
 		loginDAO.insertUser(user);
+	}
+
+	public void updateUser(UserVO userRequest, String userId) {
+		userDAO.updateUser(userRequest, userId);
+	}
+
+	public void pointCharge(int point, String userId) {
+		userDAO.pointCharge(point, userId);
 	}
 }
