@@ -10,7 +10,7 @@
 		<span class="col-span-2">날짜</span>
 	</div>
 	<div class="grid grid-cols-1 grid-rows-10 border-b-2 border-gray-7 mb-6">
-		<div class="p-4 grid grid-cols-12 text-center border-b border-gray-1">
+		<div class="p-4 grid grid-cols-12 items-center text-center border-b border-gray-1">
 			<span class="font-light">1</span>
 			<span class="col-span-3 text-blue-1">+1000</span>
 			<span class="col-span-2 font-light">11000</span>
@@ -18,7 +18,7 @@
 			<span class="col-span-3 font-light"></span>
 			<span class="col-span-2 font-light">2025.06.23</span>
 		</div>
-		<div class="p-4 grid grid-cols-12 text-center border-b border-gray-1">
+		<div class="p-4 grid grid-cols-12 items-center text-center border-b border-gray-1">
 			<span class="font-light">2</span>
 			<span class="col-span-3 text-red-1">-2000</span>
 			<span class="col-span-2 font-light">9000</span>
@@ -26,7 +26,7 @@
 			<span class="col-span-3 font-light">배달의 민족</span>
 			<span class="col-span-2 font-light">2025.06.24</span>
 		</div>
-		<div class="p-4 grid grid-cols-12 text-center border-b border-gray-1">
+		<div class="p-4 grid grid-cols-12 items-center text-center border-b border-gray-1">
 			<span class="font-light">3</span>
 			<span class="col-span-3 text-blue-1">+4000</span>
 			<span class="col-span-2 font-light">13000</span>
@@ -34,7 +34,7 @@
 			<span class="col-span-3 font-light">Coin Toss</span>
 			<span class="col-span-2 font-light">2025.06.25</span>
 		</div>
-		<div class="p-4 grid grid-cols-12 text-center border-b border-gray-1">
+		<div class="p-4 grid grid-cols-12 items-center text-center border-b border-gray-1">
 			<span class="font-light">4</span>
 			<span class="col-span-3 text-red-1">-3000</span>
 			<span class="col-span-2 font-light">10000</span>
@@ -42,12 +42,12 @@
 			<span class="col-span-3 font-light">Turtle Run</span>
 			<span class="col-span-2 font-light">2025.06.23</span>
 		</div>
-		<div class="p-4 grid grid-cols-12 text-center border-b border-gray-1"></div>
-		<div class="p-4 grid grid-cols-12 text-center border-b border-gray-1"></div>
-		<div class="p-4 grid grid-cols-12 text-center border-b border-gray-1"></div>
-		<div class="p-4 grid grid-cols-12 text-center border-b border-gray-1"></div>
-		<div class="p-4 grid grid-cols-12 text-center border-b border-gray-1"></div>
-		<div class="p-4 grid grid-cols-12 text-center border-b border-gray-1"></div>
+		</div>
+		<div class="p-4 grid grid-cols-12 items-center text-center border-b border-gray-1"></div>
+		<div class="p-4 grid grid-cols-12 items-center text-center border-b border-gray-1"></div>
+		<div class="p-4 grid grid-cols-12 items-center text-center border-b border-gray-1"></div>
+		<div class="p-4 grid grid-cols-12 items-center text-center border-b border-gray-1"></div>
+		<div class="p-4 grid grid-cols-12 items-center text-center border-b border-gray-1"></div>
 	</div>
 	<div class="flex justify-center items-center">
 		<div class="flex items-center">
