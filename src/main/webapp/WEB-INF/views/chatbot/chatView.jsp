@@ -25,6 +25,15 @@
 	        background-color: #007bff;
 	        color: white;
 	    }
+	    
+	    .question.active {
+		    color: #fff;
+		    background-color: #007bff;
+		    padding: 4px 8px;
+		    border-radius: 5px;
+		    text-decoration: none;
+		}
+	    
 	</style>
 </head>
 <body>

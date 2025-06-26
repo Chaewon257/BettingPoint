@@ -45,6 +45,11 @@
 	    $(document).on("click", ".question", function (e) {
 	        e.preventDefault();
 	        const uid = $(this).data("uid");
+	        
+	        // 모든 질문에서 active 제거
+	        $(".question").removeClass("active");
+	        // 선택한 질문에만 active 추가
+	        $(this).addClass("active");
 	
 	        $.ajax({
 	            url: `/api/chat/answer/${uid}`,
