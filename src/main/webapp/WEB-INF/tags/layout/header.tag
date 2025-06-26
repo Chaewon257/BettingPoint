@@ -88,7 +88,7 @@
 
 				// 토큰 없을 경우
 				if (!token) {
-					alert(`"${protectedRoutes[target]}"은(는) 로그인 후 이용 가능합니다.`);
+					alert(`"\${protectedRoutes[target]}"은(는) 로그인 후 이용 가능합니다.`);
 					e.preventDefault();
 					return;
 				}
@@ -133,7 +133,7 @@
 							<div id="userMobileMenu" class="bg-gray-2 py-5 w-full flex items-center justify-center relative md:hidden">
 								<a href="/login" class="text-black"><span class="underline font-semibold">로그인</span> 후 다양한 서비스를 이용해보세요</a>
 							</div>
-							<a href="solo/cointoss" class="text-black text-base hover:text-blue-1 hover:font-semibold">개인게임</a>
+							<a href="/solo/cointoss" class="text-black text-base hover:text-blue-1 hover:font-semibold">개인게임</a>
 							<a href="/gameroom" class="text-black text-base hover:text-blue-1 hover:font-semibold">단체게임</a>
 							<a href="/board" class="text-black text-base hover:text-blue-1 hover:font-semibold">게시판</a>
 							<a href="/support" class="text-black text-base hover:text-blue-1 hover:font-semibold">고객지원</a>
