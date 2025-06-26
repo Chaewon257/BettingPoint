@@ -2,6 +2,7 @@ package com.bettopia.game.controller;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import com.bettopia.game.model.auth.AuthService;
 import com.bettopia.game.socket.GameRoomListWebSocket;
@@ -59,5 +60,15 @@ public class GameRoomRestController {
 		String userId = authService.validateAndGetUserId(authHeader);
 		gameRoomService.deleteRoom(roomId, userId);
 		gameRoomListWebSocket.broadcastMessage("delete");
+	}
+
+	// 게임 시작
+	@PostMapping("/start/{roomId}")
+	public void startGame(@PathVariable String roomId, @RequestBody Map<String, String> request) {
+		String newStatus = request.get("status");
+		GameRoomResponseDTO room = gameRoomService.selectById(roomId);
+		if(!room.getStatus().equals(newStatus)) {
+			gameRoomService.updateStatus(roomId, newStatus);
+		}
 	}
 }
