@@ -2,48 +2,48 @@
 
 <%@ taglib prefix="ui" tagdir="/WEB-INF/tags"%>
 
-<div data-content="questions" class="tab-content w-full flex flex-col">
+<div data-content="questions" class="tab-content w-full flex flex-col mb-20 text-xs sm:text-sm">
 	<div class="p-4 grid grid-cols-12 text-center text-gray-3 font-semibold border-b-2 border-gray-7 border-double">
 		<span>번호</span>
-		<span class="col-span-6">문의 내용</span>
-		<span class="">상태</span>
+		<span class="col-span-5">문의 내용</span>
+		<span class="col-span-2">상태</span>
 		<span class="col-span-2">상세</span>
 		<span class="col-span-2">날짜</span>
 	</div>
 	<div class="grid grid-cols-1 grid-rows-10 border-b-2 border-gray-7 mb-6">
-		<div class="p-4 grid grid-cols-12 text-center border-b border-gray-1">
+		<div class="p-4 grid grid-cols-12 items-center text-center border-b border-gray-1">
 			<span class="font-light">1</span>
-			<span class="col-span-6 truncate">Betting Point 게임이 이렇게 재미있어도 되는건가요? 이거 만든 사람들 누구?</span>
-			<span class="font-light">대기중</span>
+			<span class="col-span-5 truncate">Betting Point 게임이 이렇게 재미있어도 되는건가요? 이거 만든 사람들 누구?</span>
+			<span class="col-span-2 font-light">대기중</span>
 			<button class="col-span-2 underline">상세보기</button>
 			<span class="col-span-2 font-light">2025.06.25</span>
 		</div>
-		<div class="p-4 grid grid-cols-12 text-center border-b border-gray-1">
+		<div class="p-4 grid grid-cols-12 items-center text-center border-b border-gray-1">
 			<span class="font-light">2</span>
-			<span class="col-span-6 truncate">돈을 다 잃었는데 어째요...ㅠ</span>
-			<span class="font-light">대기중</span>
+			<span class="col-span-5 truncate">돈을 다 잃었는데 어째요...ㅠ</span>
+			<span class="col-span-2 font-light">대기중</span>
 			<button class="col-span-2 underline">상세보기</button>
 			<span class="col-span-2 font-light">2025.06.24</span>
 		</div>
-		<div class="p-4 grid grid-cols-12 text-center border-b border-gray-1">
+		<div class="p-4 grid grid-cols-12 items-center text-center border-b border-gray-1">
 			<span class="font-light">3</span>
-			<span class="col-span-6 truncate">게임 방법은 어떻게 확인하나요</span>
-			<span class="font-light">답변완료</span>
+			<span class="col-span-5 truncate">게임 방법은 어떻게 확인하나요</span>
+			<span class="col-span-2 font-light">답변완료</span>
 			<button class="col-span-2 underline">상세보기</button>
 			<span class="col-span-2 font-light">2025.06.23</span>
 		</div>
-		<div class="p-4 grid grid-cols-12 text-center border-b border-gray-1">
+		<div class="p-4 grid grid-cols-12 items-center text-center border-b border-gray-1">
 			<span class="font-light">4</span>
-			<span class="col-span-6 truncate">포인트 충전을 어떻게 해야하나요??</span>
-			<span class="font-light">답변완료</span>
+			<span class="col-span-5 truncate">포인트 충전을 어떻게 해야하나요??</span>
+			<span class="col-span-2 font-light">답변완료</span>
 			<button class="col-span-2 underline" onclick="document.getElementById('questionsDetailModal').classList.remove('hidden')">상세보기</button>
 			<span class="col-span-2 font-light">2025.06.23</span>
 		</div>
-		<div class="p-4 grid grid-cols-12 text-center border-b border-gray-1"></div>
-		<div class="p-4 grid grid-cols-12 text-center border-b border-gray-1"></div>
-		<div class="p-4 grid grid-cols-12 text-center border-b border-gray-1"></div>
-		<div class="p-4 grid grid-cols-12 text-center border-b border-gray-1"></div>
-		<div class="p-4 grid grid-cols-12 text-center border-b border-gray-1"></div>
+		<div class="p-4 grid grid-cols-12 items-center text-center border-b border-gray-1"></div>
+		<div class="p-4 grid grid-cols-12 items-center text-center border-b border-gray-1"></div>
+		<div class="p-4 grid grid-cols-12 items-center text-center border-b border-gray-1"></div>
+		<div class="p-4 grid grid-cols-12 items-center text-center border-b border-gray-1"></div>
+		<div class="p-4 grid grid-cols-12 items-center text-center border-b border-gray-1"></div>
 	</div>
 	<div class="flex justify-center items-center">
 		<div class="flex items-center">
