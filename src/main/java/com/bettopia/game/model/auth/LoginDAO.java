@@ -50,4 +50,9 @@ public class LoginDAO {
 	public int countByPhoneNumber(String phone_number) {
 		return sqlSession.selectOne(NAMESPACE + "countByPhoneNumber", phone_number);
 	}
+	
+	public void updateUserPoint(UserVO user) {
+	    sqlSession.update(NAMESPACE + "updateUserPoint", user);
+	}
+
 }
