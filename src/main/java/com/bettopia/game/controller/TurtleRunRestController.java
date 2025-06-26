@@ -11,9 +11,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.bettopia.game.model.auth.AuthService;
 import com.bettopia.game.model.multi.turtle.TurtleRunResultDTO;
 //import com.bettopia.game.model.multi.turtle.TurtleRunService;
 
@@ -21,17 +23,18 @@ import com.bettopia.game.model.multi.turtle.TurtleRunResultDTO;
 @RequestMapping("/api/multi")
 public class TurtleRunRestController {
 
-	// πÊ ≥ª∫Œ ¡§∫∏ ∞°¡Æø¿±‚
-	@GetMapping("/{roomId}/info")
-	public Map<String, Object> getRoomInfo(@PathVariable String roomId, HttpSession session) {
+	@Autowired
+	AuthService authService;
+	
+	// ÏõπÏÜåÏºì Ïó∞Í≤∞ÏùÑ ÏúÑÌïú Ï†ïÎ≥¥ Î∞õÍ∏∞
+	@GetMapping("/gameroom/detail/{roomId}/info")
+	public Map<String, Object> getRoomInfo(@PathVariable String roomId, @RequestHeader("Authorization") String authHeader) {
 		Map<String, Object> map = new HashMap<>();
+		String userId = authService.validateAndGetUserId(authHeader);
+		
 		map.put("roomId", roomId);
-		map.put("token", session.getAttribute("token"));
+		map.put("userId", userId);
+		
 		return map;
 	}
-    @PostMapping("/turtlerun/result")
-    public ResponseEntity<?> saveTurtleRunResult(@RequestBody TurtleRunResultDTO dto) {
-//        turtleRunService.processGameResult(dto); // DTO∑Œ ∞·∞˙ ¿˙¿Â
-        return ResponseEntity.ok().build(); // ∂«¥¬ ¿˙¿Âµ» ¡§∫∏ π›»Ø
-    }
 }

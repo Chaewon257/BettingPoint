@@ -32,12 +32,21 @@ let turtleGame = null;
 
 function connectWebSocket() {
     
-    fetch(`/api/multi/${roomId}/info`)
-        .then(response => response.json())
-        .then(data => {
+    // roomId는 URL이나 다른 방식으로 먼저 준비
+    const urlParts = window.location.pathname.split('/');
+    const roomId = urlParts[urlParts.length - 2];
+    const token = localStorage.getItem("accessToken");
+
+    $.ajax({
+        url: `/api/multi/gameroom/detail/${roomId}/info`,
+        type: "GET",
+        dataType: "json",
+        headers: {
+            'Authorization': 'Bearer ' + token
+        },
+        success: function(data) {
             const roomId = data.roomId;
-            const token = data.token;
-            console.log("roomId : ", roomId, "token : ", token);
+            const userId = data.userId;
     
         // WebSocket 연결 및 메시지 핸들러 등록 (초기화 시)
         ws = new WebSocket(`ws://${location.host}/ws/game/turtle/${roomId}?token=${encodeURIComponent(token)}`);
@@ -78,7 +87,12 @@ function connectWebSocket() {
 
             // ... (race_update, race_finish 등 다른 메시지도 같이 처리)
         };
-    });
+    },
+    error: function(xhr, status, err) {
+        alert("방 정보 조회에 실패했습니다.");
+        console.error(err);
+    }
+});
 }
 
 function showCountdownOverlay(startNum, callback) {

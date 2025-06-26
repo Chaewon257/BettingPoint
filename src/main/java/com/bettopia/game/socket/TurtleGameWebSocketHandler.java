@@ -7,6 +7,8 @@ import com.bettopia.game.model.gameroom.GameRoomResponseDTO;
 import com.bettopia.game.model.gameroom.GameRoomService;
 import com.bettopia.game.model.multi.turtle.PlayerDAO;
 import com.bettopia.game.model.multi.turtle.TurtlePlayerDTO;
+import com.bettopia.game.model.multi.turtle.TurtleRunResultDTO;
+//import com.bettopia.game.model.multi.turtle.TurtleRunService;
 import com.bettopia.game.model.multi.turtle.SessionService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -95,7 +97,7 @@ public class TurtleGameWebSocketHandler extends TextWebSocketHandler {
 		data.put("userId", userId);
 		broadcastMessage("enter", roomId, data);
 	}
-
+	
 	private void broadcastMessage(String type, String roomId, Map<String, Object> data) throws IOException {
 		// 웹소켓 메시지 전송
 		List<WebSocketSession> sessions = sessionService.getSessions(roomId);
@@ -153,6 +155,31 @@ public class TurtleGameWebSocketHandler extends TextWebSocketHandler {
 			case "ready":
 				Boolean isReady = json.get("isReady").asBoolean();
 				player.setReady(isReady);
+				break;
+			case "race_finish":
+				TurtleRunResultDTO dto = new TurtleRunResultDTO();
+				dto.setUser_uid(userId);
+				dto.setRoomId(roomId);
+				dto.setWinner(json.get("winner").asInt());
+				dto.setPoints(json.get("points").asInt());
+				dto.setBet(json.get("bet").asInt());
+				dto.setPointChange(json.get("pointChange").asInt());
+				
+				 // 1. 결과 저장 (Service 호출)
+//			    turtleRunService.processGameResult(dto);
+
+			    // 2. 결과 메시지 생성 (모달에 보여줄 정보 등)
+			    Map<String, Object> resultMsg = new HashMap<>();
+			    resultMsg.put("type", "race_result");
+			    resultMsg.put("winner", dto.getWinner());
+			    resultMsg.put("points", dto.getPoints());
+			    resultMsg.put("pointsChange", dto.getPointChange());
+			    resultMsg.put("bet", dto.getBet());
+			    resultMsg.put("userId", dto.getUser_uid());
+			    resultMsg.put("roomId", dto.getRoomId());
+
+			    // 3. 방 전체에 결과 broadcast
+			    broadcastMessage("race_result", roomId, resultMsg);
 				break;
 		}
 

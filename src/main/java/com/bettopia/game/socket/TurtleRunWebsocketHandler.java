@@ -8,7 +8,6 @@ import com.bettopia.game.model.gameroom.GameRoomService;
 import com.bettopia.game.model.multi.turtle.PlayerDAO;
 import com.bettopia.game.model.multi.turtle.TurtlePlayerDTO;
 import com.bettopia.game.model.multi.turtle.TurtleRunResultDTO;
-//import com.bettopia.game.model.multi.turtle.TurtleRunService;
 import com.bettopia.game.model.multi.turtle.SessionService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -30,11 +29,11 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-// ÀüÃ¼ ¸Ş½ÃÁö Ã³¸®
+//ì›¹ì†Œì¼“ ë©”ì‹œì§€ ì²˜ë¦¬
 @Component
 public class TurtleRunWebsocketHandler extends TextWebSocketHandler {
 
-	// ½ºÇÁ¸µ ºó »ç¿ë
+	// ìŠ¤í”„ë§ ë¹ˆ ì‚¬ìš©
 	@Autowired
 	private PlayerDAO playerDAO;
 	@Autowired
@@ -45,19 +44,14 @@ public class TurtleRunWebsocketHandler extends TextWebSocketHandler {
 	private GameRoomService gameRoomService;
     @Autowired
     private AuthService authService;
-//    @Autowired
-//    private TurtleRunService turtleRunService; 
 
- // [1] °¢ ¹æº° ÃÖ½Å positions ÀúÀå ¸Ê
     private final Map<String, List<Double>> latestPositions = new ConcurrentHashMap<>();
-    // [2] °¢ ¹æº° ºê·ÎµåÄ³½ºÆ® ½ºÄÉÁÙ Å¸ÀÌ¸Ó
     private final Map<String, ScheduledFuture<?>> broadcastTasks = new ConcurrentHashMap<>();
-    // [3] Å¸ÀÌ¸Ó ½ÇÇà ¼­ºñ½º
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(4);
-
-    @Override
+    
+	@Override
 	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-		// ¿¬°áµÈ ¼¼¼Ç ÀúÀå, ÃÊ±â µ¥ÀÌÅÍ Àü¼Û µî
+		// ì—°ê²°ëœ ì„¸ì…˜ ì €ì¥, ì´ˆê¸° ë°ì´í„° ì „ì†¡ ë“±
 		String userId = (String) session.getAttributes().get("userId");
 		String roomId = (String) session.getAttributes().get("roomId");
 
@@ -66,25 +60,25 @@ public class TurtleRunWebsocketHandler extends TextWebSocketHandler {
 			return;
 		}
 
-		// ÇÃ·¹ÀÌ¾î ¸®½ºÆ® Á¶È¸
+		// í”Œë ˆì´ì–´ ë¦¬ìŠ¤íŠ¸ ì¡°íšŒ
 		List<TurtlePlayerDTO> players = playerDAO.getAll(roomId);
 
 		if(players != null) {
-			// Áßº¹ ÀÔÀå È®ÀÎ
+			// ì¤‘ë³µ ì…ì¥ ê²€ì‚¬
 			for(TurtlePlayerDTO player : players) {
 				if(player.getUser_uid().equals(userId)) {
 					session.close(CloseStatus.BAD_DATA);
 					return;
 				}
 			}
-			// ÃÖ´ë ÀÎ¿ø ÃÊ°ú È®ÀÎ
+			// ìµœëŒ€ ì¸ì› ì´ˆê³¼ ê²€ì‚¬
 			if(players.size() >= 8) {
 				session.close(CloseStatus.BAD_DATA);
 				return;
 			}
 
-			// ¹èÆÃ Æ÷ÀÎÆ® È®ÀÎ
-			// ÃÖ¼Ò ¹èÆÃ Æ÷ÀÎÆ® ¸¸Å­ ÀÔÀå Á¦ÇÑ
+			// ë³´ìœ  í¬ì¸íŠ¸ ê²€ì‚¬
+			// ìµœì†Œ ë² íŒ… í¬ì¸íŠ¸ ë¯¸ë§Œ ì…ì¥ ë¶ˆê°€
 			UserVO user = authService.findByUid(userId);
 			GameRoomResponseDTO gameroom = gameRoomService.selectById(roomId);
 			if(user.getPoint_balance() < gameroom.getMin_bet()) {
@@ -93,10 +87,10 @@ public class TurtleRunWebsocketHandler extends TextWebSocketHandler {
 			}
 		}
 
-		// ¼¼¼Ç µî·Ï
+		// ì„¸ì…˜ ë“±ë¡
 		sessionService.addSession(roomId, session);
 
-		// ÇÃ·¹ÀÌ¾î Ãß°¡
+		// í”Œë ˆì´ì–´ ì¶”ê°€
 		TurtlePlayerDTO player = TurtlePlayerDTO.builder()
 			.user_uid(userId)
 			.room_uid(roomId)
@@ -107,39 +101,19 @@ public class TurtleRunWebsocketHandler extends TextWebSocketHandler {
 
 		playerDAO.addPlayer(roomId, player);
 
-		// ÀÔÀå ¸Ş½ÃÁö ºê·ÎµåÄ³½ºÆ®
+		// ì…ì¥ ë©”ì‹œì§€ ë°©ì†¡
 		Map<String, Object> data = new HashMap<>();
 		data.put("userId", userId);
 		broadcastMessage("enter", roomId, data);
 	}
-
-	private void broadcastMessage(String type, String roomId) throws IOException {
-		List<WebSocketSession> sessions = sessionService.getSessions(roomId);
-		if (sessions == null || sessions.isEmpty()) {
-			// ´õ ÀÌ»ó ¸Ş½ÃÁö º¸³¾ ¼¼¼ÇÀÌ ¾øÀ½
-			return;
-		}
-		
-		ObjectMapper mapper = new ObjectMapper();
-		Map<String, Object> messageMap = new HashMap<>();
-		messageMap.put("type", "race_update");
-		
-		String jsonMessage = mapper.writeValueAsString(messageMap);
-		
-		for (WebSocketSession session : sessions) {
-			if (session.isOpen()) {
-				session.sendMessage(new TextMessage(jsonMessage));
-			}
-		}
-	}
 	
 	private void broadcastMessage(String type, String roomId, Map<String, Object> data) throws IOException {
-		// ÀüÃ¼ ¸Ş½ÃÁö Àü¼Û
+		// ì›¹ì†Œì¼“ ë©”ì‹œì§€ ì „ì†¡
 		List<WebSocketSession> sessions = sessionService.getSessions(roomId);
 		List<TurtlePlayerDTO> players = playerDAO.getAll(roomId);
 
 		if (sessions == null || sessions.isEmpty()) {
-			// ´õ ÀÌ»ó ¸Ş½ÃÁö º¸³¾ ¼¼¼ÇÀÌ ¾øÀ½
+			// ë” ì´ìƒ ë©”ì‹œì§€ ë³´ë‚¼ ëŒ€ìƒì´ ì—†ìŒ
 			return;
 		}
 
@@ -163,9 +137,9 @@ public class TurtleRunWebsocketHandler extends TextWebSocketHandler {
 
 	@Override
 	protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-		// Å¬¶óÀÌ¾ğÆ®°¡ º¸³½ ¸Ş½ÃÁö¸¦ ¹Ş¾Æ¼­ Ã³¸® (¿¹: ¼±ÅÃ, ÀÔÀå, ¹èÆÃ µî)
+		// í´ë¼ì´ì–¸íŠ¸ê°€ ë³´ë‚¸ ë©”ì‹œì§€ë¥¼ ë°›ì•„ì„œ ì²˜ë¦¬ (ì˜ˆ: ì±„íŒ…, ì…ì¥, ë² íŒ… ë“±)
 
-		// ¸Ş½ÃÁö ÆÄ½Ì
+		// ë©”ì‹œì§€ íŒŒì‹±
 		String payload = message.getPayload();
 		ObjectMapper mapper = new ObjectMapper();
 		JsonNode json = mapper.readTree(payload);
@@ -177,7 +151,7 @@ public class TurtleRunWebsocketHandler extends TextWebSocketHandler {
 
 		TurtlePlayerDTO player = playerDAO.getPlayer(roomId, userId);
 
-		// ¸Ş½ÃÁö Å¸ÀÔ¿¡ µû¶ó ºĞ±â
+		// ë©”ì‹œì§€ íƒ€ì…ì— ë”°ë¼ ë¶„ê¸°
 		switch(type) {
 			case "choice":
 				String turtleId = json.get("turtle_id").asText();
@@ -192,8 +166,9 @@ public class TurtleRunWebsocketHandler extends TextWebSocketHandler {
 				player.setReady(isReady);
 				break;
 			case "race_update":
-                // [1] positions Á¤º¸ ÀúÀå
-                List<Double> positions = new ArrayList<>();
+	            // positionsë¥¼ ë°›ì•„ì™€ ì „ì²´ ë°©ì— ì‹¤ì‹œê°„ìœ¼ë¡œ ë¸Œë¡œë“œìºìŠ¤íŠ¸
+	            // 1. positionsë¥¼ íŒŒì‹±
+				List<Double> positions = new ArrayList<>();
                 JsonNode posNode = json.get("positions");
                 if (posNode != null && posNode.isArray()) {
                     for (JsonNode pos : posNode) {
@@ -201,7 +176,7 @@ public class TurtleRunWebsocketHandler extends TextWebSocketHandler {
                     }
                 }
                 latestPositions.put(roomId, positions);
-                // [2] ÇØ´ç ¹æ¿¡ ÀÌ¹Ì Å¸ÀÌ¸Ó°¡ ¾øÀ¸¸é, 0.1ÃÊ¸¶´Ù broadcastÇÏ´Â Å¸ÀÌ¸Ó µî·Ï
+	            // 2. ì „ì²´ í´ë¼ì´ì–¸íŠ¸ì—ê²Œ positions ì „ì†¡
                 broadcastTasks.computeIfAbsent(roomId, k -> {
                     return scheduler.scheduleAtFixedRate(() -> {
                         try {
@@ -221,10 +196,10 @@ public class TurtleRunWebsocketHandler extends TextWebSocketHandler {
 				dto.setBet(json.get("bet").asInt());
 				dto.setPointChange(json.get("pointChange").asInt());
 				
-				 // 1. °á°ú ÀúÀå (Service È£Ãâ)
+				 // 1. ê²°ê³¼ ì €ì¥ (Service í˜¸ì¶œ)
 //			    turtleRunService.processGameResult(dto);
 
-			    // 2. °á°ú ¸Ş½ÃÁö »ı¼º (¸ğ´Ş¿¡ º¸¿©ÁÙ Á¤º¸ µî)
+			    // 2. ê²°ê³¼ ë©”ì‹œì§€ ìƒì„± (ëª¨ë‹¬ì— ë³´ì—¬ì¤„ ì •ë³´ ë“±)
 			    Map<String, Object> resultMsg = new HashMap<>();
 			    resultMsg.put("type", "race_result");
 			    resultMsg.put("winner", dto.getWinner());
@@ -234,7 +209,7 @@ public class TurtleRunWebsocketHandler extends TextWebSocketHandler {
 			    resultMsg.put("userId", dto.getUser_uid());
 			    resultMsg.put("roomId", dto.getRoomId());
 
-			    // 3. ¹æ ÀüÃ¼¿¡ °á°ú broadcast
+			    // 3. ë°© ì „ì²´ì— ê²°ê³¼ broadcast
 			    broadcastMessage("race_result", roomId, resultMsg);
 				break;
 		}
@@ -245,36 +220,36 @@ public class TurtleRunWebsocketHandler extends TextWebSocketHandler {
 		data.put("players", players);
 		broadcastMessage("update", roomId, data);
 	}
+	
+	// ë°©ì— ìœ„ì¹˜ ì •ë³´ë¥¼ ìŠ¤ì¼€ì¥´ëŸ¬ë¡œ ë³´ë‚´ì£¼ëŠ” í•¨ìˆ˜
+	private void broadcastRaceUpdate(String roomId) throws IOException {
+	    List<Double> positions = latestPositions.get(roomId);
+	    if (positions == null) return;
 
-	 // [3] positions¸¦ ÀüÃ¼ Âü°¡ÀÚ¿¡°Ô broadcastÇÏ´Â ÇÔ¼ö
-    private void broadcastRaceUpdate(String roomId) throws IOException {
-        List<Double> positions = latestPositions.get(roomId);
-        if (positions == null) return;
-        Map<String, Object> data = new HashMap<>();
-        data.put("positions", positions);
-        broadcastMessage("race_update", roomId, data);
-    }
-
+	    Map<String, Object> data = new HashMap<>();
+	    data.put("positions", positions);
+	    broadcastMessage("race_update", roomId, data);
+	}
+	
 	@Override
 	public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-		// ¼¼¼Ç Á¦°Å, ÅğÀå Ã³¸® µî
+		// ì„¸ì…˜ ì œê±°, í‡´ì¥ ì²˜ë¦¬ ë“±
 		String roomId = (String) session.getAttributes().get("roomId");
 		String userId = (String) session.getAttributes().get("userId");
 
 		sessionService.removeSession(roomId, session);
 		playerDAO.removePlayer(roomId, userId);
-		
+
+		// í”Œë ˆì´ì–´ê°€ 0ëª…ì¼ ë•Œ ë°© ì‚­ì œ
 		List<TurtlePlayerDTO> players = playerDAO.getAll(roomId);
-		if (players == null || players.isEmpty()) { // ÇÃ·¹ÀÌ¾î°¡ ¾øÀ» ¶§ ¼ÒÄÏ ¸Ş½ÃÁö ¹ß¼Û Áß´Ü
-	        ScheduledFuture<?> task = broadcastTasks.remove(roomId);
-	        if (task != null) task.cancel(true);
-	        latestPositions.remove(roomId);
-	    }
-		// ÇÃ·¹ÀÌ¾î°¡ 0¸íÀÏ ¶§ ¹æ »èÁ¦
 		if (players == null || players.isEmpty()) {
 			gameroomDAO.deleteRoom(roomId);
+			// ìŠ¤ì¼€ì¤„ëŸ¬ë„ ì¢…ë£Œ
+			ScheduledFuture<?> task = broadcastTasks.remove(roomId);
+	        if (task != null) task.cancel(true);
+	        latestPositions.remove(roomId);
 		}
-
+		
 		Map<String, Object> data = new HashMap<>();
 		data.put("userId", userId);
 		broadcastMessage("exit", roomId, data);
@@ -282,6 +257,6 @@ public class TurtleRunWebsocketHandler extends TextWebSocketHandler {
 
 	@Override
 	public void handleTransportError(WebSocketSession session, Throwable exception) throws Exception {
-		// ¿¹¿Ü ·Î±ë È¤Àº Ã³¸®
+		// ì˜ˆì™¸ ë¡œê¹… ë˜ëŠ” ë³µêµ¬ ì²˜ë¦¬
 	}
 }
