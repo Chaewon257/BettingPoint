@@ -5,6 +5,9 @@ import com.bettopia.game.model.auth.UserVO;
 import com.bettopia.game.model.gameroom.GameRoomDAO;
 import com.bettopia.game.model.gameroom.GameRoomResponseDTO;
 import com.bettopia.game.model.gameroom.GameRoomService;
+import com.bettopia.game.model.history.GameHistoryDTO;
+import com.bettopia.game.model.history.HistoryService;
+import com.bettopia.game.model.history.PointHistoryDTO;
 import com.bettopia.game.model.multi.turtle.PlayerDAO;
 import com.bettopia.game.model.multi.turtle.TurtlePlayerDTO;
 import com.bettopia.game.model.multi.turtle.TurtleRunResultDTO;
@@ -44,6 +47,8 @@ public class TurtleRunWebsocketHandler extends TextWebSocketHandler {
 	private GameRoomService gameRoomService;
     @Autowired
     private AuthService authService;
+    @Autowired
+    private HistoryService historyService;
 
     private final Map<String, List<Double>> latestPositions = new ConcurrentHashMap<>();
     private final Map<String, ScheduledFuture<?>> broadcastTasks = new ConcurrentHashMap<>();
@@ -189,17 +194,34 @@ public class TurtleRunWebsocketHandler extends TextWebSocketHandler {
                 break;
 			case "race_finish":
 				TurtleRunResultDTO dto = new TurtleRunResultDTO();
-				dto.setUser_uid(userId);
-				dto.setRoomId(roomId);
-				dto.setWinner(json.get("winner").asInt());
-				dto.setPoints(json.get("points").asInt());
-				dto.setBet(json.get("bet").asInt());
-				dto.setPointChange(json.get("pointChange").asInt());
-				
-				 // 1. 결과 저장 (Service 호출)
-//			    turtleRunService.processGameResult(dto);
+			    dto.setUser_uid(userId);
+			    dto.setRoomId(roomId);
+			    dto.setWinner(json.get("winner").asInt());
+			    dto.setPoints(json.get("points").asInt());
+			    dto.setBet(json.get("bet").asInt());
+			    dto.setPointChange(json.get("pointChange").asInt());
 
-			    // 2. 결과 메시지 생성 (모달에 보여줄 정보 등)
+			    // 1. 게임 기록 저장
+			    GameHistoryDTO gameHistory = GameHistoryDTO.builder()
+			            .user_uid(dto.getUser_uid())
+			            .game_uid(dto.getRoomId())
+			            .betting_amount(dto.getBet())
+			            .point_value(dto.getPoints())
+			            .game_result(dto.getPointChange() > 0 ? "WIN" : "LOSE")
+			            .build();
+			    GameHistoryDTO savedGameHistory = historyService.insertGameHistory(gameHistory, dto.getUser_uid());
+
+			    // 2. 포인트 기록 저장 (GameHistory UID 연동)
+			    PointHistoryDTO pointHistory = PointHistoryDTO.builder()
+			            .user_uid(dto.getUser_uid())
+			            .gh_uid(savedGameHistory.getUid())
+			            .type("GAME")
+			            .amount(dto.getPointChange())
+			            .balance_after(dto.getPoints()) // 혹은 실제 잔액 계산 결과
+			            .build();
+			    historyService.insertPointHistory(pointHistory, dto.getUser_uid());
+
+			    // 3. 결과 브로드캐스트 (모달 노출용)
 			    Map<String, Object> resultMsg = new HashMap<>();
 			    resultMsg.put("type", "race_result");
 			    resultMsg.put("winner", dto.getWinner());
@@ -208,10 +230,9 @@ public class TurtleRunWebsocketHandler extends TextWebSocketHandler {
 			    resultMsg.put("bet", dto.getBet());
 			    resultMsg.put("userId", dto.getUser_uid());
 			    resultMsg.put("roomId", dto.getRoomId());
-
-			    // 3. 방 전체에 결과 broadcast
 			    broadcastMessage("race_result", roomId, resultMsg);
-				break;
+
+			    break;
 		}
 
 		List<TurtlePlayerDTO> players = playerDAO.getAll(roomId);
