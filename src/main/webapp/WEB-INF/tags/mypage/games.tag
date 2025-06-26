@@ -1,7 +1,7 @@
 <%@ tag language="java" pageEncoding="UTF-8"%>
 
-<div data-content="games" class="tab-content w-full flex flex-col">
-	<div class="p-4 grid grid-cols-12 text-center text-gray-3 font-semibold border-b-2 border-gray-7 border-double">
+<div data-content="games" class="tab-content w-full flex flex-col text-xs sm:text-sm">
+	<div class="p-4 grid grid-cols-12 text-center text-xs sm:text-sm text-gray-3 font-semibold border-b-2 border-gray-7 border-double">
 		<span>번호</span>
 		<span class="col-span-5">게임 이름</span>
 		<span>결과</span>
@@ -9,34 +9,34 @@
 		<span class="col-span-2">날짜</span>
 	</div>
 	<div class="grid grid-cols-1 grid-rows-10 border-b-2 border-gray-7 mb-6">
-		<div class="p-4 grid grid-cols-12 text-center border-b border-gray-1">
+		<div class="p-4 grid grid-cols-12 items-center text-center border-b border-gray-1">
 			<span class="font-light">1</span>
 			<span class="col-span-5">Coin Toss</span>
 			<span class="text-blue-1">승리</span>
-			<div class="col-span-3 ">
+			<div class="col-span-3 flex flex-col sm:flex-row items-center justify-center">
 				<span class="font-light">3000</span>
 				<span class="text-blue-1">(+1000)</span>
 			</div>
 			<span class="col-span-2 font-light">2025.06.25</span>
 		</div>
-		<div class="p-4 grid grid-cols-12 text-center border-b border-gray-1">
+		<div class="p-4 grid grid-cols-12 items-center text-center border-b border-gray-1">
 			<span class="font-light">2</span>
 			<span class="col-span-5">Turtle Run</span>
 			<span class="text-red-1">패배</span>
-			<div class="col-span-3 ">
+			<div class="col-span-3 flex flex-col sm:flex-row items-center justify-center">
 				<span class="font-light">3000</span>
 				<span class="text-red-1">(-3000)</span>
 			</div>
 			<span class="col-span-2 font-light">2025.06.25</span>
 		</div>
-		<div class="p-4 grid grid-cols-12 text-center border-b border-gray-1"></div>
-		<div class="p-4 grid grid-cols-12 text-center border-b border-gray-1"></div>
-		<div class="p-4 grid grid-cols-12 text-center border-b border-gray-1"></div>
-		<div class="p-4 grid grid-cols-12 text-center border-b border-gray-1"></div>
-		<div class="p-4 grid grid-cols-12 text-center border-b border-gray-1"></div>
-		<div class="p-4 grid grid-cols-12 text-center border-b border-gray-1"></div>
-		<div class="p-4 grid grid-cols-12 text-center border-b border-gray-1"></div>
-		<div class="p-4 grid grid-cols-12 text-center border-b border-gray-1"></div>
+		<div class="p-4 grid grid-cols-12 items-center text-center border-b border-gray-1"></div>
+		<div class="p-4 grid grid-cols-12 items-center text-center border-b border-gray-1"></div>
+		<div class="p-4 grid grid-cols-12 items-center text-center border-b border-gray-1"></div>
+		<div class="p-4 grid grid-cols-12 items-center text-center border-b border-gray-1"></div>
+		<div class="p-4 grid grid-cols-12 items-center text-center border-b border-gray-1"></div>
+		<div class="p-4 grid grid-cols-12 items-center text-center border-b border-gray-1"></div>
+		<div class="p-4 grid grid-cols-12 items-center text-center border-b border-gray-1"></div>
+		<div class="p-4 grid grid-cols-12 items-center text-center border-b border-gray-1"></div>
 	</div>
 	<div class="flex justify-center items-center">
 		<div class="flex items-center">
