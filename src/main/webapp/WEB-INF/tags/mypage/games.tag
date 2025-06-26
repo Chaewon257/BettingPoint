@@ -1,7 +1,7 @@
 <%@ tag language="java" pageEncoding="UTF-8"%>
 
-<div data-content="games" class="tab-content w-full flex flex-col text-xs sm:text-sm">
-	<div class="p-4 grid grid-cols-12 text-center text-xs sm:text-sm text-gray-3 font-semibold border-b-2 border-gray-7 border-double">
+<div data-content="games" class="tab-content w-full flex flex-col mb-20 text-xs sm:text-sm">
+	<div class="p-4 grid grid-cols-12 text-center text-gray-3 font-semibold border-b-2 border-gray-7 border-double">
 		<span>번호</span>
 		<span class="col-span-5">게임 이름</span>
 		<span>결과</span>
