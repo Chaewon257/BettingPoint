@@ -34,10 +34,11 @@ const elements = {
   startErrorMessage: document.getElementById("start-error-message")
 };
 
+
+
 // 페이지 로드 시 초기 데이터 가져오기
 document.addEventListener('DOMContentLoaded', function() {
-  // 먼저 기본 UI 설정 (연결 전에도 난이도 선택 가능)
-  updateDifficultyUI();
+  
   setupEventListeners();
   updateUI();
   
@@ -46,59 +47,36 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
-// 게임 초기화 함수
+
 function initializeGame() {
   setLoadingState(true);
+  loadDifficultySettings();
   
-  // 1. 사용자 보유포인트 가져오기 (Ajax)
-  $.get('/api/user/balance')
-    .done(function(response) {
-      gameState.userId = response.userId;
-      gameState.balance = response.balance;
-      
-      // 2. 난이도 설정 가져오기 (Ajax)
-      loadDifficultySettings();
-    })
-    .fail(function(xhr) {
-      showErrorMessage('사용자 정보를 불러올 수 없습니다: ' + xhr.status);
-      setLoadingState(false);
-    });
 }
 
+// 난이도 설정 데이터를 서버에서 불러옴
 function loadDifficultySettings() {
-    $.ajax({
-        url: '/api/game/by-name/CoinToss',
-        type: 'GET',
-        dataType: 'json',
-        success: function(gameData) {
-            console.log('게임 데이터:', gameData);
-            
-            // 기존 difficultyConfigs 설정
-            $.each(gameData, function(index, game) {
-                difficultyConfigs[game.level] = {
-                    chance: game.probability,
-                    payout: game.reward
-                };
-            });
-           
-            // JSP 화면에 데이터 표시
-            updateDifficultyDisplay(gameData);
-            
-            updateDifficultyUI();
-            updateUI();
-            setLoadingState(false);
-            
-            const config = difficultyConfigs[gameState.difficulty];
-          
-        },
-        error: function(xhr, status, error) {
-            console.error('게임 설정 로딩 실패:', error);
-            updateDifficultyUI();
-            updateUI();
-            setLoadingState(false);
-        }
-    });
+  const gameUid = document.getElementById("gameUid").value;
+  console.log("받아온 데이터:", gameUid); 
+ 
+ $.ajax({
+    url: '/api/game/levels/by-game/' + gameUid,
+    type: 'GET',
+    dataType: 'json',
+    success: function(gameLevels) {
+    
+    console.log("받아온 데이터:", gameLevels); 
+    
+      updateDifficultyDisplay(gameLevels);
+    
+    },
+    error: function() {
+      showErrorMessage('난이도 정보를 불러올 수 없습니다');
+    }
+  });
+ 
 }
+
 
 // JSP 화면에 난이도 데이터 표시하는 함수
 function updateDifficultyDisplay(gameData) {
@@ -109,8 +87,8 @@ function updateDifficultyDisplay(gameData) {
         // DB의 level을 JSP의 data-difficulty와 매핑
         if (game.level === 'HARD') {
             difficultyKey = 'hard';
-        } else if (game.level === 'MEDIUM') {
-            difficultyKey = 'normal'; // JSP에서는 normal로 되어있음
+        } else if (game.level === 'NORMAL') {
+            difficultyKey = 'normal'; 
         } else if (game.level === 'EASY') {
             difficultyKey = 'easy';
         }
@@ -124,21 +102,6 @@ function updateDifficultyDisplay(gameData) {
     });
 }
 
-
-
-// 난이도 UI 업데이트
-function updateDifficultyUI() {
-  document.querySelectorAll('.difficulty-option').forEach(option => {
-    const difficulty = option.dataset.difficulty;
-    const config = difficultyConfigs[difficulty];
-    
-    if (config) {
-      option.querySelector('.difficulty-name').textContent = config.name;
-      option.querySelector('.difficulty-chance').textContent = `${Math.round(config.chance * 100)}% 확률`;
-      option.querySelector('.difficulty-payout').textContent = `성공시 ${config.payout}배 획득`;
-    }
-  });
-}
 
 // 로딩 상태 설정
 function setLoadingState(loading) {

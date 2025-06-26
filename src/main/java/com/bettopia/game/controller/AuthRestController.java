@@ -4,7 +4,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
-import java.util.UUID;
 import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +22,6 @@ import com.bettopia.game.Exception.AuthException;
 import com.bettopia.game.model.auth.AuthService;
 import com.bettopia.game.model.auth.LoginRequestDTO;
 import com.bettopia.game.model.auth.UserRegisterDTO;
-import com.bettopia.game.model.auth.UserVO;
 
 @RestController
 @RequestMapping("/api/auth")
