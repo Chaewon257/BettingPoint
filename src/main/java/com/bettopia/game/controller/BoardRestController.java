@@ -50,7 +50,7 @@ public class BoardRestController {
 		int offset = (page - 1) * size;
 
 		// 카테고리 기준으로 게시글 목록 조회
-		List<BoardDTO> boards = boardService.getAllBoards(offset, size, category, sort);
+		List<BoardDTO> boards = boardService.getBoards(offset, size, category, sort);
 
 		return boards;
 	}

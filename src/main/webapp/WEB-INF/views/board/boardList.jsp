@@ -17,12 +17,12 @@
 	let category = "${category}";
 	let sort = "${sort}";
 </script>
+
 <c:if test="${not empty msg}">
     <script>
         alert("${msg}");
     </script>
 </c:if>
-
 
 <style>
 #categoryButtons {
