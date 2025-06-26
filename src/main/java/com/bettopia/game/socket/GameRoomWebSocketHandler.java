@@ -174,8 +174,12 @@ public class GameRoomWebSocketHandler extends TextWebSocketHandler {
 		String userId = (String) session.getAttributes().get("userId");
 
 		sessionService.removeSession(roomId, session);
-		playerDAO.removePlayer(roomId, userId);
-		gameRoomListWebSocket.broadcastMessage("exit");
+
+		String gameStatus = gameRoomService.selectById(roomId).getStatus();
+		if(!gameStatus.equals("PLAYING")) {
+			playerDAO.removePlayer(roomId, userId);
+			gameRoomListWebSocket.broadcastMessage("exit");
+		}
 
 		// 플레이어가 0명일 때 방 삭제
 		List<TurtlePlayerDTO> players = playerDAO.getAll(roomId);
