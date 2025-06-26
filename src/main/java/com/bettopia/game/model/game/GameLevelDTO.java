@@ -7,11 +7,8 @@ import lombok.Data;
 @Builder
 public class GameLevelDTO {
 	private String uid; 
-	private String gameUid; 
+	private String game_uid;
 	private String level;
 	private double probability;
 	private double reward;
-
 }
-
-

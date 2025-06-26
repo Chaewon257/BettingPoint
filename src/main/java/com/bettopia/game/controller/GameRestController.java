@@ -24,7 +24,6 @@ public class GameRestController {
 	@Autowired
 	private GameService gameService;
 
-	
 	@Autowired
 	private GameLevelService gameLevelService;
 	
@@ -48,8 +47,8 @@ public class GameRestController {
 	}
 
 	// 타입별 게임 조회
-	@GetMapping("/list/{type}")
-	public List<GameResponseDTO> selectByType(@PathVariable String type) {
+	@GetMapping("/list/type")
+	public List<GameResponseDTO> selectByType(@RequestParam String type) {
 		return gameService.selectByType(type);
 	}
 
@@ -90,4 +89,9 @@ public class GameRestController {
 	    return ResponseEntity.ok(Map.of("newBalance", user.getPoint_balance()));
 	}
 
+	// 게임 난이도 상세 조회
+	@GetMapping("/level/{levelId}")
+	public GameLevelDTO selectLevelByRoom(@PathVariable String levelId) {
+		return gameLevelService.selectByRoomUid(levelId);
+	}
 }

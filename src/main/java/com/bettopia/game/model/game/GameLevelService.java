@@ -14,4 +14,8 @@ public class GameLevelService {
 	public List<GameLevelDTO> selectByGameUid(String gameUid){
 		return gameLevelDAO.selectByGameUid(gameUid);
 	}
+
+	public GameLevelDTO selectByRoomUid(String levelId) {
+		return gameLevelDAO.selectByRoomUid(levelId);
+	}
 }
