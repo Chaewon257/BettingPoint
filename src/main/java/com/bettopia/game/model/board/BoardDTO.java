@@ -21,5 +21,5 @@ public class BoardDTO {
 	    private Date updated_at;
 	    private String board_img;
 	    private String user_uid;
-	
+	    private boolean isOner;
 }
