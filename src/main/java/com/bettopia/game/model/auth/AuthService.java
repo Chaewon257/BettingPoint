@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 
 import com.bettopia.game.Exception.InvalidPasswordException;
 import com.bettopia.game.Exception.InvalidTokenException;
-import com.bettopia.game.Exception.UserNotFoundEception;
+import com.bettopia.game.Exception.UserNotFoundException;
 import com.bettopia.game.util.JWTUtil;
 
 @Service
@@ -35,7 +35,7 @@ public class AuthService {
 		UserVO user = loginDAO.findByEmail(request.getEmail());
 
 		if (user == null) {
-			throw new UserNotFoundEception();
+			throw new UserNotFoundException();
 		} else if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
 			throw new InvalidPasswordException();
 		}
