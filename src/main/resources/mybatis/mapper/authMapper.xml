@@ -54,17 +54,23 @@
     <!-- 회원 정보 수정 -->
     <update id="update" parameterType="userVO">
         update user set
-                        password = #{password},
-                        nickname = #{nickname},
-                        phone_number = #{phone_number},
-                        profile_img = #{profile_img}
+		password = #{password},
+		nickname = #{nickname},
+		phone_number = #{phone_number},
+		profile_img = #{profile_img}
         where uid = #{uid}
     </update>
 
     <!-- 포인트 충전 -->
-    <update id="pointCharge" parameterType="map">
+    <update id="addPoint" parameterType="map">
         update user set
-            point_balance = point_balance + #{point}
+		point_balance = point_balance + #{point}
         where uid = #{uid}
     </update>
+
+	<update id="losePoint" parameterType="map">
+		update user set
+		point_balance = point_balance - #{point}
+		where uid = #{uid}
+	</update>
 </mapper>

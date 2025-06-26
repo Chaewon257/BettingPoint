@@ -121,7 +121,11 @@ public class AuthService {
 		userDAO.updateUser(userRequest, userId);
 	}
 
-	public void pointCharge(int point, String userId) {
-		userDAO.pointCharge(point, userId);
+	public void addPoint(int point, String userId) {
+		userDAO.addPoint(point, userId);
+	}
+
+	public void losePoint(int point, String userId) {
+		userDAO.losePoint(point, userId);
 	}
 }

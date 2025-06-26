@@ -26,10 +26,17 @@ public class UserDAO {
         sqlSession.update(namespace + "update", user);
     }
 
-    public void pointCharge(int point, String userId) {
+    public void addPoint(int point, String userId) {
         Map<String, Object> params = new HashMap<>();
         params.put("point", point);
         params.put("uid", userId);
-        sqlSession.update(namespace + "pointCharge", params);
+        sqlSession.update(namespace + "addPoint", params);
+    }
+
+    public void losePoint(int point, String userId) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("point", point);
+        params.put("uid", userId);
+        sqlSession.update(namespace + "losePoint", params);
     }
 }
