@@ -18,5 +18,7 @@
 		<typeAlias type="com.bettopia.game.model.board.BoardDTO" alias="boardDTO" />
 		<typeAlias type="com.bettopia.game.model.game.GameResponseDTO" alias="gameDTO" />
 		<typeAlias type="com.bettopia.game.model.game.GameLevelDTO" alias="gamelevelDTO" />
+		<typeAlias type="com.bettopia.game.model.history.GameHistoryDTO" alias="gameHistoryDTO" />
+		<typeAlias type="com.bettopia.game.model.history.PointHistoryDTO" alias="pointHistoryDTO" />
   </typeAliases>
 </configuration>
