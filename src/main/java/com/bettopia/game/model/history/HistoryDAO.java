@@ -29,7 +29,7 @@ public class HistoryDAO {
         Map<String, Object> params = new HashMap<>();
         params.put("offset", offset);
         params.put("size", size);
-        params.put("userId", userId);
+        params.put("uid", userId);
         return sqlSession.selectList(namespace + "selectGameHistoryAll", params);
     }
 
@@ -37,7 +37,7 @@ public class HistoryDAO {
         Map<String, Object> params = new HashMap<>();
         params.put("offset", offset);
         params.put("size", size);
-        params.put("userId", userId);
+        params.put("uid", userId);
         return sqlSession.selectList(namespace + "selectPointHistoryAll", params);
     }
 
