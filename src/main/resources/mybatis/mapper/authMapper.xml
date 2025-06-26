@@ -4,10 +4,13 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.bpoint.auth">
-	<insert id="insertUser" parameterType="com.bettopia.game.model.auth.UserVO">
-    	INSERT INTO user (uid, user_name, password, nickname, email, birth_date, phone_number, agree_privacy)
-    	VALUES (#{uid}, #{user_name}, #{password}, #{nickname}, #{email}, #{birth_date}, #{phone_number}, #{agree_privacy})
-  	</insert>
+	<insert id="insertUser"
+		parameterType="com.bettopia.game.model.auth.UserVO">
+		INSERT INTO user (uid, user_name, password, nickname, email, birth_date,
+		phone_number, agree_privacy)
+		VALUES (#{uid}, #{user_name}, #{password}, #{nickname}, #{email},
+		#{birth_date}, #{phone_number}, #{agree_privacy})
+	</insert>
 	<select id="findByEmail"
 		resultType="com.bettopia.game.model.auth.UserVO">
 		SELECT *
@@ -21,27 +24,35 @@
 		WHERE uid = #{uid}
 	</select>
 	<insert id="updateRefreshToken" parameterType="map">
-		INSERT INTO auth_token (uid, user_uid, refresh_token, created_at)
-		VALUES (#{uid}, #{userUid}, #{refreshToken}, NOW())
+		INSERT INTO
+		auth_token (uid, user_uid, refresh_token, created_at)
+		VALUES (#{uid},
+		#{userUid}, #{refreshToken}, NOW())
 		ON DUPLICATE KEY UPDATE
 		refresh_token = #{refreshToken},
 		created_at = NOW()
 	</insert>
 	<update id="updateLastLoginAt" parameterType="String">
-	    UPDATE user
-	    SET last_login_at = NOW()
-	    WHERE uid = #{uid}
+		UPDATE user
+		SET last_login_at = NOW()
+		WHERE uid = #{uid}
 	</update>
 	<select id="countByEmail" resultType="int">
-	    SELECT COUNT(*) FROM user
-	    WHERE email = #{email}
- 	</select>
+		SELECT COUNT(*) FROM user
+		WHERE email = #{email}
+	</select>
 	<select id="countByNickname" resultType="int">
-	    SELECT COUNT(*) FROM user
-	    WHERE nickname = #{nickname}
- 	</select>
- 	<select id="countByPhoneNumber" resultType="int">
-	    SELECT COUNT(*) FROM user
-	    WHERE phone_number = #{phone_number}
- 	</select>
+		SELECT COUNT(*) FROM user
+		WHERE nickname = #{nickname}
+	</select>
+	<select id="countByPhoneNumber" resultType="int">
+		SELECT COUNT(*) FROM user
+		WHERE phone_number = #{phone_number}
+	</select>
+	 <update id="updateUserPoint" parameterType="com.bettopia.game.model.auth.UserVO">
+		UPDATE user
+		SET point_balance = #{point_balance}
+		WHERE uid = #{uid}
+	</update> 
+
 </mapper>
