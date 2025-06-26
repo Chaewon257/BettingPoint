@@ -11,11 +11,11 @@
 					<img alt="service image" src="${cpath}/resources/images/service_image_1.png" class="h-40 sm:h-48 md:h-64 lg:h-80">
 					<div class="grow mb-8 flex flex-col gap-4">
 						<div class="text-ts-18 sm:text-ts-20 md:text-ts-24 lg:text-ts-28 md:ml-2">마이페이지</div>
-						<div class="grid grid-cols-2 md:grid-cols-5 gap-4">
-							<button data-tab="info" class="tab-btn bg-blue-3 text-white font-extrabold text-base md:text-lg lg:text-xl rounded-lg shadow-[2px_2px_8px_rgba(0,0,0,0.1)] py-2">나의 정보</button>
-							<button data-tab="points" class="tab-btn bg-blue-4 hover:bg-blue-3 text-white font-extrabold text-base md:text-lg lg:text-xl rounded-lg shadow-[2px_2px_8px_rgba(0,0,0,0.1)] py-2">포인트 내역</button>
-							<button data-tab="games" class="tab-btn bg-blue-4 hover:bg-blue-3 text-white font-extrabold text-base md:text-lg lg:text-xl rounded-lg shadow-[2px_2px_8px_rgba(0,0,0,0.1)] py-2">게임 내역</button>
-							<button data-tab="questions" class="tab-btn bg-blue-4 hover:bg-blue-3 text-white font-extrabold text-base md:text-lg lg:text-xl rounded-lg shadow-[2px_2px_8px_rgba(0,0,0,0.1)] py-2">문의 내역</button>
+						<div class="grid grid-cols-2 md:grid-cols-5 gap-4 text-white font-extrabold text-sm sm:text-base md:text-lg lg:text-xl">
+							<button data-tab="info" class="tab-btn bg-blue-3 rounded-lg shadow-[2px_2px_8px_rgba(0,0,0,0.1)] py-2">나의 정보</button>
+							<button data-tab="points" class="tab-btn bg-blue-4 hover:bg-blue-3 rounded-lg shadow-[2px_2px_8px_rgba(0,0,0,0.1)] py-2">포인트 내역</button>
+							<button data-tab="games" class="tab-btn bg-blue-4 hover:bg-blue-3 rounded-lg shadow-[2px_2px_8px_rgba(0,0,0,0.1)] py-2">게임 내역</button>
+							<button data-tab="questions" class="tab-btn bg-blue-4 hover:bg-blue-3 rounded-lg shadow-[2px_2px_8px_rgba(0,0,0,0.1)] py-2">문의 내역</button>
 						</div>
 					</div>
 				</div>
