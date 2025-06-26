@@ -1,19 +1,21 @@
 <%@ tag language="java" pageEncoding="UTF-8"%>
 
 <div data-content="info" class="tab-content w-full flex flex-col gap-y-8 my-4">
-	<div class="w-full flex flex-row gap-10 rounded-lg bg-gray-10 p-10">
-		<div class="flex flex-col gap-y-10">
-			<div class="w-72 h-72 rounded-full bg-white flex justify-center overflow-hidden">
+	<div class="w-full flex flex-col gap-y-5 md:flex-row md:gap-x-5 lg:gap-x-10 rounded-lg bg-gray-10 p-4 sm:p-6 md:p-8 lg:p-10">
+		<div class="flex flex-col gap-x-4 items-center md:col-span-2 gap-y-5 lg:gap-y-10">
+			<div class="w-full sm:w-64 md:w-72 lg:w-80 aspect-square rounded-full bg-white flex justify-center overflow-hidden">
 				<img id="profileImage" alt="default profile image" src="/resources/images/profile_default_image.png">
 			</div>
-			<div class="grow flex flex-col items-center gap-y-2 rounded-xl bg-blue-4 p-4">
-				<div class="w-full flex items-center justify-between text-gray-6 text-ts-18 sm:text-ts-20 md:text-ts-24 lg:text-ts-28">
-					<img alt="money box" src="${cpath}/resources/images/money_box.png" class="w-12">
-					<div id="pointBalance" class="grow text-center">00000</div>
-					<div>P</div>
+			<div class="grow w-full flex items-center">
+				<div class="w-full flex flex-col items-center gap-y-2 rounded-xl bg-blue-4 p-4 font-extrabold text-xl md:text-xl lg:text-3xl">
+					<div class="w-full flex items-center justify-between text-gray-6">
+						<img alt="money box" src="${cpath}/resources/images/money_box.png" class="w-7 lg:w-12">
+						<div id="pointBalance" class="grow text-center">00000</div>
+						<div>P</div>
+					</div>
+					<div class="w-full h-px bg-gray-1"></div>
+					<button class="grow w-full rounded lg:rounded-xl text-gray-6 hover:text-white hover:bg-blue-3">충전하기</button>
 				</div>
-				<div class="w-full h-px bg-gray-1"></div>
-				<button class="grow w-full rounded-xl text-gray-6 hover:text-white text-ts-28 hover:bg-blue-3">충전하기</button>
 			</div>
 		</div>
 		<div class="grow flex flex-col justify-between gap-y-4">
@@ -48,7 +50,7 @@
 		</div>				
 	</div>
 	<div class="w-full flex flex-col items-end">
-		<button class="h-full bg-blue-2 hover:bg-blue-5 rounded-lg text-white shadow-[2px_2px_8px_rgba(0,0,0,0.1)] text-ts-14 sm:text-ts-18 md:text-ts-20 lg:text-ts-24 w-24 sm:w-32 md:w-48 lg:w-60 py-2">수정하기</button>
+		<button class="h-full bg-blue-2 hover:bg-blue-5 rounded-lg text-white shadow-[2px_2px_8px_rgba(0,0,0,0.1)] text-ts-14 sm:text-ts-18 md:text-ts-20 lg:text-ts-24 w-full md:w-60 py-2">수정하기</button>
 	</div>
 </div>
 
