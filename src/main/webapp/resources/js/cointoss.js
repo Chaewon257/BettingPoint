@@ -35,7 +35,7 @@ const elements = {
 document.addEventListener('DOMContentLoaded', function() {
   setupEventListeners();
   updateUI();
-  
+ 
   // 그 다음 서버 연결
   initializeGame();
 });
@@ -63,14 +63,10 @@ function fetchUserInfo() {
     xhrFields: { withCredentials: true }
   })
   .done(function (user) {
-
-    console.log("📦 유저 JSON 응답:", user); // ← 여기서 전체 응답 출력
-
     $('#userNickname').text(user.nickname);
     $('#balance').text(user.point_balance.toLocaleString());
     gameState.balance = user.point_balance;
-    gameState.userNickname =  user.nickname; // 사용자 ID 저장
-    console.log('사용자 정보 로드 완료:', gameState.balance);
+    gameState.userNickname =  user.nickname; 
     updateUI();
   })
   .fail(function (xhr) {
@@ -134,25 +130,21 @@ function loadDifficultySettings() {
     setLoadingState(false);
     return;
   }
-  
-  console.log("게임 UID:", gameUid); 
  
   $.ajax({
-    url: '/api/game/levels/by-game/' + gameUid, 
+    url: '/api/game/levels/by-game/' + gameUid,
     type: 'GET',
     dataType: 'json',
     success: function(gameLevels) {
-      console.log("받아온 난이도 데이터:", gameLevels); 
-      
       // 서버 데이터를 difficultyConfigs에 저장
       buildDifficultyConfigs(gameLevels);
-      
+     
       // JSP 화면에 난이도 데이터 표시
       updateDifficultyDisplay(gameLevels);
-      
+     
       // 로딩 완료
       setLoadingState(false);
-      
+     
       // 기본 난이도 선택 (normal이 없으면 첫 번째 난이도)
       setDefaultDifficulty();
     },
@@ -167,19 +159,19 @@ function loadDifficultySettings() {
 // 서버 데이터를 difficultyConfigs 객체로 변환 (수정된 버전)
 function buildDifficultyConfigs(gameLevels) {
   difficultyConfigs = {};
-  
+ 
   gameLevels.forEach(function(gameLevel) {  // game -> gameLevel로 명확화
     let difficultyKey;
-    
+   
     // DB의 level을 키로 매핑
     if (gameLevel.level === 'HARD') {
       difficultyKey = 'hard';
     } else if (gameLevel.level === 'NORMAL') {
-      difficultyKey = 'normal'; 
+      difficultyKey = 'normal';
     } else if (gameLevel.level === 'EASY') {
       difficultyKey = 'easy';
     }
-    
+   
     if (difficultyKey) {
       difficultyConfigs[difficultyKey] = {
         name: gameLevel.level,
@@ -188,8 +180,7 @@ function buildDifficultyConfigs(gameLevels) {
       };
     }
   });
-  
-  console.log('구성된 난이도 설정:', difficultyConfigs);
+
 }
 
 // 기본 난이도 선택
@@ -203,31 +194,30 @@ function setDefaultDifficulty() {
       gameState.difficulty = firstKey;
     }
   }
-  
+ 
   // UI에서 해당 난이도 선택 표시
   document.querySelectorAll(".difficulty-option").forEach((opt) => opt.classList.remove("selected"));
   const defaultOption = document.querySelector(`.difficulty-option[data-difficulty="${gameState.difficulty}"]`);
   if (defaultOption) {
     defaultOption.classList.add("selected");
   }
-  
-  console.log('기본 난이도 설정:', gameState.difficulty);
+
 }
 
 // JSP 화면에 난이도 데이터 표시하는 함수 (수정된 버전)
 function updateDifficultyDisplay(gameLevels) {  // gameData -> gameLevels로 명확화
   $.each(gameLevels, function(index, gameLevel) {  // game -> gameLevel로 명확화
     let difficultyKey;
-    
+   
     // DB의 level을 JSP의 data-difficulty와 매핑
     if (gameLevel.level === 'HARD') {
       difficultyKey = 'hard';
     } else if (gameLevel.level === 'NORMAL') {
-      difficultyKey = 'normal'; 
+      difficultyKey = 'normal';
     } else if (gameLevel.level === 'EASY') {
       difficultyKey = 'easy';
     }
-    
+   
     // 해당 난이도 옵션 찾아서 데이터 업데이트
     const $difficultyOption = $(`.difficulty-option[data-difficulty="${difficultyKey}"]`);
     if ($difficultyOption.length > 0) {
@@ -240,7 +230,7 @@ function updateDifficultyDisplay(gameLevels) {  // gameData -> gameLevels로 명
 // 로딩 상태 설정
 function setLoadingState(loading) {
   gameState.loading = loading;
-  
+ 
   if (loading) {
     elements.startBtn.disabled = true;
     elements.startBtn.textContent = '로딩 중...';
@@ -259,8 +249,6 @@ gameState.gameData = {
   difficulty: gameState.difficulty
 };
 
- console.log("💸 게임 시작! 배팅 금액:", betAmount);
-
   $.ajax({
     url: '/api/game/start',
     method: 'POST',
@@ -270,7 +258,6 @@ gameState.gameData = {
     },
     data: JSON.stringify({ betAmount: betAmount }),  
     success: function (res) {
-      console.log("✅ 응답:", res);
 
       gameState.balance = res.newBalance;
       gameState.currentBet = betAmount;
@@ -286,7 +273,7 @@ gameState.gameData = {
 
       updateUI();
       showResult(`🎮 게임 시작! (난이도: ${config.name}) 첫 번째 동전을 던집니다!`, "info");
-      
+     
       // 첫 번째 동전 던지기 바로 실행
       flipCoin();
     },
@@ -302,28 +289,33 @@ gameState.gameData = {
 
 // STOP 버튼 - 획득포인트 반영 (Ajax)
 function stopGame() {
-  const gameData = {
-    userNickname: gameState.userNickname,
-    winAmount: gameState.accumulatedWin,
-    difficulty: gameState.difficulty,  // 난이도 정보 전송
-    streak: gameState.streak           // 연속 성공 횟수 전송
-  };
-  
-  $.post('/api/game/stop', gameData)
-    .done(function(response) {
-      // 서버에서 포인트 추가 후 새로운 잔액 받아오기
+  $.ajax({
+    url: '/api/game/stop',
+    method: 'POST',
+    contentType: 'application/json',
+    headers: {
+      Authorization: 'Bearer ' + localStorage.getItem('accessToken')
+    },
+    data: JSON.stringify({
+        betAmount: gameState.currentBet,    
+        winAmount: gameState.accumulatedWin,
+        difficulty: gameState.difficulty,
+        streak: gameState.streak,
+        gameResult: "WIN"
+    }),
+    success: function (response) {
+
       gameState.balance = response.newBalance;
-      
       endGame(true, "게임을 멈췄습니다!");
       showResult(`성공! +${gameState.accumulatedWin}포인트 획득! (연속 ${gameState.streak}회 성공)`, "win");
       updateUI();
-    })
-    .fail(function(xhr) {
-      console.error('포인트 저장 실패:', xhr.status);
-      // 실패해도 게임은 종료 (클라이언트에서 처리)
+    },
+    error: function (xhr) {
+      console.error(' 포인트 저장 실패:', xhr.responseText);
       endGame(true, "게임을 멈췄습니다!");
       showResult(`성공! +${gameState.accumulatedWin}포인트 획득 (서버 저장 실패)`, "win");
-    });
+    }
+  });
 }
 
 // 동전 던지기 (수정된 버전)
@@ -335,7 +327,7 @@ function flipCoin() {
 
   // 선택된 난이도의 설정값 사용
   const difficultyConfig = difficultyConfigs[gameState.difficulty];  // config -> difficultyConfig로 명확화
-  
+ 
   setTimeout(() => {
     // 이제 chance가 소수(0~1)이므로 올바르게 작동
     const isWin = Math.random() < difficultyConfig.chance;
@@ -349,12 +341,18 @@ function flipCoin() {
       gameState.potentialWin = Math.round(gameState.accumulatedWin * difficultyConfig.payout);
 
       showResult(`앞면! 연속 ${gameState.streak}회 성공! (난이도: ${difficultyConfig.name}) 다음 성공시 ${gameState.potentialWin}포인트 획득`, "win");
-
+	
+	  elements.goBtn.classList.remove("hidden");
+      elements.stopBtn.classList.remove("hidden");
+     
       elements.goBtn.disabled = false;
       elements.stopBtn.disabled = false;
     } else {
+       
       elements.coin.classList.add("tails");
-      
+     
+      sendLoseHistory();
+
       endGame(false, "뒷면! 게임 오버!");
       showResult(`뒷면이 나왔습니다. (난이도: ${difficultyConfig.name}) 모든 배팅금을 잃었습니다!`, "lose");
     }
@@ -369,7 +367,7 @@ function flipCoin() {
 function showErrorMessage(message) {
   elements.startErrorMessage.innerHTML = message;
   elements.startErrorMessage.style.display = "block";
-  
+ 
   setTimeout(() => {
     elements.startErrorMessage.style.display = "none";
   }, 5000);
@@ -389,14 +387,12 @@ function setupEventListeners() {
       // 기존 선택 제거
       document.querySelectorAll(".difficulty-option")
         .forEach((opt) => opt.classList.remove("selected"));
-      
+     
       // 새로운 선택 추가
       option.classList.add("selected");
       const selectedDifficulty = option.dataset.difficulty;
       gameState.difficulty = selectedDifficulty;
-      
-      console.log('난이도 변경:', selectedDifficulty);
-      
+     
       // 선택된 난이도 정보 표시
       const difficultyConfig = difficultyConfigs[gameState.difficulty];  // config -> difficultyConfig
       if (difficultyConfig) {
@@ -408,7 +404,7 @@ function setupEventListeners() {
       } else {
         showResult(`난이도 선택됨 (데이터 로딩 중...)`, "info");
       }
-      
+     
       updateUI();
     });
   });
@@ -419,7 +415,7 @@ function setupEventListeners() {
       if (gameState.gameActive || gameState.loading) return;
 
       const amount = btn.dataset.amount;
-      
+     
       if (amount === "all") {
         elements.betAmount.value = gameState.balance;
       } else if (gameState.balance < amount) {
@@ -436,24 +432,24 @@ function setupEventListeners() {
   // 배팅 금액 입력
   elements.betAmount.addEventListener("input", () => {
     const amount = parseInt(elements.betAmount.value) || 0;
-    
+   
     if (gameState.balance < amount) {
       inputErrorMessage("보유포인트 내에서만 배팅이 가능합니다.");
       elements.betAmount.value = 0;
     }
-      
+     
     updateUI();
   });
 
   // 게임 시작 버튼
   elements.startBtn.addEventListener("click", () => {
     if (gameState.loading) return;
-    
+   
     if (elements.startBtn.textContent === "다시 시작") {
       resetGameState();
       return;
     }
-    
+   
     const betAmount = parseInt(elements.betAmount.value) || 0;
 
     if (!betAmount || betAmount <= 0) {
@@ -472,12 +468,6 @@ function setupEventListeners() {
       startErrorMessage("난이도 정보를 불러오는 중입니다. 잠시 후 다시 시도해주세요.");
       return;
     }
-
-    console.log('게임 시작 시도:', {
-      betAmount,
-      difficulty: gameState.difficulty,
-      config: difficultyConfig
-    });
 
     // Ajax로 서버에 배팅금액 차감 요청 (선택된 난이도 포함)
     startGame(betAmount);
@@ -505,7 +495,7 @@ function endGame(won, message) {
   elements.stopBtn.classList.add("hidden");
   elements.startBtn.classList.remove("hidden");
   elements.startBtn.textContent = "다시 시작";
-  
+ 
   setTimeout(() => {
     elements.coin.classList.remove("heads", "tails");
     elements.coin.classList.add("heads");
@@ -521,7 +511,7 @@ function showResult(message, type) {
 function inputErrorMessage(message) {
   elements.inputErrorMessage.innerHTML = message;
   elements.inputErrorMessage.style.display = "block";
-  
+ 
   setTimeout(() => {
     elements.inputErrorMessage.style.display = "none";
   }, 3000);
@@ -530,7 +520,7 @@ function inputErrorMessage(message) {
 function startErrorMessage(message) {
   elements.startErrorMessage.innerHTML = message;
   elements.startErrorMessage.style.display = "block";
-  
+ 
   setTimeout(() => {
     elements.startErrorMessage.style.display = "none";
   }, 3000);
@@ -545,60 +535,54 @@ function resetGameState() {
   gameState.gameActive = false;
   gameState.potentialWin = 0;
   gameState.accumulatedWin = 0;
-  
+ 
   // 버튼 상태 초기화
   elements.goBtn.classList.add("hidden");
   elements.stopBtn.classList.add("hidden");
   elements.startBtn.classList.remove("hidden");
   elements.startBtn.textContent = "게임 시작";
-  
+ 
   // 버튼 활성화 상태 초기화 (중요!)
   elements.goBtn.disabled = false;
   elements.stopBtn.disabled = false;
   elements.startBtn.disabled = false;
-  
+ 
   // 입력 필드 초기화
   elements.betAmount.value = "";
-  
+ 
   // 동전 상태 초기화
   elements.coin.classList.remove("heads", "tails", "flipping");
   elements.coin.classList.add("heads");
-  
+ 
   // 메시지 초기화
   elements.resultMessage.style.display = "none";
   elements.inputErrorMessage.style.display = "none";
   elements.startErrorMessage.style.display = "none";
-  
-  // 현재 포인트 다시 불러오기 (Ajax)
-  refreshUserBalance();
+ 
+
 }
 
-// 사용자 잔액 새로고침 함수 분리
-function refreshUserBalance() {
-  const token = localStorage.getItem('accessToken');
-  if (!token) {
-    console.warn('토큰이 없어서 잔액을 새로고침할 수 없습니다.');
-    updateUI();
-    return;
-  }
-  
+
+function sendLoseHistory() {
   $.ajax({
-    url: '/api/user/me',
-    method: 'GET',
+    url: '/api/game/lose',
+    method: 'POST',
+    contentType: 'application/json',
     headers: {
-      'Authorization': 'Bearer ' + token
+      Authorization: 'Bearer ' + localStorage.getItem('accessToken')
     },
-    xhrFields: { withCredentials: true }
-  })
-  .done(function(user) {
-    gameState.balance = user.point_balance;
-    console.log('포인트 새로고침 완료:', gameState.balance);
-    updateUI();
-  })
-  .fail(function(xhr) {
-    console.error('포인트 새로고침 실패:', xhr.status);
-    // 실패해도 UI는 업데이트
-    updateUI();
+    data: JSON.stringify({
+      betAmount: gameState.currentBet,
+      winAmount: 0,
+      difficulty: gameState.difficulty,
+      streak: gameState.streak,
+      gameResult: "LOSE"
+    }),
+    success: function (res) {
+    },
+    error: function (xhr) {
+      console.error(" 패배 히스토리 저장 실패:", xhr.responseText);
+    }
   });
 }
 
@@ -606,7 +590,7 @@ function updateUI() {
   elements.balance.textContent = gameState.balance.toLocaleString();
   elements.currentBet.textContent = gameState.currentBet.toLocaleString();
   elements.streak.textContent = gameState.streak;
-  
+ 
   elements.potentialWin.textContent = gameState.gameActive  
     ? gameState.accumulatedWin.toLocaleString()  
     : "0";
