@@ -3,10 +3,10 @@ package com.bettopia.game.model.board;
 import java.util.List;
 import java.util.UUID;
 
+import com.bettopia.game.Exception.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.bettopia.game.Exception.UserNotFoundEception;
 import com.bettopia.game.model.board.BoardRequestDTO.InsertBoardRequestDTO;
 import com.bettopia.game.model.board.BoardRequestDTO.UpdateBoardRequestDTO;
 
@@ -49,7 +49,7 @@ public class BoardService {
 	    }
 	    // 2. 작성자 검증
 	    if (!existing.getUser_uid().equals(user_uid)) {
-	        throw new UserNotFoundEception();
+	        throw new UserNotFoundException();
 	    }
 	    // 3. 수정할 내용으로 객체 생성
 	    BoardDTO board = BoardDTO.builder()
@@ -72,7 +72,7 @@ public class BoardService {
 	    }
 	    // 2. 작성자 검증
 	    if (!existing.getUser_uid().equals(user_uid)) {
-	        throw new UserNotFoundEception(); 
+	        throw new UserNotFoundException();
 	    }
 	    // 3. DB 삭제
 	    boardDAO.deleteBoardByUid(boardId);
@@ -87,7 +87,4 @@ public class BoardService {
 	public void incrementLikeCount(String boardId) {
 	    boardDAO.incrementLikeCount(boardId);
 	}
-
-	
-
 }
