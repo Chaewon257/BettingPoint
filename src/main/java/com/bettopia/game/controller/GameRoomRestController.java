@@ -12,8 +12,6 @@ import com.bettopia.game.model.gameroom.GameRoomRequestDTO;
 import com.bettopia.game.model.gameroom.GameRoomResponseDTO;
 import com.bettopia.game.model.gameroom.GameRoomService;
 
-import javax.servlet.http.HttpSession;
-
 @RestController
 @RequestMapping("/api/gameroom")
 public class GameRoomRestController {
