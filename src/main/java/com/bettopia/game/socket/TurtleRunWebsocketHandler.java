@@ -56,61 +56,9 @@ public class TurtleRunWebsocketHandler extends TextWebSocketHandler {
     
 	@Override
 	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-		// 연결된 세션 저장, 초기 데이터 전송 등
-		String userId = (String) session.getAttributes().get("userId");
 		String roomId = (String) session.getAttributes().get("roomId");
-
-		if(roomId == null || userId == null) {
-			session.close(CloseStatus.BAD_DATA);
-			return;
-		}
-
-		// 플레이어 리스트 조회
-		List<TurtlePlayerDTO> players = playerDAO.getAll(roomId);
-
-		if(players != null) {
-			// 중복 입장 검사
-			for(TurtlePlayerDTO player : players) {
-				if(player.getUser_uid().equals(userId)) {
-					session.close(CloseStatus.BAD_DATA);
-					return;
-				}
-			}
-			// 최대 인원 초과 검사
-			if(players.size() >= 8) {
-				session.close(CloseStatus.BAD_DATA);
-				return;
-			}
-
-			// 보유 포인트 검사
-			// 최소 베팅 포인트 미만 입장 불가
-			UserVO user = authService.findByUid(userId);
-			GameRoomResponseDTO gameroom = gameRoomService.selectById(roomId);
-			if(user.getPoint_balance() < gameroom.getMin_bet()) {
-				session.close(CloseStatus.BAD_DATA);
-				return;
-			}
-		}
-
-		// 세션 등록
 		sessionService.addSession(roomId, session);
-
-		// 플레이어 추가
-		TurtlePlayerDTO player = TurtlePlayerDTO.builder()
-			.user_uid(userId)
-			.room_uid(roomId)
-			.isReady(false)
-			.turtle_id("1")
-			.betting_point(0)
-			.build();
-
-		playerDAO.addPlayer(roomId, player);
-
-		// 입장 메시지 방송
-		Map<String, Object> data = new HashMap<>();
-		data.put("userId", userId);
-		broadcastMessage("enter", roomId, data);
-	}
+		}
 	
 	private void broadcastMessage(String type, String roomId, Map<String, Object> data) throws IOException {
 		// 웹소켓 메시지 전송
@@ -154,22 +102,35 @@ public class TurtleRunWebsocketHandler extends TextWebSocketHandler {
 		String roomId = (String) session.getAttributes().get("roomId");
 		String userId = (String) session.getAttributes().get("userId");
 
-		TurtlePlayerDTO player = playerDAO.getPlayer(roomId, userId);
-
 		// 메시지 타입에 따라 분기
 		switch(type) {
-			case "choice":
-				String turtleId = json.get("turtle_id").asText();
-				player.setTurtle_id(turtleId);
-				break;
-			case "betting":
-				int bettingPoint = json.get("betting_point").asInt();
-				player.setBetting_point(bettingPoint);
-				break;
-			case "ready":
-				Boolean isReady = json.get("isReady").asBoolean();
-				player.setReady(isReady);
-				break;
+			case "start":
+				GameRoomResponseDTO gameroom = gameRoomService.selectById(roomId);
+				List<TurtlePlayerDTO> player = playerDAO.getAll(roomId);
+				Map<String, Object> initMsg = new HashMap<>();
+	            initMsg.put("type", "init");
+	            initMsg.put("roomId", roomId);
+	            // ------ 방 정보 ------
+	            initMsg.put("difficulty", gameroom.getGame_level_uid());    // ex) "easy", "normal", "hard"
+	            initMsg.put("minBet", gameroom.getMin_bet());           // int
+	            initMsg.put("roomTitle", gameroom.getTitle());
+	            // ------ 플레이어 정보 ------
+	            List<Map<String, Object>> playerList = new ArrayList<>();
+	            for(TurtlePlayerDTO player : players) {
+	                Map<String, Object> playerMap = new HashMap<>();
+	                playerMap.put("userId", player.getUser_uid());
+	                playerMap.put("turtleId", player.getTurtle_id());
+	                playerMap.put("bettingPoint", player.getBetting_point());
+	                playerList.add(playerMap);
+	            }
+	            initMsg.put("players", playerList);
+	
+	            List<WebSocketSession> sessions = sessionService.getSessions(roomId);
+	            String jsonMessage = mapper.writeValueAsString(initMsg);
+	            for (WebSocketSession ws : sessions) {
+	                if (ws.isOpen()) ws.sendMessage(new TextMessage(jsonMessage));
+	            }
+	            break;
 			case "race_update":
 	            // positions를 받아와 전체 방에 실시간으로 브로드캐스트
 	            // 1. positions를 파싱
@@ -200,7 +161,6 @@ public class TurtleRunWebsocketHandler extends TextWebSocketHandler {
 			    dto.setPoints(json.get("points").asInt());
 			    dto.setBet(json.get("bet").asInt());
 			    dto.setPointChange(json.get("pointChange").asInt());
-
 			    // 1. 게임 기록 저장
 			    GameHistoryDTO gameHistory = GameHistoryDTO.builder()
 			            .user_uid(dto.getUser_uid())
@@ -210,7 +170,6 @@ public class TurtleRunWebsocketHandler extends TextWebSocketHandler {
 			            .game_result(dto.getPointChange() > 0 ? "WIN" : "LOSE")
 			            .build();
 			    GameHistoryDTO savedGameHistory = historyService.insertGameHistory(gameHistory, dto.getUser_uid());
-
 			    // 2. 포인트 기록 저장 (GameHistory UID 연동)
 			    PointHistoryDTO pointHistory = PointHistoryDTO.builder()
 			            .user_uid(dto.getUser_uid())
@@ -220,7 +179,6 @@ public class TurtleRunWebsocketHandler extends TextWebSocketHandler {
 			            .balance_after(dto.getPoints()) // 혹은 실제 잔액 계산 결과
 			            .build();
 			    historyService.insertPointHistory(pointHistory, dto.getUser_uid());
-
 			    // 3. 결과 브로드캐스트 (모달 노출용)
 			    Map<String, Object> resultMsg = new HashMap<>();
 			    resultMsg.put("type", "race_result");
@@ -231,12 +189,10 @@ public class TurtleRunWebsocketHandler extends TextWebSocketHandler {
 			    resultMsg.put("userId", dto.getUser_uid());
 			    resultMsg.put("roomId", dto.getRoomId());
 			    broadcastMessage("race_result", roomId, resultMsg);
-
 			    break;
 		}
 
 		List<TurtlePlayerDTO> players = playerDAO.getAll(roomId);
-
 		Map<String, Object> data = new HashMap<>();
 		data.put("players", players);
 		broadcastMessage("update", roomId, data);

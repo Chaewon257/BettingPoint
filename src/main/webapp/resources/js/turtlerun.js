@@ -28,7 +28,9 @@ document.querySelector('.crowd-repeat').style.width = TOTAL_WIDTH + "px";
 document.querySelector('.crowd-stand').style.width = TOTAL_WIDTH + "px";
 document.getElementById('trackContainer').style.height = trackHeight + 'px';
 
+let ws;
 let turtleGame = null;
+let roomId = null;
 
 function connectWebSocket() {
     
@@ -84,8 +86,6 @@ function connectWebSocket() {
                     selectedTurtle: msg.yourResult.selectedTurtle
                 });
             }
-
-            // ... (race_update, race_finish 등 다른 메시지도 같이 처리)
         };
     },
     error: function(xhr, status, err) {
@@ -464,19 +464,6 @@ class TurtleRacingGame {
             roomId: this.roomId // 게임방 ID 추가
         };
 
-        // $.ajax({
-        //     url: '/api/turtlerun/result',  // 서버에 결과 저장
-        //     method: 'POST',
-        //     contentType: 'application/json',    
-        //     data: JSON.stringify(gameResult),
-        //     success: function(response) {  
-        //         console.log('게임 결과 저장 성공:', response);
-        //     },
-        //     error: function(xhr, status, error) {
-        //         console.error('게임 결과 저장 실패:', error);
-        //     }
-        // });
-
         if(!serverMsg && ws && ws.readyState === 1 && !this.resultSent) {
             this.resultSent = true;
             ws.send(JSON.stringify({
@@ -533,22 +520,6 @@ class TurtleRacingGame {
     savePoints() {
         savePointsToServer(this.points);
     }
-
-    // loadStat(key) {
-    //     return parseInt(localStorage.getItem(`turtleGameStat_${key}`), 10) || 0;
-    // }
-
-    // saveStat(key, value) {
-    //     localStorage.setItem(`turtleGameStat_${key}`, value);
-    // }
-
-    // updateStatsDisplay() {
-    //     this.statDisplay.innerHTML = `<p>전체 플레이: ${this.plays} | 승리: ${this.wins} | 패배: ${this.losses}</p>`;
-    // }
-
-    // toggleMute() {
-    //     // 생략
-    // }
 }
 
 function isTabletOrMobileView() {
@@ -556,10 +527,6 @@ function isTabletOrMobileView() {
 }
 
 window.addEventListener('DOMContentLoaded', connectWebSocket);
-
-window.addEventListener('DOMContentLoaded', () => {
-    turtleGame = new TurtleRacingGame();
-});
 
 window.addEventListener('DOMContentLoaded', () => {
     const modal = document.getElementById('resultModal');
@@ -598,15 +565,9 @@ function startRedirectCountdown(seconds) {
         if (counter <= 0) {
             clearInterval(timer);
             hideModal();
-            window. location.href = '/gameroom/detail/' + roomId;
+            window.location.href = '/gameroom/detail/' + roomId;
         } else {
             countdownElem.textContent = `${counter}초 후 게임방으로 이동합니다.`;
         }
     }, 1000);
 }
-
-window.addEventListener('resize', () => {
-    if(turtleGame) turtleGame.renderTrack();
-});
-
-window.addEventListener('DOMContentLoaded', turtleGame.renderTrack());
