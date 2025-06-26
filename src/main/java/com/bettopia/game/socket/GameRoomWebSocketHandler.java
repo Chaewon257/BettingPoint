@@ -7,8 +7,6 @@ import com.bettopia.game.model.gameroom.GameRoomResponseDTO;
 import com.bettopia.game.model.gameroom.GameRoomService;
 import com.bettopia.game.model.multi.turtle.PlayerDAO;
 import com.bettopia.game.model.multi.turtle.TurtlePlayerDTO;
-import com.bettopia.game.model.multi.turtle.TurtleRunResultDTO;
-//import com.bettopia.game.model.multi.turtle.TurtleRunService;
 import com.bettopia.game.model.multi.turtle.SessionService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
