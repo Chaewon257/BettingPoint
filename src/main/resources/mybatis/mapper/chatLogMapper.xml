@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bpoint.chatlog">
+	  
+	<select id="selectByUser" parameterType="String" resultType="chatlogDTO">
+		SELECT * 
+			FROM chat_logs
+			where user_uid = #{user_uid}
+	</select>
+	
+	<select id="selectByUid" parameterType="String" resultType="chatlogDTO">
+		SELECT *
+			FROM chat_logs
+			WHERE uid=#{uid}
+	</select>
+	
+	<!-- response, response_date는 null 값으로 넣음 -->
+	<insert id="insertChatLog" parameterType="chatlogDTO">
+		INSERT INTO
+			chat_logs (uid, user_uid, title, question, response, chat_date, response_date)
+			VALUES (#{uid}, #{user_uid}, #{title}, #{question}, #{response}, NOW(), #{response_date})
+	</insert>
+	
+	<delete id="deleteChatlog" parameterType="String">
+		DELETE FROM chat_logs
+			WHERE uid=#{uid}
+	</delete>
+	
+</mapper>
