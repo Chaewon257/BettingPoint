@@ -28,7 +28,7 @@ public class UserDAO {
 
     public void pointCharge(int point, String userId) {
         Map<String, Object> params = new HashMap<>();
-        params.put("point_balance", point);
+        params.put("point", point);
         params.put("uid", userId);
         sqlSession.update(namespace + "pointCharge", params);
     }

@@ -58,7 +58,7 @@
 	<!-- 포인트 충전 -->
 	<update id="pointCharge" parameterType="map">
 		update user set
-		point_balance = #{point_balance}
+		point_balance = point_balance + #{point}
 		where uid = #{uid}
 	</update>
 </mapper>

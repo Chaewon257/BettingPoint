@@ -45,9 +45,10 @@ public class UserRestController {
 
 	// 포인트 충전
 	@PutMapping("/charge")
-	public void pointCharge(@RequestHeader("Authorization") String authHeader, int point) {
+	public void pointCharge(@RequestHeader("Authorization") String authHeader,
+							@RequestBody Map<String, Integer> request) {
+		int point = request.get("point");
 		String userId = authService.validateAndGetUserId(authHeader);
 		authService.pointCharge(point, userId);
 	}
-
 }
