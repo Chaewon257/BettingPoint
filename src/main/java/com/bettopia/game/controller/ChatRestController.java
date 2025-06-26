@@ -3,8 +3,8 @@ package com.bettopia.game.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,31 +18,37 @@ public class ChatRestController {
 
 	@Autowired
 	ChatQAService chatService;
-	
-	/*
-	 * @GetMapping(value = "/chat", produces = "text/plain;charset=UTF-8") public
-	 * String f1() { return "test"; }
-	 */
-	
-	// 질문 전체 리스트 반환
-    @GetMapping("/question")
+		
+	// ✅ 전체 Q&A 목록 반환
+    @GetMapping("/allQuestion")
     public List<ChatQADTO> getAllQuestions() {
         return chatService.selectAll();
     }
 
-    // uid로 질문-답변 1개 조회
-    @GetMapping(value= "/answer", produces = "text/plain;charset=UTF-8")
-    public String getAnswerByUid(String uid) {
-        return chatService.questiontByUid(uid);
+    // ✅ 메인 카테고리에 따른 서브 카테고리 목록 반환
+    @GetMapping(value = "/subcategories/{main_category}", produces = "application/json;charset=UTF-8")
+    public List<String> getSubCategoriesByMain(@PathVariable("main_category") String main_category) {
+        return chatService.subCatesByMainCate(main_category.trim());
     }
 
-    @GetMapping(value="/questionByCate", produces = "application/json;charset=UTF-8")
-    public List<ChatQADTO> getQuestionByCate(@RequestParam("category") String category){
-    	System.out.println("💡 전달받은 카테고리: [" + category + "]");
-        List<ChatQADTO> list = chatService.selectByCate(category.trim());
-        System.out.println("💬 결과 개수: " + list.size());
+    // ✅ 메인+서브 카테고리에 따른 질문 목록 반환
+    @GetMapping(value = "/questions/{main_category}/{sub_category}", produces = "application/json;charset=UTF-8")
+    public List<ChatQADTO> getQuestionsByMainAndSub(
+    		@PathVariable("main_category") String main_category,
+    		@PathVariable("sub_category") String sub_category) {
+        return chatService.selectByMainSubCate(main_category.trim(), sub_category.trim());
+    }
 
-    	return list;
+    // ✅ UID로 답변만 조회
+    @GetMapping(value = "/answer/{uid}", produces = "text/plain;charset=UTF-8")
+    public String getAnswerByUid(@PathVariable("uid") String uid) {
+        return chatService.answerByUid(uid);
+    }
+
+    // ✅ 메인 카테고리로 질문 목록 조회 (서브 구분 없음)
+    @GetMapping(value = "/questionsByMain/{main_category}", produces = "application/json;charset=UTF-8")
+    public List<ChatQADTO> getQuestionsByMainCategory(@PathVariable("main_category") String main_category) {
+        return chatService.selectByMainCate(main_category.trim());
     }
 	
 }

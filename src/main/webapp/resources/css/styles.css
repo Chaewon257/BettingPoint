@@ -14,14 +14,3 @@ body {
 		'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif;
 	background-color: #F7F9FC;
 }
-
-/* Main */
-.main-container {
-	margin: 0 auto;
-}
-
-
-/* Test Box */
-.test-box {
-	height: 100vh;
-}
