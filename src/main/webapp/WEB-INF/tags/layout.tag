@@ -33,8 +33,13 @@
 					'gray-4' : '#F7F7F7',
 					'gray-5' : '#D4D4D4',
 					'gray-6' : '#757575',
+					'gray-7' : '#656565',
+					'gray-10' : '#EDEDED',					
 					'blue-1' : '#4A90E2',
 					'blue-2' : '#3F7AB6',
+					'blue-3' : '#A2C8E6',
+					'blue-4' : '#D9E8F2',
+					'red-1' : '#EC6F6F',
 				},
 				fontSize : {
 					'ts-28' : [
@@ -78,12 +83,14 @@
 </script>
 </head>
 <body>
-	<layout:header pageType="${pageType}" />
-	
-	<main class="main-container">
-		<jsp:invoke fragment="bodyContent" />
-	</main>
-	
-	<layout:footer pageType="${pageType}" />
+	<div class="min-h-screen flex flex-col">
+		<layout:header pageType="${pageType}" />
+		
+		<main class="grow flex main-container">
+			<jsp:invoke fragment="bodyContent" />
+		</main>
+		
+		<layout:footer pageType="${pageType}" />
+	</div>
 </body>
 </html>
