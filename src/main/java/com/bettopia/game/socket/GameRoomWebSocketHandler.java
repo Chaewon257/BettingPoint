@@ -7,6 +7,8 @@ import com.bettopia.game.model.gameroom.GameRoomResponseDTO;
 import com.bettopia.game.model.gameroom.GameRoomService;
 import com.bettopia.game.model.multi.turtle.PlayerDAO;
 import com.bettopia.game.model.multi.turtle.TurtlePlayerDTO;
+import com.bettopia.game.model.multi.turtle.TurtleRunResultDTO;
+//import com.bettopia.game.model.multi.turtle.TurtleRunService;
 import com.bettopia.game.model.multi.turtle.SessionService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -98,7 +100,7 @@ public class GameRoomWebSocketHandler extends TextWebSocketHandler {
 		data.put("userId", userId);
 		broadcastMessage("enter", roomId, data);
 	}
-
+	
 	private void broadcastMessage(String type, String roomId, Map<String, Object> data) throws IOException {
 		// 웹소켓 메시지 전송
 		List<WebSocketSession> sessions = sessionService.getSessions(roomId);
@@ -158,7 +160,6 @@ public class GameRoomWebSocketHandler extends TextWebSocketHandler {
 				player.setReady(isReady);
 				break;
 		}
-
 		List<TurtlePlayerDTO> players = playerDAO.getAll(roomId);
 
 		Map<String, Object> data = new HashMap<>();

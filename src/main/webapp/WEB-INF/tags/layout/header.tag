@@ -1,7 +1,6 @@
 <%@ tag language="java" pageEncoding="UTF-8" description="공통 레이아웃 헤더"%>
 
 <%@ attribute name="pageType" required="true"%>
-<%@ attribute name="gameUid" required="false"%>
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
@@ -146,6 +145,7 @@
 								<a href="/login" class="text-black"><span
 									class="underline font-semibold">로그인</span> 후 다양한 서비스를 이용해보세요</a>
 							</div>
+
 							<a href="/solo/cointoss" class="text-black text-base hover:text-blue-1 hover:font-semibold">개인게임</a>
 							<a href="/gameroom" class="text-black text-base hover:text-blue-1 hover:font-semibold">단체게임</a>
 							<a href="/board" class="text-black text-base hover:text-blue-1 hover:font-semibold">게시판</a>

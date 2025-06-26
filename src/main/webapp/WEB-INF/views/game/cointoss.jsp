@@ -17,7 +17,9 @@
 				<!-- 왼쪽 패널 -->
 				<div class="left-panel">
 					<div class="balance-info">
-						<div class="balance-label">보유 포인트</div>
+						<div class="balance-label">
+						 <span id="userNickname">사용자</span>님의 보유 포인트
+						</div>
 						<div class="balance-amount" id="balance">연결 전</div>
 					</div>
 	

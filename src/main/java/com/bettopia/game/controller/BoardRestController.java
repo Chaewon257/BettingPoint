@@ -116,24 +116,24 @@ public class BoardRestController {
 	}
 
 	// summernote 이미지 업로드 (S3 연동)
-    @PostMapping(value = "/image-upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @ResponseBody
-    public Map<String, Object> uploadImage(@RequestPart("image") MultipartFile file) {
-        Map<String, Object> response = new HashMap<>();
+	@PostMapping(value = "/image-upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	@ResponseBody
+	public Map<String, Object> uploadImage(@RequestPart("image") MultipartFile file) {
+		Map<String, Object> response = new HashMap<>();
 
-        try {
-        	String imageUrl = s3FileService.uploadFile(file);  // URL을 바로 받음
+		try {
+			String imageUrl = s3FileService.uploadFile(file); // URL을 바로 받음
 
-            response.put("url", imageUrl);
-            response.put("success", 1);
-            response.put("message", "업로드 성공");
-        } catch (Exception e) {
-            e.printStackTrace();
-            response.put("success", 0);
-            response.put("message", "업로드 실패");
-        }
+			response.put("url", imageUrl);
+			response.put("success", 1);
+			response.put("message", "업로드 성공");
+		} catch (Exception e) {
+			e.printStackTrace();
+			response.put("success", 0);
+			response.put("message", "업로드 실패");
+		}
 
-        return response;
+		return response;
 	}
 
 }
