@@ -1,8 +1,10 @@
 package com.bettopia.game.controller;
 
+import java.io.IOException;
 import java.util.List;
 
 import com.bettopia.game.model.auth.AuthService;
+import com.bettopia.game.socket.GameRoomListWebSocket;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,6 +22,8 @@ public class GameRoomRestController {
 	GameRoomService gameRoomService;
 	@Autowired
 	AuthService authService;
+	@Autowired
+	private GameRoomListWebSocket gameRoomListWebSocket;
 
 	// 게임방 리스트 조회
 	@GetMapping("/list")
@@ -36,9 +40,11 @@ public class GameRoomRestController {
 	// 게임방 생성
 	@PostMapping(value = "/insert", produces = "text/plain;charset=utf-8")
 	public String insertRoom(@RequestBody GameRoomRequestDTO.InsertGameRoomRequestDTO roomRequest,
-							 @RequestHeader("Authorization") String authHeader) {
+							 @RequestHeader("Authorization") String authHeader) throws IOException {
 		String userId = authService.validateAndGetUserId(authHeader);
-		return gameRoomService.insertRoom(roomRequest, userId);
+		String roomId = gameRoomService.insertRoom(roomRequest, userId);
+		gameRoomListWebSocket.broadcastMessage("insert");
+		return roomId;
 	}
 
 	// 게임방 수정
@@ -51,8 +57,9 @@ public class GameRoomRestController {
 
 	// 게임방 삭제
 	@DeleteMapping(value = "/delete/{roomId}", produces = "text/plain;charset=utf-8")
-	public void deleteRoom(@PathVariable String roomId, @RequestHeader("Authorization") String authHeader) {
+	public void deleteRoom(@PathVariable String roomId, @RequestHeader("Authorization") String authHeader) throws IOException {
 		String userId = authService.validateAndGetUserId(authHeader);
 		gameRoomService.deleteRoom(roomId, userId);
+		gameRoomListWebSocket.broadcastMessage("delete");
 	}
 }

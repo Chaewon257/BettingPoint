@@ -34,7 +34,7 @@ public class UserRestController {
 									"birth_date", user.getBirth_date(),
 									"phone_number", user.getPhone_number(),
 									"point_balance", user.getPoint_balance(),
-									"profile_img", user.getProfile_img()
+									"profile_img", user.getProfile_img() 
 								));
 	}
 }

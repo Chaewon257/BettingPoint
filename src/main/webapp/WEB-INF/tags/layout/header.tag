@@ -1,6 +1,7 @@
 <%@ tag language="java" pageEncoding="UTF-8" description="공통 레이아웃 헤더"%>
 
 <%@ attribute name="pageType" required="true"%>
+<%@ attribute name="gameUid" required="false"%>
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
@@ -107,31 +108,43 @@
 <c:choose>
 	<c:when test="${pageType ne 'ingame'}">
 		<header class="bg-white shadow-[0_2px_10px_rgba(0,0,0,0.1)]">
-			<div class="relative w-full bg-white py-1 md:py-2.5 border border-gray-1 flex items-center justify-center site-title-box">
-			  <!-- 사이트 제목 -->
-			  <span class="text-ts-18 sm:text-ts-20 md:text-ts-24 lg:text-ts-28">Betting Point</span>
-			
-			  <!-- 로그인/회원가입 or 로그아웃 (PC에서만 보임) -->
-			  <div id="userMenu" class="hidden md:flex md:items-center md:gap-x-6 absolute right-5 top-1/2 -translate-y-1/2 ">
-			    <a href="/register" class="text-black no-underline cursor-pointer hover:font-semibold">회원가입</a>
-			    <a href="/login" class="text-black no-underline cursor-pointer py-1.5 px-[1.625rem] border-2 border-black rounded-full transition-all duration-300 ease-in-out hover:bg-gray-2">로그인</a>
-			  </div>
+			<div
+				class="relative w-full bg-white py-1 md:py-2.5 border border-gray-1 flex items-center justify-center site-title-box">
+				<!-- 사이트 제목 -->
+				<span class="text-ts-18 sm:text-ts-20 md:text-ts-24 lg:text-ts-28">Betting
+					Point</span>
+
+				<!-- 로그인/회원가입 or 로그아웃 (PC에서만 보임) -->
+				<div id="userMenu"
+					class="hidden md:flex md:items-center md:gap-x-6 absolute right-5 top-1/2 -translate-y-1/2 ">
+					<a href="/register"
+						class="text-black no-underline cursor-pointer hover:font-semibold">회원가입</a>
+					<a href="/login"
+						class="text-black no-underline cursor-pointer py-1.5 px-[1.625rem] border-2 border-black rounded-full transition-all duration-300 ease-in-out hover:bg-gray-2">로그인</a>
+				</div>
 			</div>
-			
+
 			<c:if test="${pageType eq 'main'}">
-				<div class="bg-white transition-all duration-300 ease-in-out z-[999] nav-bar">
-					<div class="relative flex justify-center items-center py-1 md:py-7 md:pl-44 md:pr-16 lg:pl-60 lg:pr-24">
+				<div
+					class="bg-white transition-all duration-300 ease-in-out z-[999] nav-bar">
+					<div
+						class="relative flex justify-center items-center py-1 md:py-7 md:pl-44 md:pr-16 lg:pl-60 lg:pr-24">
 						<div class="md:absolute md:left-12">
-							<a href="/">
-								<img src="${cpath}/resources/images/logo.png" alt="Betting Point Logo" class="h-12 md:h-16"/>
+							<a href="/"> <img src="${cpath}/resources/images/logo.png"
+								alt="Betting Point Logo" class="h-12 md:h-16" />
 							</a>
 						</div>
-						<button id="hamburgerButton" class="absolute left-6 top-1/2 -translate-y-1/2 text-2xl md:hidden">
-							&#9776; <!-- ☰ -->
+						<button id="hamburgerButton"
+							class="absolute left-6 top-1/2 -translate-y-1/2 text-2xl md:hidden">
+							&#9776;
+							<!-- ☰ -->
 						</button>
-						<nav id="mobileMenu" class="hidden absolute top-full right-0 flex flex-col z-40 w-full pb-6 gap-y-8 items-center bg-white shadow-md md:static md:py-0 md:gap-y-auto md:grow md:flex md:flex-row md:justify-between md:shadow-none">
-							<div id="userMobileMenu" class="bg-gray-2 py-5 w-full flex items-center justify-center relative md:hidden">
-								<a href="/login" class="text-black"><span class="underline font-semibold">로그인</span> 후 다양한 서비스를 이용해보세요</a>
+						<nav id="mobileMenu"
+							class="hidden absolute top-full right-0 flex flex-col z-40 w-full pb-6 gap-y-8 items-center bg-white shadow-md md:static md:py-0 md:gap-y-auto md:grow md:flex md:flex-row md:justify-between md:shadow-none">
+							<div id="userMobileMenu"
+								class="bg-gray-2 py-5 w-full flex items-center justify-center relative md:hidden">
+								<a href="/login" class="text-black"><span
+									class="underline font-semibold">로그인</span> 후 다양한 서비스를 이용해보세요</a>
 							</div>
 							<a href="/solo/cointoss" class="text-black text-base hover:text-blue-1 hover:font-semibold">개인게임</a>
 							<a href="/gameroom" class="text-black text-base hover:text-blue-1 hover:font-semibold">단체게임</a>
