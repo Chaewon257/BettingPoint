@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<c:set var="cpath" value="${pageContext.servletContext.contextPath}"  />
+<c:set var="cpath" value="${pageContext.servletContext.contextPath}" />
 <!DOCTYPE html>
 <html>
 <head>
@@ -12,23 +12,47 @@
 	    const cpath = "${pageContext.request.contextPath}";
 	</script>
     <script src="${cpath}/resources/js/chatbot.js"></script>
+    
+    <style>
+	    .main-btn, .sub-btn {
+	        margin: 5px;
+	        padding: 8px 14px;
+	        border: 1px solid #ccc;
+	        background-color: #f5f5f5;
+	        cursor: pointer;
+	    }
+	    .active {
+	        background-color: #007bff;
+	        color: white;
+	    }
+	</style>
 </head>
 <body>
     <h2>🤖 반갑습니다. 아래 질문을 선택해주세요.</h2>
-    <select id="categorySelect">
-		<option value="게임">게임</option>
-		<option value="포인트">포인트</option>
-		<option value="기타">기타</option>
-	</select>
-	<button id="questionAll">전체조회</button>
-	
-    <ul id="categoryList"></ul>
     
-    <hr>
-    <div id="answerBox">
-        <h3>답변</h3>
-        <p id="answerText">선택한 질문의 답변이 여기에 표시됩니다.</p>
-    </div>
+    <!-- 메인 카테고리 선택 -->
+    <label for="mainCategory">카테고리:</label>
+    <div id="mainCategoryButtons">
+	    <button class="main-btn" id="questionAll">전체조회</button>
+	    <button class="main-btn" data-main="GAME">게임</button>
+	    <button class="main-btn" data-main="POINT">포인트</button>
+	    <button class="main-btn" data-main="ETC">기타</button>
+	</div>
+	
+    
+	<!-- 서브 카테고리 버튼 -->	
+    <label for="subCategory">세부 항목:</label>
+	<div id="subCategoryButtons" style="margin-top: 10px;"></div>
+
+    
+    <!-- 질문 목록 -->
+	<ul id="questionList" style="margin-top: 10px;"></ul>
+	
+	<!-- 답변 -->
+	<div id="answerBox" style="margin-top: 20px;">
+	    <h4>답변</h4>
+	    <p id="answerText">선택한 질문의 답변이 여기에 표시됩니다.</p>
+	</div>
 
 </body>
 </html>
