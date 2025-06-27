@@ -125,7 +125,7 @@ function loadBoardList(page, category) {
       category: currentCategory,
       sort: currentSort
     },
-    success: function (boards) {
+	  success: function (boards) {
       let listHtml = "";
       const startNo = (currentPage - 1) * 10 + 1;
 
@@ -138,7 +138,7 @@ function loadBoardList(page, category) {
             <td>${startNo + index}</td>
             <td><a href="${cpath}/board/detail/${board.uid}">${board.title}</a></td>
             <td>${translateCategory(board.category)}</td>
-            <td>${board.user_uid}</td>
+            <td>${board.nickname}</td>
             <td>${board.view_count}</td>
             <td>${board.like_count}</td>
             <td>${formattedDate}</td>
@@ -180,18 +180,21 @@ function translateCategory(category) {
 
 // ✅ 게시글 상세 보기
 function loadBoardDetail(boardId) {
-const token = localStorage.getItem("accessToken");
-
+  const token = localStorage.getItem("accessToken");
+  // 헤더 조건부 추가 ()
+  const headers = {};
+  if (token) {
+    headers["Authorization"] = "Bearer " + token;
+  }
+  
   $.ajax({
     url: `/api/board/boarddetail/${boardId}`,
     type: "GET",
-    headers: {
-          "Authorization": "Bearer " + token
-        },
+    headers: headers,
     success: function (board) {
     	currentBoardUid = board.uid;
       $("#detailTitle").text(board.title);
-      $("#detailAuthor").text(board.user_uid);
+      $("#detailAuthor").text(board.nickname);
       $("#detailCategory").text(translateCategory(board.category));
       $("#detailContent").html(board.content);
       $("#detailViewCount").text(board.view_count);
@@ -200,7 +203,6 @@ const token = localStorage.getItem("accessToken");
       const createdDate = new Date(board.created_at);
       $("#detailCreatedAt").text(createdDate.toLocaleString("ko-KR"));
 		
-	
 	  // 2. 로그인한 사용자 토큰 확인
       const token = localStorage.getItem("accessToken");
       if (!token) {
@@ -386,6 +388,10 @@ $(document).on("click", "#btnDelete", function () {
     }
   });
 });
+
+
+
+
 
 
 
