@@ -58,7 +58,7 @@ function renderGameRooms(gamerooms) {
     gamerooms.forEach(room => {
 
         const roomHtml = `
-            <div class="game-room" data-room-id="${room.uid}">
+            <div class="game-room" data-room-id="${room.uid}" data-status="${room.status}">
                 <h3>${room.title}</h3>
                 <p><strong>게임 이름:</strong> ${room.game_name}</p>
                 <p><strong>난이도:</strong> ${room.level}</p>
@@ -72,8 +72,13 @@ function renderGameRooms(gamerooms) {
     });
 
     $(".game-room").on("click", function () {
-        const roomId = $(this).data("room-id");
-        window.location.href = `/gameroom/detail/${roomId}`;
+        const roomStatus = $(this).data("status");
+        if(roomStatus !== "PLAYING") {
+            const roomId = $(this).data("room-id");
+            window.location.href = `/gameroom/detail/${roomId}`;
+        } else {
+            alert("진행중인 게임방입니다.");
+        }
     });
 }
 

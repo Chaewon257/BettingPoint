@@ -25,6 +25,7 @@ public class UserRestController {
 		UserVO user = authService.findByUid(userId); // 또는 getUserByUid(userId)
 
 		return ResponseEntity.ok(Map.of(
+									"uid", user.getUid(),
 									"user_name", user.getUser_name(),
 									"nickname", user.getNickname(),
 									"email", user.getEmail(),
