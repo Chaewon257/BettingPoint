@@ -104,33 +104,6 @@ public class TurtleRunWebsocketHandler extends TextWebSocketHandler {
 
 		// 메시지 타입에 따라 분기
 		switch(type) {
-			case "start":
-				GameRoomResponseDTO gameroom = gameRoomService.selectById(roomId);
-				List<TurtlePlayerDTO> player = playerDAO.getAll(roomId);
-				Map<String, Object> initMsg = new HashMap<>();
-	            initMsg.put("type", "init");
-	            initMsg.put("roomId", roomId);
-	            // ------ 방 정보 ------
-	            initMsg.put("difficulty", gameroom.getGame_level_uid());    // ex) "easy", "normal", "hard"
-	            initMsg.put("minBet", gameroom.getMin_bet());           // int
-	            initMsg.put("roomTitle", gameroom.getTitle());
-	            // ------ 플레이어 정보 ------
-	            List<Map<String, Object>> playerList = new ArrayList<>();
-	            for(TurtlePlayerDTO player : players) {
-	                Map<String, Object> playerMap = new HashMap<>();
-	                playerMap.put("userId", player.getUser_uid());
-	                playerMap.put("turtleId", player.getTurtle_id());
-	                playerMap.put("bettingPoint", player.getBetting_point());
-	                playerList.add(playerMap);
-	            }
-	            initMsg.put("players", playerList);
-	
-	            List<WebSocketSession> sessions = sessionService.getSessions(roomId);
-	            String jsonMessage = mapper.writeValueAsString(initMsg);
-	            for (WebSocketSession ws : sessions) {
-	                if (ws.isOpen()) ws.sendMessage(new TextMessage(jsonMessage));
-	            }
-	            break;
 			case "race_update":
 	            // positions를 받아와 전체 방에 실시간으로 브로드캐스트
 	            // 1. positions를 파싱
@@ -190,6 +163,10 @@ public class TurtleRunWebsocketHandler extends TextWebSocketHandler {
 			    resultMsg.put("roomId", dto.getRoomId());
 			    broadcastMessage("race_result", roomId, resultMsg);
 			    break;
+			case "end":
+				Map<String, Object> data = new HashMap<>();
+				data.put("target",  "/gameroom/detail/" + roomId);
+				broadcastMessage("end", roomId, data);
 		}
 
 		List<TurtlePlayerDTO> players = playerDAO.getAll(roomId);

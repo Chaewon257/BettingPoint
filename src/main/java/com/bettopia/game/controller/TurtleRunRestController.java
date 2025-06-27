@@ -6,11 +6,15 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bettopia.game.model.auth.AuthService;
+import com.bettopia.game.model.gameroom.GameRoomResponseDTO;
+import com.bettopia.game.model.gameroom.GameRoomService;
 
 @RestController
 @RequestMapping("/api/multi")
@@ -18,6 +22,8 @@ public class TurtleRunRestController {
 
 	@Autowired
 	AuthService authService;
+	@Autowired
+	GameRoomService gameRoomService;
 	
 	// 웹소켓 연결을 위한 정보 받기
 	@GetMapping("/gameroom/detail/{roomId}/info")
@@ -29,5 +35,15 @@ public class TurtleRunRestController {
 		map.put("userId", userId);
 		
 		return map;
+	}
+	
+	// 게임 종료
+	@PostMapping("/{roomId}/turtlerun/end")
+	public void endGame(@PathVariable String roomId, @RequestBody Map<String, String> request) {
+		String newStatus = request.get("status");
+		GameRoomResponseDTO room = gameRoomService.selectById(roomId);
+		if(!room.getStatus().equals(newStatus)) {
+			gameRoomService.updateStatus(roomId, newStatus);
+		}
 	}
 }
