@@ -130,7 +130,6 @@
 		function renderChatLogsPagination(current, totalCount) {
 			paginationContainer.empty();
 			const maxPages = Math.ceil(totalCount / itemsPerPage);
-			console.log("maxPages" + maxPages);
 			const paginationHTML = [];
 
 			paginationHTML.push(`
