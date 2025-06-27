@@ -109,7 +109,6 @@
 	 	// 🔹 페이지네이션 버튼 렌더링
 	    function renderPointPagination(current, totalCount) {
 	        const maxPages = Math.ceil(totalCount / itemsPerPage);
-	        console.log("maxPages" + maxPages);
 	        paginationContainer.empty();
 	        const paginationHTML = [];
 
