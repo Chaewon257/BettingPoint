@@ -16,16 +16,12 @@ function connectGameWebSocket() {
             gamerooms = msg.gamerooms;
         }
 
-        if(msg.playerCounts) {
-            playerCounts = msg.playerCounts;
-        }
-
         switch (msg.type) {
             case "insert":
             case "delete":
             case "enter":
             case "exit":
-                renderGameRooms(gamerooms, games, levels, playerCounts);
+                renderGameRooms(gamerooms);
                 break;
             default:
                 console.warn("알 수 없는 메시지 타입", msg.type);
@@ -40,9 +36,6 @@ function connectGameWebSocket() {
 }
 
 let gamerooms = []; // 게임방 리스트
-let games = {}; // 게임 정보
-let levels = {};
-let playerCounts = {}; // 각 게임방 플레이어 수
 
 // 게임방 리스트 요청
 function gameRoomList() {
@@ -51,43 +44,25 @@ function gameRoomList() {
         url: "/api/gameroom/list",
         method: "GET",
         success: function (responseData) {
-            gamerooms = responseData;
-
-            // 게임 정보 요청
-            let gameReqs = gamerooms.map(room => {
-                return levelDetail(room, levels).then(() => {
-                    const levelData = levels[room.game_level_uid];
-                    return gameDetail(levelData, games);
-                });
-            });
-
-            // 플레이어 수 요청
-            let countReq = countPlayers(playerCounts);
-
-            Promise.all([...gameReqs, countReq]).then(() => {
-                connectGameWebSocket();
-                renderGameRooms(gamerooms, games, levels, playerCounts);
-            });
+            connectGameWebSocket();
+            renderGameRooms(responseData);
         }
     });
 };
 
 // 게임방 리스트 렌더링(임시)
-function renderGameRooms(gamerooms, games, levels, playerCounts) {
+function renderGameRooms(gamerooms) {
     const container = $("#room-container");
     container.empty();
 
     gamerooms.forEach(room => {
-        const count = playerCounts[room.uid] || 0;
-        const level = levels[room.game_level_uid] || {};
-        const game = games[level.game_uid] || {};
 
         const roomHtml = `
             <div class="game-room" data-room-id="${room.uid}" data-status="${room.status}">
                 <h3>${room.title}</h3>
-                <p><strong>게임 이름:</strong> ${game.name}</p>
-                <p><strong>난이도:</strong> ${level.level}</p>
-                <p><strong>현재 인원:</strong> ${count} / 8</p>
+                <p><strong>게임 이름:</strong> ${room.game_name}</p>
+                <p><strong>난이도:</strong> ${room.level}</p>
+                <p><strong>현재 인원:</strong> ${room.count} / 8</p>
                 <p><strong>최소 베팅 금액:</strong> ${room.min_bet} 포인트</p>
                 <p><strong>게임방 상태:</strong> ${room.status}</p>
             </div>
@@ -105,39 +80,6 @@ function renderGameRooms(gamerooms, games, levels, playerCounts) {
             alert("진행중인 게임방입니다.");
         }
     });
-}
-
-// 전체 플레이어 수 요청
-function countPlayers(playerCounts) {
-    return $.ajax({
-        url: "/api/player/count",
-        method: "GET",
-        success: function (countData) {
-            Object.assign(playerCounts, countData);
-        }
-    });
-}
-
-// 게임 상세 정보 요청
-function gameDetail(level, games) {
-    return $.ajax({
-        url: `/api/game/detail/${level.game_uid}`,
-        method: "GET",
-        success: function (gameData) {
-            games[level.game_uid] = gameData;
-        }
-    });
-}
-
-// 게임방 게임 난이도 정보 요청
-function levelDetail(room, levels) {
-    return $.ajax({
-        url: `/api/game/level/${room.game_level_uid}`,
-        method: "GET",
-        success: function (levelData) {
-            levels[room.game_level_uid] = levelData;
-        }
-    })
 }
 
 // 게임 리스트 요청

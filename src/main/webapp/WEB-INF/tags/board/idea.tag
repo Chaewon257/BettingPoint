@@ -1,6 +1,6 @@
 <%@ tag language="java" pageEncoding="UTF-8"%>
 
-<div data-content="free" class="tab-content w-full flex flex-col mb-20 text-xs sm:text-sm">
+<div data-content="idea" class="tab-content w-full flex flex-col mb-20 text-xs sm:text-sm">
 	<div class="p-4 grid grid-cols-12 text-center text-gray-3 font-semibold border-b-2 border-gray-7 border-double">
 		<span>번호</span>
 		<span class="col-span-3">제목</span>

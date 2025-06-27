@@ -58,8 +58,10 @@ function saveGameHistory() {
             "Authorization": "Bearer " + token
         },
         success: function (gamehistory) {
-            userPointBalance(token, function (point) {
-                savePointHistory(gamehistory, point);
+            userPointChange(gamehistory.game_result, pointValue, token, function () {
+                userPointBalance(token, function (point) {
+                    savePointHistory(gamehistory, point);
+                });
             });
         }
     });
@@ -101,6 +103,40 @@ function userPointBalance(token, callback) {
         },
         success: function(user) {
             callback(user.point_balance);
+        }
+    });
+}
+
+// 사용자 포인트 변동
+function userPointChange(gameResult, point, token, callback) {
+    let url = null;
+
+    if (gameResult === "WIN") {
+        url = "/api/user/get";
+    } else if (gameResult === "LOSE") {
+        url = "/api/user/lose";
+    }
+
+    if (!url) {
+        console.warn("알 수 없는 게임 결과:", gameResult);
+        if (typeof callback === "function") callback();
+        return;
+    }
+
+    $.ajax({
+        url: url,
+        method: "POST",
+        contentType: "application/json",
+        data: JSON.stringify({ point: point }),
+        headers: {
+            "Authorization": "Bearer " + token
+        },
+        success: function () {
+            console.log("포인트 변경 완료:", gameResult);
+            if (typeof callback === "function") callback();
+        },
+        error: function () {
+            console.error("포인트 변경 실패:", gameResult);
         }
     });
 }

@@ -52,8 +52,6 @@ let minBet = 0;
 
 // 게임방 상세 정보 요청
 function gameRoomDetail (roomId) {
-    let levels = {};
-    let games = {};
     let roomPlayers = [];
 
     // 게임방 상세 정보 요청
@@ -63,17 +61,9 @@ function gameRoomDetail (roomId) {
         success: function (room) {
             minBet = room.min_bet;
 
-            // 난이도 정보 요청
-            levelDetail(room, levels).then(() => {
-                const levelData = levels[room.game_level_uid];
-                return gameDetail(levelData, games).then(() => {
-                    const gameData = games[levelData.game_uid];
-                    return players(room, roomPlayers).then(() => {
-                        connectGameWebSocket(roomId);
-                        renderGameRoomDetail(room, levelData, gameData, roomPlayers);
-                    });
-                });
-            });
+            connectGameWebSocket(roomId);
+            players(room, roomPlayers);
+            renderGameRoomDetail(room, roomPlayers);
         }
     });
 };
@@ -157,15 +147,15 @@ function updatePlayerList(players) {
 }
 
 // 게임방 상세 정보 렌더링(임시)
-function renderGameRoomDetail(room, level, game, roomPlayers) {
+function renderGameRoomDetail(room, roomPlayers) {
     const container = $("#room-detail-container");
     container.empty();
 
     const roomHtml = `
         <h2 id="room-title">${room.title}</h2>
         <div>
-            <p><strong>게임 이름:</strong> ${game.name}</p>
-            <p><strong>게임 레벨:</strong> ${level.level}</p>
+            <p><strong>게임 이름:</strong> ${room.game_name}</p>
+            <p><strong>게임 레벨:</strong> ${room.level}</p>
         </div>
         <div id="player-list"></div>
     `;
@@ -173,34 +163,12 @@ function renderGameRoomDetail(room, level, game, roomPlayers) {
     container.html(roomHtml);
 
     updatePlayerList(roomPlayers);
-
+  
     userInfo(function(userId) {
         if(room.host_uid === userId) {
             $("#start-game-btn").show();
         } else {
             $("#start-game-btn").hide();
-        }
-    });
-}
-
-// 게임 상세 정보 요청
-function gameDetail(level, games) {
-    return $.ajax({
-        url: `/api/game/detail/${level.game_uid}`,
-        method: "GET",
-        success: function (gameData) {
-            games[level.game_uid] = gameData;
-        }
-    });
-}
-
-// 게임 난이도 정보 요청
-function levelDetail(room, levels) {
-    return $.ajax({
-        url: `/api/game/level/${room.game_level_uid}`,
-        method: "GET",
-        success: function (levelData) {
-            levels[room.game_level_uid] = levelData;
         }
     });
 }

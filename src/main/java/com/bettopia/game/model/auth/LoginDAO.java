@@ -53,6 +53,6 @@ public class LoginDAO {
 	
 	public void updateUserPoint(UserVO user) {
 	    sqlSession.update(NAMESPACE + "updateUserPoint", user);
-	}
+	}  
 
 }
