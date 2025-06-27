@@ -30,5 +30,68 @@
 				</div>
 			</div>
 		</div>
+		<script type="text/javascript">
+			$(".tab-btn").on("click", function () {
+				const selectedTab = $(this).data("tab");
+				
+				// 버튼 스타일 업데이트
+				$(".tab-btn").removeClass("bg-blue-3").addClass("bg-blue-4 hover:bg-blue-3");
+				$(this).removeClass("bg-blue-4 hover:bg-blue-3").addClass("bg-blue-3");
+				
+				// 정렬 버튼 스타일 기본값으로 초기화
+				$(".sort-btn").removeClass("text-gray-7 underline").addClass("text-gray-3 hover:text-gray-7");
+
+				// 기본 정렬 값 적용 (created_at)
+				$(`.sort-btn[data-sort="created_at"]`)
+					.removeClass("text-gray-3 hover:text-gray-7")
+					.addClass("text-gray-7 underline");
+
+				
+				// 콘텐츠 영역 비우고 로딩
+				const contentContainer = $("#board-tab-content");
+				contentContainer.html('<div class="text-center py-8 text-gray-5">로딩 중...</div>');
+
+				// 선택된 탭에 따라 콘텐츠 요청
+				$.ajax({
+					url: `/board/\${selectedTab}`,
+					type: 'GET',
+					success: function (html) {
+						contentContainer.html(html);
+					},
+					error: function () {
+						contentContainer.html('<div class="text-red-500">게시판 로딩 실패</div>');
+					}
+				});
+			});
+			
+			$(".sort-btn").on("click", function () {
+				const selectedSort = $(this).data("sort");
+				
+				// 정렬 버튼 스타일 기본값으로 초기화
+				$(".sort-btn").removeClass("text-gray-7 underline").addClass("text-gray-3 hover:text-gray-7");
+				
+				// 기본 정렬 값 적용 (created_at)
+				$(this).removeClass("text-gray-3 hover:text-gray-7").addClass("text-gray-7 underline");
+				
+				// 콘텐츠 영역 비우고 로딩
+				const contentContainer = $("#board-tab-content");
+				contentContainer.html('<div class="text-center py-8 text-gray-5">로딩 중...</div>');
+				
+				// ✅ 숨겨진 sort input 값 변경
+				$("#sort").val(selectedTab);
+				
+				// 선택된 탭에 따라 콘텐츠 요청
+				$.ajax({
+					url: `/board/\${selectedTab}`,
+					type: 'GET',
+					success: function (html) {
+						contentContainer.html(html);
+					},
+					error: function () {
+						contentContainer.html('<div class="text-red-500">게시판 로딩 실패</div>');
+					}
+				});
+			});
+		</script>
 	</jsp:attribute>
 </ui:layout>
