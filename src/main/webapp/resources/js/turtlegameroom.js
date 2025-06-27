@@ -111,6 +111,12 @@ function bindGameEvents() {
     });
 
     $(document).on('click', '#ready-btn', function() {
+        const point = $('#bet-point').val();
+        if(point <= 0) {
+            alert("포인트를 베팅해주세요.");
+            return;
+        }
+
         isReady = !isReady; // 전역 변수로 선언 필요
         const $btn = $(this);
         $btn.text(isReady ? '준비 취소' : '게임 준비');
@@ -126,6 +132,8 @@ function updatePlayerList(players) {
     const $playerList = $("#player-list");
     $playerList.empty(); // 기존 플레이어 목록 초기화
 
+    let isAllReady = true;
+
     players.forEach(player => {
         const html = `
             <div class="player-info" id="player-${player.user_uid}">
@@ -136,7 +144,18 @@ function updatePlayerList(players) {
             </div>
         `;
         $playerList.append(html);
+
+        if(!player.ready) {
+            isAllReady = false;
+        }
     });
+
+    // 게임 시작 버튼 활성화/비활성화
+    if (isAllReady) {
+        $("#start-game-btn").prop("disabled", false); // 모든 플레이어가 준비되면 버튼 활성화
+    } else {
+        $("#start-game-btn").prop("disabled", true); // 준비되지 않으면 버튼 비활성화
+    }
 }
 
 // 게임방 상세 정보 렌더링(임시)
