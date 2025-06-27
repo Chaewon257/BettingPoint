@@ -28,7 +28,6 @@ public class GameRoomListWebSocket extends TextWebSocketHandler {
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         sessions.add(session);
-        System.out.println(session);
     }
 
     public void broadcastMessage(String type) throws IOException {
@@ -41,7 +40,6 @@ public class GameRoomListWebSocket extends TextWebSocketHandler {
         String jsonMessage = mapper.writeValueAsString(messageMap);
 
         for(WebSocketSession session : sessions) {
-            System.out.println(session.isOpen());
             if(session.isOpen()) {
                 session.sendMessage(new TextMessage(jsonMessage));
             }
