@@ -12,7 +12,7 @@ function connectGameWebSocket(roomId) {
         return;
     }
 
-    socket = new WebSocket(`ws://${location.host}/ws/game/turtle/${roomId}?token=${encodeURIComponent(token)}`);
+    socket = new WebSocket(`ws://${location.host}/ws/game/turtleroom/${roomId}?token=${encodeURIComponent(token)}`);
 
     socket.onopen = () => {};
 
@@ -28,13 +28,17 @@ function connectGameWebSocket(roomId) {
             case "update":
                 updatePlayerList(msg.players);
                 break;
+            case "start":
+                const targetUrl = msg.target;
+                window.location.href = targetUrl;
+                break;
             default:
                 console.warn("알 수 없는 메시지 타입:", msg.type);
         }
     };
 
     socket.onclose = () => {
-        window.location.href = "/gameroom";
+        // window.location.href = "/gameroom";
     };
 
     socket.onerror = (error) => {

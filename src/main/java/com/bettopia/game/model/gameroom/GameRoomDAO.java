@@ -61,4 +61,11 @@ public class GameRoomDAO {
 	public void deleteRoom(String roomId) {
 		sqlSession.delete(namespace + "delete", roomId);
 	}
+
+	public void updateStatus(String roomId, String status) {
+		Map<String, String> params = new HashMap<>();
+		params.put("uid", roomId);
+		params.put("status", status);
+		sqlSession.update(namespace + "updateStatus", params);
+	}
 }

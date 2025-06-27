@@ -48,4 +48,8 @@ public class GameRoomService {
 			gameRoomDAO.deleteRoom(roomId);
 		}
 	}
+
+	public void updateStatus(String roomId, String status) {
+		gameRoomDAO.updateStatus(roomId, status);
+	}
 }
