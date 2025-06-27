@@ -156,6 +156,14 @@ function renderGameRoomDetail(room, level, game, roomPlayers) {
     container.html(roomHtml);
 
     updatePlayerList(roomPlayers);
+
+    userInfo(function(userId) {
+        if(room.host_uid === userId) {
+            $("#start-game-btn").show();
+        } else {
+            $("#start-game-btn").hide();
+        }
+    });
 }
 
 // 게임 상세 정보 요청
@@ -187,6 +195,29 @@ function players(room, roomPlayers) {
         method: "GET",
         success: function (players) {
             roomPlayers.push(...players);
+        }
+    });
+}
+
+// userId 요청
+let userId;
+
+function userInfo(callback) {
+    const token = localStorage.getItem("accessToken");
+    if (!token) {
+        alert("로그인이 필요합니다.");
+        return;
+    }
+
+    $.ajax({
+        url: '/api/user/me',
+        type: 'GET',
+        headers: {
+            'Authorization': 'Bearer ' + token
+        },
+        success: function(user) {
+            userId = user.uid;
+            callback(userId);
         }
     });
 }
