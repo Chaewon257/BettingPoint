@@ -96,4 +96,9 @@ public class BoardController {
 		return "board/write";
 	}
 	
+	//게시글 보기 페이지로 이동
+	@GetMapping("/view")
+	public String goBoardViewPage() {
+		return "board/view";
+	}
 }
