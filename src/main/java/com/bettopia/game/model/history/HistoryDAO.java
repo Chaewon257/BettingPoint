@@ -24,21 +24,29 @@ public class HistoryDAO {
     public List<PointHistoryDTO> pointHistoryList(String userId) {
         return sqlSession.selectList(namespace + "selectPointHistoryAll", userId);
     }
+    
+	public int countGameHistory(String userId) {
+		return sqlSession.selectOne(namespace + "countGameHistory", userId);
+	}
+	
+	public int countPointHistory(String userId) {
+		return sqlSession.selectOne(namespace + "countPointHistory", userId);
+	}
 
     public List<GameHistoryDTO> gameHistoryList(String userId, int offset, int size) {
         Map<String, Object> params = new HashMap<>();
         params.put("offset", offset);
         params.put("size", size);
-        params.put("uid", userId);
-        return sqlSession.selectList(namespace + "selectGameHistoryAll", params);
+        params.put("userId", userId);
+        return sqlSession.selectList(namespace + "gameAllWithPaging", params);
     }
 
     public List<PointHistoryDTO> pointHistoryList(String userId, int offset, int size) {
         Map<String, Object> params = new HashMap<>();
         params.put("offset", offset);
         params.put("size", size);
-        params.put("uid", userId);
-        return sqlSession.selectList(namespace + "selectPointHistoryAll", params);
+        params.put("userId", userId);
+        return sqlSession.selectList(namespace + "pointAllWithPaging", params);
     }
 
     public GameHistoryDTO insertGameHistory(GameHistoryDTO gameHistory, String userId) {
@@ -68,4 +76,6 @@ public class HistoryDAO {
         sqlSession.insert(namespace + "insertPointHistory", history);
         return uid;
     }
+
+
 }
