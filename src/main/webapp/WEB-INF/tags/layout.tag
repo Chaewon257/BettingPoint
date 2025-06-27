@@ -21,6 +21,7 @@
   <link rel="stylesheet" href="${cpath}/resources/css/cointoss.css" />
   <link rel="stylesheet" href="${cpath}/resources/css/turtlerun.css" />
 </c:if>
+<link rel="stylesheet" href="${cpath}/resources/css/summernote/summernote-lite.css">
 <script src="https://cdn.tailwindcss.com"></script>
 <script type="text/javascript">
 	tailwind.config = {
@@ -34,6 +35,7 @@
 					'gray-5' : '#D4D4D4',
 					'gray-6' : '#757575',
 					'gray-7' : '#656565',
+					'gray-8' : '#F4F4F4',
 					'gray-10' : '#EDEDED',					
 					'blue-1' : '#4A90E2',
 					'blue-2' : '#3F7AB6',

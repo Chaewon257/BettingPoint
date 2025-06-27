@@ -38,6 +38,9 @@
 
     <h3>준비</h3>
     <button id="ready-btn">게임 준비</button>
+
+    <h3>게임 시작</h3>
+    <button id="start-game-btn" style="display: none;">게임 시작</button>
 </div>
 <script src="${cpath}/resources/js/turtlegameroom.js"></script>
 <script>
@@ -45,6 +48,25 @@
         const roomId = "${roomId}";
         gameRoomDetail(roomId);
         bindGameEvents();
+
+        // 게임 시작 버튼 클릭 이벤트
+        $("#start-game-btn").click(function () {
+            $.ajax({
+                url: `/api/gameroom/start/${roomId}`,
+                method: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({ status: "PLAYING" }),
+                success: function () {
+                    // 게임 페이지로 리다이렉션
+                    socket.send(JSON.stringify({
+                        type: "start"
+                    }));
+                },
+                error: function () {
+                    alert("게임 시작에 실패했습니다.");
+                }
+            });
+        });
     });
 </script>
 </body>

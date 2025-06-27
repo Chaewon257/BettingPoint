@@ -12,7 +12,7 @@ function connectGameWebSocket(roomId) {
         return;
     }
 
-    socket = new WebSocket(`ws://${location.host}/ws/game/turtle/${roomId}?token=${encodeURIComponent(token)}`);
+    socket = new WebSocket(`ws://${location.host}/ws/game/turtleroom/${roomId}?token=${encodeURIComponent(token)}`);
 
     socket.onopen = () => {};
 
@@ -28,14 +28,16 @@ function connectGameWebSocket(roomId) {
             case "update":
                 updatePlayerList(msg.players);
                 break;
+            case "start":
+                const targetUrl = msg.target;
+                window.location.href = targetUrl;
+                break;
             default:
                 console.warn("알 수 없는 메시지 타입:", msg.type);
         }
     };
 
-    socket.onclose = () => {
-        window.location.href = "/gameroom";
-    };
+    socket.onclose = () => {};
 
     socket.onerror = (error) => {
         console.error("웹소켓 에러", error);
@@ -50,8 +52,6 @@ let minBet = 0;
 
 // 게임방 상세 정보 요청
 function gameRoomDetail (roomId) {
-    let levels = {};
-    let games = {};
     let roomPlayers = [];
 
     // 게임방 상세 정보 요청
@@ -61,17 +61,9 @@ function gameRoomDetail (roomId) {
         success: function (room) {
             minBet = room.min_bet;
 
-            // 난이도 정보 요청
-            levelDetail(room, levels).then(() => {
-                const levelData = levels[room.game_level_uid];
-                return gameDetail(levelData, games).then(() => {
-                    const gameData = games[levelData.game_uid];
-                    return players(room, roomPlayers).then(() => {
-                        connectGameWebSocket(roomId);
-                        renderGameRoomDetail(room, levelData, gameData, roomPlayers);
-                    });
-                });
-            });
+            connectGameWebSocket(roomId);
+            players(room, roomPlayers);
+            renderGameRoomDetail(room, roomPlayers);
         }
     });
 };
@@ -107,6 +99,12 @@ function bindGameEvents() {
     });
 
     $(document).on('click', '#ready-btn', function() {
+        const point = $('#bet-point').val();
+        if(point <= 0) {
+            alert("포인트를 베팅해주세요.");
+            return;
+        }
+
         isReady = !isReady; // 전역 변수로 선언 필요
         const $btn = $(this);
         $btn.text(isReady ? '준비 취소' : '게임 준비');
@@ -122,6 +120,8 @@ function updatePlayerList(players) {
     const $playerList = $("#player-list");
     $playerList.empty(); // 기존 플레이어 목록 초기화
 
+    let isAllReady = true;
+
     players.forEach(player => {
         const html = `
             <div class="player-info" id="player-${player.user_uid}">
@@ -132,19 +132,30 @@ function updatePlayerList(players) {
             </div>
         `;
         $playerList.append(html);
+
+        if(!player.ready) {
+            isAllReady = false;
+        }
     });
+
+    // 게임 시작 버튼 활성화/비활성화
+    if (isAllReady) {
+        $("#start-game-btn").prop("disabled", false); // 모든 플레이어가 준비되면 버튼 활성화
+    } else {
+        $("#start-game-btn").prop("disabled", true); // 준비되지 않으면 버튼 비활성화
+    }
 }
 
 // 게임방 상세 정보 렌더링(임시)
-function renderGameRoomDetail(room, level, game, roomPlayers) {
+function renderGameRoomDetail(room, roomPlayers) {
     const container = $("#room-detail-container");
     container.empty();
 
     const roomHtml = `
         <h2 id="room-title">${room.title}</h2>
         <div>
-            <p><strong>게임 이름:</strong> ${game.name}</p>
-            <p><strong>게임 레벨:</strong> ${level.level}</p>
+            <p><strong>게임 이름:</strong> ${room.game_name}</p>
+            <p><strong>게임 레벨:</strong> ${room.level}</p>
         </div>
         <div id="player-list"></div>
     `;
@@ -152,26 +163,12 @@ function renderGameRoomDetail(room, level, game, roomPlayers) {
     container.html(roomHtml);
 
     updatePlayerList(roomPlayers);
-}
-
-// 게임 상세 정보 요청
-function gameDetail(level, games) {
-    return $.ajax({
-        url: `/api/game/detail/${level.game_uid}`,
-        method: "GET",
-        success: function (gameData) {
-            games[level.game_uid] = gameData;
-        }
-    });
-}
-
-// 게임 난이도 정보 요청
-function levelDetail(room, levels) {
-    return $.ajax({
-        url: `/api/game/level/${room.game_level_uid}`,
-        method: "GET",
-        success: function (levelData) {
-            levels[room.game_level_uid] = levelData;
+  
+    userInfo(function(userId) {
+        if(room.host_uid === userId) {
+            $("#start-game-btn").show();
+        } else {
+            $("#start-game-btn").hide();
         }
     });
 }
@@ -183,6 +180,29 @@ function players(room, roomPlayers) {
         method: "GET",
         success: function (players) {
             roomPlayers.push(...players);
+        }
+    });
+}
+
+// userId 요청
+let userId;
+
+function userInfo(callback) {
+    const token = localStorage.getItem("accessToken");
+    if (!token) {
+        alert("로그인이 필요합니다.");
+        return;
+    }
+
+    $.ajax({
+        url: '/api/user/me',
+        type: 'GET',
+        headers: {
+            'Authorization': 'Bearer ' + token
+        },
+        success: function(user) {
+            userId = user.uid;
+            callback(userId);
         }
     });
 }

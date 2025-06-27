@@ -2,6 +2,8 @@ package com.bettopia.game.controller;
 
 import com.bettopia.game.model.auth.AuthService;
 import com.bettopia.game.model.history.GameHistoryDTO;
+import com.bettopia.game.model.history.HistoryResponseDTO;
+import com.bettopia.game.model.history.HistoryResponseDTO.GameHistoryResponseDTO;
 import com.bettopia.game.model.history.HistoryService;
 import com.bettopia.game.model.history.PointHistoryDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,17 +21,31 @@ public class HistoryRestController {
     AuthService authService;
 
     @GetMapping("/game/list")
-    public List<GameHistoryDTO> gameHistoryList(@RequestHeader("Authorization") String authHeader,
+    public HistoryResponseDTO.GameHistoryResponseDTO gameHistoryList(
+    											@RequestHeader("Authorization") String authHeader,
                                                 @RequestParam(defaultValue = "1") int page) {
         String userId = authService.validateAndGetUserId(authHeader);
-        return historyService.gameHistoryList(userId, page);
+        List<GameHistoryDTO> list = historyService.gameHistoryList(userId, page);
+        int totalCount = historyService.gameHistoryCount(userId); // data 총 개수 가져오기
+
+        return HistoryResponseDTO.GameHistoryResponseDTO.builder()
+                .histories(list)
+                .total(totalCount)
+                .build();        
     }
 
     @GetMapping("/point/list")
-    public List<PointHistoryDTO> pointHistoryList(@RequestHeader("Authorization") String authHeader,
+    public HistoryResponseDTO.PointHistoryResponseDTO pointHistoryList(
+    											@RequestHeader("Authorization") String authHeader,
                                                 @RequestParam(defaultValue = "1") int page) {
         String userId = authService.validateAndGetUserId(authHeader);
-        return historyService.pointHistoryList(userId, page);
+        List<PointHistoryDTO> list = historyService.pointHistoryList(userId, page);
+        int totalCount = historyService.pointHistoryCount(userId); // data 총 개수 가져오기
+        
+        return HistoryResponseDTO.PointHistoryResponseDTO.builder()
+        		.histories(list)
+        		.total(totalCount)
+        		.build();
     }
 
     @PostMapping("/game/insert")

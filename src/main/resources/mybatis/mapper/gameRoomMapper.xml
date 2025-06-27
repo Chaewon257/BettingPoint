@@ -36,6 +36,12 @@
         where uid = #{uid}
     </update>
 
+    <update id="updateStatus" parameterType="map">
+        update game_room set
+        status = #{status}
+        where uid = #{uid}
+    </update>
+
     <!-- 게임방 삭제 -->
     <delete id="delete" parameterType="String">
         delete from game_room where uid = #{roomId}
