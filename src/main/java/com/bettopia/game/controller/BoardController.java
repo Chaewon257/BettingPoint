@@ -12,10 +12,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.bettopia.game.model.board.BoardService;
 
+
 @Controller
 @RequestMapping("/board")
 public class BoardController {
-
 	@Autowired
 	private BoardService boardService;
 
@@ -48,7 +48,7 @@ public class BoardController {
 	// 게시글 작성 페이지로 이동
 	@GetMapping("/insert")
 	public String showBoardInsertPage() {
-		return "board/boardInsert";
+	    return "board/boardInsert";
 	}
 
 	// 좋아요
@@ -65,4 +65,5 @@ public class BoardController {
 		model.addAttribute("boardId", boardId);
 		return "board/boardUpdate";
 	}
+
 }
