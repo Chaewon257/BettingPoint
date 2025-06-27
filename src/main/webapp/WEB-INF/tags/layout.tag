@@ -23,6 +23,25 @@
 </c:if>
 <script src="https://cdn.tailwindcss.com"></script>
 <script type="text/javascript">
+	$(document).ready(function () {
+		let token = localStorage.getItem('accessToken');
+	
+		$.ajaxSetup({
+			beforeSend: function (xhr) {
+				if (token) {
+					xhr.setRequestHeader("Authorization", "Bearer " + token);
+				}
+			},
+			complete: function (xhr) {
+				const newToken = xhr.getResponseHeader("New-Access-Token");
+				if (newToken) {
+					token = newToken.replace("Bearer ", "");
+					localStorage.setItem("accessToken", token);
+				}
+			}
+		});
+	});
+
 	tailwind.config = {
 		theme : {
 			extend : {
