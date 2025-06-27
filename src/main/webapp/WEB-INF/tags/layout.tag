@@ -88,6 +88,7 @@
 		
 		<main class="grow flex main-container">
 			<jsp:invoke fragment="bodyContent" />
+			<layout:chatbot pageType="${pageType}" />
 		</main>
 		
 		<layout:footer pageType="${pageType}" />
