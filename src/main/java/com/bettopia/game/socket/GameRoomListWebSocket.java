@@ -36,7 +36,6 @@ public class GameRoomListWebSocket extends TextWebSocketHandler {
         Map<String, Object> messageMap = new HashMap<>();
         messageMap.put("type", type);
         messageMap.put("gamerooms", gameRoomService.selectAll());
-        messageMap.put("playerCounts", playerService.getAllPlayers());
 
         String jsonMessage = mapper.writeValueAsString(messageMap);
 
