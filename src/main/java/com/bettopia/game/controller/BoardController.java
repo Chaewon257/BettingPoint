@@ -89,4 +89,11 @@ public class BoardController {
 	public String boardIdea() {
 		return "/board/idea";
 	}
+	
+	// 게시글 작성 페이지로 이동
+	@GetMapping("/write")
+	public String goBoardWritePage() {
+		return "board/write";
+	}
+	
 }
