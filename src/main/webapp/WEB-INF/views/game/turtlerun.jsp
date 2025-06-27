@@ -25,6 +25,7 @@
 				</div>
 			</div>
 		</div>
+		<script> var roomId = "${roomId}";</script> 
 		<script src="${cpath}/resources/js/turtlerun.js"></script>
 	</jsp:attribute>
 </ui:layout>

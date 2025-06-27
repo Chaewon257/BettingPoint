@@ -4,14 +4,6 @@ const difficultyMap = {
   NORMAL: { count: 6},
   HARD:   { count: 8}
 };
-const { count: TURTLE_COUNT} = difficultyMap.HARD; // 기본 난이도 설정
-
-
-// 난이도/베팅/선택 고정값
-let FIXED_DIFFICULTY = 'HARD'; // 'easy', 'normal', 'hard'
-let FIXED_TURTLE_COUNT = 8;      // normal
-let FIXED_BET = 10000;
-let FIXED_SELECTED_TURTLE = 2;   // (3번, 0-based)
 
 // 트랙 설정
 const TURTLE_GAP = 10;
@@ -30,7 +22,6 @@ document.getElementById('trackContainer').style.height = trackHeight + 'px';
 
 let ws;
 let turtleGame = null;
-let roomId = null;
 
 // 게임방 상세 정보 요청
 function gameRoomDetail (roomId) {
@@ -43,6 +34,7 @@ function gameRoomDetail (roomId) {
         url: `/api/gameroom/detail/${roomId}`,
         method: "GET",
         success: function (room) {
+            
             minBet = room.min_bet;
 
             // 난이도 정보 요청
@@ -50,15 +42,15 @@ function gameRoomDetail (roomId) {
                 const levelData = levels[room.game_level_uid];
                 return gameDetail(levelData, games).then(() => {
                     const gameData = games[levelData.game_uid];
-                    return players(room, roomPlayers).then(() => {
-                        connectGameWebSocket(roomId);
+                    return players(room, roomPlayers).then(() => {                    
                         renderGameRoomDetail(room, levelData, gameData, roomPlayers);
+                        connectGameWebSocket(roomId);
                     });
                 });
             });
         }
     });
-};
+}
 
 // 게임 상세 정보 요청
 function gameDetail(level, games) {
@@ -94,14 +86,15 @@ function players(room, roomPlayers) {
 }
 
 function renderGameRoomDetail(room, levelData, gameData, roomPlayers) {
-    // 1. 난이도/거북이수/베팅금액/포인트 등 필요한 값 추출 (기존 필드명에 따라 수정)
-    const difficulty = (levelData.difficulty || levelData.level || "HARD").toUpperCase();
-    const turtleCount = difficultyMap[difficulty]?.count || 8;
-    const userBet = myInfo.betting_amount || 10000;
-
+    // 1. 내 정보 추출
     const myInfo = roomPlayers.find(p => p.user_uid === localStorage.getItem("user_uid")) || {};
-    const points = myInfo.points || 100;
-    const selectedTurtle = myInfo.selectedTurtle ?? null;
+    // 2. 난이도, 거북이 수 등
+    const difficulty = (levelData.level).toUpperCase();
+    const turtleCount = difficultyMap[difficulty]?.count || 8;
+    // 3. 사용자 베팅, 포인트, 선택 등
+    const userBet = myInfo.betting_point || 10000;
+    // const points = myInfo.points || 100;
+    const selectedTurtle = myInfo.turtle_id ?? null;
 
     const turtleImages = [
         '/resources/images/turtle1.png', '/resources/images/turtle2.png',
@@ -131,7 +124,7 @@ function renderGameRoomDetail(room, levelData, gameData, roomPlayers) {
         victoryImages,
         defeatImages,
         selectedTurtle,
-        points
+        // points
     });
 }
 
@@ -149,13 +142,6 @@ function connectGameWebSocket(roomId) {
 
     ws.onmessage = function(event) {
         const msg = JSON.parse(event.data);
-
-        // if (msg.type === "init") {
-        //     // 게임 생성
-        //     if(!turtleGame) {
-        //         turtleGame = new TurtleRacingGame(msg);
-        //     }
-        // }
         // 경기 중 위치 업데이트
         if(msg.type === "race_update" && turtleGame) {
             turtleGame.setPositions(msg.positions);
@@ -171,13 +157,15 @@ function connectGameWebSocket(roomId) {
                 winner: msg.winner,
                 didwin: msg.yourResult.didwin,
                 pointChange: msg.yourResult.pointChange,
-                points: msg.yourResult.points,
+                // points: msg.yourResult.points,
                 bet: msg.yourResult.bet,
                 selectedTurtle: msg.yourResult.selectedTurtle
             });
         }
     };
 }
+
+gameRoomDetail(roomId);
 
 function showCountdownOverlay(startNum, callback) {
     let overlay = document.getElementById('countdownOverlay');
@@ -217,7 +205,7 @@ class TurtleRacingGame {
         victoryImages,
         defeatImages,
         selectedTurtle,
-        points
+        // points
     }) {
         this.selectedDifficulty = difficulty; 
         this.turtleCount = turtleCount; 
@@ -226,7 +214,7 @@ class TurtleRacingGame {
         this.victoryImages = victoryImages;
         this.defeatImages = defeatImages;
         this.selectedTurtle = selectedTurtle;
-        this.points = points; 
+        // this.points = points; 
         this.turtleBets = Array(this.turtleCount).fill(0);
         this.positions = Array(this.turtleCount).fill(0);
         this.transitionToFollow = false; // 선택 거북이 중앙 패닝 여부
@@ -237,7 +225,7 @@ class TurtleRacingGame {
             this.turtles.push({ id: i, name: `${this.numbers[i]} 거북이`, class: `${this.numbers[i]}-turtle` });
         }
 
-        this.points = this.loadPoints();
+        // this.points = this.loadPoints();
         this.renderTrack();
         showCountdownOverlay(3, () => {
             this.startRace();
@@ -259,7 +247,7 @@ class TurtleRacingGame {
 
     renderTrack() { 
         const container = document.getElementById('trackContainer');
-        this.turtleElements = []; // 기존 요소 초기화
+        this.turtleElements = Array(8).fill(null); // 기존 요소 초기화
         const TRACK_COUNT = 8; // 트랙 개수 고정(8개)
         const trackHeight = container.clientHeight; // 트랙 높이 (px 단위)
         const laneHeight = trackHeight / TRACK_COUNT; // 각 트랙의 높이 (px 단위)
@@ -287,7 +275,8 @@ class TurtleRacingGame {
         container.style.position = 'relative';
         container.style.display = 'block';
 
-        this.turtleElements = [];
+        this.turtleElements = Array(TRACK_COUNT).fill(null);
+        let turtleLaneIdx = 0;
         for (let i = 0; i < TRACK_COUNT; i++) {
             // 트랙 라인 생성
             const track = document.createElement('div');
@@ -314,17 +303,19 @@ class TurtleRacingGame {
             // 거북이
             let turtle = null;
             if(i >= startLane && i <= endLane) {
-                const turtleIdx = i - startLane; // 0-based 인덱스
                 turtle = document.createElement('img');
-                turtle.src = this.turtleImages[turtleIdx] || this.turtleImages[0];
+                turtle.src = this.turtleImages[turtleLaneIdx] || this.turtleImages[0];
                 turtle.className = 'turtle';
                 turtle.style.left = (START_MARGIN - TURTLE_SIZE + TURTLE_GAP) + 'px';
                 turtle.style.top = (laneHeight / 2 - (laneHeight * 0.7) / 2) + 'px';
                 turtle.style.height = (laneHeight * 0.7) + "px";
-                turtle.setAttribute('data-turtle-idx', turtleIdx); // 거북이 ID 설정
+                turtle.setAttribute('data-turtle-idx', turtleLaneIdx); // 거북이 ID 설정
                 track.appendChild(turtle);
 
-                this.turtleElements[turtleIdx] = turtle; // 거북이 요소 저장
+                this.turtleElements[i] = turtle; // 거북이 요소 저장
+                turtleLaneIdx++;
+            } else {
+                this.turtleElements[i] = null;
             }
 
             container.appendChild(track);
@@ -352,7 +343,6 @@ class TurtleRacingGame {
             container.appendChild(startLine);
 
             container.appendChild(track);
-            this.turtleElements.push(turtle);
         }
             
         // FINISH 라인 생성
@@ -443,6 +433,11 @@ class TurtleRacingGame {
             // 선택 거북이가 중앙에 오도록 트랙 패닝
             const container = this.container;
             const turtles = this.turtleElements;
+            // (1) 선택된 거북이 인덱스가 유효한지 검사
+            if (typeof this.selectedTurtle !== 'number' || !this.turtleElements[this.selectedTurtle]) {
+                return; // 선택된 거북이가 없거나 잘못된 경우 패닝 로직 스킵
+            }
+            // (2) 패닝 로직 정상 수행
             const selectedPx = parseFloat(turtles[this.selectedTurtle].style.left);
             const isMobile = window.innerWidth <= 640; // 모바일 여부   
             const isTablet = window.innerWidth > 640 && window.innerWidth <= 1024; // 태블릿 여부
@@ -548,7 +543,7 @@ class TurtleRacingGame {
             winner: this.winner,
             positions: this.positions,
             selectedTurtle: this.selectedTurtle,
-            points: this.points,
+            // points: this.points,
             bet: this.userBet,
             difficulty: this.selectedDifficulty,
             turtleBets: this.turtleBets,
@@ -564,7 +559,7 @@ class TurtleRacingGame {
                 winner: this.winner,
                 positions: this.positions,
                 selectedTurtle: this.selectedTurtle,
-                points: this.points,
+                // points: this.points,
                 bet: this.userBet,
                 difficulty: this.selectedDifficulty,
                 turtleBets: this.turtleBets,
@@ -602,16 +597,13 @@ class TurtleRacingGame {
         this.pointsDisplay.textContent = this.points;
     }
 
-    loadPoints() {
-        getPointsFromServer((points) => {
-            this.points = points || 100; // 기본값 100
-            this.updatePointsDisplay();
-            if(callback) callback(points);
-        });
-    }
+    // loadPoints() {
+    //     this.points = points || 100; // 기본값 100
+    //     this.updatePointsDisplay();
+    // }
 
     savePoints() {
-        savePointsToServer(this.points);
+    
     }
 }
 
