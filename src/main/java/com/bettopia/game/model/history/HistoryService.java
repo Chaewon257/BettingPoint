@@ -18,6 +18,14 @@ public class HistoryService {
     public List<PointHistoryDTO> pointHistoryList(String userId) {
         return historyDAO.pointHistoryList(userId);
     }
+    
+    public int gameHistoryCount(String userId) {
+      return historyDAO.countGameHistory(userId);
+    }
+
+    public int pointHistoryCount(String userId) {
+      return historyDAO.countPointHistory(userId);
+    }
 
     public List<GameHistoryDTO> gameHistoryList(String userId, int page) {
         int size = 10;
@@ -38,7 +46,7 @@ public class HistoryService {
     public String insertPointHistory(PointHistoryDTO pointHistory, String userId) {
         return historyDAO.insertPointHistory(pointHistory, userId);
     }
-    
+
     public GameHistoryDTO insertGameHistory(String gameUid, int betAmount, int pointValue, String result, String userId) {
         GameHistoryDTO dto = new GameHistoryDTO();
         dto.setGame_uid(gameUid);
