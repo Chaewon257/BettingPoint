@@ -61,7 +61,7 @@
 		<div class="p-4 grid grid-cols-12 items-center text-center border-b border-gray-1"></div>
 	</div>
 	<div class="w-full flex justify-end items-center mb-4">
-		<a href="/board/write" class="text-black no-underline cursor-pointer py-1.5 px-[1.625rem] border-2 border-black rounded-full transition-all duration-300 ease-in-out hover:bg-gray-2">글쓰기</a>
+		<a id="writeBoard" href="/board/write" class="text-black no-underline cursor-pointer py-1.5 px-[1.625rem] border-2 border-black rounded-full transition-all duration-300 ease-in-out hover:bg-gray-2">글쓰기</a>
 	</div>
 	<div class="flex justify-center items-center">
 		<div class="flex items-center">
@@ -75,3 +75,37 @@
 		</div>
 	</div>
 </div>
+<script type="text/javascript">
+	//accessToken으로 유저 정보 요청
+	function getUserInfo(accessToken) {
+		return $.ajax({
+			url: '/api/user/me',
+			method: 'GET',
+			headers: {
+				'Authorization': 'Bearer ' + accessToken
+			},
+			xhrFields: { withCredentials: true }
+		});
+	}
+	
+	// 보호된 링크 클릭 시 토큰 검사
+	$("#writeBoard").on("click", function (e) {
+		const target = $(this).attr("href");
+		const token = localStorage.getItem("accessToken");
+	
+		// 토큰 없을 경우
+		if (!token) {
+			alert("로그인 후 이용 가능합니다.");
+			e.preventDefault();
+			return;
+		}
+	
+		e.preventDefault(); // 유효성 검사 전 기본 이동 차단
+	
+		getUserInfo(token)
+			.done(() => window.location.href = target)
+			.fail(() => {
+				alert("로그인 후 이용 가능합니다.");
+			});
+	});
+</script>
