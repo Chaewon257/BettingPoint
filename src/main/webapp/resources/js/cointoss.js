@@ -8,15 +8,12 @@ let gameState = {
   gameActive: false,        // 개임진행 상태
   potentialWin: 0,          // 예상획득 포인트
   accumulatedWin: 0,        // 누적 획득 포인트
-  userId: null,             // 사용자 ID (DB에서 받아올 예정)
+  userNickname: null,             // 사용자 ID (DB에서 받아올 예정)
   loading: false            // 로딩 상태
 };
 
-// 난이도 설정
- let difficultyConfigs = {
- };
-
-
+// 난이도 설정 - 서버 데이터로 채워질 예정
+let difficultyConfigs = {};
 
 // HTML 요소들
 const elements = {
@@ -36,8 +33,6 @@ const elements = {
 
 // 페이지 로드 시 초기 데이터 가져오기
 document.addEventListener('DOMContentLoaded', function() {
-  // 먼저 기본 UI 설정 (연결 전에도 난이도 선택 가능)
-  updateDifficultyUI();
   setupEventListeners();
   updateUI();
   
@@ -45,97 +40,199 @@ document.addEventListener('DOMContentLoaded', function() {
   initializeGame();
 });
 
-
-// 게임 초기화 함수
 function initializeGame() {
   setLoadingState(true);
-  
-  // 1. 사용자 보유포인트 가져오기 (Ajax)
-  $.get('/api/user/balance')
-    .done(function(response) {
-      gameState.userId = response.userId;
-      gameState.balance = response.balance;
-      
-      // 2. 난이도 설정 가져오기 (Ajax)
-      loadDifficultySettings();
-    })
-    .fail(function(xhr) {
-      showErrorMessage('사용자 정보를 불러올 수 없습니다: ' + xhr.status);
-      setLoadingState(false);
-    });
+  fetchUserInfo();
+  loadDifficultySettings();
 }
 
-function loadDifficultySettings() {
-    $.ajax({
-        url: '/api/game/by-name/CoinToss',
-        type: 'GET',
-        dataType: 'json',
-        success: function(gameData) {
-            console.log('게임 데이터:', gameData);
-            
-            // 기존 difficultyConfigs 설정
-            $.each(gameData, function(index, game) {
-                difficultyConfigs[game.level] = {
-                    chance: game.probability,
-                    payout: game.reward
-                };
-            });
-           
-            // JSP 화면에 데이터 표시
-            updateDifficultyDisplay(gameData);
-            
-            updateDifficultyUI();
-            updateUI();
-            setLoadingState(false);
-            
-            const config = difficultyConfigs[gameState.difficulty];
-          
+function fetchUserInfo() {
+  const token = localStorage.getItem('accessToken');
+  if (!token) {
+    console.warn('accessToken 없음');
+    setLoadingState(false);
+    return;
+  }
+
+  $.ajax({
+    url: '/api/user/me',
+    method: 'GET',
+    headers: {
+      'Authorization': 'Bearer ' + token
+    },
+    xhrFields: { withCredentials: true }
+  })
+  .done(function (user) {
+
+    console.log("📦 유저 JSON 응답:", user); // ← 여기서 전체 응답 출력
+
+    $('#userNickname').text(user.nickname);
+    $('#balance').text(user.point_balance.toLocaleString());
+    gameState.balance = user.point_balance;
+    gameState.userNickname =  user.nickname; // 사용자 ID 저장
+    console.log('사용자 정보 로드 완료:', gameState.balance);
+    updateUI();
+  })
+  .fail(function (xhr) {
+    if (xhr.status === 401) {
+      // 토큰 만료 → 재발급 시도
+      $.ajax({
+        url: '/api/auth/reissue',
+        method: 'POST',
+        headers: {
+          'Authorization': 'Bearer ' + token
         },
-        error: function(xhr, status, error) {
-            console.error('게임 설정 로딩 실패:', error);
-            updateDifficultyUI();
-            updateUI();
-            setLoadingState(false);
+        xhrFields: { withCredentials: true }
+      })
+      .done(function (res) {
+        const newToken = res.accessToken;
+        if (!newToken) {
+          console.warn('재발급 응답에 accessToken 없음');
+          setLoadingState(false);
+          return;
         }
-    });
+
+        localStorage.setItem('accessToken', newToken);
+        // 새 토큰으로 다시 사용자 정보 요청
+        return $.ajax({
+          url: '/api/user/me',
+          method: 'GET',
+          headers: {
+            'Authorization': 'Bearer ' + newToken
+          },
+          xhrFields: { withCredentials: true }
+        })
+        .done(function (user) {
+          $('#userNickname').text(user.nickname);
+          $('#balance').text(user.point_balance.toLocaleString() + ' P');
+          gameState.balance = user.point_balance;
+          gameState.userNickname =  user.nickname;
+          updateUI();
+        })
+        .fail(function () {
+          console.warn('재시도 실패');
+          setLoadingState(false);
+        });
+      })
+      .fail(function () {
+        localStorage.removeItem('accessToken');
+        console.warn('토큰 재발급 실패 — 로그아웃 처리 필요');
+        location.href = '/login';
+      });
+    } else {
+      console.error('사용자 정보 불러오기 실패:', xhr.responseText);
+      setLoadingState(false);
+    }
+  });
 }
 
-// JSP 화면에 난이도 데이터 표시하는 함수
-function updateDifficultyDisplay(gameData) {
-    
-    $.each(gameData, function(index, game) {
-        let difficultyKey;
-        
-        // DB의 level을 JSP의 data-difficulty와 매핑
-        if (game.level === 'HARD') {
-            difficultyKey = 'hard';
-        } else if (game.level === 'MEDIUM') {
-            difficultyKey = 'normal'; // JSP에서는 normal로 되어있음
-        } else if (game.level === 'EASY') {
-            difficultyKey = 'easy';
-        }
-        
-        // 해당 난이도 옵션 찾아서 데이터 업데이트
-        const $difficultyOption = $(`.difficulty-option[data-difficulty="${difficultyKey}"]`);
-        if ($difficultyOption.length > 0) {
-            $difficultyOption.find('.difficulty-chance').text(`성공률: ${game.probability}%`);
-            $difficultyOption.find('.difficulty-payout').text(`배당: ${game.reward}배`);
-        }
-    });
+// 난이도 설정 데이터를 서버에서 불러옴
+function loadDifficultySettings() {
+  const gameUid = document.getElementById("gameUid").value;
+  if (!gameUid) {
+    console.warn("gameUid 값이 없습니다. AJAX 호출 중단");
+    setLoadingState(false);
+    return;
+  }
+  
+  console.log("게임 UID:", gameUid); 
+ 
+  $.ajax({
+    url: '/api/game/levels/by-game/' + gameUid, 
+    type: 'GET',
+    dataType: 'json',
+    success: function(gameLevels) {
+      console.log("받아온 난이도 데이터:", gameLevels); 
+      
+      // 서버 데이터를 difficultyConfigs에 저장
+      buildDifficultyConfigs(gameLevels);
+      
+      // JSP 화면에 난이도 데이터 표시
+      updateDifficultyDisplay(gameLevels);
+      
+      // 로딩 완료
+      setLoadingState(false);
+      
+      // 기본 난이도 선택 (normal이 없으면 첫 번째 난이도)
+      setDefaultDifficulty();
+    },
+    error: function(xhr, status, error) {
+      console.error('난이도 로딩 실패:', xhr.responseText);
+      showErrorMessage('난이도 정보를 불러올 수 없습니다');
+      setLoadingState(false);
+    }
+  });
 }
 
-
-
-// 난이도 UI 업데이트
-function updateDifficultyUI() {
-  document.querySelectorAll('.difficulty-option').forEach(option => {
-    const difficulty = option.dataset.difficulty;
-    const config = difficultyConfigs[difficulty];
+// 서버 데이터를 difficultyConfigs 객체로 변환 (수정된 버전)
+function buildDifficultyConfigs(gameLevels) {
+  difficultyConfigs = {};
+  
+  gameLevels.forEach(function(gameLevel) {  // game -> gameLevel로 명확화
+    let difficultyKey;
     
-    if (config) {
-      option.querySelector('.difficulty-name').textContent = config.name;
-      option.querySelector('.difficulty-chance').textContent = `${Math.round(config.chance * 100)}% 확률`;
-      option.querySelector('.difficulty-payout').textContent = `성공시 ${config.payout}배 획득`;
+    // DB의 level을 키로 매핑
+    if (gameLevel.level === 'HARD') {
+      difficultyKey = 'hard';
+    } else if (gameLevel.level === 'NORMAL') {
+      difficultyKey = 'normal'; 
+    } else if (gameLevel.level === 'EASY') {
+      difficultyKey = 'easy';
+    }
+    
+    if (difficultyKey) {
+      difficultyConfigs[difficultyKey] = {
+        name: gameLevel.level,
+        chance: gameLevel.probability / 100,  // 퍼센트를 소수로 변환 (중요!)
+        payout: gameLevel.reward / 100
+      };
+    }
+  });
+  
+  console.log('구성된 난이도 설정:', difficultyConfigs);
+}
+
+// 기본 난이도 선택
+function setDefaultDifficulty() {
+  // normal이 있으면 선택, 없으면 첫 번째 난이도 선택
+  if (difficultyConfigs['normal']) {
+    gameState.difficulty = 'normal';
+  } else {
+    const firstKey = Object.keys(difficultyConfigs)[0];
+    if (firstKey) {
+      gameState.difficulty = firstKey;
+    }
+  }
+  
+  // UI에서 해당 난이도 선택 표시
+  document.querySelectorAll(".difficulty-option").forEach((opt) => opt.classList.remove("selected"));
+  const defaultOption = document.querySelector(`.difficulty-option[data-difficulty="${gameState.difficulty}"]`);
+  if (defaultOption) {
+    defaultOption.classList.add("selected");
+  }
+  
+  console.log('기본 난이도 설정:', gameState.difficulty);
+}
+
+// JSP 화면에 난이도 데이터 표시하는 함수 (수정된 버전)
+function updateDifficultyDisplay(gameLevels) {  // gameData -> gameLevels로 명확화
+  $.each(gameLevels, function(index, gameLevel) {  // game -> gameLevel로 명확화
+    let difficultyKey;
+    
+    // DB의 level을 JSP의 data-difficulty와 매핑
+    if (gameLevel.level === 'HARD') {
+      difficultyKey = 'hard';
+    } else if (gameLevel.level === 'NORMAL') {
+      difficultyKey = 'normal'; 
+    } else if (gameLevel.level === 'EASY') {
+      difficultyKey = 'easy';
+    }
+    
+    // 해당 난이도 옵션 찾아서 데이터 업데이트
+    const $difficultyOption = $(`.difficulty-option[data-difficulty="${difficultyKey}"]`);
+    if ($difficultyOption.length > 0) {
+      $difficultyOption.find('.difficulty-chance').text(`성공률: ${gameLevel.probability}%`);
+      $difficultyOption.find('.difficulty-payout').text(`배당: ${gameLevel.reward/100}배`);
     }
   });
 }
@@ -153,41 +250,60 @@ function setLoadingState(loading) {
   }
 }
 
-// 게임 시작 - 배팅금액만큼 포인트 차감 (Ajax)
+// 게임 시작 - 배팅금액만큼 포인트 차감 (Ajax) (수정된 버전)
 function startGame(betAmount) {
-  const gameData = {
-    userId: gameState.userId,
-    betAmount: betAmount,
-    difficulty: gameState.difficulty  // 선택된 난이도 전송
-  };
-  
-  $.post('/api/game/start', gameData)
-    .done(function(response) {
-      // 서버에서 포인트 차감 후 새로운 잔액 받아오기
-      gameState.balance = response.newBalance;
+
+gameState.gameData = {
+  userNickname: gameState.userNickname,
+  betAmount: betAmount,
+  difficulty: gameState.difficulty
+};
+
+ console.log("💸 게임 시작! 배팅 금액:", betAmount);
+
+  $.ajax({
+    url: '/api/game/start',
+    method: 'POST',
+    contentType: 'application/json',
+    headers: {
+    Authorization: 'Bearer ' + localStorage.getItem('accessToken')
+    },
+    data: JSON.stringify({ betAmount: betAmount }),  
+    success: function (res) {
+      console.log("✅ 응답:", res);
+
+      gameState.balance = res.newBalance;
       gameState.currentBet = betAmount;
       gameState.streak = 0;
       gameState.gameActive = true;
       gameState.accumulatedWin = betAmount;
-      gameState.potentialWin = Math.round(betAmount * difficultyConfigs[gameState.difficulty].payout);
 
+      const config = difficultyConfigs[gameState.difficulty];
+      gameState.potentialWin = Math.round(betAmount * config.payout);
+
+      // 시작 버튼 숨기기
       elements.startBtn.classList.add("hidden");
-      elements.goBtn.classList.remove("hidden");
-      elements.stopBtn.classList.remove("hidden");
 
       updateUI();
-      showResult(`게임이 시작되었습니다! (난이도: ${difficultyConfigs[gameState.difficulty].name}) GO 버튼을 눌러 동전을 던지세요.`, "info");
-    })
-    .fail(function(xhr) {
-      const errorMsg = xhr.responseJSON ? xhr.responseJSON.message : '게임 시작 실패';
-      startErrorMessage(errorMsg);
-    });
+      showResult(`🎮 게임 시작! (난이도: ${config.name}) 첫 번째 동전을 던집니다!`, "info");
+      
+      // 첫 번째 동전 던지기 바로 실행
+      flipCoin();
+    },
+    error: function (xhr) {
+      console.error("❌ 게임 시작 실패:", xhr.responseText);
+      const msg = xhr.responseJSON?.message || "게임 시작 실패!";
+      startErrorMessage(msg);
+    }
+  });
 }
+
+
 
 // STOP 버튼 - 획득포인트 반영 (Ajax)
 function stopGame() {
   const gameData = {
-    userId: gameState.userId,
+    userNickname: gameState.userNickname,
     winAmount: gameState.accumulatedWin,
     difficulty: gameState.difficulty,  // 난이도 정보 전송
     streak: gameState.streak           // 연속 성공 횟수 전송
@@ -210,7 +326,7 @@ function stopGame() {
     });
 }
 
-// 동전 던지기 (선택된 난이도 반영)
+// 동전 던지기 (수정된 버전)
 function flipCoin() {
   gameState.isFlipping = true;
   elements.coin.classList.add("flipping");
@@ -218,20 +334,21 @@ function flipCoin() {
   elements.stopBtn.disabled = true;
 
   // 선택된 난이도의 설정값 사용
-  const config = difficultyConfigs[gameState.difficulty];
+  const difficultyConfig = difficultyConfigs[gameState.difficulty];  // config -> difficultyConfig로 명확화
   
   setTimeout(() => {
-    const isWin = Math.random() < config.chance;
+    // 이제 chance가 소수(0~1)이므로 올바르게 작동
+    const isWin = Math.random() < difficultyConfig.chance;
 
     elements.coin.classList.remove("heads", "tails");
 
     if (isWin) {
       elements.coin.classList.add("heads");
       gameState.streak++;
-      gameState.accumulatedWin = Math.round(gameState.accumulatedWin * config.payout);
-      gameState.potentialWin = Math.round(gameState.accumulatedWin * config.payout);
+      gameState.accumulatedWin = Math.round(gameState.accumulatedWin * difficultyConfig.payout);
+      gameState.potentialWin = Math.round(gameState.accumulatedWin * difficultyConfig.payout);
 
-      showResult(`앞면! 연속 ${gameState.streak}회 성공! (난이도: ${config.name}) 다음 성공시 ${gameState.potentialWin}포인트 획득`, "win");
+      showResult(`앞면! 연속 ${gameState.streak}회 성공! (난이도: ${difficultyConfig.name}) 다음 성공시 ${gameState.potentialWin}포인트 획득`, "win");
 
       elements.goBtn.disabled = false;
       elements.stopBtn.disabled = false;
@@ -239,7 +356,7 @@ function flipCoin() {
       elements.coin.classList.add("tails");
       
       endGame(false, "뒷면! 게임 오버!");
-      showResult(`뒷면이 나왔습니다. (난이도: ${config.name}) 모든 배팅금을 잃었습니다!`, "lose");
+      showResult(`뒷면이 나왔습니다. (난이도: ${difficultyConfig.name}) 모든 배팅금을 잃었습니다!`, "lose");
     }
 
     gameState.isFlipping = false;
@@ -275,14 +392,21 @@ function setupEventListeners() {
       
       // 새로운 선택 추가
       option.classList.add("selected");
-      gameState.difficulty = option.dataset.difficulty;
+      const selectedDifficulty = option.dataset.difficulty;
+      gameState.difficulty = selectedDifficulty;
+      
+      console.log('난이도 변경:', selectedDifficulty);
       
       // 선택된 난이도 정보 표시
-      const config = difficultyConfigs[gameState.difficulty];
-      if (gameState.loading) {
-        showResult(`난이도 "${config.name}" 선택됨 (서버 연결 중...)`, "info");
+      const difficultyConfig = difficultyConfigs[gameState.difficulty];  // config -> difficultyConfig
+      if (difficultyConfig) {
+        if (gameState.loading) {
+          showResult(`난이도 "${difficultyConfig.name}" 선택됨 (서버 연결 중...)`, "info");
+        } else {
+          showResult(`난이도 "${difficultyConfig.name}" 선택됨 (성공확률: ${(difficultyConfig.chance * 100)}%, 배당: ${difficultyConfig.payout}배)`, "info");
+        }
       } else {
-        showResult(`난이도 "${config.name}" 선택됨 (성공확률: ${Math.round(config.chance * 100)}%, 배당: ${config.payout}배)`, "info");
+        showResult(`난이도 선택됨 (데이터 로딩 중...)`, "info");
       }
       
       updateUI();
@@ -332,7 +456,7 @@ function setupEventListeners() {
     
     const betAmount = parseInt(elements.betAmount.value) || 0;
 
-    if (!betAmount > 0) {
+    if (!betAmount || betAmount <= 0) {
       startErrorMessage("올바른 배팅 금액을 입력해주세요.");
       return;
     }
@@ -343,11 +467,17 @@ function setupEventListeners() {
     }
 
     // 선택된 난이도 확인
-    const config = difficultyConfigs[gameState.difficulty];
-    if (!config) {
-      startErrorMessage("난이도를 선택해주세요.");
+    const difficultyConfig = difficultyConfigs[gameState.difficulty];  // config -> difficultyConfig
+    if (!difficultyConfig) {
+      startErrorMessage("난이도 정보를 불러오는 중입니다. 잠시 후 다시 시도해주세요.");
       return;
     }
+
+    console.log('게임 시작 시도:', {
+      betAmount,
+      difficulty: gameState.difficulty,
+      config: difficultyConfig
+    });
 
     // Ajax로 서버에 배팅금액 차감 요청 (선택된 난이도 포함)
     startGame(betAmount);
@@ -367,6 +497,7 @@ function setupEventListeners() {
     }
   });
 }
+
 // 게임 종료
 function endGame(won, message) {
   gameState.gameActive = false;
@@ -405,7 +536,9 @@ function startErrorMessage(message) {
   }, 3000);
 }
 
+// 게임 상태 리셋 함수 수정
 function resetGameState() {
+  // 게임 상태 초기화
   gameState.currentBet = 0;
   gameState.streak = 0;
   gameState.isFlipping = false;
@@ -413,25 +546,60 @@ function resetGameState() {
   gameState.potentialWin = 0;
   gameState.accumulatedWin = 0;
   
+  // 버튼 상태 초기화
   elements.goBtn.classList.add("hidden");
   elements.stopBtn.classList.add("hidden");
   elements.startBtn.classList.remove("hidden");
   elements.startBtn.textContent = "게임 시작";
+  
+  // 버튼 활성화 상태 초기화 (중요!)
+  elements.goBtn.disabled = false;
+  elements.stopBtn.disabled = false;
+  elements.startBtn.disabled = false;
+  
+  // 입력 필드 초기화
   elements.betAmount.value = "";
   
+  // 동전 상태 초기화
   elements.coin.classList.remove("heads", "tails", "flipping");
   elements.coin.classList.add("heads");
+  
+  // 메시지 초기화
   elements.resultMessage.style.display = "none";
+  elements.inputErrorMessage.style.display = "none";
+  elements.startErrorMessage.style.display = "none";
   
   // 현재 포인트 다시 불러오기 (Ajax)
-  $.get('/api/user/balance')
-    .done(function(response) {
-      gameState.balance = response.balance;
-      updateUI();
-    })
-    .fail(function(xhr) {
-      console.error('포인트 새로고침 실패:', xhr.status);
-    });
+  refreshUserBalance();
+}
+
+// 사용자 잔액 새로고침 함수 분리
+function refreshUserBalance() {
+  const token = localStorage.getItem('accessToken');
+  if (!token) {
+    console.warn('토큰이 없어서 잔액을 새로고침할 수 없습니다.');
+    updateUI();
+    return;
+  }
+  
+  $.ajax({
+    url: '/api/user/me',
+    method: 'GET',
+    headers: {
+      'Authorization': 'Bearer ' + token
+    },
+    xhrFields: { withCredentials: true }
+  })
+  .done(function(user) {
+    gameState.balance = user.point_balance;
+    console.log('포인트 새로고침 완료:', gameState.balance);
+    updateUI();
+  })
+  .fail(function(xhr) {
+    console.error('포인트 새로고침 실패:', xhr.status);
+    // 실패해도 UI는 업데이트
+    updateUI();
+  });
 }
 
 function updateUI() {
@@ -443,8 +611,3 @@ function updateUI() {
     ? gameState.accumulatedWin.toLocaleString()  
     : "0";
 }
-
-
-$(document).ready(function() {
-    loadDifficultySettings();
-});

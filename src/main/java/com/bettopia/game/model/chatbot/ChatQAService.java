@@ -16,12 +16,21 @@ public class ChatQAService {
 	public List<ChatQADTO> selectAll() {
 		return chatDAO.selectAll();
 	}
+	
+	public List<String> subCatesByMainCate(String main_category) {
+		return chatDAO.subCatesByMainCate(main_category);
+	}
+		
+	public List<ChatQADTO> selectByMainSubCate(String main_category, String sub_category) {
+		return chatDAO.selectByMainSubCate(main_category, sub_category);
+	}
 
-	public String questiontByUid(String uid) {
-		return chatDAO.questiontByUid(uid);
+	public String answerByUid(String uid) {
+		return chatDAO.answerByUid(uid);
 	}
 	
-	public List<ChatQADTO> selectByCate(String main_category) {
-		return chatDAO.selectByCate(main_category);
+	public List<ChatQADTO> selectByMainCate(String main_category) {
+		return chatDAO.selectByMainCate(main_category);
 	}
+
 }

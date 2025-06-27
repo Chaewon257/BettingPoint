@@ -12,9 +12,7 @@ public class GameResponseDTO {
     private String name;
     private String type;
     private String description;
-    private String level;
-    private double probability;
-    private double reward;
+    private String game_img;
     private String status;
     private Date created_at;
 }

@@ -4,18 +4,22 @@
 
  <ui:layout pageName="Coin Toss" pageType="ingame"> 
 	<jsp:attribute name="bodyContent">
+		<input type="hidden" id="gameUid"  value="${gameUid}"> 
 		<script src="${cpath}/resources/js/cointoss.js" defer></script>
-		<div class="container">
+		<div class="custom-container">
 			<div class="header">
 				<h1 class="title">🪙 Coin Toss</h1>
-				<button class="move-page">홈으로 이동하기</button>
+				<button class="move-home" onclick="location.href='/'">홈으로 이동하기
+				</button>
 			</div>
 	
 			<div class="card horizontal-layout">
 				<!-- 왼쪽 패널 -->
 				<div class="left-panel">
 					<div class="balance-info">
-						<div class="balance-label">보유 포인트</div>
+						<div class="balance-label">
+						 <span id="userNickname">사용자</span>님의 보유 포인트
+						</div>
 						<div class="balance-amount" id="balance">연결 전</div>
 					</div>
 	

@@ -36,6 +36,7 @@
 					'gray-7' : '#656565',
 					'gray-8' : '#F4F4F4',
 					'gray-9' : '#A5A5A5',
+					'gray-10' : '#EDEDED',					
 					'blue-1' : '#4A90E2',
 					'blue-2' : '#3F7AB6',
 					'blue-3' : '#A2C8E6',

@@ -8,10 +8,10 @@ const { count: TURTLE_COUNT} = difficultyMap.hard; // 기본 난이도 설정
 
 
 // 난이도/베팅/선택 고정값
-const FIXED_DIFFICULTY = 'hard'; // 'easy', 'normal', 'hard'
-const FIXED_TURTLE_COUNT = 8;      // normal
-const FIXED_BET = 10000;
-const FIXED_SELECTED_TURTLE = 2;   // (3번, 0-based)
+let FIXED_DIFFICULTY = 'hard'; // 'easy', 'normal', 'hard'
+let FIXED_TURTLE_COUNT = 8;      // normal
+let FIXED_BET = 10000;
+let FIXED_SELECTED_TURTLE = 2;   // (3번, 0-based)
 
 // 트랙 설정
 const TURTLE_GAP = 10;
@@ -30,12 +30,77 @@ document.getElementById('trackContainer').style.height = trackHeight + 'px';
 
 let turtleGame = null;
 
+function connectWebSocket() {
+    
+    // roomId는 URL이나 다른 방식으로 먼저 준비
+    const urlParts = window.location.pathname.split('/');
+    const roomId = urlParts[urlParts.length - 2];
+    const token = localStorage.getItem("accessToken");
+
+    $.ajax({
+        url: `/api/multi/gameroom/detail/${roomId}/info`,
+        type: "GET",
+        dataType: "json",
+        headers: {
+            'Authorization': 'Bearer ' + token
+        },
+        success: function(data) {
+            const roomId = data.roomId;
+            const userId = data.userId;
+    
+        // WebSocket 연결 및 메시지 핸들러 등록 (초기화 시)
+        ws = new WebSocket(`ws://${location.host}/ws/game/turtle/${roomId}?token=${encodeURIComponent(token)}`);
+
+        ws.onopen = function() {
+            console.log("WS 연결 성공")
+        };
+
+        ws.onmessage = function(event) {
+            const msg = JSON.parse(event.data);
+
+            if (msg.type === "init") {
+                // 게임 생성
+                if(!turtleGame) {
+                    turtleGame = new TurtleRacingGame(msg);
+                }
+            }
+            // 경기 중 위치 업데이트
+            if(msg.type === "race_update" && turtleGame) {
+                turtleGame.setPositions(msg.positions);
+            }
+            // 경기 종료
+            if(msg.type === "race_finish" && turtleGame) {
+                turtleGame.finishRace(msg);
+            }
+            // 결과 메세지
+            if(msg.type === "race_result") {
+                // 1. 결과 모달에 필요한 정보
+                showResultModal({
+                    winner: msg.winner,
+                    didwin: msg.yourResult.didwin,
+                    pointChange: msg.yourResult.pointChange,
+                    points: msg.yourResult.points,
+                    bet: msg.yourResult.bet,
+                    selectedTurtle: msg.yourResult.selectedTurtle
+                });
+            }
+
+            // ... (race_update, race_finish 등 다른 메시지도 같이 처리)
+        };
+    },
+    error: function(xhr, status, err) {
+        alert("방 정보 조회에 실패했습니다.");
+        console.error(err);
+    }
+});
+}
+
 function showCountdownOverlay(startNum, callback) {
     let overlay = document.getElementById('countdownOverlay');
     if (!overlay) {
         overlay = document.createElement('div');
         overlay.id = "countdownOverlay";
-        overlay.className = "countdown-overlay"; 
+        overlay.className = "fixed inset-0 z-[2000] flex items-center justify-center bg-black/30 text-white text-[7vw] font-bold pointer-events-none select-none"; 
         document.getElementById('trackViewport').appendChild(overlay);
     } else {
         overlay.style.display = "flex";
@@ -60,22 +125,23 @@ function showCountdownOverlay(startNum, callback) {
 
 // TurtleRacingGame 클래스 정의
 class TurtleRacingGame {
-    constructor(/*turtleCount = 4, options = {}*/) {
-        this.turtleCount = FIXED_TURTLE_COUNT; //turtleCount;
-        this.selectedDifficulty = FIXED_DIFFICULTY; //options.difficulty || 'normal';
-        this.userBet = FIXED_BET; //options.bet || 100;
-        this.turtleImages =/*options.images || */['/resources/images/turtle1.png', '/resources/images/turtle2.png', '/resources/images/turtle3.png', '/resources/images/turtle4.png', '/resources/images/turtle5.png', '/resources/images/turtle6.png', '/resources/images/turtle7.png', '/resources/images/turtle8.png'];
-        this.victoryImages =/* options.victoryImages || */['/resources/images/victory1.png', '/resources/images/victory2.png', '/resources/images/victory3.png', '/resources/images/victory4.png', '/resources/images/victory5.png', '/resources/images/victory6.png', '/resources/images/victory7.png', '/resources/images/victory8.png'];
-        this.defeatImages =/* options.defeatImages || */['/resources/images/defeat1.png', '/resources/images/defeat2.png', '/resources/images/defeat3.png', '/resources/images/defeat4.png', '/resources/images/defeat5.png', '/resources/images/defeat6.png', '/resources/images/defeat7.png', '/resources/images/defeat8.png'];
-        this.selectedTurtle = FIXED_SELECTED_TURTLE; //null;
+    constructor(msg) {
+        this.turtleCount = msg.turtleCount || FIXED_TURTLE_COUNT; //FIXED_TURTLE_COUNT; //turtleCount;
+        this.selectedDifficulty = msg.difficulty || FIXED_DIFFICULTY; //FIXED_DIFFICULTY; //options.difficulty || 'normal';
+        this.userBet = msg.bet || FIXED_BET; //FIXED_BET; //options.bet || 100;
+        this.turtleImages =/*options.images || */['turtle1.png', 'turtle2.png', 'turtle3.png', 'turtle4.png', 'turtle5.png', 'turtle6.png', 'turtle7.png', 'turtle8.png'];
+        this.victoryImages =/* options.victoryImages || */['victory1.png', 'victory2.png', 'victory3.png', 'victory4.png', 'victory5.png', 'victory6.png', 'victory7.png', 'victory8.png'];
+        this.defeatImages =/* options.defeatImages || */['defeat1.png', 'defeat2.png', 'defeat3.png', 'defeat4.png', 'defeat5.png', 'defeat6.png', 'defeat7.png', 'defeat8.png'];
+        this.selectedTurtle = msg.selectedTurtle || FIXED_SELECTED_TURTLE; //FIXED_SELECTED_TURTLE; //null;
+        this.points = msg.points; //100; //options.points || 100;
         this.turtleBets = Array(this.turtleCount).fill(0);
         this.positions = Array(this.turtleCount).fill(0);
         this.transitionToFollow = false; // 선택 거북이 중앙 패닝 여부
 
         this.turtles = [];
-        this.colors = ['1번', '2번', '3번', '4번', '5번', '6번', '7번', '8번'];
+        this.numbers = ['1번', '2번', '3번', '4번', '5번', '6번', '7번', '8번'];
         for (let i = 0; i < this.turtleCount; i++) {
-            this.turtles.push({ id: i, name: `${this.colors[i]} 거북이`, class: `${this.colors[i]}-turtle` });
+            this.turtles.push({ id: i, name: `${this.numbers[i]} 거북이`, class: `${this.numbers[i]}-turtle` });
         }
 
         this.points = this.loadPoints();
@@ -84,11 +150,11 @@ class TurtleRacingGame {
             this.startRace();
         });
         this.updatePointsDisplay();
-        if (this.statDisplay) this.updateStatsDisplay();
+        // if (this.statDisplay) this.updateStatsDisplay();
     }
 
     selectTurtle(id) {
-    //     if (this.isRacing) return;
+        if (this.isRacing) return;
         this.selectedTurtle = id;
         this.turtleElements.forEach(turtle => turtle.classList.remove('selected'));
         if (this.turtleElements[id]) this.turtleElements[id].classList.add('selected');
@@ -273,6 +339,14 @@ class TurtleRacingGame {
                 }
             }
 
+            // 경주 위치 실시간 전송
+            if (ws && ws.readyState === 1) {
+                ws.send(JSON.stringify({
+                    type: "race_update",
+                    positions: this.positions
+                }));
+            }
+
             // 선택 거북이가 중앙에 오도록 트랙 패닝
             const container = this.container;
             const turtles = this.turtleElements;
@@ -315,8 +389,10 @@ class TurtleRacingGame {
         requestAnimationFrame(updateRace);
     }
 
-    finishRace() {
+    finishRace(serverMsg) {
         this.isRacing = false;
+        if(this.resultSent) return;
+        this.resultSent = true;
         const winnerText = document.getElementById('winnerText');
         const resultImage = document.getElementById('resultImage');
         const resultMessage = document.getElementById('resultMessage');
@@ -341,16 +417,16 @@ class TurtleRacingGame {
 
         // 포인트 요약
         const userBet = this.userBet; // 사용자가 건 금액
-        // const userTurtle = this.selectedTurtle; // 사용자가 선택한 거북이
-        // const winnerTurtle = this.winner;
-        // const winPool = userBet; // this.turtleBets[winnerTurtle] || 1;
-        // const totalBet = userBet; // this.turtleBets.reduce((a, b) => a + b, 0) || 1;
+        const userTurtle = this.selectedTurtle; // 사용자가 선택한 거북이
+        const winnerTurtle = this.winner;
+        const winPool = this.turtleBets[winnerTurtle] || 1; //userBet; 
+        const totalBet = this.turtleBets.reduce((a, b) => a + b, 0) || 1; //userBet; 
         const difficultyRateMap = { easy: 0.2, normal: 1.5, hard: 4.0 };
         const difficulty = this.selectedDifficulty; //|| "normal";
         const userRate = difficultyRateMap[difficulty] || 1;
 
         const pointChange = this.selectedTurtle === this.winner ?
-            Math.round(/*(totalBet / winPool) * */ userBet + userBet * userRate) :
+            Math.round((totalBet / winPool) * userBet + userBet * userRate) :
             -userBet;
         this.points = Math.max(0, this.points + pointChange);
         pointSummary.textContent = `보유 포인트: ${this.points} (${pointChange >= 0 ? '+' : ''}${pointChange})`;
@@ -375,6 +451,49 @@ class TurtleRacingGame {
             }
         }
 
+        const gameResult = {
+            winner: this.winner,
+            positions: this.positions,
+            selectedTurtle: this.selectedTurtle,
+            points: this.points,
+            bet: this.userBet,
+            difficulty: this.selectedDifficulty,
+            turtleBets: this.turtleBets,
+            pointsChange: pointChange,
+            userId: this.userId, // 사용자 ID 추가
+            roomId: this.roomId // 게임방 ID 추가
+        };
+
+        // $.ajax({
+        //     url: '/api/turtlerun/result',  // 서버에 결과 저장
+        //     method: 'POST',
+        //     contentType: 'application/json',    
+        //     data: JSON.stringify(gameResult),
+        //     success: function(response) {  
+        //         console.log('게임 결과 저장 성공:', response);
+        //     },
+        //     error: function(xhr, status, error) {
+        //         console.error('게임 결과 저장 실패:', error);
+        //     }
+        // });
+
+        if(!serverMsg && ws && ws.readyState === 1 && !this.resultSent) {
+            this.resultSent = true;
+            ws.send(JSON.stringify({
+                type: "race_finish",
+                winner: this.winner,
+                positions: this.positions,
+                selectedTurtle: this.selectedTurtle,
+                points: this.points,
+                bet: this.userBet,
+                difficulty: this.selectedDifficulty,
+                turtleBets: this.turtleBets,
+                pointChange: this.pointChange,
+                userId: this.userId,
+                roomId: this.roomId
+            }));
+        }
+
         // 모달 표시
         showModal();
         startRedirectCountdown(5);
@@ -395,6 +514,7 @@ class TurtleRacingGame {
             const turtleIdx = parseInt(turtle.getAttribute('data-turtle-idx'), 10);
             turtle.src = this.turtleImages[turtleIdx];
         }
+        this.resultSent = false; // 결과 전송 초기화
     }
 
     updatePointsDisplay() {
@@ -403,33 +523,39 @@ class TurtleRacingGame {
     }
 
     loadPoints() {
-        return parseInt(localStorage.getItem('turtleGamePoints'), 10) || 100;
+        getPointsFromServer((points) => {
+            this.points = points || 100; // 기본값 100
+            this.updatePointsDisplay();
+            if(callback) callback(points);
+        });
     }
 
     savePoints() {
-        localStorage.setItem('turtleGamePoints', this.points);
+        savePointsToServer(this.points);
     }
 
-    loadStat(key) {
-        return parseInt(localStorage.getItem(`turtleGameStat_${key}`), 10) || 0;
-    }
+    // loadStat(key) {
+    //     return parseInt(localStorage.getItem(`turtleGameStat_${key}`), 10) || 0;
+    // }
 
-    saveStat(key, value) {
-        localStorage.setItem(`turtleGameStat_${key}`, value);
-    }
+    // saveStat(key, value) {
+    //     localStorage.setItem(`turtleGameStat_${key}`, value);
+    // }
 
-    updateStatsDisplay() {
-        this.statDisplay.innerHTML = `<p>전체 플레이: ${this.plays} | 승리: ${this.wins} | 패배: ${this.losses}</p>`;
-    }
+    // updateStatsDisplay() {
+    //     this.statDisplay.innerHTML = `<p>전체 플레이: ${this.plays} | 승리: ${this.wins} | 패배: ${this.losses}</p>`;
+    // }
 
-    toggleMute() {
-        // 생략
-    }
+    // toggleMute() {
+    //     // 생략
+    // }
 }
 
 function isTabletOrMobileView() {
   return window.innerWidth <= 1024;
 }
+
+window.addEventListener('DOMContentLoaded', connectWebSocket);
 
 window.addEventListener('DOMContentLoaded', () => {
     turtleGame = new TurtleRacingGame();
@@ -472,7 +598,7 @@ function startRedirectCountdown(seconds) {
         if (counter <= 0) {
             clearInterval(timer);
             hideModal();
-            // window.location.href = 'game_room.html';
+            window. location.href = '/gameroom/detail/' + roomId;
         } else {
             countdownElem.textContent = `${counter}초 후 게임방으로 이동합니다.`;
         }

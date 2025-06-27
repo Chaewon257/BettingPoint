@@ -5,13 +5,18 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpSession;
-
 @Service
 public class GameRoomService {
 
 	@Autowired
 	private GameRoomDAO gameRoomDAO;
+
+	public List<GameRoomResponseDTO> selectAll(int page) {
+		int size = 6;
+		int offset = (page-1) * size;
+		List<GameRoomResponseDTO> roomlist = gameRoomDAO.selectAll(offset, size);
+		return roomlist;
+	}
 
 	public List<GameRoomResponseDTO> selectAll() {
 		List<GameRoomResponseDTO> roomlist = gameRoomDAO.selectAll();
@@ -42,5 +47,9 @@ public class GameRoomService {
 		if (room != null && room.getHost_uid().equals(userId)) {
 			gameRoomDAO.deleteRoom(roomId);
 		}
+	}
+
+	public void updateStatus(String roomId, String status) {
+		gameRoomDAO.updateStatus(roomId, status);
 	}
 }

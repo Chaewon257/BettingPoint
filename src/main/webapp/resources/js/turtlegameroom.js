@@ -1,59 +1,3 @@
-// 게임방 리스트 요청
-function gameRoomList() {
-    let gamerooms = []; // 게임방 리스트
-    let games = {}; // 게임 정보
-    let playerCounts = {}; // 각 게임방 플레이어 수
-
-    // 게임방 리스트 요청
-    $.ajax({
-        url: "/api/gameroom/list",
-        method: "GET",
-        success: function (responseData) {
-            gamerooms = responseData;
-
-            // 게임 상세 정보 요청
-            let detailReq = gamerooms.map(room => gameDetail(room, games));
-
-            // 플레이어 수 요청
-            let countReq = countPlayers(playerCounts);
-
-            Promise.all([...detailReq, countReq]).then(() => {
-                renderGameRooms(gamerooms, games, playerCounts);
-                console.log(gamerooms, games, playerCounts);
-            });
-        }
-    });
-};
-
-// 게임방 리스트 렌더링(임시)
-function renderGameRooms(gamerooms, games, playerCounts) {
-    const container = $("#room-container");
-    container.empty();
-
-    gamerooms.forEach(room => {
-        const count = playerCounts[room.uid] || 0;
-        const game = games[room.game_uid];
-
-        const roomHtml = `
-            <div class="game-room" data-room-id="${room.uid}">
-                <h3>${room.title}</h3>
-                <p><strong>게임 이름:</strong> ${game.name}</p>
-                <p><strong>게임 레벨:</strong> ${game.level}</p>
-                <p><strong>현재 인원:</strong> ${count} / 8</p>
-                <p><strong>최소 베팅 금액:</strong> ${room.min_bet} 포인트</p>
-                <p><strong>게임방 상태:</strong> ${room.status}</p>
-            </div>
-        `;
-
-        container.append(roomHtml);
-    });
-
-    $(".game-room").on("click", function () {
-        const roomId = $(this).data("room-id");
-        window.location.href = `/gameroom/detail/${roomId}`;
-    });
-}
-
 let socket;
 
 // 게임방 웹소켓 연결
@@ -68,15 +12,12 @@ function connectGameWebSocket(roomId) {
         return;
     }
 
-    socket = new WebSocket(`ws://${location.host}/ws/game/turtle/${roomId}?token=${encodeURIComponent(token)}`);
+    socket = new WebSocket(`ws://${location.host}/ws/game/turtleroom/${roomId}?token=${encodeURIComponent(token)}`);
 
-    socket.onopen = () => {
-        console.log("웹소켓 연결 성공");
-    };
+    socket.onopen = () => {};
 
     socket.onmessage = (event) => {
         const msg = JSON.parse(event.data);
-        console.log("서버 메시지:", msg);
 
         switch (msg.type) {
             case "enter":
@@ -87,14 +28,17 @@ function connectGameWebSocket(roomId) {
             case "update":
                 updatePlayerList(msg.players);
                 break;
+            case "start":
+                const targetUrl = msg.target;
+                window.location.href = targetUrl;
+                break;
             default:
                 console.warn("알 수 없는 메시지 타입:", msg.type);
         }
     };
 
     socket.onclose = () => {
-        console.log("웹소켓 연결 종료");
-        window.location.href = "/gameroom";
+        // window.location.href = "/gameroom";
     };
 
     socket.onerror = (error) => {
@@ -110,6 +54,7 @@ let minBet = 0;
 
 // 게임방 상세 정보 요청
 function gameRoomDetail (roomId) {
+    let levels = {};
     let games = {};
     let roomPlayers = [];
 
@@ -120,17 +65,16 @@ function gameRoomDetail (roomId) {
         success: function (room) {
             minBet = room.min_bet;
 
-            // 게임 상세 정보 요청
-            let detailReq = gameDetail(room, games);
-
-            // 플레이어 정보 요청
-            let playerReq = players(room, roomPlayers);
-
-            Promise.all([detailReq, playerReq]).then(() => {
-                const game = games[room.game_uid];
-                connectGameWebSocket(roomId);
-                renderGameRoomDetail(room, game, roomPlayers);
-                console.log(room, game, roomPlayers);
+            // 난이도 정보 요청
+            levelDetail(room, levels).then(() => {
+                const levelData = levels[room.game_level_uid];
+                return gameDetail(levelData, games).then(() => {
+                    const gameData = games[levelData.game_uid];
+                    return players(room, roomPlayers).then(() => {
+                        connectGameWebSocket(roomId);
+                        renderGameRoomDetail(room, levelData, gameData, roomPlayers);
+                    });
+                });
             });
         }
     });
@@ -196,7 +140,7 @@ function updatePlayerList(players) {
 }
 
 // 게임방 상세 정보 렌더링(임시)
-function renderGameRoomDetail(room, game, roomPlayers) {
+function renderGameRoomDetail(room, level, game, roomPlayers) {
     const container = $("#room-detail-container");
     container.empty();
 
@@ -204,7 +148,7 @@ function renderGameRoomDetail(room, game, roomPlayers) {
         <h2 id="room-title">${room.title}</h2>
         <div>
             <p><strong>게임 이름:</strong> ${game.name}</p>
-            <p><strong>게임 레벨:</strong> ${game.level}</p>
+            <p><strong>게임 레벨:</strong> ${level.level}</p>
         </div>
         <div id="player-list"></div>
     `;
@@ -215,12 +159,23 @@ function renderGameRoomDetail(room, game, roomPlayers) {
 }
 
 // 게임 상세 정보 요청
-function gameDetail(room, games) {
+function gameDetail(level, games) {
     return $.ajax({
-        url: `/api/game/detail/${room.game_uid}`,
+        url: `/api/game/detail/${level.game_uid}`,
         method: "GET",
         success: function (gameData) {
-            games[room.game_uid] = gameData;
+            games[level.game_uid] = gameData;
+        }
+    });
+}
+
+// 게임 난이도 정보 요청
+function levelDetail(room, levels) {
+    return $.ajax({
+        url: `/api/game/level/${room.game_level_uid}`,
+        method: "GET",
+        success: function (levelData) {
+            levels[room.game_level_uid] = levelData;
         }
     });
 }
@@ -233,102 +188,5 @@ function players(room, roomPlayers) {
         success: function (players) {
             roomPlayers.push(...players);
         }
-    });
-}
-
-// 전체 플레이어 수 요청
-function countPlayers(playerCounts) {
-    return $.ajax({
-        url: "/api/player/count",
-        method: "GET",
-        success: function (countData) {
-            Object.assign(playerCounts, countData);
-        }
-    });
-}
-
-// 게임 리스트 요청
-function gameList() {
-    $.ajax({
-        url: '/api/game/list',
-        type: 'GET',
-        success: function(games) {
-            games.forEach(function(game) {
-                $('#game_uid').append(
-                    $('<option>', {
-                        value: game.uid,
-                        text: game.name
-                    })
-                );
-            });
-        }
-    });
-}
-
-let userPoint = 0;
-
-// 보유 포인트 요청
-function userPointBalance() {
-    const token = localStorage.getItem("accessToken");
-    if (!token) {
-        alert("로그인이 필요합니다.");
-        return;
-    }
-
-    $.ajax({
-        url: '/api/user/me',
-        type: 'GET',
-        headers: {
-            'Authorization': 'Bearer ' + token
-        },
-        success: function(user) {
-            userPoint = user.point_balance;
-            $('#min_bet').attr('max', userPoint); // 최대값 제한
-            $('#user-point-info').text(`보유 포인트: ${userPoint}P`);
-        }
-    });
-
-}
-
-// 게임방 생성 요청
-function createRoom() {
-    $('#create-room-form').on('submit', function(e) {
-        e.preventDefault();
-
-        const token = localStorage.getItem("accessToken");
-        if (!token) {
-            alert("로그인이 필요합니다.");
-            return;
-        }
-
-        minBet = parseInt($('#min_bet').val());
-
-        if(minBet > userPoint) {
-            alert(`최소 베팅 금액은 보유 포인트(${userPoint}P)를 초과할 수 없습니다.`);
-            return;
-        }
-
-        const payload = {
-            title: $('#title').val(),
-            min_bet: minBet,
-            game_uid: $('#game_uid').val()
-        };
-
-        $.ajax({
-            url: '/api/gameroom/insert',
-            type: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify(payload),
-            headers: {
-                'Authorization': 'Bearer ' + token
-            },
-            success: function(roomId) {
-                alert("게임이 생성되었습니다.");
-                location.href = '/gameroom/detail/' + roomId;
-            },
-            error: function() {
-                alert("다시 시도하세요.");
-            }
-        });
     });
 }

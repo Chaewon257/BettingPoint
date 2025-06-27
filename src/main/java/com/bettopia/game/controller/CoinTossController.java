@@ -1,16 +1,32 @@
 package com.bettopia.game.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 
-@Controller
-@RequestMapping("/solo")  
-public class CoinTossController {
+import com.bettopia.game.model.game.GameResponseDTO;
+import com.bettopia.game.model.game.GameService;
 
-    @GetMapping("/cointoss")
-    public String showCoinTossPage() {
-        return "game/cointoss"; // = /WEB-INF/views/game/cointoss.jsp
-    }
+
+@Controller
+@RequestMapping("/solo")
+public class CoinTossController {
+	
+	
+	@Autowired
+	private GameService gameService;
+	
+	@GetMapping("/cointoss")
+	public String renderCointossPage(Model model) {
+	    GameResponseDTO game = gameService.selectByName("cointoss")
+	        .stream()
+	        .findFirst()
+	        .orElseThrow(() -> new IllegalStateException("'cointoss' 게임이 존재하지 않습니다."));
+	    
+	    model.addAttribute("gameUid", game.getUid());
+	    return "game/cointoss";
+	}
 }

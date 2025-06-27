@@ -3,7 +3,6 @@ package com.bettopia.game.controller;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -25,16 +24,7 @@ public class UserRestController {
 
 	@GetMapping("/me")
 	public ResponseEntity<?> getMyInfo(@RequestHeader("Authorization") String authHeader) {
-		if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("토큰이 없습니다.");
-		}
-
-		String token = authHeader.substring(7);
-		if (!jwtUtil.validateToken(token)) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("유효하지 않은 토큰입니다.");
-		}
-
-		String userId = jwtUtil.getUserIdFromToken(token);
+		String userId = authService.validateAndGetUserId(authHeader);
 		UserVO user = authService.findByUid(userId); // 또는 getUserByUid(userId)
 
 		return ResponseEntity.ok(Map.of(
@@ -44,7 +34,7 @@ public class UserRestController {
 									"birth_date", user.getBirth_date(),
 									"phone_number", user.getPhone_number(),
 									"point_balance", user.getPoint_balance(),
-									"profile_img", user.getProfile_img()
+									"profile_img", user.getProfile_img() 
 								));
 	}
 }
