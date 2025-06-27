@@ -22,14 +22,16 @@ public class HistoryRestController {
     public List<GameHistoryDTO> gameHistoryList(@RequestHeader("Authorization") String authHeader,
                                                 @RequestParam(defaultValue = "1") int page) {
         String userId = authService.validateAndGetUserId(authHeader);
-        return historyService.gameHistoryList(userId, page);
+//        return historyService.gameHistoryList(userId, page);
+        return historyService.gameHistoryList(userId);
     }
 
     @GetMapping("/point/list")
     public List<PointHistoryDTO> pointHistoryList(@RequestHeader("Authorization") String authHeader,
                                                 @RequestParam(defaultValue = "1") int page) {
         String userId = authService.validateAndGetUserId(authHeader);
-        return historyService.pointHistoryList(userId, page);
+//        return historyService.pointHistoryList(userId, page);
+        return historyService.pointHistoryList(userId);
     }
 
     @PostMapping("/game/insert")

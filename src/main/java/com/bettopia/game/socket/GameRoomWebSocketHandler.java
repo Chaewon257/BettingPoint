@@ -81,22 +81,26 @@ public class GameRoomWebSocketHandler extends TextWebSocketHandler {
 		// 세션 등록
 		sessionService.addSession(roomId, session);
 
-		// 플레이어 추가
-		TurtlePlayerDTO player = TurtlePlayerDTO.builder()
-			.user_uid(userId)
-			.room_uid(roomId)
-			.isReady(false)
-			.turtle_id("1")
-			.betting_point(0)
-			.build();
+		TurtlePlayerDTO existingPlayer = playerDAO.getPlayer(roomId, userId);
 
-		playerDAO.addPlayer(roomId, player);
-		gameRoomListWebSocket.broadcastMessage("enter");
+		if(existingPlayer == null) {
+			// 플레이어 추가
+			TurtlePlayerDTO player = TurtlePlayerDTO.builder()
+				.user_uid(userId)
+				.room_uid(roomId)
+				.isReady(false)
+				.turtle_id("1")
+				.betting_point(0)
+				.build();
 
-		// 입장 메시지 방송
-		Map<String, Object> data = new HashMap<>();
-		data.put("userId", userId);
-		broadcastMessage("enter", roomId, data);
+			playerDAO.addPlayer(roomId, player);
+			gameRoomListWebSocket.broadcastMessage("enter");
+
+			// 입장 메시지 방송
+			Map<String, Object> data = new HashMap<>();
+			data.put("userId", userId);
+			broadcastMessage("enter", roomId, data);
+		}
 	}
 	
 	private void broadcastMessage(String type, String roomId, Map<String, Object> data) throws IOException {
@@ -157,6 +161,11 @@ public class GameRoomWebSocketHandler extends TextWebSocketHandler {
 				Boolean isReady = json.get("isReady").asBoolean();
 				player.setReady(isReady);
 				break;
+			case "start":
+				Map<String, Object> data = new HashMap<>();
+				data.put("target", "/multi/" + roomId + "/turtlerun");
+				broadcastMessage("start", roomId, data);
+				return;
 		}
 		List<TurtlePlayerDTO> players = playerDAO.getAll(roomId);
 
@@ -172,18 +181,22 @@ public class GameRoomWebSocketHandler extends TextWebSocketHandler {
 		String userId = (String) session.getAttributes().get("userId");
 
 		sessionService.removeSession(roomId, session);
-		playerDAO.removePlayer(roomId, userId);
-		gameRoomListWebSocket.broadcastMessage("exit");
 
-		// 플레이어가 0명일 때 방 삭제
-		List<TurtlePlayerDTO> players = playerDAO.getAll(roomId);
-		if (players == null || players.isEmpty()) {
-			gameroomDAO.deleteRoom(roomId);
+		String gameStatus = gameRoomService.selectById(roomId).getStatus();
+		if(!gameStatus.equals("PLAYING")) {
+			playerDAO.removePlayer(roomId, userId);
+			gameRoomListWebSocket.broadcastMessage("exit");
+
+			// 플레이어가 0명일 때 방 삭제
+			List<TurtlePlayerDTO> players = playerDAO.getAll(roomId);
+			if (players == null || players.isEmpty()) {
+				gameroomDAO.deleteRoom(roomId);
+			}
+
+			Map<String, Object> data = new HashMap<>();
+			data.put("userId", userId);
+			broadcastMessage("exit", roomId, data);
 		}
-
-		Map<String, Object> data = new HashMap<>();
-		data.put("userId", userId);
-		broadcastMessage("exit", roomId, data);
 	}
 
 	@Override
