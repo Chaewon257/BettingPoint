@@ -19,14 +19,14 @@ public class HistoryService {
         return historyDAO.pointHistoryList(userId);
     }
     
-	public int gameHistoryCount(String userId) {
-		return historyDAO.countGameHistory(userId);
-	}
-	
-	public int pointHistoryCount(String userId) {
-		return historyDAO.countPointHistory(userId);
-	}
-    
+    public int gameHistoryCount(String userId) {
+      return historyDAO.countGameHistory(userId);
+    }
+
+    public int pointHistoryCount(String userId) {
+      return historyDAO.countPointHistory(userId);
+    }
+
     public List<GameHistoryDTO> gameHistoryList(String userId, int page) {
         int size = 10;
         int offset = (page-1) * size;
@@ -47,5 +47,13 @@ public class HistoryService {
         return historyDAO.insertPointHistory(pointHistory, userId);
     }
 
+    public GameHistoryDTO insertGameHistory(String gameUid, int betAmount, int pointValue, String result, String userId) {
+        GameHistoryDTO dto = new GameHistoryDTO();
+        dto.setGame_uid(gameUid);
+        dto.setBetting_amount(betAmount);
+        dto.setPoint_value(pointValue);
+        dto.setGame_result(result);
+        return historyDAO.insertGameHistory(dto, userId);
+    }
 
 }

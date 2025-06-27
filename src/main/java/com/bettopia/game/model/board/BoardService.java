@@ -3,6 +3,7 @@ package com.bettopia.game.model.board;
 import java.util.List;
 import java.util.UUID;
 
+import com.bettopia.game.Exception.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -87,7 +88,4 @@ public class BoardService {
 	public void incrementLikeCount(String boardId) {
 	    boardDAO.incrementLikeCount(boardId);
 	}
-
-	
-
 }
