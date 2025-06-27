@@ -65,4 +65,11 @@ public class BoardController {
 		model.addAttribute("boardId", boardId);
 		return "board/boardUpdate";
 	}
+	
+	//게시글 페이지로 이동
+	@GetMapping("")
+	public String goBoardPage() {
+		return "board/index";
+	}
+	
 }
