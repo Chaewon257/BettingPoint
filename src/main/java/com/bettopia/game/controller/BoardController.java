@@ -72,4 +72,21 @@ public class BoardController {
 		return "board/index";
 	}
 	
+	// 자유 게시판 불러오기
+	@GetMapping("/free")
+	public String boardFree() {
+		return "/board/free";
+	}
+	
+	// 정보 게시판 불러오기
+	@GetMapping("/info")
+	public String boardInfo() {
+		return "/board/info";
+	}
+	
+	// 제안 게시판 불러오기
+	@GetMapping("/idea")
+	public String boardIdea() {
+		return "/board/idea";
+	}
 }
