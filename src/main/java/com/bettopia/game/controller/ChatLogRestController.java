@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.bettopia.game.model.auth.AuthService;
 import com.bettopia.game.model.chatlog.ChatLogDTO;
+import com.bettopia.game.model.chatlog.ChatLogResponseDTO;
 import com.bettopia.game.model.chatlog.ChatLogService;
 
 @RestController
@@ -23,9 +24,16 @@ public class ChatLogRestController {
 	
 	// ✅ 사용자 UID로 채팅 로그 전체 조회
     @GetMapping("")
-    public List<ChatLogDTO> getLogsByUser(@RequestHeader("Authorization") String authHeader) {
+    public ChatLogResponseDTO getLogsByUserWithPaging(
+										@RequestHeader("Authorization") String authHeader,
+										@RequestParam(defaultValue = "1") int page) {
     	String userId = authService.validateAndGetUserId(authHeader);
-        return chatLogService.selectByUser(userId);
+    	List<ChatLogDTO> list = chatLogService.selectByUser(userId, page);
+    	int totalCount = chatLogService.chatlogCount(userId);
+    	return ChatLogResponseDTO.builder()
+    			.logs(list)
+    			.total(totalCount)
+    			.build();
     }
     
     // ✅ UID로 채팅 로그 상세 조회

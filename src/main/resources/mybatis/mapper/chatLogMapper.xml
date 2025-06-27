@@ -17,6 +17,17 @@
 			FROM chat_logs
 			WHERE uid=#{uid}
 	</select>
+		
+	<select id="countChatLog" parameterType="string" resultType="int">
+	    SELECT COUNT(*) FROM chat_logs WHERE user_uid = #{user_uid}
+	</select>	
+	
+	<select id="chatLogWithPaging" parameterType="map" resultType="chatlogDTO">
+		SELECT * from chat_logs
+		WHERE user_uid = #{user_uid}
+		ORDER BY chat_date DESC
+		LIMIT #{size} OFFSET #{offset}
+	</select>
 	
 	<!-- response, response_date는 null 값으로 넣음 -->
 	<insert id="insertChatLog" parameterType="chatlogDTO">

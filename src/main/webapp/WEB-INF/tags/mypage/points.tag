@@ -13,15 +13,7 @@
 		<div id="pointHistoryList"></div>
 	</div>
 	<div class="flex justify-center items-center">
-		<div class="flex items-center">
-			<button class="w-8 h-8 rounded-s border border-gray-1 text-gray-1 hover:bg-gray-2"><</button>
-			<button class="w-8 h-8 bg-gray-2 border border-gray-1">1</button>
-			<button class="w-8 h-8 border border-gray-1 hover:bg-gray-2">2</button>
-			<button class="w-8 h-8 border border-gray-1 hover:bg-gray-2">3</button>
-			<button class="w-8 h-8 border border-gray-1 hover:bg-gray-2">4</button>
-			<button class="w-8 h-8 border border-gray-1 hover:bg-gray-2">5</button>
-			<button class="w-8 h-8 rounded-e border border-gray-1 hover:bg-gray-2">></button>
-		</div>
+		<div id="pointPagination" class="flex items-center"></div>
 	</div>
 </div>
 
@@ -29,6 +21,11 @@
 	$(document).ready(function () {
 	    const token = localStorage.getItem('accessToken');
 	    const pointHistoryContainer = $("#pointHistoryList");
+	    
+	    const paginationContainer = $("#pointPagination");
+	    const itemsPerPage = 10;
+	    let currentPage = 1;
+	    let totalCount = 0;
 	
 	    if (!token) {
 	        alert("로그인이 필요합니다.");
@@ -39,19 +36,24 @@
 	    // 🟦 게임 이름 매핑 (gh_uid → name) 
 	    // 얘도 getname으로 불러오기 (game_history uid로 game 이름 조회)
 	    const gameNameMap = {
-			"21ab8616b4a14632981fbd8f421756ec": "Turtle Run"
+			"21ab8616b4a14632981fbd8f421756ec": "Turtle Run",
+			"76867ded4d104a05bf1aef0252b2ec42": "Coin Toss",
+			"0f82ca829f9c43458b05221b8b2c8480": "Coin Toss"
 	    };
 	
-	    // 🔹 API 호출
-	    function loadPointHistory(token) {
+	 	// 🔹 API 호출
+	    function loadPointHistory(token, page) {
 	        $.ajax({
-	            url: '/api/history/point/list',
+	            url: `/api/history/point/list?page=\${page}`,
 	            method: 'GET',
 	            headers: {
 	                'Authorization': 'Bearer ' + token
 	            },
-	            success: function (histories) {
-	                renderPointHistory(histories);
+	            success: function (res) {
+	                const histories = res.histories;
+	                totalCount = res.total;
+	                renderPointHistory(histories, page);
+	                renderPointPagination(page, totalCount);
 	            },
 	            error: function () {
 	                alert("포인트 히스토리를 불러오는 데 실패했습니다.");
@@ -60,7 +62,7 @@
 	    }
 	
 	    // 🔹 렌더링 함수
-	    function renderPointHistory(histories) {
+	    function renderPointHistory(histories, page) {
 	        pointHistoryContainer.empty();
 	
 	        if (!histories || histories.length === 0) {
@@ -69,7 +71,7 @@
 	        }
 	
 	        histories.forEach((history, idx) => {
-	            const number = idx + 1;
+	        	const number = (page - 1) * itemsPerPage + idx + 1;
 	            const typeKorMap = {
 	                "CHARGE": "충전",
 	                "USE": "사용",
@@ -103,6 +105,45 @@
 	            pointHistoryContainer.append(html);
 	        });
 	    }
+	    
+	 	// 🔹 페이지네이션 버튼 렌더링
+	    function renderPointPagination(current, totalCount) {
+	        const maxPages = Math.ceil(totalCount / itemsPerPage);
+	        paginationContainer.empty();
+	        const paginationHTML = [];
+
+	        paginationHTML.push(`
+	            <button class="w-8 h-8 rounded-s border border-gray-1 
+						\${current <= 1 ? 'text-gray-1 hover:bg-gray-2 cursor-not-allowed' 
+								: 'hover:bg-gray-2'}"
+		        		\${current <= 1 ? 'disabled' : ''}
+	                    onclick="changePointPage(\${current - 1})">&lt;</button>
+	        `);
+
+	        for (let i = 1; i <= maxPages; i++) {
+	        	paginationHTML.push(`
+	                <button class="w-8 h-8 \${i === current ? 'bg-gray-2' : 'hover:bg-gray-2'} border border-gray-1"
+                        	onclick="changePointPage(\${i})">\${i}</button>
+	            `);
+	        }
+
+	        paginationHTML.push(`
+	            <button class="w-8 h-8 rounded-e border border-gray-1 
+						\${current >= maxPages ? 'text-gray-1 hover:bg-gray-2 cursor-not-allowed' 
+								: 'hover:bg-gray-2'}"
+						\${current >= maxPages ? 'disabled' : ''}    
+	                    onclick="changePointPage(\${current + 1})">&gt;</button>
+	        `);
+
+	        paginationContainer.html(paginationHTML.join(''));
+	    }
+
+	    // 🔹 페이지 변경 함수
+	    window.changePointPage = function (page) {
+	        if (page < 1) return;
+	        currentPage = page;
+	        loadPointHistory(token, currentPage);
+	    };
 	
 	    // 🔄 유효성 검증 → 포인트 내역 불러오기
 	    $.ajax({
@@ -112,7 +153,7 @@
 	            'Authorization': 'Bearer ' + token
 	        },
 	        success: function () {
-	            loadPointHistory(token);
+	            loadPointHistory(token, currentPage);
 	        },
 	        error: function () {
 	            alert("로그인 정보가 유효하지 않습니다.");

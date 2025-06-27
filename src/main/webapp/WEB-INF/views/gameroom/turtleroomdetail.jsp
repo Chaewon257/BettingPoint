@@ -40,7 +40,7 @@
     <button id="ready-btn">게임 준비</button>
 
     <h3>게임 시작</h3>
-    <button id="start-game-btn">게임 시작</button>
+    <button id="start-game-btn" style="display: none;">게임 시작</button>
 </div>
 <script src="${cpath}/resources/js/turtlegameroom.js"></script>
 <script>

@@ -22,4 +22,5 @@ public class BoardDTO {
 	    private String board_img;
 	    private String user_uid;
 	    private boolean isOner;
+	    private String nickname;
 }

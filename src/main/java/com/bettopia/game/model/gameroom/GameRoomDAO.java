@@ -17,44 +17,44 @@ public class GameRoomDAO {
 
     String namespace = "com.bpoint.gameroom.";
 
-    public List<GameRoomResponseDTO> selectAll(int offset, int size) {
+    public List<GameRoomDTO> selectAll(int offset, int size) {
         Map<String, Integer> params = new HashMap<>();
         params.put("offset", offset);
         params.put("size", size);
-        List<GameRoomResponseDTO> roomlist = sqlSession.selectList(namespace + "selectAllWithPaging", params);
+        List<GameRoomDTO> roomlist = sqlSession.selectList(namespace + "selectAllWithPaging", params);
         return roomlist;
     }
 
-	public List<GameRoomResponseDTO> selectAll() {
-		List<GameRoomResponseDTO> roomlist = sqlSession.selectList(namespace + "selectAll");
+	public List<GameRoomDTO> selectAll() {
+		List<GameRoomDTO> roomlist = sqlSession.selectList(namespace + "selectAll");
 		return roomlist;
 	}
 
-	public GameRoomResponseDTO selectById(String roomId) {
-		GameRoomResponseDTO room = sqlSession.selectOne(namespace + "selectById", roomId);
+	public GameRoomDTO selectById(String roomId) {
+		GameRoomDTO room = sqlSession.selectOne(namespace + "selectById", roomId);
 		return room;
 	}
 
 	public String insertRoom(GameRoomRequestDTO.InsertGameRoomRequestDTO roomRequest, String userId) {
 		String uid = UUID.randomUUID().toString().replace("-", "");
-		GameRoomResponseDTO roomResponse = GameRoomResponseDTO.builder()
+		GameRoomDTO room = GameRoomDTO.builder()
                 		.uid(uid)
 						.title(roomRequest.getTitle())
 						.min_bet(roomRequest.getMin_bet())
 						.host_uid(userId)
                 		.game_level_uid(roomRequest.getGame_level_uid())
                 		.build();
-        sqlSession.insert(namespace + "insert", roomResponse);
+        sqlSession.insert(namespace + "insert", room);
 		return uid;
 	}
 
 	public String updateRoom(GameRoomRequestDTO.UpdateGameRoomRequestDTO roomRequest, String roomId) {
-		GameRoomResponseDTO roomResponse = GameRoomResponseDTO.builder()
+		GameRoomDTO room = GameRoomDTO.builder()
 				.uid(roomId)
 				.title(roomRequest.getTitle())
                 .game_level_uid(roomRequest.getGame_level_uid())
 				.build();
-		sqlSession.update(namespace + "update", roomResponse);
+		sqlSession.update(namespace + "update", room);
 		return roomId;
 	}
 
