@@ -65,5 +65,40 @@ public class BoardController {
 		model.addAttribute("boardId", boardId);
 		return "board/boardUpdate";
 	}
-
+	
+	//게시글 페이지로 이동
+	@GetMapping("")
+	public String goBoardPage() {
+		return "board/index";
+	}
+	
+	// 자유 게시판 불러오기
+	@GetMapping("/free")
+	public String boardFree() {
+		return "/board/free";
+	}
+	
+	// 정보 게시판 불러오기
+	@GetMapping("/info")
+	public String boardInfo() {
+		return "/board/info";
+	}
+	
+	// 제안 게시판 불러오기
+	@GetMapping("/idea")
+	public String boardIdea() {
+		return "/board/idea";
+	}
+	
+	// 게시글 작성 페이지로 이동
+	@GetMapping("/write")
+	public String goBoardWritePage() {
+		return "board/write";
+	}
+	
+	//게시글 보기 페이지로 이동
+	@GetMapping("/view")
+	public String goBoardViewPage() {
+		return "board/view";
+	}
 }
