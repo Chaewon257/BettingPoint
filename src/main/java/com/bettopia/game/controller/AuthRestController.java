@@ -10,13 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.bettopia.game.Exception.AuthException;
 import com.bettopia.game.model.auth.AuthService;
@@ -190,5 +184,11 @@ public class AuthRestController {
 
 	private boolean isBlank(String str) {
 		return str == null || str.trim().isEmpty();
+	}
+
+	@DeleteMapping("/logout")
+	public void logout(@RequestHeader("Authorization") String authHeader) {
+		String userId = authService.validateAndGetUserId(authHeader);
+		authService.logout(userId);
 	}
 }

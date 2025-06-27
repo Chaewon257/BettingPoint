@@ -17,7 +17,7 @@
 			// PC
 			$('#userMenu').html(`
 				<a href="/mypage" class="text-black hover:font-semibold">\${user.user_name} 님</a>
-				<a href="/logout" class="text-black py-1.5 px-[1.625rem] border-2 border-black rounded-full transition-all duration-300 ease-in-out hover:bg-gray-2">로그아웃</a>
+				<a href="#" onclick="logout();" class="text-black py-1.5 px-[1.625rem] border-2 border-black rounded-full transition-all duration-300 ease-in-out hover:bg-gray-2">로그아웃</a>
 			`);
 			
 			// 모바일
@@ -103,6 +103,20 @@
 			}
 		});
 	});
+	function logout() {
+		const token = localStorage.getItem("accessToken");
+		$.ajax({
+			url: "/api/auth/logout",
+			method: "POST",
+			headers: {
+				"Authorization": "Bearer " + token
+			}
+		}).then(() => {
+			localStorage.removeItem("accessToken");
+			alert("로그아웃 되었습니다.");
+			window.location.href = "/";
+		});
+	}
 </script>
 <c:choose>
 	<c:when test="${pageType ne 'ingame'}">
