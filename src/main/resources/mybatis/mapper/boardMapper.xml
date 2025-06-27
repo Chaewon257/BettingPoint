@@ -3,22 +3,23 @@
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.bpoint.board">
-	
+
 	<!-- 카테고리별 리스트 조회, 좋아요/조회수 순으로 정렬 -->
-	<select id="getBoards" parameterType="map"
-		resultType="BoardDTO">
-		SELECT *
-		FROM board
-		WHERE category = #{category}
+	<select id="getBoards" parameterType="map" resultType="BoardDTO">
+		SELECT b.*, u.nickname
+		FROM board b
+		LEFT JOIN user u ON b.user_uid =
+		u.uid
+		WHERE b.category = #{category}
 		<choose>
 			<when test="sort == 'like_count'">
-				ORDER BY like_count DESC
+				ORDER BY b.like_count DESC
 			</when>
 			<when test="sort == 'view_count'">
-				ORDER BY view_count DESC
+				ORDER BY b.view_count DESC
 			</when>
 			<otherwise>
-				ORDER BY created_at DESC
+				ORDER BY b.created_at DESC
 			</otherwise>
 		</choose>
 		LIMIT #{limit} OFFSET #{offset}
@@ -35,7 +36,10 @@
 	<!-- 게시글 상세 조회 -->
 	<select id="getBoardByUid" parameterType="String"
 		resultType="boardDTO">
-		SELECT * FROM board WHERE uid = #{uid}
+		SELECT b.*, u.nickname
+		FROM board b
+		LEFT JOIN user u ON b.user_uid = u.uid
+		WHERE b.uid = #{uid}
 	</select>
 
 	<!-- 게시글 등록 -->
