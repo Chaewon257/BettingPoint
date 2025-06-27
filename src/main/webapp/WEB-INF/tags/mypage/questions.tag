@@ -14,15 +14,7 @@
 		<div id="chatlogList"></div>
 	</div>
 	<div class="flex justify-center items-center">
-		<div class="flex items-center">
-			<button class="w-8 h-8 rounded-s border border-gray-1 text-gray-1 hover:bg-gray-2"><</button>
-			<button class="w-8 h-8 bg-gray-2 border border-gray-1">1</button>
-			<button class="w-8 h-8 border border-gray-1 hover:bg-gray-2">2</button>
-			<button class="w-8 h-8 border border-gray-1 hover:bg-gray-2">3</button>
-			<button class="w-8 h-8 border border-gray-1 hover:bg-gray-2">4</button>
-			<button class="w-8 h-8 border border-gray-1 hover:bg-gray-2">5</button>
-			<button class="w-8 h-8 rounded-e border border-gray-1 hover:bg-gray-2">></button>
-		</div>
+		<div id="chatlogPagination" class="flex items-center"></div>
 	</div>
 </div>
 <ui:modal modalId="questionsDetailModal" title="문의내역 상세보기">
@@ -68,6 +60,11 @@
 	$(document).ready(function () {
 		const token = localStorage.getItem('accessToken');
 		const logListContainer = $("#chatlogList");
+		
+		const paginationContainer = $("#chatlogPagination");
+	    const itemsPerPage = 10;
+	    let currentPage = 1;
+	    let totalCount = 0;
 	
 		if (!token) {
 			alert("로그인이 필요합니다.");
@@ -76,15 +73,18 @@
 		}
 	
 		// 사용자 문의 내역 가져오기
-		function loadChatLogs(token) {
+		function loadChatLogs(token, page) {
 			$.ajax({
-				url: '/api/chatlog',
+				url: `/api/chatlog?page=\${page}`,
 				method: 'GET',
 				headers: {
 					'Authorization': 'Bearer ' + token
 				},
-				success: function (logs) {
-					renderChatLogs(logs);
+				success: function (res) {
+					const logs  = res.logs ;
+	                totalCount = res.total;
+	                renderChatLogs(logs, page);
+	                renderChatLogsPagination(page, totalCount);
 				},
 				error: function () {
 					alert("문의 내역을 불러오는 데 실패했습니다.");
@@ -93,7 +93,7 @@
 		}
 	
 		// 문의 내역 렌더링
-		function renderChatLogs(logs) {
+		function renderChatLogs(logs, page) {
 			logListContainer.empty();
 	
 			if (!logs || logs.length === 0) {
@@ -102,9 +102,10 @@
 			}
 	
 			logs.forEach((log, idx) => {
-				const number = idx + 1;
+				const number = (page - 1) * itemsPerPage + idx + 1;
 				const title = log.title || "(제목 없음)";
 				const status = log.response ? "답변완료" : "대기중";
+				const statusClass = log.response ? "text-blue-1" : "";
 				const date = new Date(log.chat_date).toISOString().slice(0, 10).replace(/-/g, ".");
 				const uid = log.uid;
 				
@@ -112,7 +113,7 @@
 					<div class="p-4 grid grid-cols-12 items-center text-center border-b border-gray-1">
 						<span class="font-light">\${number}</span>
 						<span class="col-span-5 truncate">\${title}</span>
-						<span class="col-span-2 font-light">\${status}</span>
+						<span class="col-span-2 font-light \${statusClass}">\${status}</span>
 						<button class="col-span-2 underline" 
 							onclick="document.getElementById('questionsDetailModal').classList.remove('hidden')">
 							상세보기
@@ -124,6 +125,46 @@
 				logListContainer.append(html);
 			});
 		}
+		
+		// 🔹 페이지네이션 렌더링
+		function renderChatLogsPagination(current, totalCount) {
+			paginationContainer.empty();
+			const maxPages = Math.ceil(totalCount / itemsPerPage);
+			console.log("maxPages" + maxPages);
+			const paginationHTML = [];
+
+			paginationHTML.push(`
+				<button class="w-8 h-8 rounded-s border border-gray-1 
+						\${current <= 1 ? 'text-gray-1 hover:bg-gray-2 cursor-not-allowed' 
+								: 'hover:bg-gray-2'}"
+		        		\${current <= 1 ? 'disabled' : ''}
+						onclick="changeChatPage(\${current - 1})">&lt;</button>
+			`);
+
+			for (let i = 1; i <= maxPages; i++) {
+				paginationHTML.push(`
+					<button class="w-8 h-8 \${i === current ? 'bg-gray-2' : 'hover:bg-gray-2'} border border-gray-1"
+							onclick="changeChatPage(\${i})">\${i}</button>
+				`);
+			}
+
+			paginationHTML.push(`
+				<button class="w-8 h-8 rounded-e border border-gray-1 
+						\${current >= maxPages ? 'text-gray-1 hover:bg-gray-2 cursor-not-allowed' 
+								: 'hover:bg-gray-2'}"
+						\${current >= maxPages ? 'disabled' : ''}    
+	                    onclick="changeChatPage(\${current + 1})">&gt;</button>
+			`);
+
+			paginationContainer.html(paginationHTML.join(''));
+		}
+
+		// 🔹 페이지 변경
+		window.changeChatPage = function (page) {
+			if (page < 1) return;
+			currentPage = page;
+			loadChatLogs(token, currentPage);
+		};
 	
 		// 🔄 Token 유효성 확인 → 문의 내역 불러오기
 		$.ajax({
@@ -133,7 +174,7 @@
 				'Authorization': 'Bearer ' + token
 			},
 			success: function () {
-				loadChatLogs(token);
+				loadChatLogs(token, currentPage);
 			},
 			error: function () {
 				alert("로그인 정보가 유효하지 않습니다.");
