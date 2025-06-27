@@ -7,9 +7,7 @@ function connectGameWebSocket() {
 
     socket = new WebSocket(`ws://${location.host}/ws/gameroom`);
 
-    socket.onopen = () => {
-
-    };
+    socket.onopen = () => {};
 
     socket.onmessage = (event) => {
         const msg = JSON.parse(event.data);
@@ -34,9 +32,7 @@ function connectGameWebSocket() {
         }
     };
 
-    socket.onclose = () => {
-        window.location.href = "/";
-    }
+    socket.onclose = () => {}
 
     socket.onerror = (error) => {
         console.error("❌ 웹소켓 에러 발생", error);
@@ -87,7 +83,7 @@ function renderGameRooms(gamerooms, games, levels, playerCounts) {
         const game = games[level.game_uid] || {};
 
         const roomHtml = `
-            <div class="game-room" data-room-id="${room.uid}">
+            <div class="game-room" data-room-id="${room.uid}" data-status="${room.status}">
                 <h3>${room.title}</h3>
                 <p><strong>게임 이름:</strong> ${game.name}</p>
                 <p><strong>난이도:</strong> ${level.level}</p>
@@ -101,8 +97,13 @@ function renderGameRooms(gamerooms, games, levels, playerCounts) {
     });
 
     $(".game-room").on("click", function () {
-        const roomId = $(this).data("room-id");
-        window.location.href = `/gameroom/detail/${roomId}`;
+        const roomStatus = $(this).data("status");
+        if(roomStatus !== "PLAYING") {
+            const roomId = $(this).data("room-id");
+            window.location.href = `/gameroom/detail/${roomId}`;
+        } else {
+            alert("진행중인 게임방입니다.");
+        }
     });
 }
 
