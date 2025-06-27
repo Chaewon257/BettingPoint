@@ -59,10 +59,44 @@ public class GameRoomService {
 		return responseList;
 	}
 
-	public List<GameRoomDTO> selectAll() {
+	public List<GameRoomResponseDTO> selectAll() {
 		List<GameRoomDTO> roomlist = gameRoomDAO.selectAll();
-		return roomlist;
+		List<GameRoomResponseDTO> responseList = new ArrayList<>();
+
+		if (roomlist != null) {
+			for (GameRoomDTO room : roomlist) {
+				GameLevelDTO level = gameLevelDAO.selectByRoomUid(room.getGame_level_uid());
+				if (level != null) {
+					GameResponseDTO game = gameDAO.selectById(level.getGame_uid());
+					if (game != null) {
+						int count = playerDAO.getAll(room.getUid()) != null
+								? playerDAO.getAll(room.getUid()).size()
+								: 0;
+
+						GameRoomResponseDTO roomResponse = GameRoomResponseDTO.builder()
+								.uid(room.getUid())
+								.title(room.getTitle())
+								.level(level.getLevel())
+								.game_name(game.getName())
+								.count(count)
+								.min_bet(room.getMin_bet())
+								.host_uid(room.getHost_uid())
+								.created_at(room.getCreated_at())
+								.status(room.getStatus())
+								.build();
+
+						responseList.add(roomResponse);
+					}
+				}
+			}
+		}
+		return responseList;
 	}
+
+//	public List<GameRoomDTO> selectAll() {
+//		List<GameRoomDTO> roomlist = gameRoomDAO.selectAll();
+//		return roomlist;
+//	}
 
 	public GameRoomResponseDTO selectById(String roomId) {
 		GameRoomDTO room = gameRoomDAO.selectById(roomId);

@@ -1,6 +1,6 @@
 package com.bettopia.game.model.multi.turtle;
 
-import com.bettopia.game.model.gameroom.GameRoomDTO;
+import com.bettopia.game.model.gameroom.GameRoomResponseDTO;
 import com.bettopia.game.model.gameroom.GameRoomService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,7 +28,7 @@ public class PlayerService {
     public Map<String, Integer> getAllPlayers() {
         Map<String, Integer> roomPlayers = new HashMap<>();
         List<String> roomIds = gameRoomService.selectAll().stream()
-                .map(GameRoomDTO::getUid)
+                .map(GameRoomResponseDTO::getUid)
                 .collect(Collectors.toList());
         for (String roomId : roomIds) {
             List<TurtlePlayerDTO> players = playerDAO.getAll(roomId);

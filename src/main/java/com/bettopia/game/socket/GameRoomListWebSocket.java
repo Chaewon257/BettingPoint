@@ -22,8 +22,6 @@ public class GameRoomListWebSocket extends TextWebSocketHandler {
 
     @Autowired
     private GameRoomService gameRoomService;
-    @Autowired
-    private PlayerService playerService;
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
