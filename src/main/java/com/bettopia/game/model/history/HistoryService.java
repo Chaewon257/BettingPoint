@@ -38,4 +38,14 @@ public class HistoryService {
     public String insertPointHistory(PointHistoryDTO pointHistory, String userId) {
         return historyDAO.insertPointHistory(pointHistory, userId);
     }
+    
+    public GameHistoryDTO insertGameHistory(String gameUid, int betAmount, int pointValue, String result, String userId) {
+        GameHistoryDTO dto = new GameHistoryDTO();
+        dto.setGame_uid(gameUid);
+        dto.setBetting_amount(betAmount);
+        dto.setPoint_value(pointValue);
+        dto.setGame_result(result);
+        return historyDAO.insertGameHistory(dto, userId);
+    }
+
 }
