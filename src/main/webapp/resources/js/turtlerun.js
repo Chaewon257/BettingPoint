@@ -96,12 +96,12 @@ function players(room, roomPlayers) {
 function renderGameRoomDetail(room, levelData, gameData, roomPlayers) {
     // 1. 난이도/거북이수/베팅금액/포인트 등 필요한 값 추출 (기존 필드명에 따라 수정)
     const difficulty = (levelData.difficulty || levelData.level || "HARD").toUpperCase();
-    const turtleCount = levelData.turtle_count || 8;
-    const userBet = room.min_bet || 10000;
+    const turtleCount = difficultyMap[difficulty]?.count || 8;
+    const userBet = myInfo.betting_amount || 10000;
 
     const myInfo = roomPlayers.find(p => p.user_uid === localStorage.getItem("user_uid")) || {};
-    const selectedTurtle = myInfo.selectedTurtle || null;
     const points = myInfo.points || 100;
+    const selectedTurtle = myInfo.selectedTurtle ?? null;
 
     const turtleImages = [
         '/resources/images/turtle1.png', '/resources/images/turtle2.png',
@@ -249,8 +249,8 @@ class TurtleRacingGame {
     selectTurtle(id) {
         if (this.isRacing) return;
         this.selectedTurtle = id;
-        this.turtleElements.forEach(turtle => turtle.classList.hidden('selected'));
-        if (this.turtleElements[id]) this.turtleElements[id].classList.flex('selected');
+        this.turtleElements.forEach(turtle => turtle.classList.remove('selected'));
+        if (this.turtleElements[id]) this.turtleElements[id].classList.add('selected');
         // 베팅 금액을 해당 거북이에 누적
         if (this.turtleBets && typeof this.userBet === 'number') {
             this.turtleBets[id] += this.userBet;
@@ -552,7 +552,7 @@ class TurtleRacingGame {
             bet: this.userBet,
             difficulty: this.selectedDifficulty,
             turtleBets: this.turtleBets,
-            pointsChange: pointChange,
+            pointChange: pointChange,
             userId: this.userId, // 사용자 ID 추가
             roomId: this.roomId // 게임방 ID 추가
         };
@@ -568,7 +568,7 @@ class TurtleRacingGame {
                 bet: this.userBet,
                 difficulty: this.selectedDifficulty,
                 turtleBets: this.turtleBets,
-                pointChange: this.pointChange,
+                pointChange: pointChange,
                 userId: this.userId,
                 roomId: this.roomId
             }));
