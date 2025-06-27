@@ -37,9 +37,7 @@ function connectGameWebSocket(roomId) {
         }
     };
 
-    socket.onclose = () => {
-        // window.location.href = "/gameroom";
-    };
+    socket.onclose = () => {};
 
     socket.onerror = (error) => {
         console.error("웹소켓 에러", error);
