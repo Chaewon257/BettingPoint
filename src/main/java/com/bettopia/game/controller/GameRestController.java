@@ -95,123 +95,93 @@ public class GameRestController {
 
 	    return ResponseEntity.ok(Map.of("newBalance", user.getPoint_balance()));
 	}
-	
-	
+		
+	//win
 	@PostMapping("/stop")
 	public ResponseEntity<?> stopGame(@RequestHeader("Authorization") String authHeader,
 	                                  @RequestBody Map<String, Object> requestBody) {
 
-	    System.out.println("🏁 게임 종료 요청: " + requestBody);
-
-	    // 1. 토큰에서 uid 꺼냄
 	    String uid = authService.validateAndGetUserId(authHeader);
-
-	    // 2. 유저 조회
 	    UserVO user = loginDAO.findByUid(uid);
 	    if (user == null) {
 	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
 	                             .body(Map.of("message", "유저를 찾을 수 없습니다."));
 	    }
 
-	    // 3. 요청 값 꺼내기
 	    int winAmount = Integer.parseInt(requestBody.get("winAmount").toString());
 	    int betAmount = Integer.parseInt(requestBody.get("betAmount").toString());
-	    String difficulty = requestBody.get("difficulty").toString();
-	    int streak = Integer.parseInt(requestBody.get("streak").toString());
-	    String gameResult= requestBody.get("gameResult").toString();
-	    
-	    // 4. 포인트 적립
+	    String gameResult = requestBody.get("gameResult").toString();
+
+	    // 포인트 적립
 	    user.setPoint_balance(user.getPoint_balance() + winAmount);
 	    loginDAO.updateUserPoint(user);
 
-	    //로그 저장하거나, 랭킹/통계용 처리
-	    
-	    GameResponseDTO game = gameService.selectByName("cointoss")
-	    	    .stream()
-	    	    .findFirst()
-	    	    .orElseThrow(() -> new IllegalStateException("'cointoss' 게임을 찾을 수 없습니다."));
+	    // 게임 UID 조회
+	    String gameUid = gameService.selectByName("cointoss")
+	        .stream()
+	        .findFirst()
+	        .orElseThrow(() -> new IllegalStateException("'cointoss' 게임을 찾을 수 없습니다."))
+	        .getUid();
 
-	    	String gameUid = game.getUid();
-
-	 // 게임 히스토리 저장
-	    GameHistoryDTO gameHistory = GameHistoryDTO.builder()
-	        .game_uid(gameUid)
-	        .user_uid(user.getUid())
-	        .betting_amount(betAmount)
-	        .point_value(winAmount-betAmount)
-	        .game_result("WIN")
-	        .build();
-
-	    GameHistoryDTO savedGame = historyService.insertGameHistory(gameHistory, user.getUid());
+	    // 게임 히스토리 저장 (DTO 조립은 서비스 내부)
+	    GameHistoryDTO savedGame = historyService.insertGameHistory(
+	        gameUid,
+	        betAmount,
+	        winAmount - betAmount,
+	        gameResult,
+	        uid
+	    );
 
 	    // 포인트 히스토리 저장
-	    PointHistoryDTO pointHistory = PointHistoryDTO.builder()
-	        .user_uid(user.getUid())
-	        .type("WIN")
-	        .amount(winAmount-betAmount)
-	        .balance_after(user.getPoint_balance())
-	        .gh_uid(savedGame.getUid())
-	        .build();
+	    PointHistoryDTO pointHistory = new PointHistoryDTO();
+	    pointHistory.setGh_uid(savedGame.getUid());  // 포인트 내역이 어떤 게임 히스토리에서 발생했는지를 연결해주는 필드
+	    pointHistory.setType(gameResult);
+	    pointHistory.setAmount(winAmount - betAmount);
+	    pointHistory.setBalance_after(user.getPoint_balance());
 
-	    historyService.insertPointHistory(pointHistory, user.getUid());
+	    historyService.insertPointHistory(pointHistory, uid);
 
 	    return ResponseEntity.ok(Map.of("newBalance", user.getPoint_balance()));
 	}
 	
-	
+	//lose
 	@PostMapping("/lose")
 	public ResponseEntity<?> loseGame(@RequestHeader("Authorization") String authHeader,
 	                                  @RequestBody Map<String, Object> requestBody) {
 
-	    System.out.println("🏁 게임 종료 요청: " + requestBody);
-
-	    // 1. 토큰에서 uid 꺼냄
 	    String uid = authService.validateAndGetUserId(authHeader);
-
-	    // 2. 유저 조회
 	    UserVO user = loginDAO.findByUid(uid);
 	    if (user == null) {
 	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
 	                             .body(Map.of("message", "유저를 찾을 수 없습니다."));
 	    }
 
-	    // 3. 요청 값 꺼내기
-	    int winAmount = Integer.parseInt(requestBody.get("winAmount").toString());
 	    int betAmount = Integer.parseInt(requestBody.get("betAmount").toString());
-	    String difficulty = requestBody.get("difficulty").toString();
-	    int streak = Integer.parseInt(requestBody.get("streak").toString());
-	    String gameResult= requestBody.get("gameResult").toString();
+	    String gameResult = requestBody.get("gameResult").toString(); 
 
-	    //로그 저장하거나, 랭킹/통계용 처리
-	    
-	    GameResponseDTO game = gameService.selectByName("cointoss")
-	    	    .stream()
-	    	    .findFirst()
-	    	    .orElseThrow(() -> new IllegalStateException("'cointoss' 게임을 찾을 수 없습니다."));
+	    String gameUid = gameService.selectByName("cointoss")
+	        .stream()
+	        .findFirst()
+	        .orElseThrow(() -> new IllegalStateException("'cointoss' 게임을 찾을 수 없습니다."))
+	        .getUid();
 
-	    	String gameUid = game.getUid();
+	    // 게임 히스토리 insert (서비스에서 DTO 조립)
+	    GameHistoryDTO savedGame = historyService.insertGameHistory(
+	        gameUid,
+	        betAmount,
+	        betAmount, 
+	        gameResult,
+	        uid
+	    );
 
-	 // 게임 히스토리 저장
-	    GameHistoryDTO gameHistory = GameHistoryDTO.builder()
-	        .game_uid(gameUid)
-	        .user_uid(user.getUid())
-	        .betting_amount(betAmount)
-	        .point_value(betAmount)
-	        .game_result(gameResult)
-	        .build();
+	    // 포인트 히스토리 insert
+	    PointHistoryDTO pointHistory = new PointHistoryDTO();
+	    pointHistory.setGh_uid(savedGame.getUid());
+	    pointHistory.setType(gameResult);
+	    pointHistory.setAmount(betAmount);
+	    pointHistory.setBalance_after(user.getPoint_balance()); 
 
-	    GameHistoryDTO savedGame = historyService.insertGameHistory(gameHistory, user.getUid());
-
-	    // 포인트 히스토리 저장
-	    PointHistoryDTO pointHistory = PointHistoryDTO.builder()
-	        .user_uid(user.getUid())
-	        .type(gameResult)
-	        .amount(betAmount)
-	        .balance_after(user.getPoint_balance())
-	        .gh_uid(savedGame.getUid())
-	        .build();
-
-	    historyService.insertPointHistory(pointHistory, user.getUid());
+	    historyService.insertPointHistory(pointHistory, uid);
 
 	    return ResponseEntity.ok(Map.of("newBalance", user.getPoint_balance()));
 	}

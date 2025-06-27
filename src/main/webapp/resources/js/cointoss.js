@@ -58,7 +58,7 @@ function fetchUserInfo() {
     url: '/api/user/me',
     method: 'GET',
     headers: {
-      'Authorization': 'Bearer ' + token
+      Authorization: 'Bearer ' + token
     },
     xhrFields: { withCredentials: true }
   })
@@ -254,7 +254,7 @@ gameState.gameData = {
     method: 'POST',
     contentType: 'application/json',
     headers: {
-    Authorization: 'Bearer ' + localStorage.getItem('accessToken')
+    'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
     },
     data: JSON.stringify({ betAmount: betAmount }),  
     success: function (res) {
@@ -279,7 +279,7 @@ gameState.gameData = {
     },
     error: function (xhr) {
       console.error("❌ 게임 시작 실패:", xhr.responseText);
-      const msg = xhr.responseJSON?.message || "게임 시작 실패!";
+      const msg = (xhr.responseJSON && xhr.responseJSON.message) || "게임 시작 실패!";
       startErrorMessage(msg);
     }
   });
@@ -294,7 +294,7 @@ function stopGame() {
     method: 'POST',
     contentType: 'application/json',
     headers: {
-      Authorization: 'Bearer ' + localStorage.getItem('accessToken')
+      'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
     },
     data: JSON.stringify({
         betAmount: gameState.currentBet,    
