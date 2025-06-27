@@ -18,6 +18,16 @@
 						</div>
 					</div>
 				</div>
+				<div class="w-full px-4 py-2 flex justify-end gap-x-5">
+					<input type="hidden" id="sort" name="sort" value="created_at" />
+					<button data-sort="created_at" class="sort-btn text-gray-7 underline">최신순</button>
+					<button data-sort="like_count" class="sort-btn text-gray-3 hover:text-gray-7">좋아요순</button>
+					<button data-sort="view_count" class="sort-btn text-gray-3 hover:text-gray-7">조회순</button>
+				</div>
+				<div class="w-full h-[2px] bg-gray-1"></div>
+				<div id="board-tab-content" class="w-full">
+					<board:free></board:free>
+				</div>
 			</div>
 		</div>
 	</jsp:attribute>
