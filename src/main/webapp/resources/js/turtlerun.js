@@ -22,11 +22,36 @@ document.getElementById('trackContainer').style.height = trackHeight + 'px';
 
 let ws;
 let turtleGame = null;
+let userId;
+
+userInfo(function(uid) {
+    userId = uid; // 콜백에서 userId 전역 변수 세팅
+    // 반드시 userId가 준비된 뒤에 gameRoomDetail 실행
+    // gameRoomDetail(roomId);
+});
+
+// 유저 정보 요청
+function userInfo(callback) {
+    const token = localStorage.getItem("accessToken");
+    if (!token) {
+        alert("로그인이 필요합니다.");
+        return;
+    }
+
+    $.ajax({
+        url: '/api/user/me',
+        type: 'GET',
+        headers: {
+            'Authorization': 'Bearer ' + token
+        },
+        success: function(user) {            
+            callback(user.uid);
+        }
+    });
+}
 
 // 게임방 상세 정보 요청
 function gameRoomDetail (roomId) {
-    let levels = {};
-    let games = {};
     let roomPlayers = [];
 
     // 게임방 상세 정보 요청
@@ -34,68 +59,40 @@ function gameRoomDetail (roomId) {
         url: `/api/gameroom/detail/${roomId}`,
         method: "GET",
         success: function (room) {
-            
             minBet = room.min_bet;
 
-            // 난이도 정보 요청
-            levelDetail(room, levels).then(() => {
-                const levelData = levels[room.game_level_uid];
-                return gameDetail(levelData, games).then(() => {
-                    const gameData = games[levelData.game_uid];
-                    return players(room, roomPlayers).then(() => {                    
-                        renderGameRoomDetail(room, levelData, gameData, roomPlayers);
-                        connectGameWebSocket(roomId);
-                    });
-                });
+            connectGameWebSocket(roomId);
+            players(room, roomPlayers, function() {
+                renderGameDetail(room, roomPlayers);
             });
         }
     });
-}
-
-// 게임 상세 정보 요청
-function gameDetail(level, games) {
-    return $.ajax({
-        url: `/api/game/detail/${level.game_uid}`,
-        method: "GET",
-        success: function (gameData) {
-            games[level.game_uid] = gameData;
-        }
-    });
-}
-
-// 게임 난이도 정보 요청
-function levelDetail(room, levels) {
-    return $.ajax({
-        url: `/api/game/level/${room.game_level_uid}`,
-        method: "GET",
-        success: function (levelData) {
-            levels[room.game_level_uid] = levelData;
-        }
-    });
-}
+};
 
 // 플레이어 정보 요청
-function players(room, roomPlayers) {
+function players(room, roomPlayers, callback) {
     return $.ajax({
         url: `/api/player/detail/${room.uid}`,
         method: "GET",
         success: function (players) {
             roomPlayers.push(...players);
+            if(callback) callback();
         }
     });
 }
 
-function renderGameRoomDetail(room, levelData, gameData, roomPlayers) {
-    // 1. 내 정보 추출
-    const myInfo = roomPlayers.find(p => p.user_uid === localStorage.getItem("user_uid")) || {};
-    // 2. 난이도, 거북이 수 등
-    const difficulty = (levelData.level).toUpperCase();
-    const turtleCount = difficultyMap[difficulty]?.count || 8;
+function renderGameDetail(room, roomPlayers) {
+    console.log(room, roomPlayers);
+    // 1. 난이도, 거북이 수 등
+    const difficulty = room.level;
+    const turtleCount = difficultyMap[difficulty]?.count || 8;  
     // 3. 사용자 베팅, 포인트, 선택 등
-    const userBet = myInfo.betting_point || 10000;
+    const myInfo = roomPlayers.find(p => p.user_uid === userId);
+    const userBet = (myInfo && myInfo.betting_point) ? myInfo.betting_point : 10000;
     // const points = myInfo.points || 100;
-    const selectedTurtle = myInfo.turtle_id ?? null;
-
+    const selectedTurtle = (myInfo && myInfo.turtle_id != null) ? Number(myInfo.turtle_id) : null;
+    console.log('room : ', room,' roomPlayers : ', roomPlayers, ' difficulty : ',difficulty, ' turtleCount : ', turtleCount,
+        ' userBet : ', userBet, ' selectedTurtle : ', selectedTurtle);
     const turtleImages = [
         '/resources/images/turtle1.png', '/resources/images/turtle2.png',
         '/resources/images/turtle3.png', '/resources/images/turtle4.png',
@@ -164,8 +161,6 @@ function connectGameWebSocket(roomId) {
         }
     };
 }
-
-gameRoomDetail(roomId);
 
 function showCountdownOverlay(startNum, callback) {
     let overlay = document.getElementById('countdownOverlay');
@@ -247,16 +242,15 @@ class TurtleRacingGame {
 
     renderTrack() { 
         const container = document.getElementById('trackContainer');
-        this.turtleElements = Array(8).fill(null); // 기존 요소 초기화
         const TRACK_COUNT = 8; // 트랙 개수 고정(8개)
         const trackHeight = container.clientHeight; // 트랙 높이 (px 단위)
         const laneHeight = trackHeight / TRACK_COUNT; // 각 트랙의 높이 (px 단위)
 
          // [핵심] 난이도별 거북이 위치 지정
         let startLane, endLane;
-        if (this.selectedDifficulty === "easy") {
+        if (this.selectedDifficulty === "EASY") {
             startLane = 2; endLane = 5; // 3~6번(0-based: 2~5)
-        } else if (this.selectedDifficulty === "normal") {
+        } else if (this.selectedDifficulty === "NORMAL") {
             startLane = 1; endLane = 6; // 2~7번(0-based: 1~6)
         } else { // hard or 기타
             startLane = 0; endLane = 7; // 1~8번(0-based: 0~7)
@@ -275,8 +269,8 @@ class TurtleRacingGame {
         container.style.position = 'relative';
         container.style.display = 'block';
 
-        this.turtleElements = Array(TRACK_COUNT).fill(null);
-        let turtleLaneIdx = 0;
+        this.turtleElements = [];
+        let turtleIdx = 0;
         for (let i = 0; i < TRACK_COUNT; i++) {
             // 트랙 라인 생성
             const track = document.createElement('div');
@@ -304,18 +298,16 @@ class TurtleRacingGame {
             let turtle = null;
             if(i >= startLane && i <= endLane) {
                 turtle = document.createElement('img');
-                turtle.src = this.turtleImages[turtleLaneIdx] || this.turtleImages[0];
+                turtle.src = this.turtleImages[turtleIdx] || this.turtleImages[0];
                 turtle.className = 'turtle';
                 turtle.style.left = (START_MARGIN - TURTLE_SIZE + TURTLE_GAP) + 'px';
                 turtle.style.top = (laneHeight / 2 - (laneHeight * 0.7) / 2) + 'px';
                 turtle.style.height = (laneHeight * 0.7) + "px";
-                turtle.setAttribute('data-turtle-idx', turtleLaneIdx); // 거북이 ID 설정
+                turtle.setAttribute('data-turtle-idx', turtleIdx); // 거북이 ID 설정
                 track.appendChild(turtle);
 
-                this.turtleElements[i] = turtle; // 거북이 요소 저장
-                turtleLaneIdx++;
-            } else {
-                this.turtleElements[i] = null;
+                this.turtleElements.push(turtle); // 거북이 요소 저장
+                turtleIdx++;
             }
 
             container.appendChild(track);
@@ -372,7 +364,7 @@ class TurtleRacingGame {
 
     startRace() {
     //    if (this.selectedTurtle === null) return;
-        this.positions = Array(this.turtleCount).fill(0);
+        this.positions = Array(this.turtleElements.length).fill(0);
         if(this.turtleElements && this.turtleElements.forEach) {
             this.turtleElements.forEach((turtle, i) => {
                 if(!turtle) return; // 거북이 요소가 없으면 건너뛰기
@@ -397,9 +389,11 @@ class TurtleRacingGame {
             if (!this.isRacing || finished) return;
             if (!this.turtleElements || !this.turtleElements[0]) return;
 
-            for (let i = 0; i < this.positions.length; i++) {
+            for (let i = 0; i < this.turtleElements.length; i++) {
                 if(!this.turtleElements[i]) continue; // 거북이 요소가 없으면 건너뛰기
-                
+                if(this.positions[i] < 0) this.positions[i] = 0;
+                if(this.positions[i] > 100) this.positions[i] = 100;
+
                 if (this.positions[i] < 100) {
                     const burst = Math.random() < burstChances[i] ? 0.1 + Math.random() * 0.05 : 0;
                     const variation = (Math.random() - 0.05) * 0.02;
