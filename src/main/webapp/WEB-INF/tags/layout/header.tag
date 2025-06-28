@@ -49,7 +49,7 @@
 
 		// 보호된 경로 사전 정의
 		const protectedRoutes = {
-			"/solo/cointoss": "개인게임",
+			"/solo": "개인게임",
 			"/gameroom": "단체게임",
 			"/mypage": "마이페이지"
 		};
@@ -119,7 +119,7 @@
 									class="underline font-semibold">로그인</span> 후 다양한 서비스를 이용해보세요</a>
 							</div>
 
-							<a href="/solo/cointoss" class="text-black text-base hover:text-blue-1 hover:font-semibold">개인게임</a>
+							<a href="/solo" class="text-black text-base hover:text-blue-1 hover:font-semibold">개인게임</a>
 							<a href="/gameroom" class="text-black text-base hover:text-blue-1 hover:font-semibold">단체게임</a>
 							<a href="/board" class="text-black text-base hover:text-blue-1 hover:font-semibold">게시판</a>
 							<a href="/support" class="text-black text-base hover:text-blue-1 hover:font-semibold">고객지원</a>
