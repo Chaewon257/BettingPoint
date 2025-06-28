@@ -16,6 +16,14 @@
 		where user_uid = #{userId}
 		order by created_at desc
 	</select>
+	
+	<select id="countGameHistory" parameterType="string" resultType="int">
+	    SELECT COUNT(*) FROM game_history WHERE user_uid = #{userId}
+	</select>
+	
+	<select id="countPointHistory" parameterType="string" resultType="int">
+	    SELECT COUNT(*) FROM point_history WHERE user_uid = #{userId}
+	</select>
 
 	<select id="gameAllWithPaging" parameterType="map" resultType="gameHistoryDTO">
 		select * from game_history
@@ -24,7 +32,7 @@
 		limit #{size} offset #{offset}
 	</select>
 
-	<select id="historyAllWithPaging" parameterType="map" resultType="pointHistoryDTO">
+	<select id="pointAllWithPaging" parameterType="map" resultType="pointHistoryDTO">
 		select * from point_history
 		where user_uid = #{userId}
 		order by created_at desc
