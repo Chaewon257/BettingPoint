@@ -32,97 +32,35 @@
 		</div>
 
 		<script>
-  $(function () {
-    let isOpen = false;
-
-    function openChatbot() {
-      isOpen = true;
-      $('#chatbotModal').show();
-      $('#chatbotContent').load('/chatbot');
-      $('#chatbotIcon')
-        .attr('src', '${cpath}/resources/images/close.png')
-        .addClass('p-[7px] box-border');
-    }
-
-    function closeChatbot() {
-      isOpen = false;
-      $('#chatbotModal').hide();
-      $('#chatbotIcon')
-        .attr('src', '${cpath}/resources/images/chatbot.png')
-        .removeClass('p-[7px] box-border');
-    }
-
-    $('#chatbotBtn').on('click', function () {
-      isOpen ? closeChatbot() : openChatbot();
-    });
-
-    $('#closeChatbot').on('click', function () {
-      closeChatbot();
-    });
-
-    // 👉 드래그 제어 변수들
-    let draggingBtn = false;
-    let isDraggingNow = false;
-    let offsetXBtn = 0, offsetYBtn = 0;
-
-    $('#chatbotBtn').on('mousedown', function (e) {
-      draggingBtn = true;
-      isDraggingNow = false;
-
-      const offset = $(this).offset();
-      offsetXBtn = e.pageX - offset.left;
-      offsetYBtn = e.pageY - offset.top;
-      e.preventDefault();
-    });
-
-    $(document).on('mousemove', function (e) {
-      if (!draggingBtn) return;
-
-      const $btn = $('#chatbotBtn');
-      const currentOffset = $btn.offset();
-      const moveX = e.pageX - offsetXBtn;
-      const moveY = e.pageY - offsetYBtn;
-
-      const dx = Math.abs(moveX - currentOffset.left);
-      const dy = Math.abs(moveY - currentOffset.top);
-
-      // ✅ 실제 드래그일 때만 위치 전환
-      if (!isDraggingNow && (dx > 3 || dy > 3)) {
-        isDraggingNow = true;
-
-        $btn.css({
-          left: currentOffset.left,
-          top: currentOffset.top,
-          right: 'auto',
-          bottom: 'auto'
-        });
-      }
-
-      if (isDraggingNow) {
-        const winW = $(window).width();
-        const winH = $(window).height();
-        const btnW = $btn.outerWidth();
-        const btnH = $btn.outerHeight();
-
-        let left = moveX;
-        let top = moveY;
-
-        left = Math.max(0, Math.min(winW - btnW, left));
-        top = Math.max(0, Math.min(winH - btnH, top));
-
-        $btn.css({
-          top: top + 'px',
-          left: left + 'px'
-        });
-      }
-    });
-
-    $(document).on('mouseup', function () {
-      draggingBtn = false;
-      isDraggingNow = false;
-    });
-  });
-</script>
+		$(function () {
+			  let isOpen = false;
+			  
+			  function openChatbot() {
+			    isOpen = true;
+			    $('#chatbotModal').show();
+			    $('#chatbotContent').load('/chatbot');
+			    $('#chatbotIcon')
+			      .attr('src', '${cpath}/resources/images/close.png')
+			      .addClass('p-[7px] box-border');
+			  }
+			  
+			  function closeChatbot() {
+			    isOpen = false;
+			    $('#chatbotModal').hide();
+			    $('#chatbotIcon')
+			      .attr('src', '${cpath}/resources/images/chatbot.png')
+			      .removeClass('p-[7px] box-border');
+			  }
+			  
+			  $('#chatbotBtn').on('click', function () {
+			    isOpen ? closeChatbot() : openChatbot();
+			  });
+			  
+			  $('#closeChatbot').on('click', function () {
+			    closeChatbot();
+			  });
+			});
+		</script>
 
 	</c:when>
 </c:choose>
