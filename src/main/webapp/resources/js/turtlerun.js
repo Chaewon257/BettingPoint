@@ -25,6 +25,11 @@ let turtleGame = null;
 let userId;
 let isHost = false;
 
+const roomId = (function() {
+    const match = window.location.pathname.match(/\/multi\/([^\/]+)\/turtlerun/);
+    return match ? match[1] : null;
+})();
+
 userInfo(function(uid) {
     userId = uid; // 콜백에서 userId 전역 변수 세팅
     // 반드시 userId가 준비된 뒤에 gameRoomDetail 실행
@@ -96,7 +101,7 @@ function renderGameDetail(room, roomPlayers) {
     const myInfo = roomPlayers.find(p => p.user_uid === userId);
     const userBet = (myInfo && myInfo.betting_point) ? myInfo.betting_point : 10000;
     // const points = myInfo.points || 100;
-    const selectedTurtle = (myInfo && myInfo.turtle_id != null) ? Number(myInfo.turtle_id) : null;
+    const selectedTurtle = (myInfo && myInfo.turtle_id != null) ? (Number(myInfo.turtle_id) - 1)  : null;
     console.log('room : ', room,' roomPlayers : ', roomPlayers, ' difficulty : ',difficulty, ' turtleCount : ', turtleCount,
         ' userBet : ', userBet, ' selectedTurtle : ', selectedTurtle);
     const turtleImages = [
@@ -451,12 +456,11 @@ class TurtleRacingGame {
             }
             // 게임 중 레이스 위치 업데이트 전송 코드:
             function trySendRaceUpdate(positions) {
-                if (ws && ws.readyState === 1 && isHost) { // 방장만 전송!
+                if (ws && ws.readyState === 1) {
                     ws.send(JSON.stringify({
                         type: "race_update",
                         positions: positions
                     }));
-                    console.log("방장이므로 위치 전송:", positions);
                 }
             }
             
@@ -679,7 +683,7 @@ function startRedirectCountdown(seconds) {
         if (counter <= 0) {
             clearInterval(timer);
             hideModal();
-            window.location.href = `/gameroom/detail/${roomId}`;
+            window.location.href = '/gameroom/detail/' + roomId;
         } else {
             countdownElem.textContent = `${counter}초 후 게임방으로 이동합니다.`;
         }
