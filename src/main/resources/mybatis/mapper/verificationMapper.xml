@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bpoint.verification">
+	
+	<insert id="insert" parameterType="verificationDTO">
+		insert into email_verification
+		values(#{email}, #{verification_code}, #{expired_at}, #{is_verified})
+		on duplicate key update
+			 verification_code = VALUES(verification_code),
+			 expired_at = VALUES(expired_at),
+			 is_verified = VALUES(is_verified)
+	</insert>
+
+	<select id="findByEmail" parameterType="String" resultType="verificationDTO">
+		select * from email_verification where email = #{email}
+	</select>
+
+	<update id="markVerified" parameterType="String">
+		update email_verification set is_verified = true
+		where email = #{email}
+	</update>
+	
+</mapper>
