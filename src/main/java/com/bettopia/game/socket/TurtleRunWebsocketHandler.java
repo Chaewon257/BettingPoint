@@ -50,7 +50,7 @@ public class TurtleRunWebsocketHandler extends TextWebSocketHandler {
     @Autowired
     private HistoryService historyService;
 
-    private final Map<String, List<Double>> latestPositions = new ConcurrentHashMap<>();
+    private final Map<String, Map<String, List<Double>>> latestPositions = new ConcurrentHashMap<>();
     private final Map<String, ScheduledFuture<?>> broadcastTasks = new ConcurrentHashMap<>();
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(4);
     
@@ -114,7 +114,9 @@ public class TurtleRunWebsocketHandler extends TextWebSocketHandler {
                         positions.add(pos.asDouble());
                     }
                 }
-                latestPositions.put(roomId, positions);
+                latestPositions
+                .computeIfAbsent(roomId, k -> new ConcurrentHashMap<>())
+                .put(userId, positions);
 	            // 2. 전체 클라이언트에게 positions 전송
                 broadcastTasks.computeIfAbsent(roomId, k -> {
                     return scheduler.scheduleAtFixedRate(() -> {
@@ -172,16 +174,17 @@ public class TurtleRunWebsocketHandler extends TextWebSocketHandler {
 		List<TurtlePlayerDTO> players = playerDAO.getAll(roomId);
 		Map<String, Object> data = new HashMap<>();
 		data.put("players", players);
+		
 		broadcastMessage("update", roomId, data);
 	}
 	
 	// 방에 위치 정보를 스케쥴러로 보내주는 함수
 	private void broadcastRaceUpdate(String roomId) throws IOException {
-	    List<Double> positions = latestPositions.get(roomId);
-	    if (positions == null) return;
+	    Map<String, List<Double>> positionsByUser = latestPositions.get(roomId);
+	    if (positionsByUser == null) return;
 
 	    Map<String, Object> data = new HashMap<>();
-	    data.put("positions", positions);
+	    data.put("positions", positionsByUser);
 	    broadcastMessage("race_update", roomId, data);
 	}
 	

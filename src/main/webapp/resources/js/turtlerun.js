@@ -23,6 +23,7 @@ document.getElementById('trackContainer').style.height = trackHeight + 'px';
 let ws;
 let turtleGame = null;
 let userId;
+let isHost = false;
 
 userInfo(function(uid) {
     userId = uid; // 콜백에서 userId 전역 변수 세팅
@@ -50,6 +51,11 @@ function userInfo(callback) {
     });
 }
 
+function onRoomInfoLoaded(room, userId) {
+    isHost = (room.host_uid === userId);
+    console.log("host : ", room.host_uid, " userId : ", userId);
+}
+
 // 게임방 상세 정보 요청
 function gameRoomDetail (roomId) {
     let roomPlayers = [];
@@ -60,7 +66,7 @@ function gameRoomDetail (roomId) {
         method: "GET",
         success: function (room) {
             minBet = room.min_bet;
-
+            isHost = (room.host_uid === userId);
             connectGameWebSocket(roomId);
             players(room, roomPlayers, function() {
                 renderGameDetail(room, roomPlayers);
@@ -139,9 +145,10 @@ function connectGameWebSocket(roomId) {
 
     ws.onmessage = function(event) {
         const msg = JSON.parse(event.data);
-        // 경기 중 위치 업데이트
-        if(msg.type === "race_update" && turtleGame) {
-            turtleGame.setPositions(msg.positions);
+        console.log("서버로부터 메세지 : ", msg)
+        // 모든 플레이어 위치 갱신!
+        if (msg.type === "race_update" && turtleGame) {
+           turtleGame.updateAllPositions(msg.positions);
         }
         // 경기 종료
         if(msg.type === "race_finish" && turtleGame) {
@@ -237,6 +244,33 @@ class TurtleRacingGame {
         // 베팅 금액을 해당 거북이에 누적
         if (this.turtleBets && typeof this.userBet === 'number') {
             this.turtleBets[id] += this.userBet;
+        }
+    }
+
+    updateAllPositions(positionsByUser) {
+        this.allPositions = positionsByUser;
+        this.renderAllTurtles();
+    }
+
+    // "거북이 위치"만 모두 지우고 새로 그림
+    renderAllTurtles() {
+        // 기존 거북이들만 제거
+        const container = document.getElementById('trackContainer');
+        container.querySelectorAll('.live-turtle').forEach(el => el.remove());
+
+        const laneHeight = trackHeight / 8; // 트랙 수 8개 고정
+        for (const [userId, positions] of Object.entries(this.allPositions || {})) {
+            positions.forEach((pos, idx) => {
+                const turtle = document.createElement('img');
+                turtle.src = this.turtleImages[idx] || this.turtleImages[0];
+                turtle.className = 'live-turtle' + (userId === userId ? ' my-turtle' : ' other-turtle');
+                const px = START_MARGIN + (pos / 100) * TRACK_LENGTH;
+                turtle.style.position = 'absolute';
+                turtle.style.left = px + 'px';
+                turtle.style.top = (laneHeight * idx + laneHeight / 2 - TURTLE_SIZE / 2) + 'px';
+                turtle.style.height = (laneHeight * 0.7) + "px";
+                container.appendChild(turtle);
+            });
         }
     }
 
@@ -415,14 +449,17 @@ class TurtleRacingGame {
                     return;
                 }
             }
-
-            // 경주 위치 실시간 전송
-            if (ws && ws.readyState === 1) {
-                ws.send(JSON.stringify({
-                    type: "race_update",
-                    positions: this.positions
-                }));
+            // 게임 중 레이스 위치 업데이트 전송 코드:
+            function trySendRaceUpdate(positions) {
+                if (ws && ws.readyState === 1 && isHost) { // 방장만 전송!
+                    ws.send(JSON.stringify({
+                        type: "race_update",
+                        positions: positions
+                    }));
+                    console.log("방장이므로 위치 전송:", positions);
+                }
             }
+            
 
             // 선택 거북이가 중앙에 오도록 트랙 패닝
             const container = this.container;
@@ -465,7 +502,7 @@ class TurtleRacingGame {
                     crowdStand.style.transform = `translateX(${-panX}px)`;
                 }   
             }
-
+            trySendRaceUpdate(this.positions);
             requestAnimationFrame(updateRace);
         };
         requestAnimationFrame(updateRace);
@@ -510,8 +547,8 @@ class TurtleRacingGame {
         const pointChange = this.selectedTurtle === this.winner ?
             Math.round((totalBet / winPool) * userBet + userBet * userRate) :
             -userBet;
-        this.points = Math.max(0, this.points + pointChange);
-        pointSummary.textContent = `보유 포인트: ${this.points} (${pointChange >= 0 ? '+' : ''}${pointChange})`;
+        // this.points = Math.max(0, this.points + pointChange);
+        pointSummary.textContent = `포인트 변화 : (${pointChange >= 0 ? '+' : ''}${pointChange})`;
         pointSummary.style.color = pointChange >= 0 ? 'green' : 'red';
 
         this.savePoints();
