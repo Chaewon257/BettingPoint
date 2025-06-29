@@ -133,34 +133,15 @@ public class TurtleRunWebsocketHandler extends TextWebSocketHandler {
 			    dto.setUser_uid(userId);
 			    dto.setRoomId(roomId);
 			    dto.setWinner(json.get("winner").asInt());
-			    dto.setPoints(json.get("points").asInt());
-			    dto.setBet(json.get("bet").asInt());
+			    dto.setUserBet(json.get("userBet").asInt());
 			    dto.setPointChange(json.get("pointChange").asInt());
-			    // 1. 게임 기록 저장
-			    GameHistoryDTO gameHistory = GameHistoryDTO.builder()
-			            .user_uid(dto.getUser_uid())
-			            .game_uid(dto.getRoomId())
-			            .betting_amount(dto.getBet())
-			            .point_value(dto.getPoints())
-			            .game_result(dto.getPointChange() > 0 ? "WIN" : "LOSE")
-			            .build();
-			    GameHistoryDTO savedGameHistory = historyService.insertGameHistory(gameHistory, dto.getUser_uid());
-			    // 2. 포인트 기록 저장 (GameHistory UID 연동)
-			    PointHistoryDTO pointHistory = PointHistoryDTO.builder()
-			            .user_uid(dto.getUser_uid())
-			            .gh_uid(savedGameHistory.getUid())
-			            .type("GAME")
-			            .amount(dto.getPointChange())
-			            .balance_after(dto.getPoints()) // 혹은 실제 잔액 계산 결과
-			            .build();
-			    historyService.insertPointHistory(pointHistory, dto.getUser_uid());
+			    
 			    // 3. 결과 브로드캐스트 (모달 노출용)
 			    Map<String, Object> resultMsg = new HashMap<>();
 			    resultMsg.put("type", "race_result");
 			    resultMsg.put("winner", dto.getWinner());
-			    resultMsg.put("points", dto.getPoints());
-			    resultMsg.put("pointsChange", dto.getPointChange());
-			    resultMsg.put("bet", dto.getBet());
+			    resultMsg.put("pointChange", dto.getPointChange());
+			    resultMsg.put("bet", dto.getUserBet());
 			    resultMsg.put("userId", dto.getUser_uid());
 			    resultMsg.put("roomId", dto.getRoomId());
 			    broadcastMessage("race_result", roomId, resultMsg);

@@ -540,16 +540,15 @@ class TurtleRacingGame {
         const winnerTurtle = this.winner;
         const winPool = this.turtleBets[winnerTurtle] || 1; //userBet; 
         const totalBet = this.turtleBets.reduce((a, b) => a + b, 0) || 1; //userBet; 
-        const difficultyRateMap = { easy: 0.2, normal: 1.5, hard: 4.0 };
+        const difficultyRateMap = { 'EASY': 0.2, 'NORMAL': 1.5, 'HARD': 4.0 };
         const difficulty = this.selectedDifficulty; //|| "normal";
         const userRate = difficultyRateMap[difficulty] || 1;
 
-        const pointChange = this.selectedTurtle === this.winner ?
-            Math.round((totalBet / winPool) * userBet + userBet * userRate) :
-            -userBet;
-        // this.points = Math.max(0, this.points + pointChange);
-        pointSummary.textContent = `포인트 변화 : (${pointChange >= 0 ? '+' : ''}${pointChange})`;
-        pointSummary.style.color = pointChange >= 0 ? 'green' : 'red';
+        const winAmount = this.selectedTurtle === this.winner ?
+            Math.round((totalBet / winPool) * userBet + userBet * userRate) : 0;
+        let delta = winAmount > 0 ? winAmount : -userBet;
+        pointSummary.textContent = `포인트 변화 : (${delta > 0 ? '+' : ''}${delta})`;
+        pointSummary.style.color = delta > 0 ? 'green' : 'red';
 
         this.savePoints();
         this.updatePointsDisplay();
@@ -574,11 +573,11 @@ class TurtleRacingGame {
             winner: this.winner,
             positions: this.positions,
             selectedTurtle: this.selectedTurtle,
-            // points: this.points,
-            bet: this.userBet,
+            gameResult : didWin ? 'WIN' : 'LOSE',
+            userBet: this.userBet,
             difficulty: this.selectedDifficulty,
             turtleBets: this.turtleBets,
-            pointChange: pointChange,
+            pointChange: delta,
             userId: this.userId, // 사용자 ID 추가
             roomId: this.roomId // 게임방 ID 추가
         };
@@ -590,7 +589,6 @@ class TurtleRacingGame {
                 winner: this.winner,
                 positions: this.positions,
                 selectedTurtle: this.selectedTurtle,
-                // points: this.points,
                 bet: this.userBet,
                 difficulty: this.selectedDifficulty,
                 turtleBets: this.turtleBets,
@@ -600,6 +598,8 @@ class TurtleRacingGame {
             }));
         }
 
+        // 3. 저장 호출
+        saveRaceHistory(didWin, userBet, winAmount, difficulty);
         // 모달 표시
         showModal();
         startRedirectCountdown(5);
@@ -679,9 +679,33 @@ function startRedirectCountdown(seconds) {
         if (counter <= 0) {
             clearInterval(timer);
             hideModal();
-            window.location.href = '/gameroom/detail/' + roomId;
+            window.location.href = `/gameroom/detail/${roomId}`;
         } else {
             countdownElem.textContent = `${counter}초 후 게임방으로 이동합니다.`;
         }
     }, 1000);
+}
+
+function saveRaceHistory(didWin, userBet, winAmount, difficulty) {
+  $.ajax({
+    url: '/api/multi/turtleRun/history',
+    method: 'POST',
+    contentType: 'application/json',
+    headers: {
+      Authorization: 'Bearer ' + localStorage.getItem('accessToken')
+    },
+    data: JSON.stringify({
+      gameResult : didWin ? 'WIN' : 'LOSE',
+      betAmount: userBet,
+      winAmount: winAmount,
+      difficulty: difficulty,
+    }),
+    success: function (res) {
+      console.log("히스토리 저장 성공", res);
+      // 잔액, UI 최신화 등
+    },
+    error: function (xhr) {
+      console.error("히스토리 저장 실패:", xhr.responseText);
+    }
+  });
 }
