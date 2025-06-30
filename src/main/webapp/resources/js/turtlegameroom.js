@@ -115,12 +115,15 @@ function bindGameEvents() {
     });
 }
 
+let playerCount = 0;
+
 // 플레이어 목록 갱신
 function updatePlayerList(players) {
     const $playerList = $("#player-list");
     $playerList.empty(); // 기존 플레이어 목록 초기화
 
     let isAllReady = true;
+    playerCount = players.length;
 
     players.forEach(player => {
         const html = `

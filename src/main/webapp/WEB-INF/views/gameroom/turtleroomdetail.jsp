@@ -51,6 +51,11 @@
 
         // 게임 시작 버튼 클릭 이벤트
         $("#start-game-btn").click(function () {
+            if(playerCount < 2) {
+                alert("게임 시작 최소 인원은 2명입니다.");
+                return;
+            }
+
             $.ajax({
                 url: `/api/gameroom/start/${roomId}`,
                 method: "POST",
