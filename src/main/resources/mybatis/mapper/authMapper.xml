@@ -73,4 +73,9 @@
 		point_balance = point_balance - #{point}
 		where uid = #{uid}
 	</update>
+
+	<delete id="logout" parameterType="String">
+		delete from auth_token
+		where user_uid = #{userId}
+	</delete>
 </mapper>
