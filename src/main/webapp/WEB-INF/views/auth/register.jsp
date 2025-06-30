@@ -24,6 +24,22 @@
 		  							<button id="verifyEmailbtn" class="px-3 py-2 text-xs rounded-full border border-blue-3 bg-blue-3 text-white hover:border-blue-2 hover:bg-blue-1">중복검사</button>
 		  							<input id="verifyEmail" type="checkbox" class="w-0 h-0" >
 		  						</div>
+								<div class="w-full flex items-center gap-x-2 mb-2">
+									<button id="requestVerificationBtn" type="button"
+											class="px-3 py-2 text-xs rounded-full border border-blue-3 bg-blue-3 text-white hover:border-blue-2 hover:bg-blue-1">
+										인증번호 요청
+									</button>
+								</div>
+								<div id="verificationSection" class="w-full flex items-center gap-x-2 mb-2 hidden">
+									<input type="text" id="verificationCodeInput"
+										   class="grow px-4 py-2 text-xs outline-none bg-gray-4 rounded-full border border-gray-5"
+										   placeholder="인증번호 입력">
+									<button id="verifyCodeBtn" type="button"
+											class="px-3 py-2 text-xs rounded-full border border-blue-3 bg-blue-3 text-white hover:border-blue-2 hover:bg-blue-1">
+										인증 확인
+									</button>
+									<input id="emailVerified" type="checkbox" class="w-0 h-0">
+								</div>
 		  					</div>
 		  					<div class="flex flex-col items-start gap-y-1">
 		  						<span class="text-xs text-gray-6 pl-1">비밀번호</span>
@@ -172,6 +188,71 @@
 		            }
 		        });
 		    });
+
+			/* 이메일 인증번호 요청 */
+			document.getElementById('requestVerificationBtn').addEventListener('click', function () {
+				const emailInput = document.getElementById('email');
+				const emailVal = emailInput.value.trim();
+				const error = document.getElementById('errorMessage');
+
+				if (!emailVal) {
+					error.textContent = "이메일을 입력해주세요.";
+					emailInput.classList.add("border-red-600");
+					return;
+				} else {
+					emailInput.classList.remove("border-red-600");
+					emailInput.classList.add("border-gray-5");
+				}
+
+				$.ajax({
+					url: '/api/email/request',
+					type: 'POST',
+					contentType: 'application/json; charset=utf-8',
+					data: JSON.stringify({ email: emailVal }),
+					success: function (res) {
+						alert(res); // "인증번호가 이메일로 발송되었습니다." 표시
+						document.getElementById('requestVerificationBtn').style.display = 'none';
+						document.getElementById('verificationSection').classList.remove('hidden');
+					},
+					error: function () {
+						error.textContent = "인증번호 요청 중 오류가 발생했습니다.";
+					}
+				});
+			});
+
+			/* 이메일 인증번호 확인 */
+			document.getElementById('verifyCodeBtn').addEventListener('click', function () {
+				const emailInput = document.getElementById('email');
+				const codeInput = document.getElementById('verificationCodeInput');
+				const emailVerified = document.getElementById('emailVerified');
+				const error = document.getElementById('errorMessage');
+
+				const emailVal = emailInput.value.trim();
+				const codeVal = codeInput.value.trim();
+
+				if (!codeVal) {
+					error.textContent = "인증번호를 입력해주세요.";
+					codeInput.classList.add("border-red-600");
+					return;
+				} else {
+					codeInput.classList.remove("border-red-600");
+					codeInput.classList.add("border-gray-5");
+				}
+
+				$.ajax({
+					url: '/api/email/verify',
+					type: 'POST',
+					contentType: 'application/json; charset=utf-8',
+					data: JSON.stringify({ email: emailVal, code: codeVal }),
+					success: function (res) {
+						alert(res); // "이메일 인증이 완료되었습니다."
+						emailVerified.checked = true;
+					},
+					error: function () {
+						error.textContent = "인증번호 확인 중 오류가 발생했습니다.";
+					}
+				});
+			});
 		    
 		    /* 닉네임 중복 확인 이벤트 */
 		    document.getElementById('verifyNicknamebtn').addEventListener('click', function (e) {
@@ -232,6 +313,12 @@
 			    const phoneNumber = document.getElementById('phoneNumber');
 			    const agreePrivacy = document.getElementById('agreePrivacy');
 				const age = new Date().getFullYear() - birthDateVal.getFullYear();
+				const emailVerified = document.getElementById('emailVerified');
+
+				if (!emailVerified.checked) {
+					error.textContent = "이메일 인증을 완료해야 합니다.";
+					return;
+				}
 
 				if (!verifyEmail.checked) {
 		        	error.textContent = "이메일 중복 검사를 해야합니다.";
