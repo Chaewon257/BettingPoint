@@ -187,15 +187,15 @@ public class GameRoomWebSocketHandler extends TextWebSocketHandler {
 			playerDAO.removePlayer(roomId, userId);
 			gameRoomListWebSocket.broadcastMessage("exit");
 
-			// 플레이어가 0명일 때 방 삭제
-			List<TurtlePlayerDTO> players = playerDAO.getAll(roomId);
-			if (players == null || players.isEmpty()) {
-				gameroomDAO.deleteRoom(roomId);
-			}
-
 			Map<String, Object> data = new HashMap<>();
 			data.put("userId", userId);
 			broadcastMessage("exit", roomId, data);
+		}
+
+		// 플레이어가 0명일 때 방 삭제
+		List<TurtlePlayerDTO> players = playerDAO.getAll(roomId);
+		if (players == null || players.isEmpty()) {
+			gameroomDAO.deleteRoom(roomId);
 		}
 	}
 
