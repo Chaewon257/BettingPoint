@@ -108,6 +108,12 @@ function bindGameEvents() {
         isReady = !isReady; // 전역 변수로 선언 필요
         const $btn = $(this);
         $btn.text(isReady ? '준비 취소' : '게임 준비');
+
+        // 준비 상태일 때 선택 및 입력 비활성화
+        $('input[name="turtle"]').prop('disabled', isReady);
+        $('#bet-point').prop('disabled', isReady);
+        $('#bet-btn').prop('disabled', isReady);
+
         socket.send(JSON.stringify({
             type: "ready",
             isReady: isReady
