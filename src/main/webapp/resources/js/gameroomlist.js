@@ -19,12 +19,13 @@ function connectGameWebSocket() {
         switch (msg.type) {
             case "insert":
             case "delete":
+            case "update":
             case "enter":
             case "exit":
                 renderGameRooms(gamerooms);
                 break;
             default:
-                console.warn("알 수 없는 메시지 타입", msg.type);
+                break;
         }
     };
 
