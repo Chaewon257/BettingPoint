@@ -33,7 +33,7 @@ function connectGameWebSocket(roomId) {
                 window.location.href = targetUrl;
                 break;
             default:
-                console.warn("알 수 없는 메시지 타입:", msg.type);
+                break;
         }
     };
 
@@ -62,8 +62,9 @@ function gameRoomDetail (roomId) {
             minBet = room.min_bet;
 
             connectGameWebSocket(roomId);
-            players(room, roomPlayers);
-            renderGameRoomDetail(room, roomPlayers);
+            players(room, roomPlayers).done(function() {
+                renderGameRoomDetail(room, roomPlayers);
+            });
         }
     });
 };

@@ -58,8 +58,8 @@ public class GameRoomWebSocketHandler extends TextWebSocketHandler {
 			// 중복 입장 검사
 			for(TurtlePlayerDTO player : players) {
 				if(player.getUser_uid().equals(userId)) {
-					session.close(CloseStatus.BAD_DATA);
-					return;
+					sessionService.removeSession(roomId, userId);
+					break;
 				}
 			}
 			// 최대 인원 초과 검사
