@@ -76,7 +76,7 @@
 				const resultClass = history.game_result === "WIN" ? "text-blue-1" : "text-red-1";
 				const sign = history.game_result === "WIN" ? "+" : "-";
 				const pointChange = `(\${sign}\${history.point_value})`;
-				const date = new Date(history.created_at).toISOString().slice(0, 10).replace(/-/g, ".");
+				const date = formatDate(history.created_at);
 
 				
 				
@@ -130,6 +130,15 @@
 
 			paginationContainer.html(paginationHTML.join(""));
 		}
+		
+		// 날짜 포맷팅 함수 (yyyy.mm.dd)
+		function formatDate(dateStr) {
+		    if (!dateStr) return "-";
+		    const date = new Date(dateStr);
+		    if (isNaN(date)) return "-";
+		    return date.toLocaleDateString('ko-KR').replace(/\./g, '.').replace(/\s/g, '');
+		}
+		
 		
 		// 🔹 페이지 변경
 		window.changePage = function (page) {
