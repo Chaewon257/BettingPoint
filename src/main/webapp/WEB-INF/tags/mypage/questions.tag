@@ -99,7 +99,7 @@
 						<span class="font-light">\${number}</span>
 						<span class="col-span-5 truncate">\${title}</span>
 						<span class="col-span-2 font-light \${statusClass}">\${status}</span>
-						<button onclick="openChatDetailModal('\${uid}')">상세보기</button>
+						<button class="col-span-2 underline" onclick="openChatDetailModal('\${uid}')">상세보기</button>
 						<span class="col-span-2 font-light">\${date}</span>
 					</div>
 				`;
