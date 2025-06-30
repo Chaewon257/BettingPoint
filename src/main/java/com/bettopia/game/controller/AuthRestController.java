@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,8 @@ import com.bettopia.game.Exception.AuthException;
 import com.bettopia.game.model.auth.AuthService;
 import com.bettopia.game.model.auth.LoginRequestDTO;
 import com.bettopia.game.model.auth.UserRegisterDTO;
+
+import javax.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -187,8 +190,17 @@ public class AuthRestController {
 	}
 
 	@DeleteMapping("/logout")
-	public void logout(@RequestHeader("Authorization") String authHeader) {
+	public void logout(HttpServletResponse response, @RequestHeader("Authorization") String authHeader) {
 		String userId = authService.validateAndGetUserId(authHeader);
 		authService.logout(userId);
+
+		ResponseCookie cookie = ResponseCookie.from("refreshToken", "")
+				.path("/")
+				.maxAge(0)
+				.httpOnly(true)
+				.secure(false)
+				.build();
+
+		response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 	}
 }
