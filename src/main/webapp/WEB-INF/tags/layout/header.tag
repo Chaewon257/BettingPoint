@@ -80,7 +80,7 @@
 		const token = localStorage.getItem("accessToken");
 		$.ajax({
 			url: "/api/auth/logout",
-			method: "POST",
+			method: "DELETE",
 			headers: {
 				"Authorization": "Bearer " + token
 			}
