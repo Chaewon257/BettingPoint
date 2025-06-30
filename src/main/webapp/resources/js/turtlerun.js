@@ -33,7 +33,7 @@ const roomId = (function() {
 userInfo(function(uid) {
     userId = uid; // 콜백에서 userId 전역 변수 세팅
     // 반드시 userId가 준비된 뒤에 gameRoomDetail 실행
-    // gameRoomDetail(roomId);
+    gameRoomDetail(roomId);
 });
 
 // 유저 정보 요청
@@ -58,7 +58,6 @@ function userInfo(callback) {
 
 function onRoomInfoLoaded(room, userId) {
     isHost = (room.host_uid === userId);
-    console.log("host : ", room.host_uid, " userId : ", userId);
 }
 
 // 게임방 상세 정보 요청
@@ -73,6 +72,7 @@ function gameRoomDetail (roomId) {
             minBet = room.min_bet;
             isHost = (room.host_uid === userId);
             connectGameWebSocket(roomId);
+            onRoomInfoLoaded(room, userId);
             players(room, roomPlayers, function() {
                 renderGameDetail(room, roomPlayers);
             });
@@ -93,17 +93,13 @@ function players(room, roomPlayers, callback) {
 }
 
 function renderGameDetail(room, roomPlayers) {
-    console.log(room, roomPlayers);
     // 1. 난이도, 거북이 수 등
     const difficulty = room.level;
     const turtleCount = difficultyMap[difficulty]?.count || 8;  
     // 3. 사용자 베팅, 포인트, 선택 등
     const myInfo = roomPlayers.find(p => p.user_uid === userId);
-    const userBet = (myInfo && myInfo.betting_point) ? myInfo.betting_point : 10000;
-    // const points = myInfo.points || 100;
-    const selectedTurtle = (myInfo && myInfo.turtle_id != null) ? (Number(myInfo.turtle_id) - 1)  : null;
-    console.log('room : ', room,' roomPlayers : ', roomPlayers, ' difficulty : ',difficulty, ' turtleCount : ', turtleCount,
-        ' userBet : ', userBet, ' selectedTurtle : ', selectedTurtle);
+    const userBet = myInfo.betting_point;
+    const selectedTurtle = (Number(myInfo.turtle_id) - 1);
     const turtleImages = [
         '/resources/images/turtle1.png', '/resources/images/turtle2.png',
         '/resources/images/turtle3.png', '/resources/images/turtle4.png',
@@ -124,7 +120,7 @@ function renderGameDetail(room, roomPlayers) {
     ];
 
     // 2. 게임 객체 생성 (기존 전역 변수 사용)
-    window.turtleGame = new TurtleRacingGame({
+    turtleGame = new TurtleRacingGame({
         turtleCount,
         difficulty,
         userBet,
@@ -150,10 +146,11 @@ function connectGameWebSocket(roomId) {
 
     ws.onmessage = function(event) {
         const msg = JSON.parse(event.data);
-        console.log("서버로부터 메세지 : ", msg)
         // 모든 플레이어 위치 갱신!
-        if (msg.type === "race_update" && turtleGame) {
-           turtleGame.updateAllPositions(msg.positions);
+        if (msg.type === "race_update" && turtleGame) { 
+           if(!isHost) {
+            turtleGame.updateAllPositions(msg.positions);
+           }
         }
         // 경기 종료
         if(msg.type === "race_finish" && turtleGame) {
@@ -170,6 +167,11 @@ function connectGameWebSocket(roomId) {
                 bet: msg.yourResult.bet,
                 selectedTurtle: msg.yourResult.selectedTurtle
             });
+        }
+        if(msg.type === "end") {
+            console.log("END 메시지 수신", msg);
+            const targetUrl = msg.target;
+            window.location.href = targetUrl;
         }
     };
 }
@@ -212,7 +214,6 @@ class TurtleRacingGame {
         victoryImages,
         defeatImages,
         selectedTurtle,
-        // points
     }) {
         this.selectedDifficulty = difficulty; 
         this.turtleCount = turtleCount; 
@@ -221,7 +222,6 @@ class TurtleRacingGame {
         this.victoryImages = victoryImages;
         this.defeatImages = defeatImages;
         this.selectedTurtle = selectedTurtle;
-        // this.points = points; 
         this.turtleBets = Array(this.turtleCount).fill(0);
         this.positions = Array(this.turtleCount).fill(0);
         this.transitionToFollow = false; // 선택 거북이 중앙 패닝 여부
@@ -231,14 +231,11 @@ class TurtleRacingGame {
         for (let i = 0; i < this.turtleCount; i++) {
             this.turtles.push({ id: i, name: `${this.numbers[i]} 거북이`, class: `${this.numbers[i]}-turtle` });
         }
-
-        // this.points = this.loadPoints();
         this.renderTrack();
         showCountdownOverlay(3, () => {
-            this.startRace();
+            if(isHost) this.startRace();
         });
         this.updatePointsDisplay();
-        // if (this.statDisplay) this.updateStatsDisplay();
     }
 
     selectTurtle(id) {
@@ -252,30 +249,57 @@ class TurtleRacingGame {
         }
     }
 
-    updateAllPositions(positionsByUser) {
-        this.allPositions = positionsByUser;
-        this.renderAllTurtles();
-    }
-
-    // "거북이 위치"만 모두 지우고 새로 그림
-    renderAllTurtles() {
-        // 기존 거북이들만 제거
-        const container = document.getElementById('trackContainer');
-        container.querySelectorAll('.live-turtle').forEach(el => el.remove());
-
-        const laneHeight = trackHeight / 8; // 트랙 수 8개 고정
-        for (const [userId, positions] of Object.entries(this.allPositions || {})) {
-            positions.forEach((pos, idx) => {
-                const turtle = document.createElement('img');
-                turtle.src = this.turtleImages[idx] || this.turtleImages[0];
-                turtle.className = 'live-turtle' + (userId === userId ? ' my-turtle' : ' other-turtle');
-                const px = START_MARGIN + (pos / 100) * TRACK_LENGTH;
-                turtle.style.position = 'absolute';
-                turtle.style.left = px + 'px';
-                turtle.style.top = (laneHeight * idx + laneHeight / 2 - TURTLE_SIZE / 2) + 'px';
-                turtle.style.height = (laneHeight * 0.7) + "px";
-                container.appendChild(turtle);
-            });
+    updateAllPositions(positions) {
+        this.positions = positions;
+        for(let i = 0; i < this.turtleElements.length; i++) {
+            if(!this.turtleElements[i]) continue;
+            const px = START_MARGIN + (this.positions[i] / 100) * TRACK_LENGTH;
+            this.turtleElements[i].style.left = px + 'px';
+            if(!this.turtleElements[i].classList.contains('racing')) {
+                this.turtleElements[i].classList.add('racing');
+            }
+        }
+        // 선택 거북이가 중앙에 오도록 트랙 패닝
+        const vp = document.getElementById('trackViewport');
+        const container = this.container;
+        const turtles = this.turtleElements;
+        // (1) 선택된 거북이 인덱스가 유효한지 검사
+        if (typeof this.selectedTurtle !== 'number' || !this.turtleElements[this.selectedTurtle]) {
+            return; // 선택된 거북이가 없거나 잘못된 경우 패닝 로직 스킵
+        }
+        // (2) 패닝 로직 정상 수행
+        const selectedPx = parseFloat(turtles[this.selectedTurtle].style.left);
+        const isMobile = window.innerWidth <= 640; // 모바일 여부   
+        const isTablet = window.innerWidth > 640 && window.innerWidth <= 1024; // 태블릿 여부
+        const isTabletOrMobileView = isTablet || isMobile;
+        // [핵심] 초기엔 트랙 전체가 왼쪽에서 시작(맨 왼쪽!)
+        if (!this.transitionToFollow) {
+            this.container.style.transform = 'translateX(0px)';
+            if (!isTabletOrMobileView && this.positions[this.selectedTurtle] > 5 && this.positions[this.selectedTurtle] < 90) {
+                this.transitionToFollow = true;
+                }
+            if(isMobile && this.positions[this.selectedTurtle] > 0.5) {
+                this.transitionToFollow = true;
+                }
+            if(isTablet && this.positions[this.selectedTurtle] > 2.5) {
+                this.transitionToFollow = true;
+                }                 
+        } else if (this.turtleElements[this.selectedTurtle]) {
+            const px = selectedPx + 20;
+            let panX = px - vp.offsetWidth / 2;
+            
+            // 패닝 범위 제한
+            const minPan = 0;
+            const maxPan = TOTAL_WIDTH - vp.offsetWidth;
+            if (panX < minPan) panX = minPan;
+            if (panX > maxPan) panX = maxPan;
+            this.container.style.transform = `translateX(${-panX}px)`;
+            const crowd = document.querySelector('.crowd-repeat');
+            if (crowd) crowd.style.transform = `translateX(${-panX}px)`;
+            const crowdStand = document.querySelector('.crowd-stand');
+            if (crowdStand) {
+                crowdStand.style.transform = `translateX(${-panX}px)`;
+            }   
         }
     }
 
@@ -400,7 +424,7 @@ class TurtleRacingGame {
         finishLine.appendChild(finishLabel);
         container.appendChild(finishLine);
     }
-
+    
     startRace() {
     //    if (this.selectedTurtle === null) return;
         this.positions = Array(this.turtleElements.length).fill(0);
@@ -419,6 +443,7 @@ class TurtleRacingGame {
     }
 
     runRace() {
+        if(!isHost) return;
         const vp = document.getElementById('trackViewport');
         let finished = false;
         const baseSpeeds = this.turtles.map(() => 0.03 + Math.random() * 0.03);
@@ -453,13 +478,11 @@ class TurtleRacingGame {
                     this.finishRace();
                     return;
                 }
-            }
-            // 게임 중 레이스 위치 업데이트 전송 코드:
-            function trySendRaceUpdate(positions) {
-                if (ws && ws.readyState === 1) {
+                // 게임 중 레이스 위치 업데이트 전송 코드:
+                if (ws && ws.readyState === 1 && isHost) {
                     ws.send(JSON.stringify({
                         type: "race_update",
-                        positions: positions
+                        positions: this.positions
                     }));
                 }
             }
@@ -506,7 +529,6 @@ class TurtleRacingGame {
                     crowdStand.style.transform = `translateX(${-panX}px)`;
                 }   
             }
-            trySendRaceUpdate(this.positions);
             requestAnimationFrame(updateRace);
         };
         requestAnimationFrame(updateRace);
@@ -554,7 +576,6 @@ class TurtleRacingGame {
         pointSummary.textContent = `포인트 변화 : (${delta > 0 ? '+' : ''}${delta})`;
         pointSummary.style.color = delta > 0 ? 'green' : 'red';
 
-        this.savePoints();
         this.updatePointsDisplay();
         if (this.statDisplay) this.updateStatsDisplay();
         this.turtleElements.forEach(turtle => {if(turtle) turtle.classList.remove('racing')});
@@ -631,15 +652,6 @@ class TurtleRacingGame {
         if(this.pointsDisplay) 
         this.pointsDisplay.textContent = this.points;
     }
-
-    // loadPoints() {
-    //     this.points = points || 100; // 기본값 100
-    //     this.updatePointsDisplay();
-    // }
-
-    savePoints() {
-    
-    }
 }
 
 function isTabletOrMobileView() {
@@ -683,11 +695,27 @@ function startRedirectCountdown(seconds) {
         if (counter <= 0) {
             clearInterval(timer);
             hideModal();
-            window.location.href = '/gameroom/detail/' + roomId;
         } else {
             countdownElem.textContent = `${counter}초 후 게임방으로 이동합니다.`;
         }
     }, 1000);
+
+    // 상태 WAITING으로 변경 후 이동
+    $.ajax({
+        url: `/api/gameroom/start/${roomId}`,
+        method: "POST",
+        contentType: "application/json",
+        data: JSON.stringify({status: "WAITING"}),
+        success: function () {
+            ws.send(JSON.stringify({
+                type: "end"
+            }));
+        },
+        error: function() {
+            alert("게임방이 존재하지 않습니다.");
+            window.location.href = "/";
+        }
+    });
 }
 
 function saveRaceHistory(didWin, userBet, winAmount, difficulty) {

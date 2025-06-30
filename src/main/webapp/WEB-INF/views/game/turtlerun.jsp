@@ -26,9 +26,5 @@
 			</div>
 		</div>
 		<script src="${cpath}/resources/js/turtlerun.js"></script>
-		<script> $(function () {
-	        const roomId = "${roomId}";
-	        gameRoomDetail(roomId);
-	    });</script> 
 	</jsp:attribute>
 </ui:layout>

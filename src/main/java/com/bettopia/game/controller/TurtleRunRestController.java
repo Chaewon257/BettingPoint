@@ -51,16 +51,6 @@ public class TurtleRunRestController {
 		return map;
 	}
 	
-	// 게임 종료
-	@PostMapping("/{roomId}/turtlerun/end")
-	public void endGame(@PathVariable String roomId, @RequestBody Map<String, String> request) {
-		String newStatus = request.get("status");
-		GameRoomResponseDTO room = gameRoomService.selectById(roomId);
-		if(!room.getStatus().equals(newStatus)) {
-			gameRoomService.updateStatus(roomId, newStatus);
-		}
-	}
-	
 	@PostMapping("/turtleRun/history")
 	public ResponseEntity<?> saveTurtleRunHistory(
 	        @RequestHeader("Authorization") String authHeader,
@@ -101,7 +91,7 @@ public class TurtleRunRestController {
 	    GameHistoryDTO savedGame = historyService.insertGameHistory(
 	        gameUid,
 	        betAmount,
-	        winAmount - betAmount,
+	        winAmount,
 	        gameResult,
 	        uid
 	    );
@@ -110,7 +100,7 @@ public class TurtleRunRestController {
 	    PointHistoryDTO pointHistory = new PointHistoryDTO();
 	    pointHistory.setGh_uid(savedGame.getUid());
 	    pointHistory.setType(gameResult);
-	    pointHistory.setAmount(winAmount - betAmount);
+	    pointHistory.setAmount(winAmount);
 	    pointHistory.setBalance_after(user.getPoint_balance());
 	    historyService.insertPointHistory(pointHistory, uid);
 
