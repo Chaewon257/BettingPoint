@@ -9,7 +9,6 @@
 	            container.empty();
 	            
 	            const s3BaseUrl = "https://bettopia-bucket.s3.ap-southeast-2.amazonaws.com/";
-	            console.log(games);	
 	            games.forEach(function(game) {
 	                const gameHtml = `
                     <div class="w-40 flex flex-col items-center border rounded-lg p-4 shadow hover:shadow-md transition cursor-pointer"
