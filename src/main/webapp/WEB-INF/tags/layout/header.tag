@@ -17,7 +17,7 @@
 			// PC
 			$('#userMenu').html(`
 				<a href="/mypage" class="text-black hover:font-semibold">\${user.user_name} 님</a>
-				<a href="/logout" class="text-black py-1.5 px-[1.625rem] border-2 border-black rounded-full transition-all duration-300 ease-in-out hover:bg-gray-2">로그아웃</a>
+				<a href="#" onclick="logout();" class="text-black py-1.5 px-[1.625rem] border-2 border-black rounded-full transition-all duration-300 ease-in-out hover:bg-gray-2">로그아웃</a>
 			`);
 
 			// 모바일
@@ -49,7 +49,7 @@
 
 		// 보호된 경로 사전 정의
 		const protectedRoutes = {
-			"/solo/cointoss": "개인게임",
+			"/solo": "개인게임",
 			"/gameroom": "단체게임",
 			"/mypage": "마이페이지"
 		};
@@ -76,6 +76,20 @@
 				});
 		});
 	});
+	function logout() {
+		const token = localStorage.getItem("accessToken");
+		$.ajax({
+			url: "/api/auth/logout",
+			method: "DELETE",
+			headers: {
+				"Authorization": "Bearer " + token
+			}
+		}).then(() => {
+			localStorage.removeItem("accessToken");
+			alert("로그아웃 되었습니다.");
+			window.location.href = "/";
+		});
+	}
 </script>
 <c:choose>
 	<c:when test="${pageType ne 'ingame'}">
@@ -119,7 +133,7 @@
 									class="underline font-semibold">로그인</span> 후 다양한 서비스를 이용해보세요</a>
 							</div>
 
-							<a href="/solo/cointoss" class="text-black text-base hover:text-blue-1 hover:font-semibold">개인게임</a>
+							<a href="/solo" class="text-black text-base hover:text-blue-1 hover:font-semibold">개인게임</a>
 							<a href="/gameroom" class="text-black text-base hover:text-blue-1 hover:font-semibold">단체게임</a>
 							<a href="/board" class="text-black text-base hover:text-blue-1 hover:font-semibold">게시판</a>
 							<a href="/support" class="text-black text-base hover:text-blue-1 hover:font-semibold">고객지원</a>

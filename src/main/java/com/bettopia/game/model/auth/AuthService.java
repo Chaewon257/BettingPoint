@@ -128,4 +128,8 @@ public class AuthService {
 	public void losePoint(int point, String userId) {
 		userDAO.losePoint(point, userId);
 	}
+
+	public void logout(String userId) {
+		userDAO.logout(userId);
+	}
 }

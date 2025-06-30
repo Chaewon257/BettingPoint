@@ -87,7 +87,7 @@
 	
 	            const amountText = `\${amountSign}\${history.amount}`;
 	            const balanceText = history.balance_after;
-	            const date = new Date(history.created_at).toISOString().slice(0, 10).replace(/-/g, ".");
+	            const date = formatDate(history.created_at);
 	
 	            const note = history.gh_uid ? (gameNameMap[history.gh_uid] || "Unknown") : "";
 	
@@ -137,6 +137,14 @@
 
 	        paginationContainer.html(paginationHTML.join(''));
 	    }
+	 	
+	 	// 날짜 포맷팅 함수 (yyyy.mm.dd)
+		function formatDate(dateStr) {
+		    if (!dateStr) return "-";
+		    const date = new Date(dateStr);
+		    if (isNaN(date)) return "-";
+		    return date.toLocaleDateString('ko-KR').replace(/\./g, '.').replace(/\s/g, '');
+		}
 
 	    // 🔹 페이지 변경 함수
 	    window.changePointPage = function (page) {

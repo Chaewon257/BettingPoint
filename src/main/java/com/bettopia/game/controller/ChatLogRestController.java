@@ -37,7 +37,7 @@ public class ChatLogRestController {
     }
     
     // ✅ UID로 채팅 로그 상세 조회
-    @GetMapping("/{chatlog_uid}")
+    @GetMapping("/detail/{chatlog_uid}")
     public ChatLogDTO getLogByUid(@PathVariable String chatlog_uid) {
         return chatLogService.selectByUid(chatlog_uid);
     }
