@@ -46,19 +46,29 @@ public class JWTUtil {
 				.signWith(key, SignatureAlgorithm.HS256).compact();
 	}
 
+	// ✅ 토큰 유효성 검사 (만료 포함)
 	public boolean validateToken(String token) {
 		try {
 			Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
 			return true;
-		} catch (ExpiredJwtException e) {
-			// 만료된 토큰
-			return false;
 		} catch (JwtException e) {
-			// 잘못된 토큰
 			return false;
 		}
 	}
 
+	//✅ 토큰이 만료되었는지 확인
+	public boolean isTokenExpired(String token) {
+		try {
+			Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+
+			return claims.getExpiration().before(new Date());
+		} catch (ExpiredJwtException e) {
+			return true;
+		} catch (JwtException e) {
+			return false; // 잘못된 토큰이면 만료 확인 불가로 false
+		}
+	}
+	//✅ userId (sub) 가져오기
 	public String getUserIdFromToken(String token) {
 		return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().getSubject();
 	}

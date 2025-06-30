@@ -12,15 +12,7 @@
 		<div id="gameHistoryList"></div>
 	</div>
 	<div class="flex justify-center items-center">
-		<div class="flex items-center">
-			<button class="w-8 h-8 rounded-s border border-gray-1 text-gray-1 hover:bg-gray-2"><</button>
-			<button class="w-8 h-8 bg-gray-2 border border-gray-1">1</button>
-			<button class="w-8 h-8 border border-gray-1 hover:bg-gray-2">2</button>
-			<button class="w-8 h-8 border border-gray-1 hover:bg-gray-2">3</button>
-			<button class="w-8 h-8 border border-gray-1 hover:bg-gray-2">4</button>
-			<button class="w-8 h-8 border border-gray-1 hover:bg-gray-2">5</button>
-			<button class="w-8 h-8 rounded-e border border-gray-1 hover:bg-gray-2">></button>
-		</div>
+		<div id="gamePagenation" class="flex items-center"></div>
 	</div>
 </div>
 
@@ -28,6 +20,11 @@
 	$(document).ready(function () {
 		const token = localStorage.getItem('accessToken');
 		const historyContainer = $("#gameHistoryList");
+		
+		const paginationContainer = $("#gamePagenation");  // 페이지 버튼 감싸는 div
+		const itemsPerPage = 10;
+		let currentPage = 1;
+		let totalCount = 0;
 	
 		if (!token) {
 			alert("로그인이 필요합니다.");
@@ -44,15 +41,18 @@
 		};
 	
 		// 🔹 API 호출
-		function loadGameHistory(token) {
+		function loadGameHistory(token, page) {
 			$.ajax({
-				url: '/api/history/game/list',
+				url: `/api/history/game/list?page=\${page}`,
 				method: 'GET',
 				headers: {
 					'Authorization': 'Bearer ' + token
 				},
-				success: function (histories) {
-					renderGameHistory(histories);
+				success: function (res) {
+					const histories = res.histories;
+					totalCount = res.total;
+					renderGameHistory(histories, page);
+					renderPagination(page, totalCount); // 페이지 버튼 그리기
 				},
 				error: function () {
 					alert("게임 히스토리를 불러오는 데 실패했습니다.");
@@ -61,7 +61,7 @@
 		}
 	
 		// 🔹 히스토리 렌더링
-		function renderGameHistory(histories) {
+		function renderGameHistory(histories, page) {
 			historyContainer.empty();
 	
 			if (!histories || histories.length === 0) {
@@ -70,13 +70,14 @@
 			}
 	
 			histories.forEach((history, idx) => {
-				const number = idx + 1;
+				const number = (page - 1) * itemsPerPage + idx + 1;
 				const gameName = gameNameMap[history.game_uid] || "Unknown Game";
 				const result = history.game_result === "WIN" ? "승리" : "패배";
 				const resultClass = history.game_result === "WIN" ? "text-blue-1" : "text-red-1";
 				const sign = history.game_result === "WIN" ? "+" : "-";
 				const pointChange = `(\${sign}\${history.point_value})`;
-				const date = new Date(history.created_at).toISOString().slice(0, 10).replace(/-/g, ".");
+				const date = formatDate(history.created_at);
+
 				
 				
 				const html = `
@@ -95,6 +96,56 @@
 				historyContainer.append(html);
 			});
 		}
+		
+		// 🔹 페이지네이션 렌더링
+		function renderPagination(current, totalCount) {
+			paginationContainer.empty();
+			const maxPages = Math.ceil(totalCount / itemsPerPage);
+			const paginationHTML = [];
+
+			// Prev
+			paginationHTML.push(`
+				<button class="w-8 h-8 rounded-s border border-gray-1 
+						\${current <= 1 ? 'text-gray-1 hover:bg-gray-2 cursor-not-allowed' 
+										: 'hover:bg-gray-2'}"
+				        \${current <= 1 ? 'disabled' : ''}
+				        onclick="changePage(\${current - 1})">&lt;</button>
+			`);
+
+			for (let i = 1; i <= maxPages; i++) {
+				paginationHTML.push(`
+					<button class="w-8 h-8 \${i === current ? 'bg-gray-2' : 'hover:bg-gray-2'} border border-gray-1"
+					        onclick="changePage(\${i})">\${i}</button>
+				`);
+			}
+
+			// Next
+			paginationHTML.push(`
+				<button class="w-8 h-8 rounded-e border border-gray-1 
+						\${current >= maxPages ? 'text-gray-1 hover:bg-gray-2 cursor-not-allowed' 
+												: 'hover:bg-gray-2'}"
+						\${current >= maxPages ? 'disabled' : ''}
+				        onclick="changePage(\${current + 1})">&gt;</button>
+			`);
+
+			paginationContainer.html(paginationHTML.join(""));
+		}
+		
+		// 날짜 포맷팅 함수 (yyyy.mm.dd)
+		function formatDate(dateStr) {
+		    if (!dateStr) return "-";
+		    const date = new Date(dateStr);
+		    if (isNaN(date)) return "-";
+		    return date.toLocaleDateString('ko-KR').replace(/\./g, '.').replace(/\s/g, '');
+		}
+		
+		
+		// 🔹 페이지 변경
+		window.changePage = function (page) {
+			if (page < 1) return;
+			currentPage = page;
+			loadGameHistory(token, currentPage);
+		};
 	
 		// 🔄 토큰 유효성 확인 후 로딩
 		$.ajax({
@@ -104,7 +155,7 @@
 				'Authorization': 'Bearer ' + token
 			},
 			success: function () {
-				loadGameHistory(token);
+				loadGameHistory(token, currentPage);
 			},
 			error: function () {
 				alert("로그인 정보가 유효하지 않습니다.");

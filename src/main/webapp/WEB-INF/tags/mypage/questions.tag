@@ -14,52 +14,29 @@
 		<div id="chatlogList"></div>
 	</div>
 	<div class="flex justify-center items-center">
-		<div class="flex items-center">
-			<button class="w-8 h-8 rounded-s border border-gray-1 text-gray-1 hover:bg-gray-2"><</button>
-			<button class="w-8 h-8 bg-gray-2 border border-gray-1">1</button>
-			<button class="w-8 h-8 border border-gray-1 hover:bg-gray-2">2</button>
-			<button class="w-8 h-8 border border-gray-1 hover:bg-gray-2">3</button>
-			<button class="w-8 h-8 border border-gray-1 hover:bg-gray-2">4</button>
-			<button class="w-8 h-8 border border-gray-1 hover:bg-gray-2">5</button>
-			<button class="w-8 h-8 rounded-e border border-gray-1 hover:bg-gray-2">></button>
-		</div>
+		<div id="chatlogPagination" class="flex items-center"></div>
 	</div>
 </div>
 <ui:modal modalId="questionsDetailModal" title="문의내역 상세보기">
 	<jsp:attribute name="content">
 		<div class="py-4 px-2 sm:w-[36rem] md:w-[48rem] min-w-72 flex flex-col gap-y-4">
-			<div class="text-ts-18 sm:text-ts-20 md:text-ts-24 lg:text-ts-28">
-				포인트 충전을 어떻게 해야하나요??
+		
+			<div class="text-lg font-semibold flex justify-between">
+			  <span id="chatDetailTitle">제목</span>
+			  <span id="chatDetailDate" class="text-sm text-gray-500">2025.06.25</span>
 			</div>
-			<div class="w-full overflow-y-scroll">
-				<div class="p-6 bg-white rounded-xl shadow-md border border-gray-200 text-gray-800">
-					<p class="text-base mb-4">
-						안녕하세요 😊<br>
-				    	포인트 충전은 아래의 방법으로 간편하게 하실 수 있습니다:
-				  	</p>
-				  	<ol class="list-decimal list-inside space-y-2 mb-6">
-				    	<li>
-				    		<strong>마이페이지 접속</strong><br>
-				    		화면 상단 메뉴에서 <strong>마이페이지</strong>를 클릭해주세요.
-				    	</li>
-				    	<li>
-				    		<strong>충전하기 버튼 클릭</strong><br>
-				    		마이페이지 내 프로필 영역에 있는 <strong>충전하기</strong> 버튼을 눌러주세요.
-				    	</li>
-				    	<li>
-				      		<strong>충전 금액 입력 및 결제 진행</strong><br>
-				      		원하는 포인트 금액을 입력하신 후, 결제 수단을 선택하여 충전을 완료하시면 됩니다.
-				    	</li>
-				  	</ol>
-					<div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 text-sm text-gray-700">
-						<p class="font-bold mb-2">✅ 주의사항</p>
-					    <ul class="list-disc list-inside space-y-1">
-					    	<li>충전한 포인트는 즉시 사용 가능합니다.</li>
-					      	<li>충전 후 <strong>취소는 불가</strong>하니 신중하게 입력해 주세요.</li>
-					    </ul>
-					</div>
-				</div>
+			
+			<div class="mt-4">
+			  <h4 class="font-semibold mb-1">문의 내용</h4>
+			  <p id="chatDetailQuestion" class="text-sm text-gray-700"></p>
 			</div>
+			
+			<div class="mt-4">
+			  <h4 class="font-semibold mb-1">답변</h4>
+			  <p id="chatDetailAnswer" class="text-sm text-gray-700"></p>
+			  <p class="text-xs text-right text-gray-400 mt-1">답변일시: <span id="chatDetailResponseDate">-</span></p>
+			</div>
+			
 		</div>
 	</jsp:attribute>
 </ui:modal>
@@ -68,6 +45,11 @@
 	$(document).ready(function () {
 		const token = localStorage.getItem('accessToken');
 		const logListContainer = $("#chatlogList");
+		
+		const paginationContainer = $("#chatlogPagination");
+	    const itemsPerPage = 10;
+	    let currentPage = 1;
+	    let totalCount = 0;
 	
 		if (!token) {
 			alert("로그인이 필요합니다.");
@@ -76,15 +58,18 @@
 		}
 	
 		// 사용자 문의 내역 가져오기
-		function loadChatLogs(token) {
+		function loadChatLogs(token, page) {
 			$.ajax({
-				url: '/api/chatlog',
+				url: `/api/chatlog?page=\${page}`,
 				method: 'GET',
 				headers: {
 					'Authorization': 'Bearer ' + token
 				},
-				success: function (logs) {
-					renderChatLogs(logs);
+				success: function (res) {
+					const logs  = res.logs ;
+	                totalCount = res.total;
+	                renderChatLogs(logs, page);
+	                renderChatLogsPagination(page, totalCount);
 				},
 				error: function () {
 					alert("문의 내역을 불러오는 데 실패했습니다.");
@@ -93,7 +78,7 @@
 		}
 	
 		// 문의 내역 렌더링
-		function renderChatLogs(logs) {
+		function renderChatLogs(logs, page) {
 			logListContainer.empty();
 	
 			if (!logs || logs.length === 0) {
@@ -102,21 +87,19 @@
 			}
 	
 			logs.forEach((log, idx) => {
-				const number = idx + 1;
+				const number = (page - 1) * itemsPerPage + idx + 1;
 				const title = log.title || "(제목 없음)";
 				const status = log.response ? "답변완료" : "대기중";
-				const date = new Date(log.chat_date).toISOString().slice(0, 10).replace(/-/g, ".");
+				const statusClass = log.response ? "text-blue-1" : "";
+				const date = formatDate(log.chat_date);
 				const uid = log.uid;
 				
 				const html = `
 					<div class="p-4 grid grid-cols-12 items-center text-center border-b border-gray-1">
 						<span class="font-light">\${number}</span>
 						<span class="col-span-5 truncate">\${title}</span>
-						<span class="col-span-2 font-light">\${status}</span>
-						<button class="col-span-2 underline" 
-							onclick="document.getElementById('questionsDetailModal').classList.remove('hidden')">
-							상세보기
-						</button>
+						<span class="col-span-2 font-light \${statusClass}">\${status}</span>
+						<button class="col-span-2 underline" onclick="openChatDetailModal('\${uid}')">상세보기</button>
 						<span class="col-span-2 font-light">\${date}</span>
 					</div>
 				`;
@@ -124,6 +107,45 @@
 				logListContainer.append(html);
 			});
 		}
+		
+		// 🔹 페이지네이션 렌더링
+		function renderChatLogsPagination(current, totalCount) {
+			paginationContainer.empty();
+			const maxPages = Math.ceil(totalCount / itemsPerPage);
+			const paginationHTML = [];
+
+			paginationHTML.push(`
+				<button class="w-8 h-8 rounded-s border border-gray-1 
+						\${current <= 1 ? 'text-gray-1 hover:bg-gray-2 cursor-not-allowed' 
+								: 'hover:bg-gray-2'}"
+		        		\${current <= 1 ? 'disabled' : ''}
+						onclick="changeChatPage(\${current - 1})">&lt;</button>
+			`);
+
+			for (let i = 1; i <= maxPages; i++) {
+				paginationHTML.push(`
+					<button class="w-8 h-8 \${i === current ? 'bg-gray-2' : 'hover:bg-gray-2'} border border-gray-1"
+							onclick="changeChatPage(\${i})">\${i}</button>
+				`);
+			}
+
+			paginationHTML.push(`
+				<button class="w-8 h-8 rounded-e border border-gray-1 
+						\${current >= maxPages ? 'text-gray-1 hover:bg-gray-2 cursor-not-allowed' 
+								: 'hover:bg-gray-2'}"
+						\${current >= maxPages ? 'disabled' : ''}    
+	                    onclick="changeChatPage(\${current + 1})">&gt;</button>
+			`);
+
+			paginationContainer.html(paginationHTML.join(''));
+		}
+
+		// 🔹 페이지 변경
+		window.changeChatPage = function (page) {
+			if (page < 1) return;
+			currentPage = page;
+			loadChatLogs(token, currentPage);
+		};
 	
 		// 🔄 Token 유효성 확인 → 문의 내역 불러오기
 		$.ajax({
@@ -133,7 +155,7 @@
 				'Authorization': 'Bearer ' + token
 			},
 			success: function () {
-				loadChatLogs(token);
+				loadChatLogs(token, currentPage);
 			},
 			error: function () {
 				alert("로그인 정보가 유효하지 않습니다.");
@@ -142,5 +164,42 @@
 		});
 	
 	});
+	
+	function openChatDetailModal(chatlogUid) {
+	    $.ajax({
+	        url: `/api/chatlog/detail/\${chatlogUid}`,
+	        method: 'GET',
+	        success: function (res) {
+	            // DOM 요소에 데이터 삽입
+	            $('#chatDetailTitle').text(res.title || "(제목 없음)");
+	            $('#chatDetailDate').text(formatDate(res.chat_date));
+	            $('#chatDetailQuestion').text(res.question || "(질문 없음)");
+	            $('#chatDetailAnswer').text(res.response || "(답변 없음)");
+	            $('#chatDetailResponseDate').text(res.response_date ? formatDate(res.response_date) : "-");
+
+	            // 모달 열기
+	            document.getElementById('questionsDetailModal').classList.remove('hidden');
+	        },
+	        error: function () {
+	            alert("문의 상세 정보를 불러오지 못했습니다.");
+	        }
+	    });
+	}
+
+	// 날짜 포맷팅 함수 (yyyy.mm.dd)
+	function formatDate(dateStr) {
+	    if (!dateStr) return "-";
+	    const date = new Date(dateStr);
+	    if (isNaN(date)) return "-";
+	    return date.toLocaleDateString('ko-KR').replace(/\./g, '.').replace(/\s/g, '');
+	}
+	
+	// 렌더링 끝난 뒤 이벤트 바인딩
+	$(document).on('click', '.chat-detail-btn', function () {
+	    const uid = $(this).data('uid');
+	    openChatDetailModal(uid);
+	});
+
+	
 </script>
 

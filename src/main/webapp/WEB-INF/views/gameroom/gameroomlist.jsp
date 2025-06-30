@@ -58,8 +58,6 @@
 		<script type="text/javascript">
 		  $(function () {
 		    let gamerooms = []; // 게임방 리스트
-		    let games = {};    // 게임 정보
-		    let levels = {};   // 게임 난이도 리스트
 		    let playerCounts = {}; // 각 게임방 플레이어 수
 		    let socket;
 		
@@ -68,22 +66,12 @@
 		      return levels[level] || '-';
 		    }
 		
-		    function fetchGameDetail(room) {
-		      return $.ajax({
-		        url: `/api/game/detail/\${room.game_uid}`,
-		        method: "GET",
-		        success: function (gameData) {
-		          games[room.game_uid] = gameData;
-		        }
-		      });
-		    }
-		
-		    function renderGameRooms() {
+		    function renderGameRooms(gamerooms) {
 		      const container = $("#room-container").empty();
 		
 		      gamerooms.forEach(room => {
 		        const html = `
-		          <div data-room-id="${room.uid}" class="game-room min-h-36 flex flex-col justify-between p-4 bg-gray-8 rounded-lg hover:shadow-[2px_2px_8px_rgba(0,0,0,0.15)]">
+		          <div data-room-id="${room.uid}" data-status="${room.status}" class="game-room min-h-36 flex flex-col justify-between p-4 bg-gray-8 rounded-lg hover:shadow-[2px_2px_8px_rgba(0,0,0,0.15)]">
 		            <div class="flex items-center justify-between gap-x-4">
 		              <div class="w-7 sm:w-8 md:w-9 lg:w-10 h-7 sm:h-8 md:h-9 lg:h-10 rounded-full bg-blue-3 flex items-center justify-center text-ts-18 sm:text-ts-20 md:text-ts-24 text-red-1">
 		                \${getLevelText(room.level)}
@@ -110,8 +98,13 @@
 		      });
 		
 		      $(".game-room").on("click", function () {
-		        const roomId = $(this).data("room-id");
-		        window.location.href = `/gameroom/detail/\${roomId}`;
+				  const roomStatus = $(this).data("status");
+				  if(roomStatus !== "PLAYING") {
+					  const roomId = $(this).data("room-id");
+					  window.location.href = "/gameroom/detail/\${roomId}";
+				  } else {
+					  alert("진행중인 게임방입니다.");
+				  }
 		      });
 		    }
 		
@@ -133,7 +126,7 @@
 		          case "delete":
 		          case "enter":
 		          case "exit":
-		            renderGameRooms();
+		            renderGameRooms(gamerooms);
 		            break;
 		          default:
 		            console.warn("알 수 없는 메시지 타입", msg.type);
@@ -153,21 +146,8 @@
 		        url: "/api/gameroom/list",
 		        method: "GET",
 		        success: function (responseData) {
-		          gamerooms = responseData;
-		
-		          let gameReqs = gamerooms.map(room => {
-		            return levelDetail(room, levels).then(() => {
-		              const levelData = levels[room.game_level_uid];
-		              return gameDetail(levelData, games);
-		            });
-		          });
-		
-		          let countReq = countPlayers(playerCounts);
-		
-		          Promise.all([...gameReqs, countReq]).then(() => {
 		            connectGameWebSocket();
-		            renderGameRooms();
-		          });
+		            renderGameRooms(responseData);
 		        }
 		      });
 		    }
@@ -182,7 +162,7 @@
 		
 		          games.forEach(game => {
 		            grid.append(`
-		              <div class="aspect-square bg-blue-4 rounded-md overflow-hidden hover:shadow-[2px_2px_8px_rgba(0,0,0,0.2)]">
+		              <div class="game-select aspect-square bg-blue-4 rounded-md overflow-hidden hover:shadow-[2px_2px_8px_rgba(0,0,0,0.2)]" data-uid="${game.uid}">
 		                <img alt="game image" src="https://bettopia-bucket.s3.ap-southeast-2.amazonaws.com/\${game.game_img}" class="w-full h-full object-cover">
 		              </div>`);
 		          });
@@ -196,7 +176,7 @@
 		          $('#gameGrid').html('<div class="col-span-3 text-red-500 text-center">게임 목록을 불러오지 못했습니다.</div>');
 		        }
 		      });
-		    }
+			}
 		
 		    $('#createGameRoomBtn').on('click', function () {
 		      const error = $('#errorMessage');
