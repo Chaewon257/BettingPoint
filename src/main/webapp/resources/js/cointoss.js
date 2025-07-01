@@ -333,10 +333,10 @@ function flipCoin() {
     // 이제 chance가 소수(0~1)이므로 올바르게 작동
     const isWin = Math.random() < difficultyConfig.chance;
 
-    elements.coin.classList.remove("heads", "tails");
+    elements.coin.classList.remove("coin-heads", "coin-tails");
 
     if (isWin) {
-      elements.coin.classList.add("heads");
+      elements.coin.classList.add("coin-heads");
       gameState.streak++;
       gameState.accumulatedWin = Math.round(gameState.accumulatedWin * difficultyConfig.payout);
       gameState.potentialWin = Math.round(gameState.accumulatedWin * difficultyConfig.payout);
@@ -350,7 +350,7 @@ function flipCoin() {
       elements.stopBtn.disabled = false;
     } else {
        
-      elements.coin.classList.add("tails");
+      elements.coin.classList.add("coin-tails");
      
       sendLoseHistory();
 
