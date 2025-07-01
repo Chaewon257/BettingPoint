@@ -47,6 +47,26 @@
 					}
 				});
 			});
+			
+			$(document).on("click", '.notice-view', function () {
+				const selectednotice = $(this).data("notice");
+				
+				// 콘텐츠 영역 비우고 로딩
+				const contentContainer = $("#support-tab-content");
+				contentContainer.html('<div class="text-center py-8 text-gray-5">로딩 중...</div>');
+				
+				// url: `/support/view/\${selectednotice}`,
+				$.ajax({
+					url: `/support/view`,
+					type: 'GET',
+					success: function (html) {
+						contentContainer.html(html);
+					},
+					error: function () {
+						alert('공지사항 보기 실패');
+					}
+				});
+			});
 		</script>
 	</jsp:attribute>
 </ui:layout>
