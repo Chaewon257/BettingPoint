@@ -133,11 +133,11 @@
 			        const randomIndex = Math.floor(Math.random() * buttons.length);
 			        const randomBtn = buttons.eq(randomIndex);
 
-			        // 스타일 업데이트
+              // 스타일 업데이트
 			        $(".turtle-btn").removeClass("border-blue-2").addClass("border-transparent");
 			        randomBtn.removeClass("border-transparent").addClass("border-blue-2");
 					
-			     	// 선택된 이미지 src 가져오기
+			     	  // 선택된 이미지 src 가져오기
 			        const imgSrc = randomBtn.find("img").attr("src");
 			        $("#mainTurtleImage").attr("src", imgSrc);
 			        
