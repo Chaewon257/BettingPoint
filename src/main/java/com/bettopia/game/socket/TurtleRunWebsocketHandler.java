@@ -182,19 +182,16 @@ public class TurtleRunWebsocketHandler extends TextWebSocketHandler {
 	       playerDAO.removePlayer(roomId, userId);
 	       gameRoomListWebSocket.broadcastMessage("exit");
 
-	       Map<String, Object> data = new HashMap<>();
-	       data.put("userId", userId);
-	       broadcastMessage("exit", roomId, data);
-	    }
-
-	    // 플레이어가 0명일 때 방 삭제
-	    List<TurtlePlayerDTO> players = playerDAO.getAll(roomId);
-	    if (players == null || players.isEmpty()) {
-	       gameroomDAO.deleteRoom(roomId);
-	       // 스케줄러도 종료
-	       ScheduledFuture<?> task = broadcastTasks.remove(roomId);
-	        if (task != null) task.cancel(true);
-	        latestPositions.remove(roomId);
+		   // 플레이어가 0명일 때 방 삭제
+		   List<TurtlePlayerDTO> players = playerDAO.getAll(roomId);
+		   if (players == null || players.isEmpty()) {
+			   gameroomDAO.deleteRoom(roomId);
+			   gameRoomListWebSocket.broadcastMessage("delete");
+			   // 스케줄러도 종료
+			   ScheduledFuture<?> task = broadcastTasks.remove(roomId);
+			   if (task != null) task.cancel(true);
+			   latestPositions.remove(roomId);
+		   }
 	    }
 	}
 

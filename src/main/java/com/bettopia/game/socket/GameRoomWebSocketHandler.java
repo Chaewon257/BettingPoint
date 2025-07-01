@@ -195,11 +195,13 @@ public class GameRoomWebSocketHandler extends TextWebSocketHandler {
 			if(userId.equals(gameroom.getHost_uid())) {
 				List<TurtlePlayerDTO> players = playerDAO.getAll(roomId);
 
-				if(!players.isEmpty()) {
+				if(players != null && !players.isEmpty()) {
 					gameroomDAO.updateHost(roomId, players.get(0).getUser_uid());
 					data.put("hostId", players.get(0).getUser_uid());
 				} else {
+					// 플레이어가 0명일 때 방 삭제
 					gameroomDAO.deleteRoom(roomId);
+					gameRoomListWebSocket.broadcastMessage("delete");
 				}
 			}
 
@@ -213,6 +215,7 @@ public class GameRoomWebSocketHandler extends TextWebSocketHandler {
 		List<TurtlePlayerDTO> players = playerDAO.getAll(roomId);
 		if (players == null || players.isEmpty()) {
 			gameroomDAO.deleteRoom(roomId);
+			gameRoomListWebSocket.broadcastMessage("delete");
 		}
 	}
 
