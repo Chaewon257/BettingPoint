@@ -41,4 +41,3 @@
 			WHERE uid=#{uid}
 	</delete>
 	
-</mapper>
