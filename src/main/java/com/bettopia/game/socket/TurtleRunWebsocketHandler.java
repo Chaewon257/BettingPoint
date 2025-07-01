@@ -1,7 +1,9 @@
 package com.bettopia.game.socket;
 
 import com.bettopia.game.model.auth.AuthService;
+import com.bettopia.game.model.auth.UserVO;
 import com.bettopia.game.model.gameroom.GameRoomDAO;
+import com.bettopia.game.model.gameroom.GameRoomResponseDTO;
 import com.bettopia.game.model.gameroom.GameRoomService;
 import com.bettopia.game.model.history.HistoryService;
 import com.bettopia.game.model.multi.turtle.PlayerDAO;
@@ -122,35 +124,22 @@ public class TurtleRunWebsocketHandler extends TextWebSocketHandler {
                 });
                 break;
 			case "race_finish":
+				ScheduledFuture<?> task = broadcastTasks.remove(roomId);
+	             if (task != null) task.cancel(true);
+	             latestPositions.remove(roomId);
+	             
 				TurtleRunResultDTO dto = new TurtleRunResultDTO();
 			    dto.setUser_uid(userId);
 			    dto.setRoomId(roomId);
 			    dto.setWinner(json.get("winner").asInt());
-			    dto.setUserBet(json.get("userBet").asInt());
-			    dto.setPointChange(json.get("pointChange").asInt());
-			    dto.setSelectedTurtle(json.get("selectedTurtle").asInt());
 			    dto.setDifficulty(json.get("difficulty").asText());
 			    
 			    Map<String, Object> finishMsg = new HashMap<>();
 			    finishMsg.put("type", "race_finish");
 			    finishMsg.put("winner", dto.getWinner());
-			    finishMsg.put("pointChange", dto.getPointChange());
-			    finishMsg.put("bet", dto.getUserBet());
-			    finishMsg.put("userId", dto.getUser_uid());
 			    finishMsg.put("roomId", dto.getRoomId());
-			    finishMsg.put("selectedTurtle", dto.getSelectedTurtle());
 			    finishMsg.put("difficulty", dto.getDifficulty());			    
 			    broadcastMessage("race_finish", roomId, finishMsg);
-			    
-			    // 3. 결과 브로드캐스트 (모달 노출용)
-			    Map<String, Object> resultMsg = new HashMap<>();
-			    resultMsg.put("type", "race_result");
-			    resultMsg.put("winner", dto.getWinner());
-			    resultMsg.put("pointChange", dto.getPointChange());
-			    resultMsg.put("bet", dto.getUserBet());
-			    resultMsg.put("userId", dto.getUser_uid());
-			    resultMsg.put("roomId", dto.getRoomId());
-			    broadcastMessage("race_result", roomId, resultMsg);
 			    break;
 			case "end":
 				Map<String, Object> data = new HashMap<>();
@@ -177,24 +166,42 @@ public class TurtleRunWebsocketHandler extends TextWebSocketHandler {
 
 	    sessionService.removeSession(roomId, session);
 
-	    String gameStatus = gameRoomService.selectById(roomId).getStatus();
+	    UserVO user = authService.findByUid(userId);
+	    
+	    GameRoomResponseDTO gameroom = gameRoomService.selectById(roomId);
+	    String gameStatus = gameroom.getStatus();
+	    
 	    if(!gameStatus.equals("WAITING")) {
-	       playerDAO.removePlayer(roomId, userId);
-	       gameRoomListWebSocket.broadcastMessage("exit");
+	       if(userId.equals(gameroom.getHost_uid())) {
+	          playerDAO.removePlayer(roomId, userId);
+	          
+	          List<TurtlePlayerDTO> players = playerDAO.getAll(roomId);
 
-	       Map<String, Object> data = new HashMap<>();
-	       data.put("userId", userId);
-	       broadcastMessage("exit", roomId, data);
+	          if(players != null && !players.isEmpty()) {
+	             gameroomDAO.updateHost(roomId, players.get(0).getUser_uid());
+	          } else {
+	             // 플레이어가 0명일 때 방 삭제
+	             gameroomDAO.deleteRoom(roomId);
+	             gameRoomListWebSocket.broadcastMessage("delete");
+
+	             ScheduledFuture<?> task = broadcastTasks.remove(roomId);
+	             if (task != null) task.cancel(true);
+	             latestPositions.remove(roomId);
+	          }
+	       }
+
+	       gameRoomListWebSocket.broadcastMessage("exit");
 	    }
 
 	    // 플레이어가 0명일 때 방 삭제
 	    List<TurtlePlayerDTO> players = playerDAO.getAll(roomId);
 	    if (players == null || players.isEmpty()) {
 	       gameroomDAO.deleteRoom(roomId);
+	       gameRoomListWebSocket.broadcastMessage("delete");
 	       // 스케줄러도 종료
 	       ScheduledFuture<?> task = broadcastTasks.remove(roomId);
-	        if (task != null) task.cancel(true);
-	        latestPositions.remove(roomId);
+	       if (task != null) task.cancel(true);
+	       latestPositions.remove(roomId);
 	    }
 	}
 
