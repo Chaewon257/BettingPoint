@@ -55,11 +55,13 @@
 					'gray-6' : '#757575',
 					'gray-7' : '#656565',
 					'gray-8' : '#F4F4F4',
+					'gray-9' : '#A5A5A5',
 					'gray-10' : '#EDEDED',					
 					'blue-1' : '#4A90E2',
 					'blue-2' : '#3F7AB6',
 					'blue-3' : '#A2C8E6',
 					'blue-4' : '#D9E8F2',
+					'blue-5' : '#1967B6',
 					'red-1' : '#EC6F6F',
 				},
 				fontSize : {
@@ -109,6 +111,7 @@
 		
 		<main class="grow flex main-container">
 			<jsp:invoke fragment="bodyContent" />
+			<layout:chatbot pageType="${pageType}" />
 		</main>
 		
 		<layout:footer pageType="${pageType}" />
