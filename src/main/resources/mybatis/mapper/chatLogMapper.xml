@@ -40,4 +40,4 @@
 		DELETE FROM chat_logs
 			WHERE uid=#{uid}
 	</delete>
-	
+</mapper>
