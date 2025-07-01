@@ -9,56 +9,9 @@
 		<span class="col-span-2">작성자</span>
 		<span class="col-span-2">날짜</span>
 	</div>
-	<div class="grid grid-cols-1 grid-rows-10 border-b-2 border-gray-7 mb-6">
-		<div class="p-4 grid grid-cols-12 items-center text-center border-b border-gray-1 font-light">
-			<span>1</span>
-			<span class="col-span-3 truncate">이것이 자유다 정말!!</span>
-			<div class="col-span-2 flex items-center justify-center gap-x-2">
-				<img alt="service image" src="${cpath}/resources/images/like.png" class="w-4">
-				<span>100</span>
-			</div>
-			<div class="col-span-2 flex items-center justify-center gap-x-2">
-				<img alt="service image" src="${cpath}/resources/images/view.png" class="w-4">
-				<span>100</span>
-			</div>
-			<span class="col-span-2">부자가될끄야</span>
-			<span class="col-span-2">2025.06.23</span>
-		</div>
-		<div class="p-4 grid grid-cols-12 items-center text-center border-b border-gray-1 font-light">
-			<span>2</span>
-			<span class="col-span-3 truncate">이것이 자유다 정말!!</span>
-			<div class="col-span-2 flex items-center justify-center gap-x-2">
-				<img alt="service image" src="${cpath}/resources/images/like.png" class="w-4">
-				<span>100</span>
-			</div>
-			<div class="col-span-2 flex items-center justify-center gap-x-2">
-				<img alt="service image" src="${cpath}/resources/images/view.png" class="w-4">
-				<span>100</span>
-			</div>
-			<span class="col-span-2">부자가될끄야</span>
-			<span class="col-span-2">2025.06.23</span>
-		</div>
-		<div class="p-4 grid grid-cols-12 items-center text-center border-b border-gray-1 font-light">
-			<span>3</span>
-			<span class="col-span-3 truncate">이것이 자유다 정말!!</span>
-			<div class="col-span-2 flex items-center justify-center gap-x-2">
-				<img alt="service image" src="${cpath}/resources/images/like.png" class="w-4">
-				<span>100</span>
-			</div>
-			<div class="col-span-2 flex items-center justify-center gap-x-2">
-				<img alt="service image" src="${cpath}/resources/images/view.png" class="w-4">
-				<span>100</span>
-			</div>
-			<span class="col-span-2">부자가될끄야</span>
-			<span class="col-span-2">2025.06.23</span>
-		</div>
-		<div class="p-4 grid grid-cols-12 items-center text-center border-b border-gray-1"></div>
-		<div class="p-4 grid grid-cols-12 items-center text-center border-b border-gray-1"></div>
-		<div class="p-4 grid grid-cols-12 items-center text-center border-b border-gray-1"></div>
-		<div class="p-4 grid grid-cols-12 items-center text-center border-b border-gray-1"></div>
-		<div class="p-4 grid grid-cols-12 items-center text-center border-b border-gray-1"></div>
-		<div class="p-4 grid grid-cols-12 items-center text-center border-b border-gray-1"></div>
-		<div class="p-4 grid grid-cols-12 items-center text-center border-b border-gray-1"></div>
+	<!--JS로 채워질 영역-->
+	<div id="boardList" class="grid grid-cols-1 border-b-2 border-gray-7 mb-6"></div>
+		
 	</div>
 	<div class="w-full flex justify-end items-center mb-4">
 		<a id="writeBoard" href="/board/write" class="text-black no-underline cursor-pointer py-1.5 px-[1.625rem] border-2 border-black rounded-full transition-all duration-300 ease-in-out hover:bg-gray-2">글쓰기</a>
