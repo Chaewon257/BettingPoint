@@ -8,7 +8,8 @@
 	<select id="selectByUser" parameterType="String" resultType="chatlogDTO">
 		SELECT * 
 			FROM chat_logs
-			where user_uid = #{user_uid}
+			WHERE user_uid = #{user_uid}
+			ORDER BY chat_date desc
 	</select>
 	
 	<select id="selectByUid" parameterType="String" resultType="chatlogDTO">
