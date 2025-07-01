@@ -95,12 +95,12 @@ public class GameRoomWebSocketHandler extends TextWebSocketHandler {
 
 			playerDAO.addPlayer(roomId, player);
 			gameRoomListWebSocket.broadcastMessage("enter");
-
-			// 입장 메시지 방송
-			Map<String, Object> data = new HashMap<>();
-			data.put("userId", user.getNickname());
-			broadcastMessage("enter", roomId, data);
 		}
+
+		// 입장 메시지 방송
+		Map<String, Object> data = new HashMap<>();
+		data.put("userId", user.getNickname());
+		broadcastMessage("enter", roomId, data);
 	}
 	
 	private void broadcastMessage(String type, String roomId, Map<String, Object> data) throws IOException {
@@ -125,8 +125,10 @@ public class GameRoomWebSocketHandler extends TextWebSocketHandler {
 		String jsonMessage = mapper.writeValueAsString(messageMap);
 
 		for (WebSocketSession session : sessions) {
-			if (session.isOpen()) {
-				session.sendMessage(new TextMessage(jsonMessage));
+			synchronized (session) {
+				if (session.isOpen()) {
+					session.sendMessage(new TextMessage(jsonMessage));
+				}
 			}
 		}
 	}
