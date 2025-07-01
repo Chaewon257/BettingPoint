@@ -3,6 +3,7 @@ package com.bettopia.game.socket;
 import com.bettopia.game.model.auth.AuthService;
 import com.bettopia.game.model.auth.UserVO;
 import com.bettopia.game.model.gameroom.GameRoomDAO;
+import com.bettopia.game.model.gameroom.GameRoomRequestDTO;
 import com.bettopia.game.model.gameroom.GameRoomResponseDTO;
 import com.bettopia.game.model.gameroom.GameRoomService;
 import com.bettopia.game.model.multi.turtle.PlayerDAO;
@@ -46,6 +47,9 @@ public class GameRoomWebSocketHandler extends TextWebSocketHandler {
 		String userId = (String) session.getAttributes().get("userId");
 		String roomId = (String) session.getAttributes().get("roomId");
 
+		UserVO user = authService.findByUid(userId);
+		GameRoomResponseDTO gameroom = gameRoomService.selectById(roomId);
+
 		if(roomId == null || userId == null) {
 			session.close(CloseStatus.BAD_DATA);
 			return;
@@ -70,8 +74,6 @@ public class GameRoomWebSocketHandler extends TextWebSocketHandler {
 
             // 보유 포인트 검사
             // 최소 베팅 포인트 미만 입장 불가
-            UserVO user = authService.findByUid(userId);
-            GameRoomResponseDTO gameroom = gameRoomService.selectById(roomId);
             if(user.getPoint_balance() < gameroom.getMin_bet()) {
                 session.close(CloseStatus.BAD_DATA);
                 return;
@@ -89,8 +91,7 @@ public class GameRoomWebSocketHandler extends TextWebSocketHandler {
 				.user_uid(userId)
 				.room_uid(roomId)
 				.isReady(false)
-				.turtle_id("1")
-				.betting_point(0)
+				.betting_point(gameroom.getMin_bet())
 				.build();
 
 			playerDAO.addPlayer(roomId, player);
@@ -182,20 +183,31 @@ public class GameRoomWebSocketHandler extends TextWebSocketHandler {
 
 		sessionService.removeSession(roomId, session);
 
-		String gameStatus = gameRoomService.selectById(roomId).getStatus();
+		GameRoomResponseDTO gameroom = gameRoomService.selectById(roomId);
+		String gameStatus = gameroom.getStatus();
+
 		if(!gameStatus.equals("PLAYING")) {
 			playerDAO.removePlayer(roomId, userId);
-			gameRoomListWebSocket.broadcastMessage("exit");
 
-			// 플레이어가 0명일 때 방 삭제
-			List<TurtlePlayerDTO> players = playerDAO.getAll(roomId);
-			if (players == null || players.isEmpty()) {
-				gameroomDAO.deleteRoom(roomId);
+			if(userId.equals(gameroom.getHost_uid())) {
+				List<TurtlePlayerDTO> players = playerDAO.getAll(roomId);
+
+				if(!players.isEmpty()) {
+					gameroomDAO.updateHost(roomId, players.get(0).getUser_uid());
+				}
 			}
+
+			gameRoomListWebSocket.broadcastMessage("exit");
 
 			Map<String, Object> data = new HashMap<>();
 			data.put("userId", userId);
 			broadcastMessage("exit", roomId, data);
+		}
+
+		// 플레이어가 0명일 때 방 삭제
+		List<TurtlePlayerDTO> players = playerDAO.getAll(roomId);
+		if (players == null || players.isEmpty()) {
+			gameroomDAO.deleteRoom(roomId);
 		}
 	}
 
