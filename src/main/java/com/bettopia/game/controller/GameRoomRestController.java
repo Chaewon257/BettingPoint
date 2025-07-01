@@ -64,11 +64,12 @@ public class GameRoomRestController {
 
 	// 게임 시작
 	@PostMapping("/start/{roomId}")
-	public void startGame(@PathVariable String roomId, @RequestBody Map<String, String> request) {
+	public void startGame(@PathVariable String roomId, @RequestBody Map<String, String> request) throws IOException {
 		String newStatus = request.get("status");
 		GameRoomResponseDTO room = gameRoomService.selectById(roomId);
 		if(!room.getStatus().equals(newStatus)) {
 			gameRoomService.updateStatus(roomId, newStatus);
+			gameRoomListWebSocket.broadcastMessage("update");
 		}
 	}
 }

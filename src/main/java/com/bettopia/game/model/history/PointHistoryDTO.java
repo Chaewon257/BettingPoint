@@ -19,4 +19,5 @@ public class PointHistoryDTO {
     private int balance_after;
     private String gh_uid;
     private Date created_at;
+    private String game_name; 
 }

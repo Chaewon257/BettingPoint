@@ -15,6 +15,7 @@ public class GameHistoryDTO {
     private String uid;
     private String user_uid;
     private String game_uid;
+    private String game_name;
     private int betting_amount;
     private String game_result;
     private int point_value;

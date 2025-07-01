@@ -1,4 +1,4 @@
-/* ----------- ¹ÝÀÀÇü SCALE ----------- */
+/* ----------- ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ SCALE ----------- */
 #gameRoot {
 	transform: scale(0.75);
 	transform-origin: center center;
@@ -34,33 +34,33 @@
   align-items: center;
   justify-content: center;
   z-index: 999;
-  background: rgba(20,18,25,0.17); /* ÇÊ¿ä½Ã Åõ¸íµµ, »ö»ó º¯°æ */
+  background: rgba(20,18,25,0.17); /* ï¿½Ê¿ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ */
   font-size: 8vw;
   color: #fff;
   font-weight: bold;
   letter-spacing: 0.6vw;
   text-shadow: 0 2px 8px #2228;
   pointer-events: none;
-  border-radius: 36px;   /* ÇÊ¿ä½Ã °ÔÀÓÈ­¸é°ú µ¿ÀÏÇÏ°Ô */
+  border-radius: 36px;   /* ï¿½Ê¿ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½È­ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ */
   overflow: hidden;
   transition: font-size 0.2s, letter-spacing 0.2s;
 }
 
-/* ÅÂºí¸´¿¡¼­ ´õ Å©°Ô, °£°Ýµµ Á¶±Ý ´õ ³Ð°Ô */
+/* ï¿½Âºï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ Å©ï¿½ï¿½, ï¿½ï¿½ï¿½Ýµï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ð°ï¿½ */
 @media (max-width: 1024px) {
   #countdownOverlay, .countdown-overlay {
     font-size: 12vw;
     letter-spacing: 1vw;
-    border-radius: 18px;      /* ÅÂºí¸´Àº ¶ó¿îµåµµ ¾à°£ ÁÙÀÏ ¼ö ÀÖÀ½ */
+    border-radius: 18px;      /* ï¿½Âºï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½åµµ ï¿½à°£ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ */
   }
 }
 
-/* ¸ð¹ÙÀÏ¿¡¼­ Á¦ÀÏ Å©°Ô, °£°ÝÀº 1.5vw, ¶ó¿îµå Á¦°Å */
+/* ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Å©ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 1.5vw, ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ */
 @media (max-width: 640px) {
   #countdownOverlay, .countdown-overlay {
     font-size: 16vw;
     letter-spacing: 1.5vw;
-    border-radius: 0;         /* ¸ð¹ÙÀÏÀº ¶ó¿îµå ¾øÀÌ ²Ë Ã¤¿ì±â */
+    border-radius: 0;         /* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ Ã¤ï¿½ï¿½ï¿½ */
   }
 }
 
@@ -89,31 +89,31 @@ body, html {
   box-sizing: border-box;
 }
 
-/* °üÁß¼® PNG Æ®·¢ »ó´Ü */
+/* ï¿½ï¿½ï¿½ß¼ï¿½ PNG Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ */
 .crowd-repeat {
   width: 100%;
-  height: 16vh; /* PNG °üÁß¼® Å©±â(»ó´Ü¿¡¼­ °íÁ¤) */
-  min-height: 56px; /* ÃÖ¼Ò ³ôÀÌ */
-  background-image: url('/resources/images/crowd.png'); /* ¾÷·Îµå PNG */
+  height: 16vh; /* PNG ï¿½ï¿½ï¿½ß¼ï¿½ Å©ï¿½ï¿½(ï¿½ï¿½Ü¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½) */
+  min-height: 56px; /* ï¿½Ö¼ï¿½ ï¿½ï¿½ï¿½ï¿½ */
+  background-image: url('/resources/images/crowd.png'); /* ï¿½ï¿½ï¿½Îµï¿½ PNG */
   background-repeat: repeat-x;
   background-size: auto 100%;
   background-position: bottom left;
   z-index: 2;
   pointer-events: none;
   flex: 0 0 16vh;
-  padding: 0; /* ÆÐµù Á¦°Å */
+  padding: 0; /* ï¿½Ðµï¿½ ï¿½ï¿½ï¿½ï¿½ */
   transition: transform 0.08s linear;
   will-change: transform;
 }
 .crowd-stand {
-  width: 100%; height: 2vh; /* °üÁß¼® ¾Æ·¡ ÁÙ ³ôÀÌ */
-  min-height: 10px; /* ÃÖ¼Ò ³ôÀÌ */
+  width: 100%; height: 2vh; /* ï¿½ï¿½ï¿½ß¼ï¿½ ï¿½Æ·ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ */
+  min-height: 10px; /* ï¿½Ö¼ï¿½ ï¿½ï¿½ï¿½ï¿½ */
   background: repeating-linear-gradient(-45deg, #e9e9ef 0 7px, #636c92 7px 12px, #b99a83 12px 18px);
   background-repeat: repeat-x;
   background-size: auto 100%;
   background-position: bottom left;
   border-bottom: 4px solid #bbb;
-  padding: 0; /* ÆÐµù Á¦°Å */
+  padding: 0; /* ï¿½Ðµï¿½ ï¿½ï¿½ï¿½ï¿½ */
   z-index: 2;
   flex: 0 0 2vh; 
   transition: transform 0.08s linear;
@@ -121,7 +121,7 @@ body, html {
 }
 
 #trackContainer {
-  flex: 1 1 0%;    /* Æ®·¢ÀÌ ÀüÃ¼ ¿µ¿ªÀ» ÀÚµ¿À¸·Î Ã¤¿ò */
+  flex: 1 1 0%;    /* Æ®ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Úµï¿½ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½ */
   position: relative;
   width: 100vw;
   min-height: 0;
@@ -140,18 +140,18 @@ body, html {
   box-sizing: border-box;
 }
 
-/* Æ®·¢ */
+/* Æ®ï¿½ï¿½ */
 .track-container {
   position: relative;
-  width: 100%;  /* JS¿¡¼­ width ¼³Á¤ */
-  /* height´Â JS¿¡¼­ ÀÚµ¿ ÇÒ´çµÊ */
+  width: 100%;  /* JSï¿½ï¿½ï¿½ï¿½ width ï¿½ï¿½ï¿½ï¿½ */
+  /* heightï¿½ï¿½ JSï¿½ï¿½ï¿½ï¿½ ï¿½Úµï¿½ ï¿½Ò´ï¿½ï¿½ */
   display: block;
 }
 
 .track-line {
   position: absolute;
   width: 100%;
-  background: #e1764e; /* ½ÇÁ¦ Æ®·¢ »ö»ó */
+  background: #e1764e; /* ï¿½ï¿½ï¿½ï¿½ Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ */
   box-shadow: 0 1.5px 7px #652a1524, 0 0.5px 0 #fff5 inset;
   position: absolute;
   left: 0;
@@ -175,45 +175,45 @@ body, html {
 .start-line {
   position: absolute;
   top: 0;
-  width: 38px;         /* ¼± ±½±â ¸ÂÃß·Á¸é (24~38 µî ¿øÇÏ´Â ¸¸Å­) */
+  width: 38px;         /* ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ß·ï¿½ï¿½ï¿½ (24~38 ï¿½ï¿½ ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½Å­) */
   height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center; /* ¼öÁ÷Á¤·Ä */
+  justify-content: center; /* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ */
   z-index: 15;
   border-radius: 6px;
-  /* ¼¼·Î ÁÙ¹«´Ì ¹× ¹è°æ»ö»ó ÁöÁ¤ */
+  /* ï¿½ï¿½ï¿½ï¿½ ï¿½Ù¹ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ */
   background: repeating-linear-gradient(
    90deg, #fff 0 19px, #2196f3 19px 38px
-  ); /* ÆÄ¶û/Èò»ö ÁÙ¹«´Ì, µÎÄ­¸¶´Ù ¹Ýº¹ */
+  ); /* ï¿½Ä¶ï¿½/ï¿½ï¿½ï¿½ ï¿½Ù¹ï¿½ï¿½ï¿½, ï¿½ï¿½Ä­ï¿½ï¿½ï¿½ï¿½ ï¿½Ýºï¿½ */
   box-shadow: 1px 0 6px #2196f377;
 }
 
 .finish-line {
   position: absolute;
   top: 0;
-  width: 38px;         /* ¼± ±½±â ¸ÂÃß·Á¸é (24~38 µî ¿øÇÏ´Â ¸¸Å­) */
+  width: 38px;         /* ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ß·ï¿½ï¿½ï¿½ (24~38 ï¿½ï¿½ ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½Å­) */
   height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center; /* ¼öÁ÷Á¤·Ä */
+  justify-content: center; /* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ */
   z-index: 15;
   border-radius: 6px;
-  /* ¼¼·Î ÁÙ¹«´Ì ¹× ¹è°æ»ö»ó ÁöÁ¤ */
+  /* ï¿½ï¿½ï¿½ï¿½ ï¿½Ù¹ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ */
   background: repeating-linear-gradient(
    90deg, #fff 0 19px, #d62c16 19px 38px
-  ); /* »¡°­/Èò»ö ÁÙ¹«´Ì */
+  ); /* ï¿½ï¿½ï¿½ï¿½/ï¿½ï¿½ï¿½ ï¿½Ù¹ï¿½ï¿½ï¿½ */
   box-shadow: 1px 0 6px #c1141477;
 }
 
 .start-line-label, .finish-line-label {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;  /* ¼öÁ÷! */
+  justify-content: space-between;  /* ï¿½ï¿½ï¿½ï¿½! */
   align-items: center;
-  height: 100%;      /* ¼± ÀüÃ¼ ³ôÀÌ¿¡ ¸ÂÃã */
+  height: 100%;      /* ï¿½ï¿½ ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½Ì¿ï¿½ ï¿½ï¿½ï¿½ï¿½ */
   font-size: 2.1em;
   font-weight: bold;
   letter-spacing: 0.12em;
@@ -224,7 +224,7 @@ body, html {
 }
 .start-line-label span, .finish-line-label span {
   display: block;
-  /* °¢ ÁÙ Á¤·Ä/µ¿ÀÏ Å©±â ¿øÇÒ ¶§ flex: 1 ºÎ¿© */
+  /* ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½/ï¿½ï¿½ï¿½ï¿½ Å©ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ flex: 1 ï¿½Î¿ï¿½ */
 }
 
 .start-line-label {
@@ -235,7 +235,7 @@ body, html {
   text-shadow: 0 2px 12px #fff9;
 }
 
-/* °ÅºÏÀÌ ÀÌ¹ÌÁö ¾Ö´Ï¸ÞÀÌ¼Ç */
+/* ï¿½Åºï¿½ï¿½ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½ ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ */
 .turtle {
   position: absolute;
   top: 10px;
@@ -245,7 +245,7 @@ body, html {
   object-fit: contain;
 }
 
-.turtle.selected {
+.live-turtle.my-turtle {
   border: 3px solid gold;
 }
 
@@ -277,19 +277,19 @@ body, html {
     z-index: 10001;
 }
  */
-/* °á°ú ¸ð´Þ ¿À¹ö·¹ÀÌ/ÆË¾÷ ½ºÅ¸ÀÏ */
+/* ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½/ï¿½Ë¾ï¿½ ï¿½ï¿½Å¸ï¿½ï¿½ */
 .modal {
-  /* display: none;                ±âº»Àº ¾Èº¸ÀÓ */
+  /* display: none;                ï¿½âº»ï¿½ï¿½ ï¿½Èºï¿½ï¿½ï¿½ */
   position: absolute;
-  z-index: 1001;                /* ÃÖ»ó´Üº¸´Ù À§ */
+  z-index: 1001;                /* ï¿½Ö»ï¿½Üºï¿½ï¿½ï¿½ ï¿½ï¿½ */
   left: 0; top: 0;
   width: 100%; height: 100%;
-  background: rgba(0,0,0,0.5);  /* ¹ÝÅõ¸í °ËÁ¤ ¹è°æ */
-  justify-content: center;      /* Flex ¼öÆòÁ¤·Ä */
+  background: rgba(0,0,0,0.5);  /* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ */
+  justify-content: center;      /* Flex ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ */
   align-items: center;
 }
 
-/* ¸ð´Þ ³»ºÎ ÄÁÅÙÃ÷ */
+/* ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ */
 .modal-content {
   background: white;
   border-radius: 12px;
@@ -300,13 +300,13 @@ body, html {
   width: 400px;
 }
 
-/* ¸ð´Þ ³»ºÎÀÇ °á°ú ÀÌ¹ÌÁö Å©±â Á¶Á¤ */
+/* ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½ Å©ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ */
 #resultImage img {
-  max-width: 180px;  /* ¿øÇÏ´Â ÃÖ´ë Å©±â */
-  width: 100%;       /* ÄÁÅ×ÀÌ³Ê ³ÐÀÌ±îÁö ´Ã¾î³ª¸é 100% */
-  height: auto;      /* ºñÀ² À¯Áö */
+  max-width: 180px;  /* ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½Ö´ï¿½ Å©ï¿½ï¿½ */
+  width: 100%;       /* ï¿½ï¿½ï¿½ï¿½ï¿½Ì³ï¿½ ï¿½ï¿½ï¿½Ì±ï¿½ï¿½ï¿½ ï¿½Ã¾î³ªï¿½ï¿½ 100% */
+  height: auto;      /* ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ */
   display: block;
-  margin: 0 auto;    /* °¡¿îµ¥ Á¤·Ä */
+  margin: 0 auto;    /* ï¿½ï¿½ï¿½îµ¥ ï¿½ï¿½ï¿½ï¿½ */
 }
 
 .result-turtle-img {
@@ -322,7 +322,7 @@ body, html {
   margin-top: 10px;
 }
 
-/* ´Ý±â ¹öÆ° */
+/* ï¿½Ý±ï¿½ ï¿½ï¿½Æ° */
 .modal-close {
   position: absolute;
   top: 8px; right: 12px;
@@ -334,7 +334,7 @@ body, html {
   color: #000;
 }
 
-/* ¸ð´Þ ³»ºÎ Ä«¿îÆ®´Ù¿î ÅØ½ºÆ® */
+/* ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ä«ï¿½ï¿½Æ®ï¿½Ù¿ï¿½ ï¿½Ø½ï¿½Æ® */
 .countdown-text {
   margin-top: 12px;
   font-size: 14px;

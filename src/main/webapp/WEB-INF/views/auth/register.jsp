@@ -4,7 +4,7 @@
 
 <ui:layout pageName="Betting Poing 회원가입" pageType="lobby">
 	<jsp:attribute name="bodyContent">
-		<div class="fixed top-0 left-0 flex items-center justify-center h-screen w-full px-10 md:px-0 pt-11 md:pt-16 lg:pt-20">
+		<div class="grow flex items-center justify-center w-full px-10 md:px-0 ">
 	  		<div class="w-full flex items-end justify-center gap-x-5">
 	  			<img class="hidden md:block max-w-[14rem] min-w-[8rem]" src="${cpath}/resources/images/auth_fox.png" alt="Fox Character" />
 	  			<div class="flex min-w-[22rem] max-w-[56.063rem] grow bg-white rounded-3xl shadow-[2px_2px_8px_rgba(0,0,0,0.15)]">
@@ -21,25 +21,16 @@
 		  						<span class="text-xs text-gray-6 pl-1">이메일</span>
 		  						<div class="w-full flex items-center gap-x-2 mb-2">
 		  							<input type="email" id="email" name="email" class="grow px-4 py-2 text-xs outline-none bg-gray-4 rounded-full border border-gray-5" placeholder="사용자 ID(Email)" required>
-		  							<button id="verifyEmailbtn" class="px-3 py-2 text-xs rounded-full border border-blue-3 bg-blue-3 text-white hover:border-blue-2 hover:bg-blue-1">중복검사</button>
-		  							<input id="verifyEmail" type="checkbox" class="w-0 h-0" >
+		  							<button id="requestVerificationBtn" class="px-3 py-2 text-xs rounded-full border border-blue-3 bg-blue-3 text-white hover:border-blue-2 hover:bg-blue-1">인증번호요청</button>
 		  						</div>
-								<div class="w-full flex items-center gap-x-2 mb-2">
-									<button id="requestVerificationBtn" type="button"
-											class="px-3 py-2 text-xs rounded-full border border-blue-3 bg-blue-3 text-white hover:border-blue-2 hover:bg-blue-1">
-										인증번호 요청
-									</button>
-								</div>
-								<div id="verificationSection" class="w-full flex items-center gap-x-2 mb-2 hidden">
-									<input type="text" id="verificationCodeInput"
-										   class="grow px-4 py-2 text-xs outline-none bg-gray-4 rounded-full border border-gray-5"
-										   placeholder="인증번호 입력">
-									<button id="verifyCodeBtn" type="button"
-											class="px-3 py-2 text-xs rounded-full border border-blue-3 bg-blue-3 text-white hover:border-blue-2 hover:bg-blue-1">
-										인증 확인
-									</button>
-									<input id="emailVerified" type="checkbox" class="w-0 h-0">
-								</div>
+		  					</div>
+		  					<div class="flex flex-col items-start gap-y-1">
+		  						<span class="text-xs text-gray-6 pl-1">인증번호</span>
+		  						<div class="w-full flex items-center gap-x-2 mb-2">
+		  							<input type="text" id="verificationCodeInput" name="verificationCodeInput" class="grow px-4 py-2 text-xs outline-none bg-gray-4 rounded-full border border-gray-5" placeholder="인증번호 입력" required>
+		  							<button id="verifyCodeBtn" class="px-3 py-2 text-xs rounded-full border border-blue-3 bg-blue-3 text-white hover:border-blue-2 hover:bg-blue-1">인증번호확인</button>
+		  						</div>
+		  						<input id="emailVerified" type="checkbox" class="absolute w-0 h-0">
 		  					</div>
 		  					<div class="flex flex-col items-start gap-y-1">
 		  						<span class="text-xs text-gray-6 pl-1">비밀번호</span>
@@ -58,7 +49,7 @@
 		  						<div class="w-full flex items-center gap-x-2 mb-2">
 		  							<input type="text" id="nickname" name="nickname" class="grow px-4 py-2 text-xs outline-none bg-gray-4 rounded-full border border-gray-5" placeholder="닉네임" required>
 		  							<button id="verifyNicknamebtn" class="px-3 py-2 text-xs rounded-full border border-blue-3 bg-blue-3 text-white hover:border-blue-2 hover:bg-blue-1">중복검사</button>
-		  							<input id="verifyNickname" type="checkbox" class="w-0 h-0" >
+		  							<input id="verifyNickname" type="checkbox" class="absolute w-0 h-0" >
 		  						</div>
 		  					</div>
 		  					<div class="flex flex-col items-start gap-y-1">
@@ -70,7 +61,7 @@
 		  						<input type="text" id="phoneNumber" name="phoneNumber" class="w-full px-4 py-2 text-xs outline-none bg-gray-4 rounded-full border border-gray-5 mb-2" placeholder="전화번호(010-0000-0000)" required>
 		  					</div>
 		  					<div class="flex items-center justify-end px-2 mb-2">
-			  					<span id="errorMessage" class="grow text-xs h-5 text-red-600 text-base"></span>
+			  					<span id="errorMessage" class="grow text-xs h-5 text-red-600"></span>
 			  					<div id="fakeCheckBox" class="flex items-center justify-end gap-x-2 text-gray-6">
 			  						<div id="fakeCheckIcon" class="w-4 h-4 border border-gray-6 rounded-full flex items-center justify-center">&#x2713;</div>
 			  						<span>개인정보 수집 및 이용 동의</span>
@@ -87,7 +78,7 @@
 	  	</div>
 	  	<ui:modal modalId="agreePrivacyInfoModal" title="개인정보 수집 및 이용 안내">
 	  		<jsp:attribute name="content">
-	  			<div class="max-h-[35rem] overflow-y-scroll max-w-[25rem] text-xs">
+	  			<div class="overflow-y-scroll max-w-[25rem] text-xs">
 	  				개인정보보호법에 따라 베팅포인트에 회원가입 신청하시는 분께 수집하는 개인정보의 항목, 개인정보의 수집 및 이용목적, 개인정보의 보유 및 이용기간, 동의 거부권 및 동의 거부 시 불이익에 관한 사항을 안내 드리오니 자세히 읽은 후 동의하여 주시기 바랍니다.<br/>
 				    <br/>
 				    <span class="text-xl font-semibold">1. 수집하는 개인정보</span><br/>
@@ -147,47 +138,6 @@
 		    		fakeCheckIcon.classList.add("border-gray-6");
 		    	}
 		    });
-		    
-		    /* 이메일 중복 확인 이벤트 */
-		   	document.getElementById('verifyEmailbtn').addEventListener('click', function (e) {
-		        const error = document.getElementById('errorMessage');
-		        error.textContent = "";
-
-		        const email = document.getElementById('email');
-		        const verifyEmail = document.getElementById('verifyEmail');
-
-		        const emailVal = email.value.trim();
-
-		        if (!emailVal) {
-		            error.textContent = "이메일을 입력해주세요.";
-		            email.classList.add("border-red-600");
-		            return;
-		        }
-
-		        $.ajax({
-		            url: '/api/auth/check-email',
-		            method: 'GET',
-		            data: { email: emailVal },
-		            success: function (res) {
-		                if (res.duplicate) {
-		                    // 중복된 이메일
-		                    email.classList.remove("border-gray-5");
-		                    email.classList.add("border-red-600");
-		                    error.textContent = "이미 사용 중인 이메일입니다.";
-		                    verifyEmail.checked = false;
-		                } else {
-		                    // 사용 가능한 이메일
-		                    email.classList.remove("border-red-600");
-		                    email.classList.add("border-gray-5");
-		                    verifyEmail.checked = true;
-		                    alert("사용 가능한 이메일입니다.");
-		                }
-		            },
-		            error: function () {
-		                error.textContent = "이메일 확인 중 오류가 발생했습니다.";
-		            }
-		        });
-		    });
 
 			/* 이메일 인증번호 요청 */
 			document.getElementById('requestVerificationBtn').addEventListener('click', function () {
@@ -211,8 +161,6 @@
 					data: JSON.stringify({ email: emailVal }),
 					success: function (res) {
 						alert(res); // "인증번호가 이메일로 발송되었습니다." 표시
-						document.getElementById('requestVerificationBtn').style.display = 'none';
-						document.getElementById('verificationSection').classList.remove('hidden');
 					},
 					error: function () {
 						error.textContent = "인증번호 요청 중 오류가 발생했습니다.";
@@ -302,7 +250,7 @@
 			    error.textContent = "";
 		
 			    const email = document.getElementById('email');
-		    	const verifyEmail = document.getElementById('verifyEmail');
+				const emailVerified = document.getElementById('emailVerified');
 			    const password = document.getElementById('password');
 			    const passwordCheck = document.getElementById('passwordCheck');
 			    const name = document.getElementById('name');
@@ -313,17 +261,11 @@
 			    const phoneNumber = document.getElementById('phoneNumber');
 			    const agreePrivacy = document.getElementById('agreePrivacy');
 				const age = new Date().getFullYear() - birthDateVal.getFullYear();
-				const emailVerified = document.getElementById('emailVerified');
 
 				if (!emailVerified.checked) {
 					error.textContent = "이메일 인증을 완료해야 합니다.";
 					return;
 				}
-
-				if (!verifyEmail.checked) {
-		        	error.textContent = "이메일 중복 검사를 해야합니다.";
-		        	return;
-		        }
 
 				if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{6,}$/.test(password.value)) {
 					password.classList.remove("border-gray-5");

@@ -32,7 +32,13 @@ public class HistoryDAO {
 	public int countPointHistory(String userId) {
 		return sqlSession.selectOne(namespace + "countPointHistory", userId);
 	}
+	
+	
+	public GameHistoryDTO selectGameHistoryByUid(String ghUid) {
+	    return sqlSession.selectOne(namespace + "selectGameHistoryByUid", ghUid);
+	}
 
+	
     public List<GameHistoryDTO> gameHistoryList(String userId, int offset, int size) {
         Map<String, Object> params = new HashMap<>();
         params.put("offset", offset);
@@ -59,6 +65,9 @@ public class HistoryDAO {
                 .point_value(gameHistory.getPoint_value())
                 .game_result(gameHistory.getGame_result())
                 .build();
+        
+        history.setGame_name(gameHistory.getGame_name());
+
         sqlSession.insert(namespace + "insertGameHistory", history);
         return history;
     }
