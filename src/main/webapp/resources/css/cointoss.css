@@ -1,413 +1,107 @@
-/* 
-전체 요소에 여백 제거, 박스 사이즈 설정
-*/
-* {
-  margin: 0; /* 기본 마진 제거 */
-  padding: 0; /* 기본 패딩 제거 */
-  box-sizing: border-box; /* width/height에 padding과 border 포함 */
-}
-
-.header{
-  position: relative; /* 자식 버튼의 절대 위치 기준 */
-  margin-bottom: 30px;
-  text-align: center; /* 제목 가운데 정렬 */
-} 
-
-/* 바디 설정 */
+/* 글꼴 및 body 기본 설정 */
 body {
-  font-family: 'Noto Sans KR', sans-serif; /* 기본 글꼴 */
-  min-height: 100vh; /* 최소 높이: 화면 전체 */
-  background: #eaf6fd; /* 밝은 파란 배경 */
-  padding: 20px; /* 바디 전체 패딩 */
-  color: #1E3A5F; /* 기본 글자색 (짙은 남색) */
-  overflow-x: auto; /* 가로 스크롤 허용 (작은 기기 대응) */
-}
-
-/* 가운데 정렬된 전체 레이아웃 컨테이너 */
-.custom-container {
-  width: 80%; /* 전체 너비 사용 */
-  max-width: 1200px; /* 최대 너비 제한 (데스크톱 대응) */
-  margin: 0 auto; /* 가운데 정렬 */
-  min-width: 320px; /* 최소 너비 설정 (모바일 대응) */
-  height: 60%;
-}
-
-.move-home{
-  position: absolute;
-  top: 0;
-  right: 0;
-  background: #A3D3F5;
+  font-family: 'Noto Sans KR', sans-serif;
+  background: #eaf6fd;
   color: #1E3A5F;
-  border: none;
-  padding: 10px 16px;
-  border-radius: 8px;
-  font-weight: bold;
-  cursor: pointer;
-  font-size: clamp(12px, 2vw, 14px);
-  transition: background 0.3s ease;
-}
-
-/* 헤더 영역 */
-.header {
-  text-align: center; /* 중앙 정렬 */
-  margin-bottom: 30px; /* 하단 여백 */
-}
-.title {
-  font-size: clamp(20px, 4vw, 28px); /* 반응형 폰트 크기 */
-  font-weight: 700; /* 굵은 글씨 */
-  color: #1E3A5F; /* 메인 텍스트 색 */
-}
-
-/* 공통 카드 스타일 */
-.card {
-  background: #ffffff; /* 흰 배경 */
-  border-radius: 16px; /* 둥근 테두리 */
-  padding: clamp(1.5vw, 3vw, 5vw); /* 모든 단위를 vw로 설정 */
-  border: 1px solid #c9e4f8; /* 연한 파란 테두리 */
-  min-height: 400px; /* 원하는 최소 높이로 설정 (조정 가능) */
-}
-
-/* 좌우 패널 배치 */
-.horizontal-layout {
-  display: flex; /* 가로 배치 */
-}
-
-/* 좌/우 패널 공통 스타일 */
-.left-panel,
-.right-panel {
-  flex: 1; /* 동일한 비율로 배치 */
-  display: flex;
-  flex-direction: column; /* 내부 요소 세로 정렬 */
-  gap: 20px; /* 내부 요소 간 간격 */
-}
-
-/* 세로로 쌓기 */
-@media (max-width: 768px) {
-  .horizontal-layout {
-    flex-direction: column; /* 수직 배치 */
-    gap: 20px; /* 간격 조정 */
-  }
-
-  .left-panel {
-    border-right: none; /* 테두리 제거 */
-    padding-right: 0;
-    border-bottom: 2px solid #cce7f9; /* 하단 구분선 */
-    padding-bottom: 20px;
-  }
-
-  .right-panel {
-    padding-left: 0;
-    padding-top: 20px;
-  }
-}
-
-/* 데스크톱에서 좌우 여백 및 테두리 */
-@media (min-width: 769px) {
-  .left-panel {
-    border-right: 2px solid #cce7f9; /* 오른쪽 테두리 */
-    padding-right: 24px;
-  }
-  .right-panel {
-    padding-left: 24px;
-  }
-}
-
-@media (min-width: 1440px) {
-  .custom-container {
-    width: 75%;
-    max-width: 1600px;
-  }
-
-  .card {
-    padding: 50px; /* 조금 더 넉넉하게 */
-    min-height: 600px;
-  }
-
-  .right-panel {
-    padding-left: 60px;
-  }
-}
-
-/* 잔액 정보 박스 */
-.balance-info {
-  background: #A3D3F5; /* 연한 파란 배경 */
+  margin: 0;
   padding: 20px;
-  border-radius: 12px;
-  text-align: center;
-  color: #1E3A5F;
-}
-.balance-label {
-  font-size: 14px;
-  opacity: 0.9; /* 약간 투명 */
-}
-.balance-amount {
-  font-size: clamp(20px, 5vw, 28px); /* 반응형 크기 */
-  font-weight: bold;
+  min-height: 100vh;
+  overflow-x: auto;
+  box-sizing: border-box;
 }
 
-.section-title {
-  font-size: clamp(16px, 3vw, 18px);
-  font-weight: bold;
-  margin-bottom: 12px;
-  line-height: 1.2;
-  color: #1E3A5F;
+*, *::before, *::after {
+  box-sizing: border-box;
 }
 
-.section-header {
-  display: flex;
-  gap: 10px; /* 요소 사이 간격 */
-}
-
-.difficulty-options {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); /* 반응형 그리드 */
-  gap: 12px;
-}
-.difficulty-option {
-  padding: 16px 8px;
-  border: 2px solid #cbe5fa;
-  border-radius: 12px;
-  background: white;
-  text-align: center;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-.difficulty-option:hover {
-  background: #e5f3fd;
-}
-.difficulty-option.selected {
-  border-color: #82C2EF;
-  background: #A3D3F5;
-  color: #1E3A5F;
-}
-.difficulty-name {
-  font-size: clamp(14px, 2.5vw, 16px);
-  font-weight: bold;
-  margin-bottom: 6px;
-}
-.difficulty-chance {
-  font-size: clamp(11px, 2vw, 13px);
-  margin-bottom: 4px;
-}
-.difficulty-payout {
-  font-size: clamp(12px, 2.2vw, 14px);
-  font-weight: bold;
-  color: #ff6b35; /* 주황색 */
-}
-.difficulty-option.selected .difficulty-payout {
-  color: #0d47a1; /* 진한 파랑 */
-}
-
-/* 베팅 입력 필드 */
-.bet-input-container {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 10px;
-}
-.bet-input {
-  flex: 1;
-  padding: 12px;
-  border: 2px solid #82C2EF;
-  border-radius: 8px;
-  font-size: clamp(14px, 2.5vw, 16px);
-  text-align: center;
-  min-width: 0;
-}
-.bet-input:focus {
-  outline: none;
-  border-color: #1E88E5;    
-}
-
-/* 베팅 프리셋 버튼 */
-.bet-buttons {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
-  gap: 8px;
-}
-.bet-preset {
-  padding: 12px 8px;
-  border: none;
-  border-radius: 8px;
-  background: #A3D3F5;
-  color: #1E3A5F;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background 0.3s;
-  font-size: clamp(12px, 2vw, 14px);
-}
-.bet-preset:hover {
-  background: #82C2EF;
-}
-
-/* 통계 영역 */
-.stats-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
-  gap: 12px;
-}
-.stat-item {
-  text-align: center;
-  padding: 10px;
-  background: #f0f8fe;
-  border-radius: 8px;
-  height: 80px;
-}
-.stat-label {
-  font-size: clamp(11px, 2vw, 13px);
-  color: #607d8b;
-  margin-bottom: 4px;
-}
-.stat-value {
-  font-size: clamp(14px, 3vw, 20px);
-  font-weight: bold;
-}
-
-/* 코인 이미지 */
-.coin-container {
-  margin-top: 10px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-.coin {
-  width: 180px;
-  height: 180px;
-  border-radius: 50%;
-  background-size: cover;
-  background-position: center;
-  backface-visibility: hidden;
-  cursor: pointer;
-  user-select: none;
-  transform-style: preserve-3d;
-  transition: none;   
-}
-.coin.heads {
+/* 코인 이미지 배경 */
+.coin-heads {
   background-image: url('../images/coin-head.png');
   filter: drop-shadow(0 0 12px rgba(255, 215, 0, 0.5));
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+  transition: none;
 }
-.coin.tails {
+
+.coin-tails {
   background-image: url('../images/coin-tail.png');
   filter: drop-shadow(0 0 10px rgba(100, 100, 100, 0.6));
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+  transition: none;
 }
-.coin:hover {
-  transform: scale(1.05);
-}
-.coin-symbol {
-  font-size: clamp(40px, 8vw, 64px);
-  font-weight: bold;
-}
-.coin.heads .coin-symbol {
+
+/* 코인 기호 색상 */
+.coin-heads .coin-symbol {
   color: #b8860b;
 }
-.coin.tails .coin-symbol {
+
+.coin-tails .coin-symbol {
   color: #555;
 }
-.start-error-message{
-  padding: 10px;
-  border-radius: 8px;
-  text-align: center;
-  margin-top: 15px;
-  font-weight: bold;
-  font-size: clamp(14px, 2.5vw, 16px);
-  display: none;
-  color: #c62828;
+
+/* 난이도 선택 상태 */
+.difficulty-option.selected,
+.difficulty-selected {
+  border-color: #82C2EF !important;
+  background: #A3D3F5 !important;
+  color: #1E3A5F !important;
 }
 
-/* 결과 메시지 */
-.result-message {
-  padding: 10px;
-  border-radius: 8px;
-  text-align: center;
-  margin-top: 15px;
-  font-weight: bold;
-  font-size: clamp(14px, 2.5vw, 16px);
-  display: none;
+.difficulty-option.selected .difficulty-payout,
+.difficulty-selected .difficulty-payout {
+  color: #0d47a1 !important;
 }
+
+/* 결과 메시지 스타일 */
 .result-win {
-  background: #e3fcec;
-  color: #2e7d32;
+  background: #e3fcec !important;
+  color: #2e7d32 !important;
 }
+
 .result-lose {
-  background: #ffebee;
-  color: #c62828;
+  background: #ffebee !important;
+  color: #c62828 !important;
 }
 
-.input-error {
-  display: none;
-  color: #c62828;
+/* 애니메이션 */
+@keyframes flip {
+  0% {
+    transform: rotateX(0deg) rotateY(0deg);
+  }
+  100% {
+    transform: rotateX(5000deg) rotateY(5000deg);
+  }
 }
 
-/* 게임 버튼 */
-.game-buttons {
-  margin-top: 25px;
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-.game-button {
-  padding: 12px 24px;
-  border: none;
-  border-radius: 10px;
-  font-size: clamp(14px, 2.5vw, 16px);
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  background: #6dbaf1;
-  color: #ffffff;
-  min-width: 80px;
-}
-.game-button:hover {
-  background: #4394ce;
-}
-.btn-success {
-  background: #4caf50;
-  color: white;
-}
-.btn-success:hover {
-  background: #388e3c;
-}
-.btn-danger {
-  background: #f44336;
-  color: white;
-}
-.btn-danger:hover {
-  background: #d32f2f;
-}
-.game-button:disabled {
-  background: #ccc;
-  cursor: not-allowed;
+.flipping {
+  animation: flip 2s linear forwards;
+  transform-style: preserve-3d;
 }
 
-/* 매우 작은 화면 대응 */
+/* 모바일 대응 - 매우 작은 화면 */
 @media (max-width: 480px) {
   body {
     padding: 10px;
   }
+  
   .difficulty-options {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr !important;
   }
+  
   .bet-buttons {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, 1fr) !important;
   }
+  
   .stats-container {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr !important;
   }
 }
 
-/* 애니메이션 */
-.hidden {
-  display: none;
-}
-@keyframes flip {
-  0% {
-      transform: rotateX(0deg) rotateY(0deg);
-  }
-  100% {
-      transform: rotateX(5000deg) rotateY(5000deg);
-  }
-}
-.flipping {
-   animation: flip 2s linear forwards;
-  transform-style: preserve-3d;
+/* 난이도 선택 상태 */
+.difficulty-option.selected,
+.difficulty-selected {
+  border-color: #93c5fd !important;
+  background: #93c5fd !important;    
+  color: #1e3a8a !important;       
 }
