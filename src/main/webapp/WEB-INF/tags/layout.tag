@@ -26,7 +26,7 @@
 <script type="text/javascript">
 	$(document).ready(function () {
 		let token = localStorage.getItem('accessToken');
-	
+
 		$.ajaxSetup({
 			beforeSend: function (xhr) {
 				if (token) {
@@ -56,12 +56,13 @@
 					'gray-7' : '#656565',
 					'gray-8' : '#F4F4F4',
 					'gray-9' : '#A5A5A5',
-					'gray-10' : '#EDEDED',					
+					'gray-10' : '#EDEDED',
 					'blue-1' : '#4A90E2',
 					'blue-2' : '#3F7AB6',
 					'blue-3' : '#A2C8E6',
 					'blue-4' : '#D9E8F2',
 					'blue-5' : '#1967B6',
+					'blue-6' : '#D2E1EB',
 					'red-1' : '#EC6F6F',
 				},
 				fontSize : {
@@ -88,6 +89,13 @@
 					],
 					'ts-18' : [
 						'1rem',
+						{
+							ineHeight: '100%',
+		  					fontWeight: '800'
+						}
+					],
+					'ts-14' : [
+						'0.75rem',
 						{
 							ineHeight: '100%',
 		  					fontWeight: '800'
