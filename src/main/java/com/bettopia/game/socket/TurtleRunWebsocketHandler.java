@@ -2,9 +2,11 @@ package com.bettopia.game.socket;
 
 import com.bettopia.game.model.auth.AuthService;
 import com.bettopia.game.model.auth.UserVO;
+import com.bettopia.game.model.game.GameService;
 import com.bettopia.game.model.gameroom.GameRoomDAO;
 import com.bettopia.game.model.gameroom.GameRoomResponseDTO;
 import com.bettopia.game.model.gameroom.GameRoomService;
+import com.bettopia.game.model.history.GameHistoryDTO;
 import com.bettopia.game.model.history.HistoryService;
 import com.bettopia.game.model.multi.turtle.PlayerDAO;
 import com.bettopia.game.model.multi.turtle.TurtlePlayerDTO;
@@ -48,11 +50,15 @@ public class TurtleRunWebsocketHandler extends TextWebSocketHandler {
     private HistoryService historyService;
     @Autowired
 	private GameRoomListWebSocket gameRoomListWebSocket;
+    @Autowired
+	private GameService gameService;
+    
     
 
     private final Map<String, List<Double>> latestPositions = new ConcurrentHashMap<>();
     private final Map<String, ScheduledFuture<?>> broadcastTasks = new ConcurrentHashMap<>();
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(4);
+    private final Map<String, List<String>> exitedPlayers = new ConcurrentHashMap<>();
     
 	@Override
 	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
@@ -172,11 +178,28 @@ public class TurtleRunWebsocketHandler extends TextWebSocketHandler {
 	    String gameStatus = gameroom.getStatus();
 	    
 	    if(!gameStatus.equals("WAITING")) {
+	    	exitedPlayers.computeIfAbsent(roomId,  k -> new ArrayList<>()).add(userId);
 	       if(userId.equals(gameroom.getHost_uid())) {
 	          playerDAO.removePlayer(roomId, userId);
 	          
 	          List<TurtlePlayerDTO> players = playerDAO.getAll(roomId);
+	          
+	          if (gameroom != null && userId.equals(gameroom.getHost_uid())) {
 
+	              if (players != null && !players.isEmpty()) {
+	                  String newHostUid = players.get(0).getUser_uid();
+	                  gameroomDAO.updateHost(roomId, newHostUid);
+
+	                  // 현재 레이스 위치와 상태도 같이 전달
+	                  Map<String, Object> msg = new HashMap<>();
+	                  msg.put("type", "host_changed");
+	                  msg.put("newHostUid", newHostUid);
+	                  msg.put("positions", latestPositions.get(roomId)); // 현재 거북이 위치
+	                  // (필요하면 타이머, 진행중인 상태 등도 같이)
+	                  broadcastMessage("host_changed", roomId, msg);
+	              }
+	          }
+	          
 	          if(players != null && !players.isEmpty()) {
 	             gameroomDAO.updateHost(roomId, players.get(0).getUser_uid());
 	          } else {

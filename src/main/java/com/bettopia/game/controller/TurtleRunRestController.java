@@ -92,7 +92,7 @@ public class TurtleRunRestController {
 	        gameUid,
 	        gameName,
 	        betAmount,
-	        winAmount - betAmount,
+	        Math.abs(winAmount - betAmount),
 	        gameResult,
 	        uid
 	    );

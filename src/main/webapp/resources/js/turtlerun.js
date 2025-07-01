@@ -95,7 +95,7 @@ function players(room, roomPlayers, callback) {
 function renderGameDetail(room, roomPlayers) {
     // 1. 난이도, 거북이 수 등
     const difficulty = room.level;
-    const turtleCount = difficultyMap[difficulty]?.count || 8;  
+    const turtleCount = difficultyMap[difficulty]?.count;  
     // 3. 사용자 베팅, 포인트, 선택 등
     const myInfo = roomPlayers.find(p => p.user_uid === userId);
     const userBet = myInfo.betting_point;
@@ -146,6 +146,18 @@ function connectGameWebSocket(roomId) {
 
     ws.onmessage = function(event) {
         const msg = JSON.parse(event.data);
+        // 방장이 퇴장했을 때 방장 변경
+        if(msg.type === "host_changed") {
+            // 방장 UID 갱신
+            isHost = (userId === msg.newHostUid);
+            if(isHost) {
+                if(msg.positions) {
+                    turtleGame.positions = msg.positions;
+                }
+                turtleGame.isRacing = true;
+                turtleGame.runRace();
+            } 
+        }
         // 모든 플레이어 위치 갱신!
         if (msg.type === "race_update" && turtleGame) { 
            if(!isHost) {
@@ -155,15 +167,6 @@ function connectGameWebSocket(roomId) {
         // 경기 종료
         if(msg.type === "race_finish" && turtleGame) {
             turtleGame.finishRace(msg);
-            // 1. 결과 모달에 필요한 정보
-            showResultModal({
-                winner: msg.winner,
-                didwin: msg.yourResult.didwin,
-                pointChange: msg.yourResult.pointChange,
-                // points: msg.yourResult.points,
-                bet: msg.yourResult.bet,
-                selectedTurtle: msg.yourResult.selectedTurtle
-            });
         }
         if(msg.type === "end") {
             const targetUrl = msg.target;
@@ -582,7 +585,6 @@ class TurtleRacingGame {
                 roomId: this.roomId
             }));
         }
-        // this.resultSent = true;
 
         // 애니메이션
         this.turtleElements.forEach(turtle => {if(turtle) turtle.classList.remove('racing')});
