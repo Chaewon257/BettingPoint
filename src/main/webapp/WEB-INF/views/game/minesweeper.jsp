@@ -9,7 +9,8 @@
 <div class="w-4/5 max-w-screen-xl mx-auto min-w-80 h-3/5 xl:w-3/4 xl:max-w-screen-2xl">
   <div class="relative mb-8 text-center">
     <h1 class="text-xl font-bold text-blue-900 sm:text-2xl lg:text-3xl xl:text-4xl">
-      💎 지뢰찾기 게임
+      <img src="${cpath}/resources/images/bomb.png" alt="지뢰" class="inline-block  h-11 sm: sm:h-13 lg: lg:h-15 xl: xl:h-17 mr-2">
+      지뢰찾기 게임
     </h1>
     <button class="absolute top-0 right-0 bg-blue-200 text-blue-900 border-none py-2 px-4 rounded-lg font-bold cursor-pointer text-xs transition-colors duration-300 hover:bg-blue-300 sm:text-sm"
       onclick="location.href='/solo'">개인게임 리스트로 이동하기</button>
@@ -98,9 +99,9 @@
           난이도와 베팅 금액을 선택하고 게임을 시작하세요!
         </div>
 
-        <div class="mt-6 flex gap-3 flex-wrap">
+        <div class="mt-4 flex gap-3 flex-wrap">
           <button class="game-button py-3 px-6 rounded-xl text-sm font-bold bg-blue-200 text-blue-900 hover:bg-blue-300 sm:text-base" id="start-btn">게임 시작</button>
-          <button class="game-button btn-success hidden py-3 px-6 rounded-xl text-sm font-bold bg-green-500 text-white hover:bg-green-700 sm:text-base" id="cashout-btn">현금화</button>
+          <button class="game-button btn-success hidden py-3 px-6 border-none rounded-xl text-sm font-bold cursor-pointer transition-all duration-300 bg-red-500 text-white min-w-20 hover:bg-red-700 sm:text-base disabled:bg-gray-400 disabled:cursor-not-allowed" id="stop-btn">STOP</button>
         </div>
 
         <div class="start-error-message p-2.5 rounded-lg text-center mt-4 font-bold text-sm hidden text-red-700 sm:text-base" id="start-error-message"></div>
