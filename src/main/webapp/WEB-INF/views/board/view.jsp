@@ -37,7 +37,7 @@
             <div class="grid grid-cols-8 text-gray-3 font-light text-xs sm:text-sm md:text-base">
               <span id="detailAuthor" class="col-span-4 text-start">—</span>
               <div class="flex items-center justify-center">
-	              <button class="flex items-center justify-center gap-x-2 px-2 py-1 rounded-full hover:bg-gray-1">
+	              <button id="likeBtn" class="flex items-center justify-center gap-x-2 px-2 py-1 rounded-full hover:bg-gray-1">
 	                <img alt="like image" src="${cpath}/resources/images/like.png" class="w-4">
 	                <span id="detailLikeCount">0</span>
 	              </button>
@@ -52,16 +52,17 @@
             </div>
 
             <!-- 본문 -->
-            <div id="detailContent" class="w-full h-96 bg-white p-2 overflow-y-scroll">
+            <div id="detailContent" class="w-full h-[500px] bg-white p-2 overflow-y-scroll">
               로딩 중…
             </div>
           </div>
 
           <!-- 우측: 버튼 -->
           <div class="col-span-1 flex lg:flex-col items-center justify-end gap-4 bg-blue-4 p-4 font-bold text-white text-base md:text-lg lg:text-xl">
-            <button id="btnEdit" class="w-full bg-blue-3 hover:bg-blue-4 rounded-full py-2.5">수정하기</button>
-            <button onclick="history.back()"
-                    class="w-full bg-blue-2 hover:bg-blue-1 rounded-full py-2.5">뒤로가기</button>
+            <button id="btnEdit" style="display:none" class="w-full bg-blue-3 hover:bg-blue-4 rounded-full py-2.5">수정하기</button>
+            <button id="btnDelete" style="display:none" class="w-full bg-gray-1 hover:bg-gray-5 text-red-1 rounded-full py-2.5">삭제하기</button>
+            <button type="button" onclick="location.href='${cpath}/board';"
+					class="w-full bg-blue-2 hover:bg-blue-1 rounded-full py-2.5">뒤로가기</button>
           </div>
         </div>
       </div>
@@ -82,7 +83,7 @@
       : {};
 
     $.ajax({
-      url: `\${cpath}/api/board/boarddetail/\${boardId}`,
+      url: `${cpath}/api/board/boarddetail/\${boardId}`,
       type: "GET",
       headers: headers,
       success: function(board) {
@@ -95,15 +96,11 @@
           new Date(board.created_at).toLocaleString("ko-KR")
         );
         $("#detailContent").html(board.content);
-
-        // 작성자와 로그인 사용자 비교
+        
         if (board.oner === true) {
-          $("#btnEdit").show();
-          $("#btnDelete").show();
-        } else {
-          $("#btnEdit").hide();
-          $("#btnDelete").hide();
-        }
+            $("#btnEdit, #btnDelete").show();
+          }
+		
       },
       error: function() {
         alert("상세 정보를 불러오지 못했습니다.");
@@ -115,9 +112,61 @@
   $(document).ready(function(){
     loadBoardDetail(boardId);
     
-    $('#btnEdit').show().on('click', function(){
+    $('#btnEdit').on('click', function(){
         window.location.href = `\${cpath}/board/write/\${boardId}`;
       });
+    
+ 	// 삭제 버튼 클릭
+    $("#btnDelete").on("click", function() {
+      if (!confirm("정말 삭제하시겠습니까?")) return;
+
+      const token   = localStorage.getItem("accessToken");
+      const headers = token ? { "Authorization": "Bearer " + token } : {};
+
+      $.ajax({
+        url: `${cpath}/api/board/boarddelete/${boardId}`,
+        type: "DELETE",
+        headers: headers,
+        success: function() {
+          alert("게시글이 삭제되었습니다.");
+          location.href = `${cpath}/board`;
+        },
+        error: function() {
+          alert("삭제에 실패했습니다. 다시 시도해주세요.");
+        }
+      });
+    });
+	    
   });
+  //좋아요 버튼 클릭 시
+  $(document).on("click", "#likeBtn", function () {
+	  
+	  const token = localStorage.getItem("accessToken");
+	  if (!token) {
+	    alert("로그인이 필요합니다.");
+	    return;
+	  }
+
+	  if (!currentBoardUid) {
+	    alert("게시글 정보가 없습니다.");
+	    return;
+	  }
+
+	  $.ajax({
+	    url: "/api/board/like/" + currentBoardUid,
+	    method: "POST",
+	    success: function () {
+	      let likeSpan = $("#likeCount");
+	      let likeSpan2 = $("#detailLikeCount");
+	      let current = parseInt(likeSpan.text()) || 0;
+	      let current2 = parseInt(likeSpan2.text()) || 0;
+	      likeSpan.text(current + 1);
+	      likeSpan2.text(current2 + 1);
+	    },
+	    error: function () {
+	      alert("좋아요 처리에 실패했습니다.");
+	    }
+	  });
+	});
   
 </script>
