@@ -32,10 +32,7 @@
 		</div>
 	</jsp:attribute>
 </ui:layout>
-		<script type="text/javascript">
-  		const cpath = '${pageContext.request.contextPath}';
-		</script>
-		<script src="${cpath}/resources/js/board2.js"></script>
+		<script src="/resources/js/board2.js"></script>
 		<script>
 		$(function(){
 		      // 페이지 로드 시 
