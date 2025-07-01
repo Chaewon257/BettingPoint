@@ -13,7 +13,7 @@ import com.bettopia.game.model.game.GameService;
 
 @Controller
 @RequestMapping("/solo")
-public class CoinTossController {
+public class GameController {
 	
 	
 	@Autowired
@@ -28,5 +28,17 @@ public class CoinTossController {
 	    
 	    model.addAttribute("gameUid", game.getUid());
 	    return "game/cointoss";
+	}
+	
+	
+	@GetMapping("/minesweeper")
+	public String renderMineSweeperPage(Model model) {
+	    GameResponseDTO game = gameService.selectByName("minesweeper")
+	        .stream()
+	        .findFirst()
+	        .orElseThrow(() -> new IllegalStateException("'minesweeper' 게임이 존재하지 않습니다."));
+	    
+	    model.addAttribute("gameUid", game.getUid());
+	    return "game/minesweeper";
 	}
 }
