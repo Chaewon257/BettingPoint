@@ -27,6 +27,7 @@ let currentSort     = "created_at";
 	      category: currentCategory,
 	      sort:     currentSort
 	    },
+	    dataType: "json",
 	    success: function (res) {
 	    
 		    // 메타 업데이트
@@ -78,51 +79,55 @@ let currentSort     = "created_at";
      $("#boardList").html(listHtml);
  }
 	
-function renderPaging(current, totalCount) {
-  const itemsPerPage = PAGE_SIZE;
-  const maxPages     = Math.ceil(totalCount / itemsPerPage);
-  const html         = [];
+  function renderPaging(current, totalCount) {
+	  const itemsPerPage = PAGE_SIZE;
+	  const maxPages     = Math.ceil(totalCount / itemsPerPage);
+	  const html         = [];
 
-  // ◀ 이전
-  html.push(`
-    <button
-      class="w-8 h-8 rounded-s border border-gray-1
-             ${current <= 1
-               ? 'text-gray-1 cursor-not-allowed'
-               : 'hover:bg-gray-2'}"
-      ${current <= 1 ? 'disabled' : ''}
-      onclick="loadBoardList(${current - 1}, '${currentCategory}', '${currentSort}')">
-      &lt;
-    </button>
-  `);
+	  // ◀ 이전
+	  html.push(`
+	    <button
+	      class="w-8 h-8 rounded-s border border-gray-1
+	             ${current <= 1
+	               ? 'text-gray-1 cursor-not-allowed'
+	               : 'hover:bg-gray-2'}"
+	      ${current <= 1 ? 'disabled' : ''}
+	      onclick="loadBoardList(${current - 1}, '${currentCategory}', '${currentSort}')">
+	      &lt;
+	    </button>
+	  `);
 
-  // [1] [2] … 숫자
-  for (let i = 1; i <= maxPages; i++) {
-    html.push(`
-      <button
-        class="w-8 h-8 border border-gray-1
-               ${i === current
-                 ? 'bg-gray-2'
-                 : 'hover:bg-gray-2'} page-btn"
-        onclick="loadBoardList(${i}, '${currentCategory}', '${currentSort}')">
-        ${i}
-      </button>
-    `);
-  }
+	  // [1] [2] … 숫자
+	  for (let i = 1; i <= maxPages; i++) {
+	    html.push(`
+	      <button
+	        class="w-8 h-8 border border-gray-1
+	               ${i === current
+	                 ? 'bg-gray-2'
+	                 : 'hover:bg-gray-2'} page-btn"
+	        onclick="loadBoardList(${i}, '${currentCategory}', '${currentSort}')">
+	        ${i}
+	      </button>
+	    `);
+	  }
 
-  // ▶ 다음
-  html.push(`
-    <button
-      class="w-8 h-8 rounded-e border border-gray-1
-             ${current >= maxPages
-               ? 'text-gray-1 cursor-not-allowed'
-               : 'hover:bg-gray-2'}"
-      ${current >= maxPages ? 'disabled' : ''}
-      onclick="loadBoardList(${current + 1}, '${currentCategory}', '${currentSort}')">
-      &gt;
-    </button>
-  `);
+	  // ▶ 다음
+	  html.push(`
+	    <button
+	      class="w-8 h-8 rounded-e border border-gray-1
+	             ${current >= maxPages
+	               ? 'text-gray-1 cursor-not-allowed'
+	               : 'hover:bg-gray-2'}"
+	      ${current >= maxPages ? 'disabled' : ''}
+	      onclick="loadBoardList(${current + 1}, '${currentCategory}', '${currentSort}')">
+	      &gt;
+	    </button>
+	  `);
 
-  // 컨테이너에 출력
-  $("#paging").html(html.join(''));
-}
+	  // 컨테이너에 출력
+	  $("#paging").html(html.join(''));
+	}
+  
+  	$(function() {
+	  loadBoardList(1);
+	});
