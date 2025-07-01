@@ -35,12 +35,12 @@
 
             <!-- 작성자 · 좋아요 · 조회수 · 작성일 -->
             <div class="grid grid-cols-8 text-gray-3 font-light text-xs sm:text-sm md:text-base">
-              <span id="detailAuthor" class="text-start">—</span>
-              <div class="flex items-center justify-center gap-x-2">
-                <img alt="like image"
-                     src="${cpath}/resources/images/like.png"
-                     class="w-4">
-                <span id="detailLikeCount">0</span>
+              <span id="detailAuthor" class="col-span-4 text-start">—</span>
+              <div class="flex items-center justify-center">
+	              <button class="flex items-center justify-center gap-x-2 px-2 py-1 rounded-full hover:bg-gray-1">
+	                <img alt="like image" src="${cpath}/resources/images/like.png" class="w-4">
+	                <span id="detailLikeCount">0</span>
+	              </button>
               </div>
               <div class="flex items-center justify-center gap-x-2">
                 <img alt="view image"
@@ -48,12 +48,11 @@
                      class="w-4">
                 <span id="detailViewCount">0</span>
               </div>
-              <span id="detailCreatedAt" class="text-end">—</span>
+              <span id="detailCreatedAt" class="col-span-2 text-end">—</span>
             </div>
 
             <!-- 본문 -->
-            <div id="detailContent"
-                 class="w-full h-96 bg-white p-2 overflow-y-scroll">
+            <div id="detailContent" class="w-full h-96 bg-white p-2 overflow-y-scroll">
               로딩 중…
             </div>
           </div>

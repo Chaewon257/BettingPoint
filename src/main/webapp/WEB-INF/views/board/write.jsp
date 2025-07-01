@@ -72,12 +72,13 @@
 
           <div class="col-span-1 flex lg:flex-col items-center justify-end gap-4
                       bg-blue-4 p-4 font-bold text-white text-base md:text-lg lg:text-xl">
-            <button class="w-full bg-blue-3 hover:bg-blue-4 rounded-full py-2.5"
-                    onclick="history.back()">취소하기</button>
             <button type="submit"
                     class="w-full bg-blue-2 hover:bg-blue-1 rounded-full py-2.5">
               ${mode == 'create' ? '등록하기' : '수정하기'}
             </button>
+            <button id="boardDeleteBtn" class="w-full bg-gray-1 hover:bg-gray-5 text-red-1 rounded-full py-2.5">삭제하기</button>
+            <button class="w-full bg-blue-3 hover:bg-blue-4 rounded-full py-2.5"
+                    onclick="history.back()">취소하기</button>
           </div>
         </form>
       </div>
@@ -209,5 +210,13 @@
           $("#category").val(selectedTab);
         });
       });
+      
+      	$('#boardDeleteBtn').on("click", function () {
+			const isConfirmed = confirm("정말 삭제할거야?");
+    	    if (!isConfirmed) {
+    	        return;
+    	    }
+    	    
+      	});
     </script>
   
