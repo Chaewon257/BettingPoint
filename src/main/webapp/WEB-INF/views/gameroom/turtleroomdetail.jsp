@@ -86,7 +86,6 @@
 						게임 시작
 					</button>
 
-
 					<!-- 준비 버튼 -->
 					<button id="ready-btn" class="w-full bg-blue-2 hover:bg-blue-5 rounded-lg text-white shadow-[2px_2px_8px_rgba(0,0,0,0.1)] font-extrabold sm:text-base md:text-lg lg:text-xl xl:text-2xl py-2 md:py-4">
 						게임 준비
@@ -104,6 +103,7 @@
 			let userId;
 			let point_balance = 0;
 			let hostId;
+            let playerCount = 0;
 			const turtleMap = {
 				one: 1,
 				two: 2,
@@ -154,7 +154,7 @@
 							window.location.href = targetUrl;
 							break;
 						default:
-							console.warn("알 수 없는 메시지 타입:", msg.type);
+							break;
 					}
 				};
 
@@ -233,6 +233,7 @@
 				$playerList.empty(); // 기존 플레이어 목록 초기화
 
 				let isAllReady = true;
+                playerCount = players.length;
 
 				players.forEach(player => {
 					const turtleId = player.turtle_id ?? 0;
@@ -396,6 +397,10 @@
 					const $btn = $(this);
 					$btn.text(isReady ? '준비 완료' : '게임 준비');
 
+                    // 준비 상태일 때 선택 및 입력 비활성화
+                    $('input[name="turtle"]').prop('disabled', isReady);
+                    $('#bet_point').prop('disabled', isReady);
+
 					socket.send(JSON.stringify({
 						type: "ready",
 						isReady: isReady
@@ -417,6 +422,11 @@
 					alert("포인트를 베팅해주세요.");
 					return;
 				}
+
+                if(playerCount < 2) {
+                    alert("최소 플레이 인원은 2명입니다.");
+                    return;
+                }
 
 				$.ajax({
 					url: `/api/gameroom/start/${roomId}`,
