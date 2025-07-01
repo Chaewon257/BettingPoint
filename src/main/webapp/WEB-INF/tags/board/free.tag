@@ -20,9 +20,8 @@
 		<a id="writeBoard" href="/board/write" class="text-black no-underline cursor-pointer py-1.5 px-[1.625rem] border-2 border-black rounded-full transition-all duration-300 ease-in-out hover:bg-gray-2">글쓰기</a>
 	</div>
 	<div class="flex justify-center items-center">
-		<div id = "paging" class="flex items-center">
-			
-		</div>
+		<!-- 여기 id="paging"만 남겨두고 안의 버튼은 제거 -->
+  		<div id="paging" class="flex items-center"></div>
 	</div>
 </div>
 <script type="text/javascript">
