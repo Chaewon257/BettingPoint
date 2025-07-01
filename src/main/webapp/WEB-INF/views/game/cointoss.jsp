@@ -10,7 +10,7 @@ pageEncoding="UTF-8"%>
   <div class="w-4/5 max-w-screen-xl mx-auto min-w-80 h-3/5 xl:w-3/4 xl:max-w-screen-2xl">
      <div class="relative mb-8 text-center">
      <h1 class="text-xl font-bold text-blue-900 sm:text-2xl lg:text-3xl xl:text-4xl">
-	 <img src="${cpath}/resources/images/coin-head.png" alt="코인" class="inline-block w-6 h-9 sm:w-8 sm:h-11 lg:w-10 lg:h-13 xl:w-12 xl:w-13 mr-2">
+	 <img src="${cpath}/resources/images/coin-head.png" alt="코인" class="inline-block  h-9 sm: sm:h-11 lg: lg:h-13 xl: xl:h-13 mr-2">
       Coin Toss
      </h1>
         <button class="absolute top-0 right-0 bg-blue-200 text-blue-900 border-none py-2 px-4 rounded-lg font-bold cursor-pointer text-xs transition-colors duration-300 hover:bg-blue-300 sm:text-sm"
@@ -28,7 +28,9 @@ pageEncoding="UTF-8"%>
            </div>
 
            <div>
-              <h3 class="text-base font-bold mb-3 leading-tight text-blue-900 sm:text-lg">🎯 난이도 선택</h3>
+              <h3 class="text-base font-bold mb-3 leading-tight text-blue-900 sm:text-lg">
+              <img src="${cpath}/resources/images/difficulty.png" alt="난이도" class="inline-block  h-5 sm: sm:h-7 lg: lg:h-8 xl: xl:h-13 mr-2">
+               난이도 선택</h3>
               <div class="grid grid-cols-[repeat(auto-fit,minmax(80px,1fr))] gap-3">
                  <div class="difficulty-option py-4 px-2 border-2 border-blue-200 rounded-xl bg-white text-center cursor-pointer transition-all duration-300 hover:bg-blue-50" data-difficulty="hard">
                     <div class="text-sm font-bold mb-1.5 sm:text-base">상</div>
@@ -50,7 +52,9 @@ pageEncoding="UTF-8"%>
 
            <div>
               <div class="flex gap-2.5 mb-3">
-                 <h3 class="text-base font-bold leading-tight text-blue-900 sm:text-lg">💰 배팅 금액</h3>
+                 <h3 class="text-base font-bold leading-tight text-blue-900 sm:text-lg">
+                   <img src="${cpath}/resources/images/betting-money.png" alt="배팅금액" class="inline-block  h-3 sm: sm:h-5 lg: lg:h-6 xl: xl:w-7 mr-2">
+                  배팅 금액</h3>
                  <span class="input-error hidden text-red-700" id="input-error"></span>
               </div>
               <div class="flex items-center gap-3 mb-2.5">
