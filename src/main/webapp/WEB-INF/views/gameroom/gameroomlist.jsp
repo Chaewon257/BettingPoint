@@ -73,7 +73,7 @@
 		
 		      		gamerooms.forEach(room => {
 		        	const html = `
-		          		<div data-room-id="\${room.uid}" data-status="$\{room.status}" class="game-room min-h-36 flex flex-col justify-between p-4 bg-gray-8 rounded-lg hover:shadow-[2px_2px_8px_rgba(0,0,0,0.15)]">
+		          		<div data-room-id="\${room.uid}" data-status="\${room.status}" class="game-room min-h-36 flex flex-col justify-between p-4 bg-gray-8 rounded-lg hover:shadow-[2px_2px_8px_rgba(0,0,0,0.15)]">
 		            		<div class="flex items-center justify-between gap-x-4">
 		              			<div class="w-7 sm:w-8 md:w-9 lg:w-10 h-7 sm:h-8 md:h-9 lg:h-10 rounded-full bg-blue-3 flex items-center justify-center text-ts-18 sm:text-ts-20 md:text-ts-24 text-red-1">
 		                			\${getLevelText(room.level)}
@@ -103,7 +103,7 @@
 		
 		      		$(".game-room").on("click", function () {
 				  		const roomStatus = $(this).data("status");
-				  		
+				  		console.log(roomStatus);
 				  		if(roomStatus !== "PLAYING") {
 					  		const roomId = $(this).data("room-id");
 					  		window.location.href = `/gameroom/detail/\${roomId}`;
