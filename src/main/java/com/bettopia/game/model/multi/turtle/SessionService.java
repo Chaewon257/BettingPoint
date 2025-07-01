@@ -33,14 +33,17 @@ public class SessionService {
         if(sessions != null) {
             sessions.removeIf(session -> {
                 String sessionUserId = (String) session.getAttributes().get("userId");
-                if(session.isOpen() && userId.equals(sessionUserId)) {
-                    try {
-                        session.close(CloseStatus.NORMAL);
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                if (userId.equals(sessionUserId)) {
+                    if (session.isOpen()) {
+                        try {
+                            session.close(CloseStatus.NORMAL);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
+                    return true;  // userId가 같은 세션만 삭제
                 }
-                return true;
+                return false;  // 나머지는 삭제하지 않음
             });
             if(sessions.isEmpty()) {
                 roomSessions.remove(roomId);
