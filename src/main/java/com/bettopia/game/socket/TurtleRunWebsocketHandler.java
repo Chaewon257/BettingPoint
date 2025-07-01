@@ -1,6 +1,7 @@
 package com.bettopia.game.socket;
 
 import com.bettopia.game.model.auth.AuthService;
+import com.bettopia.game.model.auth.LoginDAO;
 import com.bettopia.game.model.auth.UserVO;
 import com.bettopia.game.model.game.GameService;
 import com.bettopia.game.model.gameroom.GameRoomDAO;
@@ -8,6 +9,7 @@ import com.bettopia.game.model.gameroom.GameRoomResponseDTO;
 import com.bettopia.game.model.gameroom.GameRoomService;
 import com.bettopia.game.model.history.GameHistoryDTO;
 import com.bettopia.game.model.history.HistoryService;
+import com.bettopia.game.model.history.PointHistoryDTO;
 import com.bettopia.game.model.multi.turtle.PlayerDAO;
 import com.bettopia.game.model.multi.turtle.TurtlePlayerDTO;
 import com.bettopia.game.model.multi.turtle.TurtleRunResultDTO;
@@ -44,28 +46,29 @@ public class TurtleRunWebsocketHandler extends TextWebSocketHandler {
 	private GameRoomDAO gameroomDAO;
 	@Autowired
 	private GameRoomService gameRoomService;
-    @Autowired
-    private AuthService authService;
-    @Autowired
-    private HistoryService historyService;
-    @Autowired
+	@Autowired
+	private AuthService authService;
+	@Autowired
+	private HistoryService historyService;
+	@Autowired
 	private GameRoomListWebSocket gameRoomListWebSocket;
-    @Autowired
+	@Autowired
 	private GameService gameService;
-    
-    
+	@Autowired
+	private LoginDAO loginDAO;
 
-    private final Map<String, List<Double>> latestPositions = new ConcurrentHashMap<>();
-    private final Map<String, ScheduledFuture<?>> broadcastTasks = new ConcurrentHashMap<>();
-    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(4);
-    private final Map<String, List<String>> exitedPlayers = new ConcurrentHashMap<>();
-    
+	private final Map<String, List<Double>> latestPositions = new ConcurrentHashMap<>();
+	private final Map<String, ScheduledFuture<?>> broadcastTasks = new ConcurrentHashMap<>();
+	private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(4);
+	private final Map<String, List<TurtlePlayerDTO>> gameStartPlayersMap = new ConcurrentHashMap<>();
+
 	@Override
 	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
 		String roomId = (String) session.getAttributes().get("roomId");
 		sessionService.addSession(roomId, session);
-		}
-	
+		onGameStart(roomId);
+	}
+
 	private void broadcastMessage(String type, String roomId, Map<String, Object> data) throws IOException {
 		// 웹소켓 메시지 전송
 		List<WebSocketSession> sessions = sessionService.getSessions(roomId);
@@ -89,6 +92,15 @@ public class TurtleRunWebsocketHandler extends TextWebSocketHandler {
 				session.sendMessage(new TextMessage(jsonMessage));
 			}
 		}
+	}
+
+	public void onGameStart(String roomId) {
+	    // 게임 시작 시점의 참가자 전체 정보 저장
+	    List<TurtlePlayerDTO> startPlayers = playerDAO.getAll(roomId);
+	    // null 방지
+	    if (startPlayers != null) {
+	        gameStartPlayersMap.put(roomId, new ArrayList<>(startPlayers));
+	    }
 	}
 
 	@Override
@@ -130,16 +142,16 @@ public class TurtleRunWebsocketHandler extends TextWebSocketHandler {
                 });
                 break;
 			case "race_finish":
-				ScheduledFuture<?> task = broadcastTasks.remove(roomId);
-	             if (task != null) task.cancel(true);
-	             latestPositions.remove(roomId);
-	             
-				TurtleRunResultDTO dto = new TurtleRunResultDTO();
+			    ScheduledFuture<?> task = broadcastTasks.remove(roomId);
+			    if (task != null) task.cancel(true);
+			    latestPositions.remove(roomId);
+
+			    TurtleRunResultDTO dto = new TurtleRunResultDTO();
 			    dto.setUser_uid(userId);
 			    dto.setRoomId(roomId);
 			    dto.setWinner(json.get("winner").asInt());
 			    dto.setDifficulty(json.get("difficulty").asText());
-			    
+
 			    Map<String, Object> finishMsg = new HashMap<>();
 			    finishMsg.put("type", "race_finish");
 			    finishMsg.put("winner", dto.getWinner());
@@ -166,54 +178,76 @@ public class TurtleRunWebsocketHandler extends TextWebSocketHandler {
 	
 	@Override
 	public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-	    // 세션 제거, 퇴장 처리 등
 	    String roomId = (String) session.getAttributes().get("roomId");
 	    String userId = (String) session.getAttributes().get("userId");
 
 	    sessionService.removeSession(roomId, session);
 
-	    UserVO user = authService.findByUid(userId);
-	    
 	    GameRoomResponseDTO gameroom = gameRoomService.selectById(roomId);
 	    String gameStatus = gameroom.getStatus();
-	    
-	    if(!gameStatus.equals("WAITING")) {
-	    	exitedPlayers.computeIfAbsent(roomId,  k -> new ArrayList<>()).add(userId);
-	       if(userId.equals(gameroom.getHost_uid())) {
-	          playerDAO.removePlayer(roomId, userId);
-	          
-	          List<TurtlePlayerDTO> players = playerDAO.getAll(roomId);
-	          
-	          if (gameroom != null && userId.equals(gameroom.getHost_uid())) {
 
-	              if (players != null && !players.isEmpty()) {
-	                  String newHostUid = players.get(0).getUser_uid();
-	                  gameroomDAO.updateHost(roomId, newHostUid);
+	    if (!gameStatus.equals("WAITING")) {
+	        //  나간사람 즉시 패배처리
+	        List<TurtlePlayerDTO> startPlayers = gameStartPlayersMap.get(roomId);
+	        if (startPlayers != null) {
+	            for (TurtlePlayerDTO player : startPlayers) {
+	                if (player.getUser_uid().equals(userId)) {
+	                    int betAmount = player.getBetting_point();
+	                    String gameName = "Turtle Run";
+	                    String gameResult = "LOSE";
+	                    int winAmount = 0;
+	                    // 1) 유저 정보 조회
+	                    UserVO user = authService.findByUid(userId);
+	                    if (user != null) {
+	                        user.setPoint_balance(user.getPoint_balance() - betAmount);
+	                        loginDAO.updateUserPoint(user);
+	                        String gameUid = gameService.selectByName(gameName)
+	                            .stream().findFirst()
+	                            .orElseThrow(() -> new IllegalStateException("'" + gameName + "' 게임을 찾을 수 없습니다."))
+	                            .getUid();
+	                        GameHistoryDTO savedGame = historyService.insertGameHistory(
+	                            gameUid, gameName, betAmount,
+	                            Math.abs(winAmount - betAmount), gameResult, userId
+	                        );
+	                        PointHistoryDTO pointHistory = new PointHistoryDTO();
+	                        pointHistory.setGh_uid(savedGame.getUid());
+	                        pointHistory.setType(gameResult);
+	                        pointHistory.setAmount(Math.abs(winAmount - betAmount));
+	                        pointHistory.setBalance_after(user.getPoint_balance());
+	                        historyService.insertPointHistory(pointHistory, userId);
+	                    }
+	                    break; 
+	                }
+	            }
+	        }
 
-	                  // 현재 레이스 위치와 상태도 같이 전달
-	                  Map<String, Object> msg = new HashMap<>();
-	                  msg.put("type", "host_changed");
-	                  msg.put("newHostUid", newHostUid);
-	                  msg.put("positions", latestPositions.get(roomId)); // 현재 거북이 위치
-	                  // (필요하면 타이머, 진행중인 상태 등도 같이)
-	                  broadcastMessage("host_changed", roomId, msg);
-	              }
-	          }
-	          
-	          if(players != null && !players.isEmpty()) {
-	             gameroomDAO.updateHost(roomId, players.get(0).getUser_uid());
-	          } else {
-	             // 플레이어가 0명일 때 방 삭제
-	             gameroomDAO.deleteRoom(roomId);
-	             gameRoomListWebSocket.broadcastMessage("delete");
+	        List<TurtlePlayerDTO> players = playerDAO.getAll(roomId);
+	        if (userId.equals(gameroom.getHost_uid())) {
+	            // 방장 퇴장 시 host 위임 또는 방 삭제
+	            playerDAO.removePlayer(roomId, userId);
+	            players = playerDAO.getAll(roomId); // 방장 제외하고 재조회
 
-	             ScheduledFuture<?> task = broadcastTasks.remove(roomId);
-	             if (task != null) task.cancel(true);
-	             latestPositions.remove(roomId);
-	          }
-	       }
+	            if (players != null && !players.isEmpty()) {
+	                String newHostUid = players.get(0).getUser_uid();
+	                gameroomDAO.updateHost(roomId, newHostUid);
 
-	       gameRoomListWebSocket.broadcastMessage("exit");
+	                // host_changed 메시지 브로드캐스트
+	                Map<String, Object> msg = new HashMap<>();
+	                msg.put("type", "host_changed");
+	                msg.put("newHostUid", newHostUid);
+	                msg.put("positions", latestPositions.get(roomId));
+	                broadcastMessage("host_changed", roomId, msg);
+	            } else {
+	                // 플레이어가 0명일 때 방 삭제
+	                gameroomDAO.deleteRoom(roomId);
+	                gameRoomListWebSocket.broadcastMessage("delete");
+	                ScheduledFuture<?> task = broadcastTasks.remove(roomId);
+	                if (task != null) task.cancel(true);
+	                latestPositions.remove(roomId);
+	            }
+	        }
+
+	        gameRoomListWebSocket.broadcastMessage("exit");
 	    }
 
 	    // 플레이어가 0명일 때 방 삭제
@@ -221,10 +255,6 @@ public class TurtleRunWebsocketHandler extends TextWebSocketHandler {
 	    if (players == null || players.isEmpty()) {
 	       gameroomDAO.deleteRoom(roomId);
 	       gameRoomListWebSocket.broadcastMessage("delete");
-	       // 스케줄러도 종료
-	       ScheduledFuture<?> task = broadcastTasks.remove(roomId);
-	       if (task != null) task.cancel(true);
-	       latestPositions.remove(roomId);
 	    }
 	}
 
