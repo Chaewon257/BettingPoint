@@ -410,25 +410,32 @@ function setupEventListeners() {
     });
   });
 
-  // 배팅 프리셋 버튼
-  document.querySelectorAll(".bet-preset").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      if (gameState.gameActive || gameState.loading) return;
+// 배팅 프리셋 버튼 (수정된 버전 - 금액 누적)
+document.querySelectorAll(".bet-preset").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    if (gameState.gameActive || gameState.loading) return;
 
-      const amount = btn.dataset.amount;
-     
-      if (amount === "all") {
-        elements.betAmount.value = gameState.balance;
-      } else if (gameState.balance < amount) {
+    const amount = parseInt(btn.dataset.amount) || 0;
+    const currentAmount = parseInt(elements.betAmount.value) || 0; // 현재 입력된 금액
+    
+    if (amount === "all") {
+      // ALL IN은 기존 로직 유지 (전체 잔액으로 설정)
+      elements.betAmount.value = gameState.balance;
+    } else {
+      // 다른 버튼들은 현재 금액에 더하기
+      const newAmount = currentAmount + amount;
+      
+      if (gameState.balance < newAmount) {
         inputErrorMessage("보유포인트 내에서만 배팅이 가능합니다.");
-        elements.betAmount.value = 0;
+        elements.betAmount.value = 0;  
       } else {
-        elements.betAmount.value = amount;
+        elements.betAmount.value = newAmount;
       }
+    }
 
-      updateUI();
-    });
+    updateUI();
   });
+});
 
   // 배팅 금액 입력
   elements.betAmount.addEventListener("input", () => {
