@@ -217,9 +217,11 @@
 					success: function (room) {
 						minBet = room.min_bet;
 						hostId = room.host_uid;
+						level = room.level;
 
 						connectGameWebSocket(roomId);
 						players(room, roomPlayers);
+						updateTurtleButtonsByLevel(level);
 						renderGameRoomDetail(room, roomPlayers);
 					}
 				});
@@ -432,6 +434,49 @@
 					}
 				});
 			});
+
+			function updateTurtleButtonsByLevel(level) {
+				// 각 레벨별 활성화 가능한 turtle 번호 배열 (1~8)
+				const levelMap = {
+					"EASY": [1, 2, 3, 4],
+					"NORMAL": [1, 2, 3, 4, 5, 6],
+					"HARD": [1, 2, 3, 4, 5, 6, 7, 8]
+				};
+
+				const allowed = levelMap[level] || [];
+
+				$(".turtle-btn").each(function() {
+					const turtleName = $(this).data("turtle");
+
+					// "random" 버튼은 항상 활성화 상태로 유지하려면 아래 조건문 추가 가능
+					if(turtleName === "random") {
+						$(this).prop("disabled", false).removeClass("opacity-40 cursor-not-allowed");
+						return;
+					}
+
+					// turtleName을 숫자로 바꿔야 비교 가능 (예: "one" → 1)
+					const turtleNumMap = {
+						one: 1,
+						two: 2,
+						three: 3,
+						four: 4,
+						five: 5,
+						six: 6,
+						seven: 7,
+						eight: 8
+					};
+
+					const num = turtleNumMap[turtleName] || 0;
+
+					if(allowed.includes(num)) {
+						// 활성화
+						$(this).prop("disabled", false).removeClass("opacity-40 cursor-not-allowed");
+					} else {
+						// 비활성화
+						$(this).prop("disabled", true).addClass("opacity-40 cursor-not-allowed");
+					}
+				});
+			}
 		</script>
 		<script>
 			const roomId = "${roomId}";
