@@ -11,7 +11,7 @@
 	<div class="grid grid-cols-1 grid-rows-10 border-b-2 border-gray-7 mb-6">
 		<div class="p-4 grid grid-cols-12 items-center text-center border-b border-gray-1 font-light">
 			<span>1</span>
-			<button class="notice-view col-span-4 truncate hover:underline">이것이 자유다 정말!!</button>
+			<button data-notice="" class="notice-view col-span-4 truncate hover:underline">이것이 자유다 정말!!</button>
 			<div class="col-span-2 flex items-center justify-center gap-x-2">
 				<img alt="service image" src="${cpath}/resources/images/view.png" class="w-4">
 				<span>100</span>

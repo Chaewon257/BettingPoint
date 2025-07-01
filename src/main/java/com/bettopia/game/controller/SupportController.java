@@ -24,9 +24,9 @@ public class SupportController {
 		return "/support/notice";
 	}
 	
-	//게시글 보기 페이지로 이동
+	// 공지사항 상세 불러오기
 	@GetMapping("/view")
-	public String goNoticetViewPage() {
+	public String supportView() {
 		return "support/view";
 	}
 
