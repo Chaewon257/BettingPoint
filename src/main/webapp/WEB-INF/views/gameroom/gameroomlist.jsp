@@ -103,7 +103,7 @@
 		
 		      		$(".game-room").on("click", function () {
 				  		const roomStatus = $(this).data("status");
-				  		console.log(roomStatus);
+
 				  		if(roomStatus !== "PLAYING") {
 					  		const roomId = $(this).data("room-id");
 					  		window.location.href = `/gameroom/detail/\${roomId}`;
