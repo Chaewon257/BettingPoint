@@ -567,7 +567,7 @@ function resetGameState() {
   elements.inputErrorMessage.style.display = "none";
   elements.startErrorMessage.style.display = "none";
  
-
+  updateUI();
 }
 
 
