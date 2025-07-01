@@ -4,10 +4,7 @@ import com.bettopia.game.model.auth.AuthService;
 import com.bettopia.game.model.gameroom.GameRoomDAO;
 import com.bettopia.game.model.gameroom.GameRoomService;
 import com.bettopia.game.model.history.HistoryService;
-import com.bettopia.game.model.multi.turtle.PlayerDAO;
-import com.bettopia.game.model.multi.turtle.TurtlePlayerDTO;
-import com.bettopia.game.model.multi.turtle.TurtleRunResultDTO;
-import com.bettopia.game.model.multi.turtle.SessionService;
+import com.bettopia.game.model.multi.turtle.*;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,8 +74,10 @@ public class TurtleRunWebsocketHandler extends TextWebSocketHandler {
 		String jsonMessage = mapper.writeValueAsString(messageMap);
 
 		for (WebSocketSession session : sessions) {
-			if (session.isOpen()) {
-				session.sendMessage(new TextMessage(jsonMessage));
+			synchronized (session) {
+				if (session.isOpen()) {
+					session.sendMessage(new TextMessage(jsonMessage));
+				}
 			}
 		}
 	}
@@ -139,7 +138,7 @@ public class TurtleRunWebsocketHandler extends TextWebSocketHandler {
 			    finishMsg.put("userId", dto.getUser_uid());
 			    finishMsg.put("roomId", dto.getRoomId());
 			    finishMsg.put("selectedTurtle", dto.getSelectedTurtle());
-			    finishMsg.put("difficulty", dto.getDifficulty());			    
+			    finishMsg.put("difficulty", dto.getDifficulty());
 			    broadcastMessage("race_finish", roomId, finishMsg);
 			    
 			    // 3. 결과 브로드캐스트 (모달 노출용)
@@ -153,9 +152,17 @@ public class TurtleRunWebsocketHandler extends TextWebSocketHandler {
 			    broadcastMessage("race_result", roomId, resultMsg);
 			    break;
 			case "end":
+				List<TurtlePlayerDTO> players = playerDAO.getAll(roomId);
+				for(TurtlePlayerDTO player : players) {
+					player.setTurtle_id(null);
+					player.setReady(false);
+					player.setBetting_point(gameroomDAO.selectById(roomId).getMin_bet());
+				}
+
 				Map<String, Object> data = new HashMap<>();
 				data.put("target",  "/gameroom/detail/" + roomId);
 				broadcastMessage("end", roomId, data);
+				break;
 		}
 	}
 	
