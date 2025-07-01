@@ -29,4 +29,10 @@ public class SupportController {
 	public String goNoticetViewPage() {
 		return "support/view";
 	}
+
+	// 1대1문의 불러오기
+	@GetMapping("/inquiry")
+	public String supportInquiry() {
+		return "support/inquiry";
+	}
 }

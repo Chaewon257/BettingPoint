@@ -1,6 +1,6 @@
 <%@ tag language="java" pageEncoding="UTF-8"%>
 
-<div data-content="free" class="tab-content w-full px-4 flex flex-col mb-20 mt-6 text-xs sm:text-sm">
+<div class="tab-content w-full px-4 flex flex-col mb-20 mt-6 text-xs sm:text-sm">
 	<!-- 질문 1 -->
     <div class="faq-item w-full md:px-6 border-b mb-6 pb-6">
        	<div class="flex justify-between items-start">
