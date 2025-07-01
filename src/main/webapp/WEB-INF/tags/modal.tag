@@ -7,7 +7,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
 <div id="${modalId}" class="fixed top-0 left-0 px-5 z-50 flex items-center justify-center h-screen w-full bg-black/10 hidden">
-    <div class="relative p-4 flex flex-col bg-white rounded-xl shadow-[2px_2px_8px_rgba(0,0,0,0.35)]">
+    <div class="relative max-h-[90%] p-4 flex flex-col bg-white rounded-xl shadow-[2px_2px_8px_rgba(0,0,0,0.35)]">
         <button class="absolute top-4 right-4 text-sm" onclick="document.getElementById('${modalId}').classList.add('hidden')">
             닫기
         </button>
