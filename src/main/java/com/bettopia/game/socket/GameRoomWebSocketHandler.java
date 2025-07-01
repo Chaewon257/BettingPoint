@@ -3,7 +3,6 @@ package com.bettopia.game.socket;
 import com.bettopia.game.model.auth.AuthService;
 import com.bettopia.game.model.auth.UserVO;
 import com.bettopia.game.model.gameroom.GameRoomDAO;
-import com.bettopia.game.model.gameroom.GameRoomRequestDTO;
 import com.bettopia.game.model.gameroom.GameRoomResponseDTO;
 import com.bettopia.game.model.gameroom.GameRoomService;
 import com.bettopia.game.model.multi.turtle.PlayerDAO;
@@ -99,7 +98,7 @@ public class GameRoomWebSocketHandler extends TextWebSocketHandler {
 
 			// 입장 메시지 방송
 			Map<String, Object> data = new HashMap<>();
-			data.put("userId", userId);
+			data.put("userId", user.getNickname());
 			broadcastMessage("enter", roomId, data);
 		}
 	}
@@ -183,8 +182,12 @@ public class GameRoomWebSocketHandler extends TextWebSocketHandler {
 
 		sessionService.removeSession(roomId, session);
 
+		UserVO user = authService.findByUid(userId);
+
 		GameRoomResponseDTO gameroom = gameRoomService.selectById(roomId);
 		String gameStatus = gameroom.getStatus();
+
+		Map<String, Object> data = new HashMap<>();
 
 		if(!gameStatus.equals("PLAYING")) {
 			playerDAO.removePlayer(roomId, userId);
@@ -194,13 +197,15 @@ public class GameRoomWebSocketHandler extends TextWebSocketHandler {
 
 				if(!players.isEmpty()) {
 					gameroomDAO.updateHost(roomId, players.get(0).getUser_uid());
+					data.put("hostId", players.get(0).getUser_uid());
+				} else {
+					gameroomDAO.deleteRoom(roomId);
 				}
 			}
 
 			gameRoomListWebSocket.broadcastMessage("exit");
 
-			Map<String, Object> data = new HashMap<>();
-			data.put("userId", userId);
+			data.put("userId", user.getNickname());
 			broadcastMessage("exit", roomId, data);
 		}
 
