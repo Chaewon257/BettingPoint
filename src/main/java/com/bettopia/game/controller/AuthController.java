@@ -15,4 +15,9 @@ public class AuthController {
 	public String goRegisterPage() {
 		return "/auth/register";
 	}
+
+	@GetMapping("/logout")
+	public String goHomePage() {
+		return "redirect:/";
+	}
 }
