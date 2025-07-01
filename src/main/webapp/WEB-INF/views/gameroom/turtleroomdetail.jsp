@@ -398,7 +398,7 @@
 					$btn.text(isReady ? '준비 완료' : '게임 준비');
 
                     // 준비 상태일 때 선택 및 입력 비활성화
-                    $('input[name="turtle"]').prop('disabled', isReady);
+                    $('.turtle-btn').prop('disabled', isReady);
                     $('#bet_point').prop('disabled', isReady);
 
 					socket.send(JSON.stringify({
