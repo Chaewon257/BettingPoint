@@ -128,6 +128,19 @@ public class TurtleRunWebsocketHandler extends TextWebSocketHandler {
 			    dto.setWinner(json.get("winner").asInt());
 			    dto.setUserBet(json.get("userBet").asInt());
 			    dto.setPointChange(json.get("pointChange").asInt());
+			    dto.setSelectedTurtle(json.get("selectedTurtle").asInt());
+			    dto.setDifficulty(json.get("difficulty").asText());
+			    
+			    Map<String, Object> finishMsg = new HashMap<>();
+			    finishMsg.put("type", "race_finish");
+			    finishMsg.put("winner", dto.getWinner());
+			    finishMsg.put("pointChange", dto.getPointChange());
+			    finishMsg.put("bet", dto.getUserBet());
+			    finishMsg.put("userId", dto.getUser_uid());
+			    finishMsg.put("roomId", dto.getRoomId());
+			    finishMsg.put("selectedTurtle", dto.getSelectedTurtle());
+			    finishMsg.put("difficulty", dto.getDifficulty());			    
+			    broadcastMessage("race_finish", roomId, finishMsg);
 			    
 			    // 3. 결과 브로드캐스트 (모달 노출용)
 			    Map<String, Object> resultMsg = new HashMap<>();

@@ -235,7 +235,6 @@ class TurtleRacingGame {
         showCountdownOverlay(3, () => {
             if(isHost) this.startRace();
         });
-        this.updatePointsDisplay();
     }
 
     selectTurtle(id) {
@@ -562,12 +561,11 @@ class TurtleRacingGame {
 
         // 포인트 요약
         const userBet = this.userBet; // 사용자가 건 금액
-        const userTurtle = this.selectedTurtle; // 사용자가 선택한 거북이
         const winnerTurtle = this.winner;
-        const winPool = this.turtleBets[winnerTurtle] || 1; //userBet; 
-        const totalBet = this.turtleBets.reduce((a, b) => a + b, 0) || 1; //userBet; 
+        const winPool = this.turtleBets[winnerTurtle] || 1;
+        const totalBet = this.turtleBets.reduce((a, b) => a + b, 0) || 1;
         const difficultyRateMap = { 'EASY': 0.2, 'NORMAL': 1.5, 'HARD': 4.0 };
-        const difficulty = this.selectedDifficulty; //|| "normal";
+        const difficulty = this.selectedDifficulty;
         const userRate = difficultyRateMap[difficulty] || 1;
 
         const winAmount = this.selectedTurtle === this.winner ?
@@ -575,9 +573,6 @@ class TurtleRacingGame {
         let delta = winAmount > 0 ? winAmount : -userBet;
         pointSummary.textContent = `포인트 변화 : (${delta > 0 ? '+' : ''}${delta})`;
         pointSummary.style.color = delta > 0 ? 'green' : 'red';
-
-        this.updatePointsDisplay();
-        if (this.statDisplay) this.updateStatsDisplay();
         this.turtleElements.forEach(turtle => {if(turtle) turtle.classList.remove('racing')});
 
          // 1. 승패 이미지로 변경
@@ -601,7 +596,6 @@ class TurtleRacingGame {
             gameResult : didWin ? 'WIN' : 'LOSE',
             userBet: this.userBet,
             difficulty: this.selectedDifficulty,
-            turtleBets: this.turtleBets,
             pointChange: delta,
             userId: this.userId, // 사용자 ID 추가
             roomId: this.roomId // 게임방 ID 추가
@@ -612,12 +606,10 @@ class TurtleRacingGame {
             ws.send(JSON.stringify({
                 type: "race_finish",
                 winner: this.winner,
-                positions: this.positions,
                 selectedTurtle: this.selectedTurtle,
                 bet: this.userBet,
                 difficulty: this.selectedDifficulty,
-                turtleBets: this.turtleBets,
-                pointChange: pointChange,
+                pointChange: delta,
                 userId: this.userId,
                 roomId: this.roomId
             }));
@@ -646,11 +638,6 @@ class TurtleRacingGame {
             turtle.src = this.turtleImages[turtleIdx];
         }
         this.resultSent = false; // 결과 전송 초기화
-    }
-
-    updatePointsDisplay() {
-        if(this.pointsDisplay) 
-        this.pointsDisplay.textContent = this.points;
     }
 }
 

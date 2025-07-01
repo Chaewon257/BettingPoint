@@ -1,5 +1,7 @@
 package com.bettopia.game.model.multi.turtle;
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,6 +18,6 @@ public class TurtleRunResultDTO {
 	private int userBet;
 	private int pointChange;
 	private String difficulty;
-	private int positions[];
-	private int turtleBets[];
+	private List<Double> positions;
+	private List<Integer> turtleBets;
 }
