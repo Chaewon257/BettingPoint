@@ -23,4 +23,10 @@ public class SupportController {
 	public String supportNotice() {
 		return "/support/notice";
 	}
+	
+	//게시글 보기 페이지로 이동
+	@GetMapping("/view")
+	public String goNoticetViewPage() {
+		return "support/view";
+	}
 }
