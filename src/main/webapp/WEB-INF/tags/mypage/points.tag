@@ -33,13 +33,7 @@
 	        return;
 	    }
 	
-	    // 🟦 게임 이름 매핑 (gh_uid → name) 
-	    // 얘도 getname으로 불러오기 (game_history uid로 game 이름 조회)
-	    const gameNameMap = {
-			"21ab8616b4a14632981fbd8f421756ec": "Turtle Run",
-			"76867ded4d104a05bf1aef0252b2ec42": "Coin Toss",
-			"0f82ca829f9c43458b05221b8b2c8480": "Coin Toss"
-	    };
+	    
 	
 	 	// 🔹 API 호출
 	    function loadPointHistory(token, page) {
@@ -89,7 +83,9 @@
 	            const balanceText = history.balance_after;
 	            const date = formatDate(history.created_at);
 	
-	            const note = history.gh_uid ? (gameNameMap[history.gh_uid] || "Unknown") : "";
+
+	            const note = history.game_name || "Unknown";
+
 	
 	            const html = `
 	                <div class="p-4 grid grid-cols-12 items-center text-center border-b border-gray-1">

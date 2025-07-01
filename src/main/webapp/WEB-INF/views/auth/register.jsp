@@ -21,25 +21,16 @@
 		  						<span class="text-xs text-gray-6 pl-1">이메일</span>
 		  						<div class="w-full flex items-center gap-x-2 mb-2">
 		  							<input type="email" id="email" name="email" class="grow px-4 py-2 text-xs outline-none bg-gray-4 rounded-full border border-gray-5" placeholder="사용자 ID(Email)" required>
-		  							<button id="verifyEmailbtn" class="px-3 py-2 text-xs rounded-full border border-blue-3 bg-blue-3 text-white hover:border-blue-2 hover:bg-blue-1">중복검사</button>
-		  							<input id="verifyEmail" type="checkbox" class="w-0 h-0" >
+		  							<button id="requestVerificationBtn" class="px-3 py-2 text-xs rounded-full border border-blue-3 bg-blue-3 text-white hover:border-blue-2 hover:bg-blue-1">인증번호요청</button>
 		  						</div>
-								<div class="w-full flex items-center gap-x-2 mb-2">
-									<button id="requestVerificationBtn" type="button"
-											class="px-3 py-2 text-xs rounded-full border border-blue-3 bg-blue-3 text-white hover:border-blue-2 hover:bg-blue-1">
-										인증번호 요청
-									</button>
-								</div>
-								<div id="verificationSection" class="w-full flex items-center gap-x-2 mb-2 hidden">
-									<input type="text" id="verificationCodeInput"
-										   class="grow px-4 py-2 text-xs outline-none bg-gray-4 rounded-full border border-gray-5"
-										   placeholder="인증번호 입력">
-									<button id="verifyCodeBtn" type="button"
-											class="px-3 py-2 text-xs rounded-full border border-blue-3 bg-blue-3 text-white hover:border-blue-2 hover:bg-blue-1">
-										인증 확인
-									</button>
-									<input id="emailVerified" type="checkbox" class="w-0 h-0">
-								</div>
+		  					</div>
+		  					<div class="flex flex-col items-start gap-y-1">
+		  						<span class="text-xs text-gray-6 pl-1">인증번호</span>
+		  						<div class="w-full flex items-center gap-x-2 mb-2">
+		  							<input type="text" id="verificationCodeInput" name="verificationCodeInput" class="grow px-4 py-2 text-xs outline-none bg-gray-4 rounded-full border border-gray-5" placeholder="인증번호 입력" required>
+		  							<button id="verifyCodeBtn" class="px-3 py-2 text-xs rounded-full border border-blue-3 bg-blue-3 text-white hover:border-blue-2 hover:bg-blue-1">인증번호확인</button>
+		  						</div>
+		  						<input id="emailVerified" type="checkbox" class="absolute w-0 h-0">
 		  					</div>
 		  					<div class="flex flex-col items-start gap-y-1">
 		  						<span class="text-xs text-gray-6 pl-1">비밀번호</span>
@@ -58,7 +49,7 @@
 		  						<div class="w-full flex items-center gap-x-2 mb-2">
 		  							<input type="text" id="nickname" name="nickname" class="grow px-4 py-2 text-xs outline-none bg-gray-4 rounded-full border border-gray-5" placeholder="닉네임" required>
 		  							<button id="verifyNicknamebtn" class="px-3 py-2 text-xs rounded-full border border-blue-3 bg-blue-3 text-white hover:border-blue-2 hover:bg-blue-1">중복검사</button>
-		  							<input id="verifyNickname" type="checkbox" class="w-0 h-0" >
+		  							<input id="verifyNickname" type="checkbox" class="absolute w-0 h-0" >
 		  						</div>
 		  					</div>
 		  					<div class="flex flex-col items-start gap-y-1">
@@ -147,47 +138,6 @@
 		    		fakeCheckIcon.classList.add("border-gray-6");
 		    	}
 		    });
-		    
-		    /* 이메일 중복 확인 이벤트 */
-		   	document.getElementById('verifyEmailbtn').addEventListener('click', function (e) {
-		        const error = document.getElementById('errorMessage');
-		        error.textContent = "";
-
-		        const email = document.getElementById('email');
-		        const verifyEmail = document.getElementById('verifyEmail');
-
-		        const emailVal = email.value.trim();
-
-		        if (!emailVal) {
-		            error.textContent = "이메일을 입력해주세요.";
-		            email.classList.add("border-red-600");
-		            return;
-		        }
-
-		        $.ajax({
-		            url: '/api/auth/check-email',
-		            method: 'GET',
-		            data: { email: emailVal },
-		            success: function (res) {
-		                if (res.duplicate) {
-		                    // 중복된 이메일
-		                    email.classList.remove("border-gray-5");
-		                    email.classList.add("border-red-600");
-		                    error.textContent = "이미 사용 중인 이메일입니다.";
-		                    verifyEmail.checked = false;
-		                } else {
-		                    // 사용 가능한 이메일
-		                    email.classList.remove("border-red-600");
-		                    email.classList.add("border-gray-5");
-		                    verifyEmail.checked = true;
-		                    alert("사용 가능한 이메일입니다.");
-		                }
-		            },
-		            error: function () {
-		                error.textContent = "이메일 확인 중 오류가 발생했습니다.";
-		            }
-		        });
-		    });
 
 			/* 이메일 인증번호 요청 */
 			document.getElementById('requestVerificationBtn').addEventListener('click', function () {
@@ -211,8 +161,6 @@
 					data: JSON.stringify({ email: emailVal }),
 					success: function (res) {
 						alert(res); // "인증번호가 이메일로 발송되었습니다." 표시
-						document.getElementById('requestVerificationBtn').style.display = 'none';
-						document.getElementById('verificationSection').classList.remove('hidden');
 					},
 					error: function () {
 						error.textContent = "인증번호 요청 중 오류가 발생했습니다.";
@@ -302,7 +250,7 @@
 			    error.textContent = "";
 		
 			    const email = document.getElementById('email');
-		    	const verifyEmail = document.getElementById('verifyEmail');
+				const emailVerified = document.getElementById('emailVerified');
 			    const password = document.getElementById('password');
 			    const passwordCheck = document.getElementById('passwordCheck');
 			    const name = document.getElementById('name');
@@ -313,17 +261,11 @@
 			    const phoneNumber = document.getElementById('phoneNumber');
 			    const agreePrivacy = document.getElementById('agreePrivacy');
 				const age = new Date().getFullYear() - birthDateVal.getFullYear();
-				const emailVerified = document.getElementById('emailVerified');
 
 				if (!emailVerified.checked) {
 					error.textContent = "이메일 인증을 완료해야 합니다.";
 					return;
 				}
-
-				if (!verifyEmail.checked) {
-		        	error.textContent = "이메일 중복 검사를 해야합니다.";
-		        	return;
-		        }
 
 				if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{6,}$/.test(password.value)) {
 					password.classList.remove("border-gray-5");

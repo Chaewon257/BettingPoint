@@ -111,21 +111,24 @@ public class GameRestController {
 	    int winAmount = Integer.parseInt(requestBody.get("winAmount").toString());
 	    int betAmount = Integer.parseInt(requestBody.get("betAmount").toString());
 	    String gameResult = requestBody.get("gameResult").toString();
-
+	    String gameName = requestBody.get("gameName").toString(); 
+	    
+	
 	    // 포인트 적립
 	    user.setPoint_balance(user.getPoint_balance() + winAmount);
 	    loginDAO.updateUserPoint(user);
 
 	    // 게임 UID 조회
-	    String gameUid = gameService.selectByName("cointoss")
+	    String gameUid = gameService.selectByName(gameName)
 	        .stream()
 	        .findFirst()
-	        .orElseThrow(() -> new IllegalStateException("'cointoss' 게임을 찾을 수 없습니다."))
+	        .orElseThrow(() -> new IllegalStateException("'" + gameName + "' 게임을 찾을 수 없습니다."))
 	        .getUid();
 
-	    // 게임 히스토리 저장 (DTO 조립은 서비스 내부)
+	    // 게임 히스토리 저장 (gameName도 같이)
 	    GameHistoryDTO savedGame = historyService.insertGameHistory(
 	        gameUid,
+	        gameName,
 	        betAmount,
 	        winAmount - betAmount,
 	        gameResult,
@@ -134,7 +137,7 @@ public class GameRestController {
 
 	    // 포인트 히스토리 저장
 	    PointHistoryDTO pointHistory = new PointHistoryDTO();
-	    pointHistory.setGh_uid(savedGame.getUid());  // 포인트 내역이 어떤 게임 히스토리에서 발생했는지를 연결해주는 필드
+	    pointHistory.setGh_uid(savedGame.getUid());
 	    pointHistory.setType(gameResult);
 	    pointHistory.setAmount(winAmount - betAmount);
 	    pointHistory.setBalance_after(user.getPoint_balance());
@@ -157,19 +160,22 @@ public class GameRestController {
 	    }
 
 	    int betAmount = Integer.parseInt(requestBody.get("betAmount").toString());
-	    String gameResult = requestBody.get("gameResult").toString(); 
-
-	    String gameUid = gameService.selectByName("cointoss")
+	    String gameResult = requestBody.get("gameResult").toString();
+	    String gameName = requestBody.get("gameName").toString(); 
+	    
+	    // 게임 UID 조회
+	    String gameUid = gameService.selectByName(gameName)
 	        .stream()
 	        .findFirst()
-	        .orElseThrow(() -> new IllegalStateException("'cointoss' 게임을 찾을 수 없습니다."))
+	        .orElseThrow(() -> new IllegalStateException("'" + gameName + "' 게임을 찾을 수 없습니다."))
 	        .getUid();
 
 	    // 게임 히스토리 insert (서비스에서 DTO 조립)
 	    GameHistoryDTO savedGame = historyService.insertGameHistory(
 	        gameUid,
+	        gameName,       
 	        betAmount,
-	        betAmount, 
+	        betAmount,      
 	        gameResult,
 	        uid
 	    );
@@ -179,7 +185,7 @@ public class GameRestController {
 	    pointHistory.setGh_uid(savedGame.getUid());
 	    pointHistory.setType(gameResult);
 	    pointHistory.setAmount(betAmount);
-	    pointHistory.setBalance_after(user.getPoint_balance()); 
+	    pointHistory.setBalance_after(user.getPoint_balance());
 
 	    historyService.insertPointHistory(pointHistory, uid);
 
