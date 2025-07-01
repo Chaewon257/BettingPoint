@@ -33,7 +33,7 @@ function connectGameWebSocket(roomId) {
                 window.location.href = targetUrl;
                 break;
             default:
-                console.warn("알 수 없는 메시지 타입:", msg.type);
+                break;
         }
     };
 
@@ -62,8 +62,9 @@ function gameRoomDetail (roomId) {
             minBet = room.min_bet;
 
             connectGameWebSocket(roomId);
-            players(room, roomPlayers);
-            renderGameRoomDetail(room, roomPlayers);
+            players(room, roomPlayers).done(function() {
+                renderGameRoomDetail(room, roomPlayers);
+            });
         }
     });
 };
@@ -108,6 +109,12 @@ function bindGameEvents() {
         isReady = !isReady; // 전역 변수로 선언 필요
         const $btn = $(this);
         $btn.text(isReady ? '준비 취소' : '게임 준비');
+
+        // 준비 상태일 때 선택 및 입력 비활성화
+        $('input[name="turtle"]').prop('disabled', isReady);
+        $('#bet-point').prop('disabled', isReady);
+        $('#bet-btn').prop('disabled', isReady);
+
         socket.send(JSON.stringify({
             type: "ready",
             isReady: isReady
@@ -115,12 +122,15 @@ function bindGameEvents() {
     });
 }
 
+let playerCount = 0;
+
 // 플레이어 목록 갱신
 function updatePlayerList(players) {
     const $playerList = $("#player-list");
     $playerList.empty(); // 기존 플레이어 목록 초기화
 
     let isAllReady = true;
+    playerCount = players.length;
 
     players.forEach(player => {
         const html = `

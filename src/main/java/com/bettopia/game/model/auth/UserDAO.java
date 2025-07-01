@@ -39,4 +39,8 @@ public class UserDAO {
         params.put("uid", userId);
         sqlSession.update(namespace + "losePoint", params);
     }
+
+    public void logout(String userId) {
+        sqlSession.delete(namespace + "logout", userId);
+    }
 }
