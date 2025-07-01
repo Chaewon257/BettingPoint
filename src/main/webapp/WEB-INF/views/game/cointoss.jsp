@@ -22,7 +22,7 @@ pageEncoding="UTF-8"%>
         <div class="flex-1 flex flex-col gap-5 border-b-2 border-blue-100 pb-5 md:border-b-0 md:border-r-2 md:pr-6 md:pb-0 xl:pr-16">
            <div class="bg-blue-200 p-5 rounded-xl text-center text-blue-900">
               <div class="text-sm opacity-90">
-               <span id="userNickname">사용자</span>님의 보유 포인트
+               <span id="userNickname" class="font-bold">사용자</span>님의 보유 포인트
               </div>
               <div class="text-xl font-bold sm:text-2xl lg:text-3xl" id="balance">연결 전</div>
            </div>
