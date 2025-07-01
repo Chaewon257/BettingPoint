@@ -42,6 +42,12 @@
         where uid = #{uid}
     </update>
 
+    <update id="updateHost" parameterType="map">
+        update game_room set
+        host_uid = #{host_uid}
+        where uid = #{uid}
+    </update>
+
     <!-- 게임방 삭제 -->
     <delete id="delete" parameterType="String">
         delete from game_room where uid = #{roomId}

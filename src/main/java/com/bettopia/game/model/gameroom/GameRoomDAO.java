@@ -68,4 +68,11 @@ public class GameRoomDAO {
 		params.put("status", status);
 		sqlSession.update(namespace + "updateStatus", params);
 	}
+
+	public void updateHost(String roomId, String host_uid) {
+		Map<String, String> params = new HashMap<>();
+		params.put("uid", roomId);
+		params.put("host_uid", host_uid);
+		sqlSession.update(namespace + "updateHost", params);
+	}
 }
