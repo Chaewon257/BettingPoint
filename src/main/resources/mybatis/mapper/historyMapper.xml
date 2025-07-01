@@ -5,48 +5,71 @@
 
 <mapper namespace="com.bpoint.history">
 
-	<select id="selectGameHistoryAll" parameterType="String" resultType="gameHistoryDTO">
+	<select id="selectGameHistoryAll" parameterType="String"
+		resultType="gameHistoryDTO">
 		select * from game_history
 		where user_uid = #{userId}
-		order by created_at desc
+		order
+		by created_at desc
 	</select>
 
-	<select id="selectPointHistoryAll" parameterType="String" resultType="pointHistoryDTO">
+	<select id="selectGameHistoryByUid" parameterType="string"
+		resultType="GameHistoryDTO">
+		SELECT *
+		FROM game_history
+		WHERE uid = #{ghUid}
+	</select>
+
+
+	<select id="selectPointHistoryAll" parameterType="String"
+		resultType="pointHistoryDTO">
 		select * from point_history
 		where user_uid = #{userId}
-		order by created_at desc
-	</select>
-	
-	<select id="countGameHistory" parameterType="string" resultType="int">
-	    SELECT COUNT(*) FROM game_history WHERE user_uid = #{userId}
-	</select>
-	
-	<select id="countPointHistory" parameterType="string" resultType="int">
-	    SELECT COUNT(*) FROM point_history WHERE user_uid = #{userId}
+		order
+		by created_at desc
 	</select>
 
-	<select id="gameAllWithPaging" parameterType="map" resultType="gameHistoryDTO">
+	<select id="countGameHistory" parameterType="string"
+		resultType="int">
+		SELECT COUNT(*) FROM game_history WHERE user_uid = #{userId}
+	</select>
+
+	<select id="countPointHistory" parameterType="string"
+		resultType="int">
+		SELECT COUNT(*) FROM point_history WHERE user_uid = #{userId}
+	</select>
+
+	<select id="gameAllWithPaging" parameterType="map"
+		resultType="gameHistoryDTO">
 		select * from game_history
 		where user_uid = #{userId}
-		order by created_at desc
+		order
+		by created_at desc
 		limit #{size} offset #{offset}
 	</select>
 
-	<select id="pointAllWithPaging" parameterType="map" resultType="pointHistoryDTO">
+	<select id="pointAllWithPaging" parameterType="map"
+		resultType="pointHistoryDTO">
 		select * from point_history
 		where user_uid = #{userId}
-		order by created_at desc
+		order
+		by created_at desc
 		limit #{size} offset #{offset}
 	</select>
 
 	<insert id="insertGameHistory" parameterType="gameHistoryDTO">
-		insert into game_history(uid, user_uid, game_uid, betting_amount, game_result, point_value)
-		values(#{uid}, #{user_uid}, #{game_uid}, #{betting_amount}, #{game_result}, #{point_value})
+		insert into
+		game_history(uid, user_uid, game_uid, betting_amount, game_result,
+		point_value)
+		values(#{uid}, #{user_uid}, #{game_uid},
+		#{betting_amount}, #{game_result}, #{point_value})
 	</insert>
 
 	<insert id="insertPointHistory" parameterType="pointHistoryDTO">
-		insert into point_history(uid, user_uid, type, amount, balance_after, gh_uid)
-		values(#{uid}, #{user_uid}, #{type}, #{amount}, #{balance_after}, #{gh_uid})
+		insert into
+		point_history(uid, user_uid, type, amount, balance_after, gh_uid)
+		values(#{uid}, #{user_uid}, #{type}, #{amount}, #{balance_after},
+		#{gh_uid})
 	</insert>
 
 </mapper>
