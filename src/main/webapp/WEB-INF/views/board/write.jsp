@@ -111,7 +111,7 @@
               }
             }
           });
-
+       	// 이미지 S3에 업로드 후 Summernote에 삽입
           function uploadSummernoteImageFile(file, editor) {
             let data = new FormData();
             data.append("image", file);
