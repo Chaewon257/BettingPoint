@@ -1,5 +1,5 @@
 <%@ tag language="java" pageEncoding="UTF-8"%>
-<c:set var="cpath" value="${pageContext.request.contextPath}" />
+
 
 <div data-content="free" class="tab-content w-full flex flex-col mb-20 text-xs sm:text-sm">
 	<div class="p-4 grid grid-cols-12 text-center text-gray-3 font-semibold border-b-2 border-gray-7 border-double">
@@ -58,7 +58,4 @@
 				alert("로그인 후 이용 가능합니다.");
 			});
 	});
-	
-	
-
 </script>
