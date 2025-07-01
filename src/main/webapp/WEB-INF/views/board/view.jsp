@@ -96,6 +96,15 @@
           new Date(board.created_at).toLocaleString("ko-KR")
         );
         $("#detailContent").html(board.content);
+
+        // 작성자와 로그인 사용자 비교
+        if (board.oner === true) {
+          $("#btnEdit").show();
+          $("#btnDelete").show();
+        } else {
+          $("#btnEdit").hide();
+          $("#btnDelete").hide();
+        }
       },
       error: function() {
         alert("상세 정보를 불러오지 못했습니다.");
