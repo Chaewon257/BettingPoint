@@ -686,7 +686,8 @@ function startRedirectCountdown(seconds) {
             countdownElem.textContent = `${counter}초 후 게임방으로 이동합니다.`;
         }
     }, 1000);
-
+    turtleGame.resetRace();
+    
     // 상태 WAITING으로 변경 후 이동
     $.ajax({
         url: `/api/gameroom/start/${roomId}`,

@@ -68,7 +68,7 @@ public class TurtleRunRestController {
 	    int betAmount = Integer.parseInt(requestBody.get("betAmount").toString());
 	    int winAmount = Integer.parseInt(requestBody.get("winAmount").toString());
 	    String gameResult = requestBody.get("gameResult").toString();
-	    
+	    String gameName = requestBody.get("gameName").toString();
 	    
 
 	    // 3. 포인트 적립/차감
@@ -81,15 +81,16 @@ public class TurtleRunRestController {
 	    loginDAO.updateUserPoint(user);
 
 	    // 4. 게임 UID 조회 (거북이 달리기 게임으로)
-	    String gameUid = gameService.selectByName("Turtle Run")
+	    String gameUid = gameService.selectByName(gameName)
 	        .stream()
 	        .findFirst()
-	        .orElseThrow(() -> new IllegalStateException("'Turtle Run' 게임을 찾을 수 없습니다."))
+	        .orElseThrow(() -> new IllegalStateException("'" + gameName + "' 게임을 찾을 수 없습니다."))
 	        .getUid();
 
 	    // 5. 게임 히스토리 저장 (서비스에서 DTO 조립)
 	    GameHistoryDTO savedGame = historyService.insertGameHistory(
 	        gameUid,
+	        gameName,
 	        betAmount,
 	        winAmount,
 	        gameResult,
