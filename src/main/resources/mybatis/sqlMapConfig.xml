@@ -24,5 +24,6 @@
         <typeAlias type="com.bettopia.game.model.history.GameHistoryDTO" alias="gameHistoryDTO" />
         <typeAlias type="com.bettopia.game.model.history.PointHistoryDTO" alias="pointHistoryDTO" />
         <typeAlias type="com.bettopia.game.model.auth.UserVO" alias="userVO" />
+        <typeAlias type="com.bettopia.game.model.verification.VerificationDTO" alias="verificationDTO" />
   </typeAliases>
 </configuration>

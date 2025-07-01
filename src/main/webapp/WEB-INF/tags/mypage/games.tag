@@ -32,14 +32,6 @@
 			return;
 		}
 	
-		// 🟦 게임 이름 매핑 (서버에서 DTO에 포함되면 생략 가능)
-		// 매핑하지 말고 getName 불러와서 (나중에) 해야됨
-		const gameNameMap = {
-			"f47ac10b58cc4372a5670e02b2c3d479": "Coin Toss",
-			"0a644307148b4446857a624dc2a6e3b2": "Turtle Run"
-			// 필요시 계속 추가
-		};
-	
 		// 🔹 API 호출
 		function loadGameHistory(token, page) {
 			$.ajax({
@@ -70,13 +62,17 @@
 			}
 	
 			histories.forEach((history, idx) => {
+
+
 				const number = (page - 1) * itemsPerPage + idx + 1;
-				const gameName = gameNameMap[history.game_uid] || "Unknown Game";
+				
+				
+				const gameName = history.game_name || "Unknown Game";    
 				const result = history.game_result === "WIN" ? "승리" : "패배";
 				const resultClass = history.game_result === "WIN" ? "text-blue-1" : "text-red-1";
 				const sign = history.game_result === "WIN" ? "+" : "-";
 				const pointChange = `(\${sign}\${history.point_value})`;
-				const date = new Date(history.created_at).toISOString().slice(0, 10).replace(/-/g, ".");
+				const date = formatDate(history.created_at);
 
 				
 				
@@ -130,6 +126,15 @@
 
 			paginationContainer.html(paginationHTML.join(""));
 		}
+		
+		// 날짜 포맷팅 함수 (yyyy.mm.dd)
+		function formatDate(dateStr) {
+		    if (!dateStr) return "-";
+		    const date = new Date(dateStr);
+		    if (isNaN(date)) return "-";
+		    return date.toLocaleDateString('ko-KR').replace(/\./g, '.').replace(/\s/g, '');
+		}
+		
 		
 		// 🔹 페이지 변경
 		window.changePage = function (page) {
