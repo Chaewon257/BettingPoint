@@ -29,6 +29,12 @@ public class BoardController {
 		model.addAttribute("boardId", boardId);
 		return "board/view";
 	}
+	
+	// 게시글 상세보기
+	@GetMapping("/view")
+	public String getBoardDetail() {
+		return "board/view";
+	}
 
 	// 좋아요
 	@PostMapping("/like/{boardId}")

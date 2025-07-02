@@ -18,13 +18,6 @@
 						</div>
 					</div>
 				</div>
-				<div class="w-full px-4 py-2 flex justify-end gap-x-5">
-					<input type="hidden" id="sort" name="sort" value="created_at" />
-					<button data-sort="created_at" class="sort-btn text-gray-7 underline">최신순</button>
-					<button data-sort="like_count" class="sort-btn text-gray-3 hover:text-gray-7">좋아요순</button>
-					<button data-sort="view_count" class="sort-btn text-gray-3 hover:text-gray-7">조회순</button>
-				</div>
-				<div class="w-full h-[2px] bg-gray-1"></div>
 				<div id="board-tab-content" class="w-full">
 					<board:free></board:free>
 				</div>
@@ -33,9 +26,6 @@
 		<script src="/resources/js/board.js"></script>
 		<script>
 		$(function(){
-		      // 페이지 로드 시 
-		      loadBoardList(1, currentCategory , currentSort);
-		
 			$(".tab-btn").on("click", function () {
 				const selectedTab = $(this).data("tab");
 				
@@ -69,7 +59,11 @@
 				});
 				
 			});
+		});
+		$(document).on("click", '.board-view', function () {
+			const selectedboardId = $(this).data("boardId");
 			
+
 			$(".sort-btn").on("click", function () {
 				const selectedSort = $(this).data("sort");
 				
@@ -81,6 +75,22 @@
 				
 				loadBoardList(1, currentCategory, selectedSort);
 				
+
+			// 콘텐츠 영역 비우고 로딩
+			const contentContainer = $("#board-tab-content");
+			contentContainer.html('<div class="text-center py-8 text-gray-5">로딩 중...</div>');
+			
+			// url: `/support/view/\${selectednotice}`,
+			$.ajax({
+				url: `/board/view`,
+				type: 'GET',
+				success: function (html) {
+					contentContainer.html(html);
+				},
+				error: function () {
+					alert('공지사항 보기 실패');
+				}
+
 			});
 		});
 		</script>
