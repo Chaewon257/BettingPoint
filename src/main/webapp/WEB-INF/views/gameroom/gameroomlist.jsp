@@ -174,7 +174,7 @@
 				      	games.forEach(game => {
 				      		gameBtn.append(`
 				          		<button data-uid="\${game.uid}" class="game-select aspect-square bg-blue-4 rounded-md overflow-hidden border-2 border-transparent hover:shadow-[2px_2px_8px_rgba(0,0,0,0.2)]">
-				            		<img alt="game image" src="https://bettopia-bucket.s3.ap-southeast-2.amazonaws.com/\${game.game_img}" class="w-full h-full object-cover">
+				            		<img alt="game image" src="\${game.game_img}" class="w-full h-full object-cover">
 				          		</button>
 				          	`);
 				      	});
