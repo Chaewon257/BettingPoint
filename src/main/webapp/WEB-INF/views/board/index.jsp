@@ -30,7 +30,14 @@
 				</div>
 			</div>
 		</div>
-		<script type="text/javascript">
+	</jsp:attribute>
+</ui:layout>
+		<script src="/resources/js/board2.js"></script>
+		<script>
+		$(function(){
+		      // 페이지 로드 시 
+		      loadBoardList(1, currentCategory , currentSort);
+		
 			$(".tab-btn").on("click", function () {
 				const selectedTab = $(this).data("tab");
 				
@@ -46,7 +53,6 @@
 					.removeClass("text-gray-3 hover:text-gray-7")
 					.addClass("text-gray-7 underline");
 
-				
 				// 콘텐츠 영역 비우고 로딩
 				const contentContainer = $("#board-tab-content");
 				contentContainer.html('<div class="text-center py-8 text-gray-5">로딩 중...</div>');
@@ -57,11 +63,13 @@
 					type: 'GET',
 					success: function (html) {
 						contentContainer.html(html);
+						loadBoardList(1, selectedTab);
 					},
 					error: function () {
 						contentContainer.html('<div class="text-red-500">게시판 로딩 실패</div>');
 					}
 				});
+				
 			});
 			
 			$(".sort-btn").on("click", function () {
@@ -73,25 +81,11 @@
 				// 기본 정렬 값 적용 (created_at)
 				$(this).removeClass("text-gray-3 hover:text-gray-7").addClass("text-gray-7 underline");
 				
-				// 콘텐츠 영역 비우고 로딩
-				const contentContainer = $("#board-tab-content");
-				contentContainer.html('<div class="text-center py-8 text-gray-5">로딩 중...</div>');
 				
-				// ✅ 숨겨진 sort input 값 변경
-				$("#sort").val(selectedTab);
+				loadBoardList(1, currentCategory, selectedSort);
 				
-				// 선택된 탭에 따라 콘텐츠 요청
-				$.ajax({
-					url: `/board/\${selectedTab}`,
-					type: 'GET',
-					success: function (html) {
-						contentContainer.html(html);
-					},
-					error: function () {
-						contentContainer.html('<div class="text-red-500">게시판 로딩 실패</div>');
-					}
-				});
 			});
+			
+		
+		});
 		</script>
-	</jsp:attribute>
-</ui:layout>

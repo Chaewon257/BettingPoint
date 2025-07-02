@@ -14,7 +14,7 @@ pageEncoding="UTF-8"%>
       Coin Toss
      </h1>
         <button class="absolute top-0 right-0 bg-blue-200 text-blue-900 border-none py-2 px-4 rounded-lg font-bold cursor-pointer text-xs transition-colors duration-300 hover:bg-blue-300 sm:text-sm"
-           onclick="location.href='/'">홈으로 이동하기</button>
+           onclick="location.href='/solo'">게인게임 리스트로 이동하기</button>
      </div>
 
      <div class="bg-white rounded-2xl p-6 border border-blue-200 min-h-96 flex flex-col gap-5 md:flex-row xl:p-12 xl:min-h-[600px]">

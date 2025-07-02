@@ -11,7 +11,7 @@
 						</div>
 						<div class="grow flex md:justify-end gap-x-2">
 							<button class="h-full bg-blue-3 hover:bg-blue-2 rounded-lg text-white shadow-[2px_2px_8px_rgba(0,0,0,0.1)] font-extrabold sm:text-base md:text-lg lg:text-xl xl:text-2xl w-full md:min-w-24 md:max-w-56 py-1" onclick="document.getElementById('createGameRoomModal').classList.remove('hidden')">방정보 수정</button>
-							<button class="h-full bg-gray-4 hover:bg-gray-2 rounded-lg text-gray-9 shadow-[2px_2px_8px_rgba(0,0,0,0.1)] font-extrabold sm:text-base md:text-lg lg:text-xl xl:text-2xl w-full md:min-w-24 md:max-w-56 py-1" onclick="history.back()">나가기</button>
+							<button class="h-full bg-gray-4 hover:bg-gray-2 rounded-lg text-gray-9 shadow-[2px_2px_8px_rgba(0,0,0,0.1)] font-extrabold sm:text-base md:text-lg lg:text-xl xl:text-2xl w-full md:min-w-24 md:max-w-56 py-1" onclick="location.href='/gameroom'">나가기</button>
 						</div>
 					</div>
 					<div class="relative w-full grid grid-cols-4 grid-rows-2 gap-2 md:gap-4 justify-items-stretch">
@@ -209,8 +209,6 @@
 
 			// 게임방 상세 정보 요청
 			function gameRoomDetail (roomId) {
-				let roomPlayers = [];
-
 				$.ajax({
 					url: `/api/gameroom/detail/\${roomId}`,
 					method: "GET",
@@ -220,9 +218,13 @@
 						level = room.level;
 
 						connectGameWebSocket(roomId);
-						players(room, roomPlayers);
 						updateTurtleButtonsByLevel(level);
-						renderGameRoomDetail(room, roomPlayers);
+						renderGameRoomDetail(room);
+
+						let roomPlayers = [];
+						players(room, roomPlayers).done(function() {
+							updatePlayerList(roomPlayers);
+						});
 					}
 				});
 			};
@@ -269,10 +271,8 @@
 			}
 
 			// 게임방 상세 정보 렌더링(임시)
-			function renderGameRoomDetail(room, roomPlayers) {
+			function renderGameRoomDetail(room) {
 				$("#room-title").text(`\${room.title}`);
-
-				updatePlayerList(roomPlayers);
 
 				userInfo(function() {
 					updateButtons();
@@ -311,34 +311,39 @@
 				$(".turtle-btn").on("click", function () {
 					let selectedTurtle = $(this).data("turtle");
 
-					// "random" 선택 시 다른 버튼 중 하나를 무작위 선택
 					if (selectedTurtle === "random") {
-						// random 버튼 제외하고 나머지 turtle-btn 가져오기
-						const buttons = $(".turtle-btn").not('[data-turtle="random"]');
-						const randomIndex = Math.floor(Math.random() * buttons.length);
-						const randomBtn = buttons.eq(randomIndex);
+						// 현재 활성화된 거북이 버튼들 중에서만 랜덤 선택
+						const enabledButtons = $(".turtle-btn").not('[data-turtle="random"]').filter(function() {
+							return !$(this).prop("disabled");
+						});
+
+						if (enabledButtons.length === 0) {
+							alert("선택 가능한 거북이가 없습니다.");
+							return;
+						}
+
+						const randomIndex = Math.floor(Math.random() * enabledButtons.length);
+						const randomBtn = enabledButtons.eq(randomIndex);
 
 						// 스타일 업데이트
 						$(".turtle-btn").removeClass("border-blue-2").addClass("border-transparent");
 						randomBtn.removeClass("border-transparent").addClass("border-blue-2");
 
-						// 선택된 이미지 src 가져오기
+						// 선택된 이미지 src 변경
 						const imgSrc = randomBtn.find("img").attr("src");
 						$("#mainTurtleImage").attr("src", imgSrc);
 
 						// 선택된 turtle 데이터
 						selectedTurtle = randomBtn.data("turtle");
 					} else {
-						// 스타일 업데이트
 						$(".turtle-btn").removeClass("border-blue-2").addClass("border-transparent");
 						$(this).removeClass("border-transparent").addClass("border-blue-2");
 
-						// 선택된 이미지 src 가져오기
+						// 선택된 이미지 src 변경
 						const imgSrc = $(this).find("img").attr("src");
 						$("#mainTurtleImage").attr("src", imgSrc);
 					}
 
-					// ✅ 숨겨진 turtle input 값 변경
 					$("#turtle").val(selectedTurtle);
 
 					const turtleId = turtleMap[selectedTurtle] ?? 0;

@@ -59,7 +59,6 @@ public class GameRoomRestController {
 	public void deleteRoom(@PathVariable String roomId, @RequestHeader("Authorization") String authHeader) throws IOException {
 		String userId = authService.validateAndGetUserId(authHeader);
 		gameRoomService.deleteRoom(roomId, userId);
-		gameRoomListWebSocket.broadcastMessage("delete");
 	}
 
 	// 게임 시작

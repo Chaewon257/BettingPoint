@@ -27,6 +27,7 @@ import com.bettopia.game.model.aws.S3FileService;
 import com.bettopia.game.model.board.BoardDTO;
 import com.bettopia.game.model.board.BoardRequestDTO.InsertBoardRequestDTO;
 import com.bettopia.game.model.board.BoardRequestDTO.UpdateBoardRequestDTO;
+import com.bettopia.game.model.board.BoardResponseDTO;
 import com.bettopia.game.model.board.BoardService;
 
 @RestController
@@ -39,20 +40,27 @@ public class BoardRestController {
 	private AuthService authService;
 	@Autowired
 	private S3FileService s3FileService;
-
+	
+	private static final int PAGE_SIZE = 10;
 	// 게시글 리스트 조회, 페이징 (카테고리별)
 	@GetMapping("/boardlist")
-	public List<BoardDTO> list(@RequestParam(defaultValue = "1") int page,
+	public BoardResponseDTO list(@RequestParam(defaultValue = "1") int page,
 			@RequestParam(defaultValue = "free") String category,
 			@RequestParam(defaultValue = "created_at") String sort) {
 
-		int size = 10; // 한 페이지에 보여줄 게시글 수
-		int offset = (page - 1) * size;
+		int offset     = (page - 1) * PAGE_SIZE;
+        List<BoardDTO> boards      = boardService.getBoards(offset, PAGE_SIZE, category, sort);
+        long totalCount            = boardService.getCountByCategory(category);
+        int totalPages             = (int)Math.ceil((double) totalCount / PAGE_SIZE);
 
-		// 카테고리 기준으로 게시글 목록 조회
-		List<BoardDTO> boards = boardService.getBoards(offset, size, category, sort);
-
-		return boards;
+        return BoardResponseDTO.builder()
+            .boards(boards)
+            .currentPage(page)
+            .pageSize(PAGE_SIZE)
+            .totalCount(totalCount)
+            .totalPages(totalPages)
+            .category(category)
+            .build();
 	}
 
 	// 게시글 상세보기 시 조회수 증가
