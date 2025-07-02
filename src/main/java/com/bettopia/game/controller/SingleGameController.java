@@ -19,9 +19,9 @@ public class SingleGameController {
 	@Autowired
 	private GameService gameService;
 	
-	@GetMapping("/cointoss")
+	@GetMapping("/CoinToss")
 	public String renderCointossPage(Model model) {
-	    GameResponseDTO game = gameService.selectByName("cointoss")
+	    GameResponseDTO game = gameService.selectByName("CoinToss")
 	        .stream()
 	        .findFirst()
 	        .orElseThrow(() -> new IllegalStateException("'cointoss' 게임이 존재하지 않습니다."));
@@ -31,14 +31,14 @@ public class SingleGameController {
 	}
 	
 	
-	@GetMapping("/minesweeper")
+	@GetMapping("/TreasureHunt")
 	public String renderMineSweeperPage(Model model) {
-	    GameResponseDTO game = gameService.selectByName("minesweeper")
+	    GameResponseDTO game = gameService.selectByName("TreasureHunt")
 	        .stream()
 	        .findFirst()
-	        .orElseThrow(() -> new IllegalStateException("'minesweeper' 게임이 존재하지 않습니다."));
+	        .orElseThrow(() -> new IllegalStateException("'TreasureHunt' 게임이 존재하지 않습니다."));
 	    
 	    model.addAttribute("gameUid", game.getUid());
-	    return "game/minesweeper";
+	    return "game/treasurehunt";
 	}
 }

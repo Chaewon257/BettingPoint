@@ -373,7 +373,7 @@ function stopGame() {
       difficulty: gameState.difficulty,
       streak: gameState.gemsFound,
       gameResult: "WIN",
-      gameName: "minesweeper"
+      gameName: "TreasureHunt"
     }),
     success: function (response) {
       gameState.balance = response.newBalance;
@@ -423,7 +423,7 @@ function sendLoseHistory() {
       difficulty: gameState.difficulty,
       streak: gameState.gemsFound,
       gameResult: "LOSE",
-      gameName: "minesweeper"
+      gameName: "TreasureHunt"
     }),
     success: function (res) {
       console.log("패배 기록 저장 완료");

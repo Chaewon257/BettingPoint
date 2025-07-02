@@ -302,7 +302,7 @@ function stopGame() {
         difficulty: gameState.difficulty,
         streak: gameState.streak,
         gameResult: "WIN",
-        gameName: "cointoss"
+        gameName: "CoinToss"
     }),
     success: function (response) {
 
@@ -585,7 +585,7 @@ function sendLoseHistory() {
       difficulty: gameState.difficulty,
       streak: gameState.streak,
       gameResult: "LOSE",
-      gameName: "cointoss"
+      gameName: "CoinToss"
     }),
     success: function (res) {
     },

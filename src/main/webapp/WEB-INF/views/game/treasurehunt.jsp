@@ -3,8 +3,8 @@
 <ui:layout pageName="Minesweeper" pageType="ingame">
 <jsp:attribute name="bodyContent">
 <input type="hidden" id="gameUid" value="${gameUid}">
-<script src="${cpath}/resources/js/minesweeper.js" defer></script>
-<link rel="stylesheet" href="${cpath}/resources/css/minesweeper.css">
+<script src="${cpath}/resources/js/treasurehunt.js" defer></script>
+<link rel="stylesheet" href="${cpath}/resources/css/treasurehunt.css">
 
 <div class="w-4/5 max-w-screen-xl mx-auto min-w-80 h-3/5 xl:w-3/4 xl:max-w-screen-2xl">
   <div class="relative mb-8 text-center">
