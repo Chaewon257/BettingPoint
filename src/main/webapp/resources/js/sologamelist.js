@@ -11,12 +11,17 @@
 	            const s3BaseUrl = "https://bettopia-bucket.s3.ap-southeast-2.amazonaws.com/";
 	            games.forEach(function(game) {
 	                const gameHtml = `
-                    <div class="w-40 flex flex-col items-center border rounded-lg p-4 shadow hover:shadow-md transition cursor-pointer"
-	                			onclick="location.href='/solo/${game.name}'">
-                        <img src="${s3BaseUrl}${game.game_img}" alt="${game.name}" width="200" height="200" class="w-full h-24 object-cover rounded mb-2" />
-                        <span class="text-center text-sm font-semibold">${game.name}</span>
-                    </div>
-                `;
+	                	<div class="bg-gray-4 rounded-lg p-2.5 md:p-4 flex items-center gap-x-4 hover:shadow-[2px_2px_8px_rgba(0,0,0,0.2)]" onclick="location.href='/solo/${game.name}'">
+    						<div class="w-28 md:w-36 aspect-square overflow-hidden rounded flex items-center justify-center flex-shrink-0">
+                        		<img src="${s3BaseUrl}${game.game_img}" alt="${game.name}" class="w-full rounded" />
+                        	</div>
+                        	<div class="h-full flex flex-col items-start py-2 justify-between">
+                        		<span class="flex items-center text-ts-14 sm:text-ts-18 md:text-ts-20 lg:text-ts-24">${game.name}</span>
+                        		<span class="line-clamp-2 font-light text-xs sm:text-sm md:text-base">${game.description}</span>
+                        	</div>
+                    	</div>
+                	`;
+                	
 	                container.append(gameHtml);
 	            });
 	        },
