@@ -534,7 +534,19 @@ function endGame(won, message) {
 
 function showResult(message, type) {
   elements.resultMessage.innerHTML = message;
-  elements.resultMessage.className = `result-message result-${type}`;
+  
+  // 기존 result-* 클래스들 제거
+  elements.resultMessage.classList.remove("result-win", "result-lose", "result-info");
+  
+  // 타입에 따라 Tailwind 클래스 적용
+  if (type === "win") {
+    elements.resultMessage.className = "result-message p-2.5 rounded-lg text-center font-bold text-sm sm:text-base bg-green-100 text-green-800 border border-green-300";
+  } else if (type === "lose") {
+    elements.resultMessage.className = "result-message p-2.5 rounded-lg text-center font-bold text-sm sm:text-base bg-red-100 text-red-600 border border-red-300";
+  } else if (type === "info") {
+    elements.resultMessage.className = "result-message p-2.5 rounded-lg text-center font-bold text-sm sm:text-base bg-blue-100 text-blue-800 border border-blue-300";
+  }
+  
   elements.resultMessage.style.display = "block";
 }
 

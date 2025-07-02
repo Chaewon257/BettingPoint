@@ -9,9 +9,9 @@
 <div class="w-4/5 max-w-screen-xl mx-auto min-w-80 h-3/5 xl:w-3/4 xl:max-w-screen-2xl">
   <div class="relative mb-8 text-center">
     <h1 class="text-xl font-bold text-blue-900 sm:text-2xl lg:text-3xl xl:text-4xl">
-   <img src="${cpath}/resources/images/treasure.png" alt="보물" 
-     class="inline-block h-11 sm:h-13 lg:h-15 xl:h-17 mr-2 bg-transparent object-contain">
-      Treausre Hunt
+      <img src="${cpath}/resources/images/treasure.png" alt="보물" 
+        class="inline-block h-9 sm:h-11 lg:h-13 xl:h-13 mr-2 bg-transparent object-contain">
+      Treasure Hunt
     </h1>
     <button class="absolute top-0 right-0 bg-blue-200 text-blue-900 border-none py-2 px-4 rounded-lg font-bold cursor-pointer text-xs transition-colors duration-300 hover:bg-blue-300 sm:text-sm"
       onclick="location.href='/solo'">개인게임 리스트로 이동하기</button>
@@ -35,17 +35,17 @@
           난이도 선택
         </h3>
         <div class="grid grid-cols-[repeat(auto-fit,minmax(80px,1fr))] gap-3">
-          <div class="difficulty-option py-4 px-2 border-2 border-blue-200 rounded-xl bg-white text-center cursor-pointer hover:bg-blue-50" data-difficulty="hard">
+          <div class="difficulty-option py-4 px-2 border-2 border-blue-200 rounded-xl bg-white text-center cursor-pointer transition-all duration-300 hover:bg-blue-50" data-difficulty="hard">
             <div class="text-sm font-bold mb-1.5 sm:text-base">상</div>
             <div class="text-xs mb-1 sm:text-sm difficulty-chance">연결 전</div>
             <div class="text-sm font-bold text-orange-600 sm:text-base difficulty-payout">연결 전</div>
           </div>
-          <div class="difficulty-option py-4 px-2 border-2 border-blue-200 rounded-xl bg-white text-center cursor-pointer hover:bg-blue-50" data-difficulty="normal">
+          <div class="difficulty-option py-4 px-2 border-2 border-blue-200 rounded-xl bg-white text-center cursor-pointer transition-all duration-300 hover:bg-blue-50" data-difficulty="normal">
             <div class="text-sm font-bold mb-1.5 sm:text-base">중</div>
             <div class="text-xs mb-1 sm:text-sm difficulty-chance">연결 전</div>
             <div class="text-sm font-bold text-orange-600 sm:text-base difficulty-payout">연결 전</div>
           </div>
-          <div class="difficulty-option py-4 px-2 border-2 border-blue-200 rounded-xl bg-white text-center cursor-pointer hover:bg-blue-50" data-difficulty="easy">
+          <div class="difficulty-option py-4 px-2 border-2 border-blue-200 rounded-xl bg-white text-center cursor-pointer transition-all duration-300 hover:bg-blue-50" data-difficulty="easy">
             <div class="text-sm font-bold mb-1.5 sm:text-base">하</div>
             <div class="text-xs mb-1 sm:text-sm difficulty-chance">연결 전</div>
             <div class="text-sm font-bold text-orange-600 sm:text-base difficulty-payout">연결 전</div>
@@ -63,13 +63,13 @@
           <span class="input-error hidden text-red-700" id="input-error"></span>
         </div>
         <div class="flex items-center gap-3 mb-2.5">
-          <input type="number" class="flex-1 p-3 border-2 border-blue-400 rounded-lg text-sm text-center focus:outline-none focus:border-blue-600 sm:text-base" id="bet-amount" placeholder="배팅할 포인트 입력" min="1" />
+          <input type="number" class="flex-1 p-3 border-2 border-blue-400 rounded-lg text-sm text-center min-w-0 focus:outline-none focus:border-blue-600 sm:text-base" id="bet-amount" placeholder="배팅할 포인트 입력" min="1" />
         </div>
         <div class="grid grid-cols-[repeat(auto-fit,minmax(60px,1fr))] gap-2">
-          <button class="bet-preset py-3 px-2 rounded-lg bg-blue-200 text-blue-900 font-bold hover:bg-blue-400 text-xs sm:text-sm" data-amount="1000">1000</button>
-          <button class="bet-preset py-3 px-2 rounded-lg bg-blue-200 text-blue-900 font-bold hover:bg-blue-400 text-xs sm:text-sm" data-amount="10000">10000</button>
-          <button class="bet-preset py-3 px-2 rounded-lg bg-blue-200 text-blue-900 font-bold hover:bg-blue-400 text-xs sm:text-sm" data-amount="50000">50000</button>
-          <button class="bet-preset py-3 px-2 rounded-lg bg-blue-200 text-blue-900 font-bold hover:bg-blue-400 text-xs sm:text-sm" data-amount="all">ALL IN</button>
+          <button class="bet-preset py-3 px-2 border-none rounded-lg bg-blue-200 text-blue-900 font-bold cursor-pointer transition-colors duration-300 text-xs hover:bg-blue-400 sm:text-sm" data-amount="1000">1000</button>
+          <button class="bet-preset py-3 px-2 border-none rounded-lg bg-blue-200 text-blue-900 font-bold cursor-pointer transition-colors duration-300 text-xs hover:bg-blue-400 sm:text-sm" data-amount="10000">10000</button>
+          <button class="bet-preset py-3 px-2 border-none rounded-lg bg-blue-200 text-blue-900 font-bold cursor-pointer transition-colors duration-300 text-xs hover:bg-blue-400 sm:text-sm" data-amount="50000">50000</button>
+          <button class="bet-preset py-3 px-2 border-none rounded-lg bg-blue-200 text-blue-900 font-bold cursor-pointer transition-colors duration-300 text-xs hover:bg-blue-400 sm:text-sm" data-amount="all">ALL IN</button>
         </div>
       </div>
     </div>
@@ -96,12 +96,12 @@
           <!-- 타일 생성 -->
         </div>
 
-        <div class="result-message p-2.5 rounded-lg text-center font-bold text-sm hidden sm:text-base" id="result-message">
+        <div class="result-message p-2.5 rounded-lg text-center mt-4 font-bold text-sm hidden sm:text-base" id="result-message">
           난이도와 베팅 금액을 선택하고 게임을 시작하세요!
         </div>
 
-        <div class="mt-4 flex gap-3 flex-wrap">
-          <button class="game-button py-3 px-6 rounded-xl text-sm font-bold bg-blue-200 text-blue-900 hover:bg-blue-300 sm:text-base" id="start-btn">게임 시작</button>
+        <div class="mt-6 flex gap-3 flex-wrap">
+          <button class="game-button py-3 px-6 border-none rounded-xl text-sm font-bold cursor-pointer transition-all duration-300 bg-blue-200 text-blue-900 hover:bg-blue-300 sm:text-base disabled:bg-gray-400 disabled:cursor-not-allowed" id="start-btn">게임 시작</button>
           <button class="game-button btn-success hidden py-3 px-6 border-none rounded-xl text-sm font-bold cursor-pointer transition-all duration-300 bg-red-500 text-white min-w-20 hover:bg-red-700 sm:text-base disabled:bg-gray-400 disabled:cursor-not-allowed" id="stop-btn">STOP</button>
         </div>
 
