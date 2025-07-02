@@ -95,12 +95,12 @@ public class GameRoomWebSocketHandler extends TextWebSocketHandler {
 
 			playerDAO.addPlayer(roomId, player);
 			gameRoomListWebSocket.broadcastMessage("enter");
-
-			// 입장 메시지 방송
-			Map<String, Object> data = new HashMap<>();
-			data.put("userId", user.getNickname());
-			broadcastMessage("enter", roomId, data);
 		}
+
+		// 입장 메시지 방송
+		Map<String, Object> data = new HashMap<>();
+		data.put("userId", user.getNickname());
+		broadcastMessage("enter", roomId, data);
 	}
 	
 	private void broadcastMessage(String type, String roomId, Map<String, Object> data) throws IOException {
@@ -125,8 +125,10 @@ public class GameRoomWebSocketHandler extends TextWebSocketHandler {
 		String jsonMessage = mapper.writeValueAsString(messageMap);
 
 		for (WebSocketSession session : sessions) {
-			if (session.isOpen()) {
-				session.sendMessage(new TextMessage(jsonMessage));
+			synchronized (session) {
+				if (session.isOpen()) {
+					session.sendMessage(new TextMessage(jsonMessage));
+				}
 			}
 		}
 	}
@@ -195,11 +197,13 @@ public class GameRoomWebSocketHandler extends TextWebSocketHandler {
 			if(userId.equals(gameroom.getHost_uid())) {
 				List<TurtlePlayerDTO> players = playerDAO.getAll(roomId);
 
-				if(!players.isEmpty()) {
+				if(players != null && !players.isEmpty()) {
 					gameroomDAO.updateHost(roomId, players.get(0).getUser_uid());
 					data.put("hostId", players.get(0).getUser_uid());
 				} else {
+					// 플레이어가 0명일 때 방 삭제
 					gameroomDAO.deleteRoom(roomId);
+					gameRoomListWebSocket.broadcastMessage("delete");
 				}
 			}
 
@@ -213,6 +217,7 @@ public class GameRoomWebSocketHandler extends TextWebSocketHandler {
 		List<TurtlePlayerDTO> players = playerDAO.getAll(roomId);
 		if (players == null || players.isEmpty()) {
 			gameroomDAO.deleteRoom(roomId);
+			gameRoomListWebSocket.broadcastMessage("delete");
 		}
 	}
 

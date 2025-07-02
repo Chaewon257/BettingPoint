@@ -5,7 +5,6 @@ import com.bettopia.game.model.auth.LoginDAO;
 import com.bettopia.game.model.auth.UserVO;
 import com.bettopia.game.model.game.GameService;
 import com.bettopia.game.model.gameroom.GameRoomDAO;
-import com.bettopia.game.model.gameroom.GameRoomResponseDTO;
 import com.bettopia.game.model.gameroom.GameRoomService;
 import com.bettopia.game.model.history.GameHistoryDTO;
 import com.bettopia.game.model.history.HistoryService;
@@ -88,8 +87,10 @@ public class TurtleRunWebsocketHandler extends TextWebSocketHandler {
 		String jsonMessage = mapper.writeValueAsString(messageMap);
 
 		for (WebSocketSession session : sessions) {
-			if (session.isOpen()) {
-				session.sendMessage(new TextMessage(jsonMessage));
+			synchronized (session) {
+				if (session.isOpen()) {
+					session.sendMessage(new TextMessage(jsonMessage));
+				}
 			}
 		}
 	}
@@ -150,19 +151,44 @@ public class TurtleRunWebsocketHandler extends TextWebSocketHandler {
 			    dto.setUser_uid(userId);
 			    dto.setRoomId(roomId);
 			    dto.setWinner(json.get("winner").asInt());
+			    dto.setUserBet(json.get("userBet").asInt());
+			    dto.setPointChange(json.get("pointChange").asInt());
+			    dto.setSelectedTurtle(json.get("selectedTurtle").asInt());
 			    dto.setDifficulty(json.get("difficulty").asText());
 
 			    Map<String, Object> finishMsg = new HashMap<>();
 			    finishMsg.put("type", "race_finish");
 			    finishMsg.put("winner", dto.getWinner());
+			    finishMsg.put("pointChange", dto.getPointChange());
+			    finishMsg.put("bet", dto.getUserBet());
+			    finishMsg.put("userId", dto.getUser_uid());
 			    finishMsg.put("roomId", dto.getRoomId());
-			    finishMsg.put("difficulty", dto.getDifficulty());			    
+			    finishMsg.put("selectedTurtle", dto.getSelectedTurtle());
+			    finishMsg.put("difficulty", dto.getDifficulty());
 			    broadcastMessage("race_finish", roomId, finishMsg);
+			    
+			    // 3. 결과 브로드캐스트 (모달 노출용)
+			    Map<String, Object> resultMsg = new HashMap<>();
+			    resultMsg.put("type", "race_result");
+			    resultMsg.put("winner", dto.getWinner());
+			    resultMsg.put("pointChange", dto.getPointChange());
+			    resultMsg.put("bet", dto.getUserBet());
+			    resultMsg.put("userId", dto.getUser_uid());
+			    resultMsg.put("roomId", dto.getRoomId());
+			    broadcastMessage("race_result", roomId, resultMsg);
 			    break;
 			case "end":
+				List<TurtlePlayerDTO> players = playerDAO.getAll(roomId);
+				for(TurtlePlayerDTO player : players) {
+					player.setTurtle_id(null);
+					player.setReady(false);
+					player.setBetting_point(gameroomDAO.selectById(roomId).getMin_bet());
+				}
+
 				Map<String, Object> data = new HashMap<>();
 				data.put("target",  "/gameroom/detail/" + roomId);
 				broadcastMessage("end", roomId, data);
+				break;
 		}
 	}
 	

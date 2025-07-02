@@ -14,6 +14,10 @@ public class TurtleRunResultDTO {
 	private String game_uid;	
 	private String roomId;
 	private int winner;
+	private int selectedTurtle;
+	private int userBet;
+	private int pointChange;
 	private String difficulty;
+	private List<Double> positions;
 	private List<Integer> turtleBets;
 }

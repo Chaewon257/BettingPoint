@@ -93,11 +93,6 @@ public class GameRoomService {
 		return responseList;
 	}
 
-//	public List<GameRoomDTO> selectAll() {
-//		List<GameRoomDTO> roomlist = gameRoomDAO.selectAll();
-//		return roomlist;
-//	}
-
 	public GameRoomResponseDTO selectById(String roomId) {
 		GameRoomDTO room = gameRoomDAO.selectById(roomId);
 
