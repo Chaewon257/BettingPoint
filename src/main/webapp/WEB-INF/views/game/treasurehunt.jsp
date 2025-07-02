@@ -9,8 +9,9 @@
 <div class="w-4/5 max-w-screen-xl mx-auto min-w-80 h-3/5 xl:w-3/4 xl:max-w-screen-2xl">
   <div class="relative mb-8 text-center">
     <h1 class="text-xl font-bold text-blue-900 sm:text-2xl lg:text-3xl xl:text-4xl">
-      <img src="${cpath}/resources/images/bomb.png" alt="지뢰" class="inline-block  h-11 sm: sm:h-13 lg: lg:h-15 xl: xl:h-17 mr-2">
-      지뢰찾기 게임
+   <img src="${cpath}/resources/images/treasure.png" alt="보물" 
+     class="inline-block h-11 sm:h-13 lg:h-15 xl:h-17 mr-2 bg-transparent object-contain">
+      Treausre Hunt
     </h1>
     <button class="absolute top-0 right-0 bg-blue-200 text-blue-900 border-none py-2 px-4 rounded-lg font-bold cursor-pointer text-xs transition-colors duration-300 hover:bg-blue-300 sm:text-sm"
       onclick="location.href='/solo'">개인게임 리스트로 이동하기</button>
