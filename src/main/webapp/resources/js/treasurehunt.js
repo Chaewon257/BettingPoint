@@ -1,3 +1,5 @@
+
+
 // 게임상태(객체)
 let gameState = {
   balance: 0,               // 사용자 보유 포인트 (DB에서 받아올 예정)
@@ -295,6 +297,15 @@ function handleTileClick(index) {
     updateUI();
     showResult(`💎 보석 발견! (${gameState.gemsFound}개) 현금화하거나 계속 진행하세요!`, "win");
     
+    
+    // 현재 난이도의 전체 보석 수 계산
+	const totalGems = 25 - difficultyConfigs[gameState.difficulty].mineCount;
+
+	// 보석 다 찾았을 경우 자동 종료 처리
+	if (gameState.gemsFound >= totalGems) {
+  	stopGame();  // 자동으로 현금화
+	}
+    
     // 현금화 버튼 표시
     elements.stopBtn.classList.remove("hidden");
   }
@@ -479,24 +490,23 @@ document.querySelectorAll(".bet-preset").forEach((btn) => {
   btn.addEventListener("click", () => {
     if (gameState.gameActive || gameState.loading) return;
 
-    const amount = parseInt(btn.dataset.amount) || 0;
-    const currentAmount = parseInt(elements.betAmount.value) || 0; // 현재 입력된 금액
+    const amountStr = btn.dataset.amount;  // 문자열로 먼저 받기
+    const currentAmount = parseInt(elements.betAmount.value) || 0;
 
-    if (amount === "all") {
-      // ALL IN은 기존 로직 유지 (전체 잔액으로 설정)
+    if (amountStr === "all") {  // 문자열 비교
       elements.betAmount.value = gameState.balance;
     } else {
-      // 다른 버튼들은 현재 금액에 더하기
+      const amount = parseInt(amountStr) || 0;  // 숫자 변환
       const newAmount = currentAmount + amount;
 
       if (gameState.balance < newAmount) {
-       inputErrorMessage("보유포인트 내에서만 배팅이 가능합니다.");
-       elements.betAmount.value = 0;  
+        inputErrorMessage("보유포인트 내에서만 배팅이 가능합니다.");
+        elements.betAmount.value = 0;  
       } else {
-      	 elements.betAmount.value = newAmount;
+        elements.betAmount.value = newAmount;
       }
-     }
-     updateUI();
+    }
+    updateUI();
   });
 });
 
