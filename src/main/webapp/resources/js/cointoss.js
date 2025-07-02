@@ -345,7 +345,7 @@ function flipCoin() {
 	  
 	  
 	  
-	   if (gameState.accumulatedWin > MAX_POINTS) {
+	   if (gameState.accumulatedWin >=MAX_POINTS) {
         gameState.accumulatedWin = MAX_POINTS;
         gameState.potentialWin = MAX_POINTS;
         
