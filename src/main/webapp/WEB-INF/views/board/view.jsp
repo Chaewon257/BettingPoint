@@ -1,5 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-         pageEncoding="UTF-8" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="ui" tagdir="/WEB-INF/tags" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
@@ -67,106 +66,103 @@
         </div>
       </div>
     </div>
+	<script type="text/javascript">
+	  const boardId = "${boardId}";
+	  let currentBoardUid;
+	
+	  function loadBoardDetail(boardId) {
+	    const token = localStorage.getItem("accessToken");
+	    const headers = token
+	      ? { "Authorization": "Bearer " + token }
+	      : {};
+	
+	    $.ajax({
+	      url: `/api/board/boarddetail/\${boardId}`,
+	      type: "GET",
+	      headers: headers,
+	      success: function(board) {
+	        currentBoardUid = board.uid;
+	        $("#detailTitle").text(board.title);
+	        $("#detailAuthor").text(board.nickname);
+	        $("#detailLikeCount").text(board.like_count);
+	        $("#detailViewCount").text(board.view_count);
+	        $("#detailCreatedAt").text(
+	          new Date(board.created_at).toLocaleString("ko-KR")
+	        );
+	        $("#detailContent").html(board.content);
+	        
+	        if (board.oner === true) {
+	            $("#btnEdit, #btnDelete").show();
+	          }
+			
+	      },
+	      error: function() {
+	        alert("상세 정보를 불러오지 못했습니다.");
+	        history.back();
+	      }
+	    });
+	  }
+	
+	  $(document).ready(function(){
+	    loadBoardDetail(boardId);
+	    
+	    $('#btnEdit').on('click', function(){
+	        window.location.href = `/board/write/\${boardId}`;
+	      });
+	    
+	 	// 삭제 버튼 클릭
+	    $("#btnDelete").on("click", function() {
+	      if (!confirm("정말 삭제하시겠습니까?")) return;
+	
+	      const token   = localStorage.getItem("accessToken");
+	      const headers = token ? { "Authorization": "Bearer " + token } : {};
+	
+	      $.ajax({
+	        url: `/api/board/boarddelete/${boardId}`,
+	        type: "DELETE",
+	        headers: headers,
+	        success: function() {
+	          alert("게시글이 삭제되었습니다.");
+	          location.href = `${cpath}/board`;
+	        },
+	        error: function() {
+	          alert("삭제에 실패했습니다. 다시 시도해주세요.");
+	        }
+	      });
+	    });
+		    
+	  });
+	  //좋아요 버튼 클릭 시
+	  $(document).on("click", "#likeBtn", function () {
+		  
+		  const token = localStorage.getItem("accessToken");
+		  if (!token) {
+		    alert("로그인이 필요합니다.");
+		    return;
+		  }
+	
+		  if (!currentBoardUid) {
+		    alert("게시글 정보가 없습니다.");
+		    return;
+		  }
+	
+		  $.ajax({
+		    url: "/api/board/like/" + currentBoardUid,
+		    method: "POST",
+		    success: function () {
+		      let likeSpan = $("#likeCount");
+		      let likeSpan2 = $("#detailLikeCount");
+		      let current = parseInt(likeSpan.text()) || 0;
+		      let current2 = parseInt(likeSpan2.text()) || 0;
+		      likeSpan.text(current + 1);
+		      likeSpan2.text(current2 + 1);
+		    },
+		    error: function () {
+		      alert("좋아요 처리에 실패했습니다.");
+		    }
+		  });
+		});
+	  
+	</script>
   </jsp:attribute>
 </ui:layout>
-
-<script src="${cpath}/resources/js/jquery-3.6.0.min.js"></script>
-<script type="text/javascript">
-  const cpath   = "${cpath}";
-  const boardId = "${boardId}";
-  let currentBoardUid;
-
-  function loadBoardDetail(boardId) {
-    const token = localStorage.getItem("accessToken");
-    const headers = token
-      ? { "Authorization": "Bearer " + token }
-      : {};
-
-    $.ajax({
-      url: `${cpath}/api/board/boarddetail/\${boardId}`,
-      type: "GET",
-      headers: headers,
-      success: function(board) {
-        currentBoardUid = board.uid;
-        $("#detailTitle").text(board.title);
-        $("#detailAuthor").text(board.nickname);
-        $("#detailLikeCount").text(board.like_count);
-        $("#detailViewCount").text(board.view_count);
-        $("#detailCreatedAt").text(
-          new Date(board.created_at).toLocaleString("ko-KR")
-        );
-        $("#detailContent").html(board.content);
-        
-        if (board.oner === true) {
-            $("#btnEdit, #btnDelete").show();
-          }
-		
-      },
-      error: function() {
-        alert("상세 정보를 불러오지 못했습니다.");
-        history.back();
-      }
-    });
-  }
-
-  $(document).ready(function(){
-    loadBoardDetail(boardId);
-    
-    $('#btnEdit').on('click', function(){
-        window.location.href = `\${cpath}/board/write/\${boardId}`;
-      });
-    
- 	// 삭제 버튼 클릭
-    $("#btnDelete").on("click", function() {
-      if (!confirm("정말 삭제하시겠습니까?")) return;
-
-      const token   = localStorage.getItem("accessToken");
-      const headers = token ? { "Authorization": "Bearer " + token } : {};
-
-      $.ajax({
-        url: `${cpath}/api/board/boarddelete/${boardId}`,
-        type: "DELETE",
-        headers: headers,
-        success: function() {
-          alert("게시글이 삭제되었습니다.");
-          location.href = `${cpath}/board`;
-        },
-        error: function() {
-          alert("삭제에 실패했습니다. 다시 시도해주세요.");
-        }
-      });
-    });
-	    
-  });
-  //좋아요 버튼 클릭 시
-  $(document).on("click", "#likeBtn", function () {
-	  
-	  const token = localStorage.getItem("accessToken");
-	  if (!token) {
-	    alert("로그인이 필요합니다.");
-	    return;
-	  }
-
-	  if (!currentBoardUid) {
-	    alert("게시글 정보가 없습니다.");
-	    return;
-	  }
-
-	  $.ajax({
-	    url: "/api/board/like/" + currentBoardUid,
-	    method: "POST",
-	    success: function () {
-	      let likeSpan = $("#likeCount");
-	      let likeSpan2 = $("#detailLikeCount");
-	      let current = parseInt(likeSpan.text()) || 0;
-	      let current2 = parseInt(likeSpan2.text()) || 0;
-	      likeSpan.text(current + 1);
-	      likeSpan2.text(current2 + 1);
-	    },
-	    error: function () {
-	      alert("좋아요 처리에 실패했습니다.");
-	    }
-	  });
-	});
-  
-</script>

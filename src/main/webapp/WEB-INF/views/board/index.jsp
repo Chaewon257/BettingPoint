@@ -30,9 +30,7 @@
 				</div>
 			</div>
 		</div>
-	</jsp:attribute>
-</ui:layout>
-		<script src="/resources/js/board2.js"></script>
+		<script src="/resources/js/board.js"></script>
 		<script>
 		$(function(){
 		      // 페이지 로드 시 
@@ -81,11 +79,11 @@
 				// 기본 정렬 값 적용 (created_at)
 				$(this).removeClass("text-gray-3 hover:text-gray-7").addClass("text-gray-7 underline");
 				
-				
 				loadBoardList(1, currentCategory, selectedSort);
 				
 			});
-			
-		
 		});
 		</script>
+	</jsp:attribute>
+</ui:layout>
+		
