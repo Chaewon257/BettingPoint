@@ -40,9 +40,6 @@
 	        $.ajax({
 	            url: `/api/history/point/list?page=\${page}`,
 	            method: 'GET',
-	            headers: {
-	                'Authorization': 'Bearer ' + token
-	            },
 	            success: function (res) {
 	                const histories = res.histories;
 	                totalCount = res.total;
@@ -78,9 +75,10 @@
 	            const amountSign = isPositive ? "+" : "-";
 	            const amountClass = isPositive ? "text-blue-1" : "text-red-1";
 	            const typeClass = amountClass;
-	
-	            const amountText = `\${amountSign}\${history.amount}`;
-	            const balanceText = history.balance_after;
+				
+	            const historyAmount = Number(history.amount).toLocaleString();
+	            const amountText = `\${amountSign}\${historyAmount}`;
+	            const balanceText = Number(history.balance_after).toLocaleString();
 	            const date = formatDate(history.created_at);
 	
 
@@ -153,9 +151,6 @@
 	    $.ajax({
 	        url: '/api/user/me',
 	        method: 'GET',
-	        headers: {
-	            'Authorization': 'Bearer ' + token
-	        },
 	        success: function () {
 	            loadPointHistory(token, currentPage);
 	        },
