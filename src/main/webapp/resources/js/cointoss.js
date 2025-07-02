@@ -1,3 +1,5 @@
+const MAX_POINTS = 1000000000; // 10억
+
 // 게임상태(객체)
 let gameState = {
   balance: 0,               //  사용자 보유 포인트 (DB에서 받아올 예정)
@@ -340,7 +342,27 @@ function flipCoin() {
       gameState.streak++;
       gameState.accumulatedWin = Math.round(gameState.accumulatedWin * difficultyConfig.payout);
       gameState.potentialWin = Math.round(gameState.accumulatedWin * difficultyConfig.payout);
-
+	  
+	  
+	  
+	   if (gameState.accumulatedWin > MAX_POINTS) {
+        gameState.accumulatedWin = MAX_POINTS;
+        gameState.potentialWin = MAX_POINTS;
+        
+        showResult(`💰 최대 금액 도달! 자동으로 현금화됩니다. (연속 ${gameState.streak}회 성공)`, "win");
+        
+        // 2초 후 자동 현금화
+        setTimeout(() => {
+          stopGame();
+        }, 2000);
+        
+        gameState.isFlipping = false;
+        elements.coin.classList.remove("flipping");
+        updateUI();
+        return;
+      }
+      
+      else{
       showResult(`앞면! 연속 ${gameState.streak}회 성공! (난이도: ${difficultyConfig.name}) 다음 성공시 ${gameState.potentialWin}포인트 획득`, "win");
 	
 	  elements.goBtn.classList.remove("hidden");
@@ -348,7 +370,9 @@ function flipCoin() {
      
       elements.goBtn.disabled = false;
       elements.stopBtn.disabled = false;
-    } else {
+      }
+    }
+     else {
        
       elements.coin.classList.add("coin-tails");
      

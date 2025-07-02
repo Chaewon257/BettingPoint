@@ -1,4 +1,4 @@
-
+const MAX_POINTS = 1000000000; // 10억
 
 // 게임상태(객체)
 let gameState = {
@@ -291,11 +291,29 @@ function handleTileClick(index) {
     gameState.gemsFound++;
     
     // 획득 포인트 계산
-    const difficultyConfig = difficultyConfigs[gameState.difficulty];
-    gameState.potentialWin = Math.round(gameState.currentBet * Math.pow(difficultyConfig.payout, gameState.gemsFound));
+ 
+	const difficultyConfig = difficultyConfigs[gameState.difficulty];
+	let calculatedWin = Math.round(gameState.currentBet * Math.pow(difficultyConfig.payout, gameState.gemsFound));
+
+	// 10억 초과 체크
+	if (calculatedWin > MAX_POINTS) {
+  	gameState.potentialWin = MAX_POINTS;
+  	updateUI();
+  	showResult(`💎 최대 금액 도달! 자동으로 현금화됩니다. (${gameState.gemsFound}개 발견)`, "win");
+  
+     setTimeout(() => {
+          stopGame();
+        }, 2000);
+   
+  	
+  	return;
+	}
+  else{
+	gameState.potentialWin = calculatedWin;
+
+	updateUI();
+	showResult(`💎 보석 발견! (${gameState.gemsFound}개) 현금화하거나 계속 진행하세요!`, "win");
     
-    updateUI();
-    showResult(`💎 보석 발견! (${gameState.gemsFound}개) 현금화하거나 계속 진행하세요!`, "win");
     
     
     // 현재 난이도의 전체 보석 수 계산
@@ -309,6 +327,7 @@ function handleTileClick(index) {
     // 현금화 버튼 표시
     elements.stopBtn.classList.remove("hidden");
   }
+}
 }
 
 // 게임 시작
@@ -371,6 +390,12 @@ function setMinePositions(mineCount) {
 
 // 현금화
 function stopGame() {
+	
+  // 10억 초과 시 10억으로 제한
+  if (gameState.potentialWin > MAX_POINTS) {
+    gameState.potentialWin = MAX_POINTS;
+    showResult(`포인트가 최대값(20억)으로 제한되어 현금화됩니다.`, "info");
+  }
   $.ajax({
     url: '/api/game/stop',
     method: 'POST',
