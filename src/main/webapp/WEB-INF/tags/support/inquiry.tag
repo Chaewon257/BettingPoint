@@ -1,6 +1,6 @@
 <%@ tag language="java" pageEncoding="UTF-8"%>
 
-<script src="${cpath}/resources/js/summernote/summernote-lite.js"></script>
+<script src="${cpath}/resources/js/summernote/summernote-lite-support.js"></script>
 <div class="w-full grid grid-cols-1 lg:grid-cols-5">
 	<div class="col-span-4 w-full h-full flex flex-col gap-y-4 bg-gray-8 p-4">
 		<input type="text" id="title" name="title" class="text-3xl font-extrabold bg-transparent outline-none" placeholder="제목을 입력하세요">
