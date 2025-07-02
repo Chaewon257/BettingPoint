@@ -66,7 +66,7 @@ public class BoardService {
 		boardDAO.updateBoard(board);
 	}
 
-	// 게시글 삭제 - 로그인한 본인만 삭제 가능
+	// 게시글 삭제 - 로그인한 본인만 삭제 가능 (s3 연동)
 	public void deleteBoard(String boardId, String user_uid) {
 		// 1. 기존 게시글 조회
 		BoardDTO existing = boardDAO.getBoardByUid(boardId);
