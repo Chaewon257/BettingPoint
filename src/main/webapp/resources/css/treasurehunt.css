@@ -35,18 +35,6 @@ body {
   color: #059669;
 }
 
-/* #gameBoard {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 8px;
-  max-width: 350px; 필요 시 조정
-  margin: 20px auto; 좌우 중앙 정렬
-
-  padding: 8px; 내부 여백 균일하게 추가
-  box-sizing: border-box; 패딩이 크기에 포함되도록
-  background-color: #e6f0ff; 연한 배경색 (선택사항)
-  border-radius: 12px; 둥근 모서리 (선택사항)
-} */
 
 #gameBoard {
   display: grid;
