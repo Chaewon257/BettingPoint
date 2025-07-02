@@ -6,18 +6,22 @@
 <script src="${cpath}/resources/js/treasurehunt.js" defer></script>
 <link rel="stylesheet" href="${cpath}/resources/css/treasurehunt.css">
 
-<div class="w-4/5 max-w-screen-xl mx-auto min-w-80 h-3/5 xl:w-3/4 xl:max-w-screen-2xl">
+<div class="w-full max-w-screen-xl mx-auto px-4 sm:px-6 md:px-8">
   <div class="relative mb-8 text-center">
     <h1 class="text-xl font-bold text-blue-900 sm:text-2xl lg:text-3xl xl:text-4xl">
       <img src="${cpath}/resources/images/treasure.png" alt="보물" 
         class="inline-block h-9 sm:h-11 lg:h-13 xl:h-13 mr-2 bg-transparent object-contain">
       Treasure Hunt
-    </h1>
-    <button class="absolute top-0 right-0 bg-blue-200 text-blue-900 border-none py-2 px-4 rounded-lg font-bold cursor-pointer text-xs transition-colors duration-300 hover:bg-blue-300 sm:text-sm"
-      onclick="location.href='/solo'">개인게임 리스트로 이동하기</button>
+    </h1>      
+      <button
+  class="absolute right-0 top-0 sm:top-0 top-8  /* 모바일에서 top-10(3rem)로 아래로 내림 */
+         bg-blue-200 text-blue-900 border-none py-2 px-4 rounded-lg font-bold cursor-pointer text-xs transition-colors duration-300 hover:bg-blue-300 sm:text-sm"
+  onclick="location.href='/solo'">
+  개인게임 리스트로 이동하기
+</button>
   </div>
 
-  <div class="bg-white rounded-2xl p-6 border border-blue-200 min-h-96 flex flex-col gap-5 md:flex-row xl:p-12 xl:min-h-[600px]">
+	<div class="bg-white sm:h-[650px] max-sm:h-auto max-sm:min-h-[750px] rounded-2xl p-6 border border-blue-200 flex flex-col gap-5 md:flex-row xl:p-12">
     <!-- 왼쪽 패널 -->
     <div class="flex-1 flex flex-col gap-5 border-b-2 border-blue-100 pb-5 md:border-b-0 md:border-r-2 md:pr-6 md:pb-0 xl:pr-16">
       <!-- 유저 포인트 -->
@@ -92,7 +96,7 @@
       </div>
 
       <div class="mt-2.5 flex flex-col items-center">
-        <div class="grid grid-cols-5 gap-2 mb-4 p-4 bg-blue-50 rounded-xl" id="gameBoard">
+       <div id="gameBoard" class="w-full grid grid-cols-5 gap-2 mb-4 p-4 bg-blue-50 rounded-xl">
           <!-- 타일 생성 -->
         </div>
 

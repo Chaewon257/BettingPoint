@@ -6,17 +6,23 @@
 <script src="${cpath}/resources/js/cointoss.js" defer></script>
 <link rel="stylesheet" href="${cpath}/resources/css/cointoss.css">
 
-<div class="w-4/5 max-w-screen-xl mx-auto min-w-80 h-3/5 xl:w-3/4 xl:max-w-screen-2xl">
+<div class="w-full max-w-screen-xl mx-auto px-4 sm:px-6 md:px-8">
   <div class="relative mb-8 text-center">
     <h1 class="text-xl font-bold text-blue-900 sm:text-2xl lg:text-3xl xl:text-4xl">
       <img src="${cpath}/resources/images/coin-head.png" alt="코인" class="inline-block h-9 sm:h-11 lg:h-13 xl:h-13 mr-2">
       Coin Toss
     </h1>
-    <button class="absolute top-0 right-0 bg-blue-200 text-blue-900 border-none py-2 px-4 rounded-lg font-bold cursor-pointer text-xs transition-colors duration-300 hover:bg-blue-300 sm:text-sm"
-      onclick="location.href='/solo'">개인게임 리스트로 이동하기</button>
+<button
+  class="absolute right-0 top-0 sm:top-0 top-8  /* 모바일에서 top-10(3rem)로 아래로 내림 */
+         bg-blue-200 text-blue-900 border-none py-2 px-4 rounded-lg font-bold cursor-pointer text-xs transition-colors duration-300 hover:bg-blue-300 sm:text-sm"
+  onclick="location.href='/solo'">
+  개인게임 리스트로 이동하기
+</button>
   </div>
 
-  <div class="bg-white rounded-2xl p-6 border border-blue-200 min-h-96 flex flex-col gap-5 md:flex-row xl:p-12 xl:min-h-[600px]">
+    <!-- <div class="bg-white h-[650px] rounded-2xl p-6 border border-blue-200 flex flex-col gap-5 md:flex-row xl:p-12"> -->
+   <!--  <div class="bg-white h-auto min-h-[750px] sm:h-[650px] rounded-2xl p-6 border border-blue-200 flex flex-col gap-5 md:flex-row xl:p-12"> -->
+    <div class="bg-white sm:h-[650px] max-sm:h-auto max-sm:min-h-[750px] rounded-2xl p-6 border border-blue-200 flex flex-col gap-5 md:flex-row xl:p-12">
     <!-- 왼쪽 패널 -->
     <div class="flex-1 flex flex-col gap-5 border-b-2 border-blue-100 pb-5 md:border-b-0 md:border-r-2 md:pr-6 md:pb-0 xl:pr-16">
       <!-- 유저 포인트 -->
@@ -91,13 +97,22 @@
       </div>
 
       <div class="mt-2.5 flex flex-col items-center">
-        <div class="coin coin-heads w-44 h-44 rounded-full bg-cover bg-center cursor-pointer select-none transition-transform duration-300 hover:scale-105 mb-8" id="coin">
-          <div class="coin-symbol text-4xl font-bold sm:text-6xl"></div>
-        </div>
+      <div class="coin coin-heads 
+            w-32 h-32            <!-- 모바일 기본 -->
+            sm:w-36 sm:h-36      <!-- 작은 태블릿 -->
+            md:w-44 md:h-44      <!-- 중형 디바이스 -->
+            lg:w-48 lg:h-48      <!-- PC -->
+            rounded-full bg-cover bg-center 
+            cursor-pointer select-none 
+            transition-transform duration-300 
+            hover:scale-105 mb-8"
+     id="coin">
+  <div class="coin-symbol text-4xl font-bold sm:text-6xl"></div>
+</div>
 
         <div class="result-message p-2.5 rounded-lg text-center mt-4 font-bold text-sm hidden sm:text-base" id="result-message"></div>
 
-        <div class="mt-12 flex gap-3 flex-wrap">
+        <div class="mt-8 flex gap-3 flex-wrap">
           <button class="game-button py-3 px-6 border-none rounded-xl text-sm font-bold cursor-pointer transition-all duration-300 bg-blue-200 text-blue-900 hover:bg-blue-300 sm:text-base disabled:bg-gray-400 disabled:cursor-not-allowed" id="start-btn">게임 시작</button>
           <button class="game-button btn-success hidden py-3 px-6 border-none rounded-xl text-sm font-bold cursor-pointer transition-all duration-300 bg-green-500 text-white min-w-20 hover:bg-green-700 sm:text-base disabled:bg-gray-400 disabled:cursor-not-allowed" id="go-btn">GO</button>
           <button class="game-button btn-danger hidden py-3 px-6 border-none rounded-xl text-sm font-bold cursor-pointer transition-all duration-300 bg-red-500 text-white min-w-20 hover:bg-red-700 sm:text-base disabled:bg-gray-400 disabled:cursor-not-allowed" id="stop-btn">STOP</button>
