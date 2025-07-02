@@ -97,7 +97,7 @@
 		          onImageUpload: function (files) {
 		            uploadSummernoteImageFile(files[0], this);
 		          },
-		          // 에디터에서 사진 지우는 즉시 s3에서도 삭제
+		          // 에디터에서 사진 지우는 즉시 s3에서도 삭제.
 		          onMediaDelete: function (target) {
 		        	// target: jQuery 객체(<img> 요소)
 		            const imageUrl = target.attr('src');
