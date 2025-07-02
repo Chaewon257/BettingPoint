@@ -37,7 +37,6 @@ setInterval(detectDevTools, 500);
 // 2. 우클릭 방지
 document.addEventListener('contextmenu', function(e) {
   e.preventDefault();
-  alert('우클릭이 비활성화되어 있습니다.');
   return false;
 });
 
@@ -46,35 +45,30 @@ document.addEventListener('keydown', function(e) {
   // F12 (개발자 도구)
   if (e.keyCode === 123) {
     e.preventDefault();
-    alert('F12 키가 비활성화되어 있습니다.');
     return false;
   }
   
   // Ctrl+Shift+I (개발자 도구)
   if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
     e.preventDefault();
-    alert('개발자 도구 단축키가 비활성화되어 있습니다.');
     return false;
   }
   
   // Ctrl+Shift+C (요소 검사)
   if (e.ctrlKey && e.shiftKey && e.keyCode === 67) {
     e.preventDefault();
-    alert('요소 검사 단축키가 비활성화되어 있습니다.');
     return false;
   }
   
   // Ctrl+U (소스보기)
   if (e.ctrlKey && e.keyCode === 85) {
     e.preventDefault();
-    alert('소스보기가 비활성화되어 있습니다.');
     return false;
   }
   
   // Ctrl+Shift+J (콘솔)
   if (e.ctrlKey && e.shiftKey && e.keyCode === 74) {
     e.preventDefault();
-    alert('콘솔 단축키가 비활성화되어 있습니다.');
     return false;
   }
 });
@@ -126,7 +120,6 @@ setInterval(function() {
 // 6. 개발자 도구에서 변수 접근 차단
 Object.defineProperty(window, 'gameState', {
   get: function() {
-    alert('게임 데이터 접근이 차단되었습니다.');
     location.reload();
   },
   configurable: false
@@ -134,7 +127,6 @@ Object.defineProperty(window, 'gameState', {
 
 Object.defineProperty(window, 'difficultyConfigs', {
   get: function() {
-    alert('게임 설정 접근이 차단되었습니다.');
     location.reload();
   },
   configurable: false
