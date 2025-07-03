@@ -19,64 +19,50 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(UserNotFoundException.class)
 	public ResponseEntity<?> handleUserNotFound(UserNotFoundException ex) {
 		return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-				.body(Map.of(
-						"error", "USER_NOT_FOUND",
-						"message", ex.getMessage()
-						));
+				.body(Map.of("error", "USER_NOT_FOUND", "message", ex.getMessage()));
 	}
-	
+
 	@ExceptionHandler(InvalidPasswordException.class)
-  public ResponseEntity<?> handleInvalidPassword(InvalidPasswordException ex) {
-      return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-              .body(Map.of(
-                      "error", "INVALID_PASSWORD",
-                      "message", ex.getMessage()
-              ));
-  }
-	
+	public ResponseEntity<?> handleInvalidPassword(InvalidPasswordException ex) {
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+				.body(Map.of("error", "INVALID_PASSWORD", "message", ex.getMessage()));
+	}
+
 	@ExceptionHandler(MissingCredentialsException.class)
 	public ResponseEntity<?> handleMissingCredentials(MissingCredentialsException ex) {
 		return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-				.body(Map.of(
-						"error", "MISSING_CREDENTIALS",
-						"message", ex.getMessage()
-						));
+				.body(Map.of("error", "MISSING_CREDENTIALS", "message", ex.getMessage()));
 	}
-	
+
 	@ExceptionHandler(SessionExpiredException.class)
 	public ResponseEntity<?> handleSessionExpired(SessionExpiredException ex) {
 		return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-				.body(Map.of(
-						"error", "SESSION_EXPIRED",
-						"message", ex.getMessage()
-						));
+				.body(Map.of("error", "SESSION_EXPIRED", "message", ex.getMessage()));
 	}
-	
+
 	@ExceptionHandler(UnauthorizedAccessException.class)
 	public ResponseEntity<?> handleUnauthorizedAccess(UnauthorizedAccessException ex) {
 		return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-				.body(Map.of(
-						"error", "UNAUTHORIZED_ACCESS",
-						"message", ex.getMessage()
-						));
+				.body(Map.of("error", "UNAUTHORIZED_ACCESS", "message", ex.getMessage()));
 	}
-	
+
 	@ExceptionHandler(InvalidTokenException.class)
 	public ResponseEntity<?> handleInvalidToken(InvalidTokenException ex) {
 		return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-				.body(Map.of(
-						"error", "INVALID_TOKEN",
-						"message", ex.getMessage()
-						));
+				.body(Map.of("error", "INVALID_TOKEN", "message", ex.getMessage()));
 	}
 
-  // Optional: 모든 예외를 처리하는 fallback
-  @ExceptionHandler(Exception.class)
-  public ResponseEntity<?> handleAll(Exception ex) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-              .body(Map.of(
-                      "error", "INTERNAL_ERROR",
-                      "message", ex.getMessage()
-              ));
-  }
+	// Optional: 모든 예외를 처리하는 fallback
+	@ExceptionHandler(Exception.class)
+	public ResponseEntity<?> handleAll(Exception ex) {
+		ex.printStackTrace();
+		String message = ex.getMessage() != null ? ex.getMessage() : "알 수 없는 오류";
+		String detail = ex.getCause() != null && ex.getCause().getMessage() != null ? ex.getCause().getMessage()
+				: "원인 정보 없음";
+
+		Map<String, Object> body = Map.of("status", HttpStatus.INTERNAL_SERVER_ERROR.value(), "message", message, "detail",
+				detail);
+		
+		return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
+	}
 }

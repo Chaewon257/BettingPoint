@@ -69,35 +69,35 @@
 					'ts-28' : [
 						'1.75rem',
 						{
-							ineHeight: '100%',
+							lineHeight: '100%',
 		  					fontWeight: '800'
 						}
 					],
 					'ts-24' : [
 						'1.5rem',
 						{
-							ineHeight: '100%',
+							lineHeight: '100%',
 		  					fontWeight: '800'
 						}
 					],
 					'ts-20' : [
 						'1.25rem',
 						{
-							ineHeight: '100%',
+							lineHeight: '100%',
 		  					fontWeight: '800'
 						}
 					],
 					'ts-18' : [
 						'1rem',
 						{
-							ineHeight: '100%',
+							lineHeight: '100%',
 		  					fontWeight: '800'
 						}
 					],
 					'ts-14' : [
 						'0.75rem',
 						{
-							ineHeight: '100%',
+							lineHeight: '100%',
 		  					fontWeight: '800'
 						}
 					]
