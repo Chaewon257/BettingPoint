@@ -4,6 +4,7 @@
 
 <%@ attribute name="pageName" required="true"%>
 <%@ attribute name="bodyContent" fragment="true"%>
+<%@ attribute name="headLink" fragment="true"%>
 <%@ attribute name="pageType" required="true"%>
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
@@ -22,6 +23,7 @@
   <link rel="stylesheet" href="${cpath}/resources/css/turtlerun.css" />
 </c:if>
 <link rel="stylesheet" href="${cpath}/resources/css/summernote/summernote-lite.css">
+<jsp:invoke fragment="headLink"></jsp:invoke>
 <script src="https://cdn.tailwindcss.com"></script>
 <script type="text/javascript">
 	$(document).ready(function () {
@@ -69,35 +71,35 @@
 					'ts-28' : [
 						'1.75rem',
 						{
-							ineHeight: '100%',
+							lineHeight: '100%',
 		  					fontWeight: '800'
 						}
 					],
 					'ts-24' : [
 						'1.5rem',
 						{
-							ineHeight: '100%',
+							lineHeight: '100%',
 		  					fontWeight: '800'
 						}
 					],
 					'ts-20' : [
 						'1.25rem',
 						{
-							ineHeight: '100%',
+							lineHeight: '100%',
 		  					fontWeight: '800'
 						}
 					],
 					'ts-18' : [
 						'1rem',
 						{
-							ineHeight: '100%',
+							lineHeight: '100%',
 		  					fontWeight: '800'
 						}
 					],
 					'ts-14' : [
 						'0.75rem',
 						{
-							ineHeight: '100%',
+							lineHeight: '100%',
 		  					fontWeight: '800'
 						}
 					]

@@ -7,7 +7,7 @@
 				<img id="profileImage" alt="default profile image" src="/resources/images/profile_default_image.png">
 			</div>
 			<div class="grow w-full flex items-center">
-				<div class="w-full flex flex-col items-center gap-y-2 rounded-xl bg-blue-4 p-4 font-extrabold text-xl md:text-xl lg:text-3xl">
+				<div class="w-full flex flex-col items-center gap-y-2 rounded-xl bg-blue-4 p-4 font-extrabold text-xl lg:text-3xl">
 					<div class="w-full flex items-center justify-between text-gray-6">
 						<img alt="money box" src="${cpath}/resources/images/money_box.png" class="w-7 lg:w-12">
 						<div id="pointBalance" class="grow text-center">00000</div>
