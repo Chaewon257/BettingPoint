@@ -11,10 +11,4 @@ public class TossPaymentConfig {
 
     @Value("${toss_secret_key}")
     private String tossSecretKey;
-
-    @Value("${toss_success_url}")
-    private String successUrl;
-
-    @Value("${toss_fail_url}")
-    private String failUrl;
 }
