@@ -20,5 +20,12 @@ public class SupportService {
 	public BoardDTO selectById(String boardId) {
 		return supportDAO.selectById(boardId);
 	}
+
+	public List<BoardDTO> selectByCategoryWithPaging(String upperCategory, int offset, int size) {
+		return supportDAO.selectByCategoryWithPaging(upperCategory, offset, size);
+	}
 	
+	public int countByCategory(String category) {
+		return supportDAO.countByCategory(category);
+	}
 }
