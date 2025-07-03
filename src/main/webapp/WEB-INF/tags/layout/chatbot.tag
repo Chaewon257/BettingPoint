@@ -6,7 +6,7 @@
 	<c:when test="${pageType eq 'main'}">
 		<!--  챗봇 버튼 -->
 		<button id="chatbotBtn"
-			class="fixed top-[75%] right-[30px] transform -translate-y-1/2 z-[1000] bg-white border-none w-[72px] h-[70px] rounded-full cursor-pointer flex items-center justify-center
+			class="fixed bottom-2.5 right-5 transform -translate-y-1/2 z-[1000] bg-white border-none w-[72px] h-[70px] rounded-full cursor-pointer flex items-center justify-center
          shadow-[0_0_12px_rgba(0,0,0,0.3)] transition transform active:scale-90 duration-150 ease-out
          hover:scale-110 hover:shadow-[0_0_20px_rgba(0,0,0,0.4)]">
 			<img id="chatbotIcon" src="${cpath}/resources/images/chatbot.png"
