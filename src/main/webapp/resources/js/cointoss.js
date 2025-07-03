@@ -1,3 +1,5 @@
+const MAX_POINTS = 1000000000; // 10억
+
 // 게임상태(객체)
 let gameState = {
   balance: 0,               //  사용자 보유 포인트 (DB에서 받아올 예정)
@@ -222,7 +224,7 @@ function updateDifficultyDisplay(gameLevels) {  // gameData -> gameLevels로 명
     const $difficultyOption = $(`.difficulty-option[data-difficulty="${difficultyKey}"]`);
     if ($difficultyOption.length > 0) {
       $difficultyOption.find('.difficulty-chance').text(`성공률: ${gameLevel.probability}%`);
-      $difficultyOption.find('.difficulty-payout').text(`배당: ${gameLevel.reward/100}배`);
+      $difficultyOption.find('.difficulty-payout').text(`${gameLevel.reward/100}배`);
     }
   });
 }
@@ -302,7 +304,7 @@ function stopGame() {
         difficulty: gameState.difficulty,
         streak: gameState.streak,
         gameResult: "WIN",
-        gameName: "cointoss"
+        gameName: "CoinToss"
     }),
     success: function (response) {
 
@@ -340,7 +342,27 @@ function flipCoin() {
       gameState.streak++;
       gameState.accumulatedWin = Math.round(gameState.accumulatedWin * difficultyConfig.payout);
       gameState.potentialWin = Math.round(gameState.accumulatedWin * difficultyConfig.payout);
-
+	  
+	  
+	  
+	   if (gameState.accumulatedWin >=MAX_POINTS) {
+        gameState.accumulatedWin = MAX_POINTS;
+        gameState.potentialWin = MAX_POINTS;
+        
+        showResult(`💰 최대 금액 도달! 자동으로 현금화됩니다. (연속 ${gameState.streak}회 성공)`, "win");
+        
+        // 2초 후 자동 현금화
+        setTimeout(() => {
+          stopGame();
+        }, 2000);
+        
+        gameState.isFlipping = false;
+        elements.coin.classList.remove("flipping");
+        updateUI();
+        return;
+      }
+      
+      else{
       showResult(`앞면! 연속 ${gameState.streak}회 성공! (난이도: ${difficultyConfig.name}) 다음 성공시 ${gameState.potentialWin}포인트 획득`, "win");
 	
 	  elements.goBtn.classList.remove("hidden");
@@ -348,7 +370,9 @@ function flipCoin() {
      
       elements.goBtn.disabled = false;
       elements.stopBtn.disabled = false;
-    } else {
+      }
+    }
+     else {
        
       elements.coin.classList.add("coin-tails");
      
@@ -411,20 +435,20 @@ function setupEventListeners() {
   });
 
 // 배팅 프리셋 버튼 (수정된 버전 - 금액 누적)
+ // 배팅 프리셋 버튼 (수정된 버전 - 금액 누적)
 document.querySelectorAll(".bet-preset").forEach((btn) => {
   btn.addEventListener("click", () => {
     if (gameState.gameActive || gameState.loading) return;
 
-    const amount = parseInt(btn.dataset.amount) || 0;
-    const currentAmount = parseInt(elements.betAmount.value) || 0; // 현재 입력된 금액
-    
-    if (amount === "all") {
-      // ALL IN은 기존 로직 유지 (전체 잔액으로 설정)
+    const amountStr = btn.dataset.amount;  // 문자열로 먼저 받기
+    const currentAmount = parseInt(elements.betAmount.value) || 0;
+
+    if (amountStr === "all") {  // 문자열 비교
       elements.betAmount.value = gameState.balance;
     } else {
-      // 다른 버튼들은 현재 금액에 더하기
+      const amount = parseInt(amountStr) || 0;  // 숫자 변환
       const newAmount = currentAmount + amount;
-      
+
       if (gameState.balance < newAmount) {
         inputErrorMessage("보유포인트 내에서만 배팅이 가능합니다.");
         elements.betAmount.value = 0;  
@@ -432,11 +456,9 @@ document.querySelectorAll(".bet-preset").forEach((btn) => {
         elements.betAmount.value = newAmount;
       }
     }
-
     updateUI();
   });
 });
-
   // 배팅 금액 입력
   elements.betAmount.addEventListener("input", () => {
     const amount = parseInt(elements.betAmount.value) || 0;
@@ -512,7 +534,19 @@ function endGame(won, message) {
 
 function showResult(message, type) {
   elements.resultMessage.innerHTML = message;
-  elements.resultMessage.className = `result-message result-${type}`;
+  
+  // 기존 result-* 클래스들 제거
+  elements.resultMessage.classList.remove("result-win", "result-lose", "result-info");
+  
+  // 타입에 따라 Tailwind 클래스 적용
+  if (type === "win") {
+    elements.resultMessage.className = "result-message p-0.5 rounded-lg text-center font-bold text-sm sm:text-base bg-green-100 text-green-800 border border-green-300";
+  } else if (type === "lose") {
+    elements.resultMessage.className = "result-message p-0.5 rounded-lg text-center font-bold text-sm sm:text-base bg-red-100 text-red-600 border border-red-300";
+  } else if (type === "info") {
+    elements.resultMessage.className = "result-message p-0.5 rounded-lg text-center font-bold text-sm sm:text-base bg-blue-100 text-blue-800 border border-blue-300";
+  }
+  
   elements.resultMessage.style.display = "block";
 }
 
@@ -585,7 +619,7 @@ function sendLoseHistory() {
       difficulty: gameState.difficulty,
       streak: gameState.streak,
       gameResult: "LOSE",
-      gameName: "cointoss"
+      gameName: "CoinToss"
     }),
     success: function (res) {
     },
