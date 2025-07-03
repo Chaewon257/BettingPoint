@@ -224,7 +224,7 @@ function updateDifficultyDisplay(gameLevels) {  // gameData -> gameLevels로 명
     const $difficultyOption = $(`.difficulty-option[data-difficulty="${difficultyKey}"]`);
     if ($difficultyOption.length > 0) {
       $difficultyOption.find('.difficulty-chance').text(`성공률: ${gameLevel.probability}%`);
-      $difficultyOption.find('.difficulty-payout').text(`배당: ${gameLevel.reward/100}배`);
+      $difficultyOption.find('.difficulty-payout').text(`${gameLevel.reward/100}배`);
     }
   });
 }
@@ -540,11 +540,11 @@ function showResult(message, type) {
   
   // 타입에 따라 Tailwind 클래스 적용
   if (type === "win") {
-    elements.resultMessage.className = "result-message p-2.5 rounded-lg text-center font-bold text-sm sm:text-base bg-green-100 text-green-800 border border-green-300";
+    elements.resultMessage.className = "result-message p-0.5 rounded-lg text-center font-bold text-sm sm:text-base bg-green-100 text-green-800 border border-green-300";
   } else if (type === "lose") {
-    elements.resultMessage.className = "result-message p-2.5 rounded-lg text-center font-bold text-sm sm:text-base bg-red-100 text-red-600 border border-red-300";
+    elements.resultMessage.className = "result-message p-0.5 rounded-lg text-center font-bold text-sm sm:text-base bg-red-100 text-red-600 border border-red-300";
   } else if (type === "info") {
-    elements.resultMessage.className = "result-message p-2.5 rounded-lg text-center font-bold text-sm sm:text-base bg-blue-100 text-blue-800 border border-blue-300";
+    elements.resultMessage.className = "result-message p-0.5 rounded-lg text-center font-bold text-sm sm:text-base bg-blue-100 text-blue-800 border border-blue-300";
   }
   
   elements.resultMessage.style.display = "block";

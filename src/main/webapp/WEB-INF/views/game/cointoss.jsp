@@ -16,13 +16,10 @@
   class="absolute right-0 top-0 sm:top-0 top-8  /* 모바일에서 top-10(3rem)로 아래로 내림 */
          bg-blue-200 text-blue-900 border-none py-2 px-4 rounded-lg font-bold cursor-pointer text-xs transition-colors duration-300 hover:bg-blue-300 sm:text-sm"
   onclick="location.href='/solo'">
-  개인게임 리스트로 이동하기
+  뒤로가기
 </button>
   </div>
-
-    <!-- <div class="bg-white h-[650px] rounded-2xl p-6 border border-blue-200 flex flex-col gap-5 md:flex-row xl:p-12"> -->
-   <!--  <div class="bg-white h-auto min-h-[750px] sm:h-[650px] rounded-2xl p-6 border border-blue-200 flex flex-col gap-5 md:flex-row xl:p-12"> -->
-    <div class="bg-white sm:h-[650px] max-sm:h-auto max-sm:min-h-[750px] rounded-2xl p-6 border border-blue-200 flex flex-col gap-5 md:flex-row xl:p-12">
+    <div class="bg-white sm:h-[550px] max-sm:h-auto max-sm:min-h-[750px] rounded-2xl p-6 border border-blue-200 flex flex-col gap-5 md:flex-row xl:p-12">
     <!-- 왼쪽 패널 -->
     <div class="flex-1 flex flex-col gap-5 border-b-2 border-blue-100 pb-5 md:border-b-0 md:border-r-2 md:pr-6 md:pb-0 xl:pr-16">
       <!-- 유저 포인트 -->
@@ -110,7 +107,7 @@
   <div class="coin-symbol text-4xl font-bold sm:text-6xl"></div>
 </div>
 
-        <div class="result-message p-2.5 rounded-lg text-center mt-4 font-bold text-sm hidden sm:text-base" id="result-message"></div>
+        <div class="result-message" id="result-message"></div>
 
         <div class="mt-8 flex gap-3 flex-wrap">
           <button class="game-button py-3 px-6 border-none rounded-xl text-sm font-bold cursor-pointer transition-all duration-300 bg-blue-200 text-blue-900 hover:bg-blue-300 sm:text-base disabled:bg-gray-400 disabled:cursor-not-allowed" id="start-btn">게임 시작</button>
@@ -118,7 +115,7 @@
           <button class="game-button btn-danger hidden py-3 px-6 border-none rounded-xl text-sm font-bold cursor-pointer transition-all duration-300 bg-red-500 text-white min-w-20 hover:bg-red-700 sm:text-base disabled:bg-gray-400 disabled:cursor-not-allowed" id="stop-btn">STOP</button>
         </div>
 
-        <div class="start-error-message p-2.5 rounded-lg text-center mt-4 font-bold text-sm hidden text-red-700 sm:text-base" id="start-error-message"></div>
+        <div class="start-error-message text-red-700" id="start-error-message"></div>
       </div>
     </div>
   </div>
