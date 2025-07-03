@@ -20,18 +20,11 @@ public class PaymentRestController {
     @Autowired
     private HistoryService historyService;
 
-    @PostMapping("/request")
-    public PaymentDTO requestPayment(@RequestHeader("Authorization") String authHeader,
-                                     @RequestBody PaymentRequestDTO reqeust) {
-        String userId = authService.validateAndGetUserId(authHeader);
-        return paymentService.requestPayment(reqeust, userId);
-    }
-
-    @GetMapping("/confirm")
-    public PaymentResponseDTO confirmPayment(@RequestBody PaymentConfirmDTO response,
+    @PostMapping("/confirm")
+    public PaymentDTO confirmPayment(@RequestBody PaymentConfirmDTO response,
                                      @RequestHeader("Authorization") String authHeader) throws Exception {
         String userId = authService.validateAndGetUserId(authHeader);
-        PaymentResponseDTO payment = paymentService.confirmPayment(response, userId);
+        PaymentDTO payment = paymentService.confirmPayment(response, userId);
 
         if(payment.getStatus().equals(PaymentStatus.PAID)) {
             authService.addPoint(payment.getAmount(), userId);
