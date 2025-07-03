@@ -92,7 +92,7 @@ public class TurtleRunRestController {
 	        gameUid,
 	        gameName,
 	        betAmount,
-	        winAmount,
+	        Math.abs(winAmount - betAmount),
 	        gameResult,
 	        uid
 	    );
@@ -101,7 +101,7 @@ public class TurtleRunRestController {
 	    PointHistoryDTO pointHistory = new PointHistoryDTO();
 	    pointHistory.setGh_uid(savedGame.getUid());
 	    pointHistory.setType(gameResult);
-	    pointHistory.setAmount(winAmount);
+	    pointHistory.setAmount(Math.abs(winAmount - betAmount));
 	    pointHistory.setBalance_after(user.getPoint_balance());
 	    historyService.insertPointHistory(pointHistory, uid);
 
