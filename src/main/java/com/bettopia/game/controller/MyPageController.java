@@ -31,4 +31,14 @@ public class MyPageController {
 	public String myQuestions() {
 		return "/mypage/questions";
 	}
+	
+	@GetMapping("/success")
+	public String chargeSuccess() {
+		return "/mypage/success";
+	}
+	
+	@GetMapping("/fail")
+	public String chargeFail() {
+		return "/mypage/fail";
+	}
 }
