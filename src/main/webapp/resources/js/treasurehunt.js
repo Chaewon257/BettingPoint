@@ -1,17 +1,13 @@
 // 1. 개발자 도구 열림 감지
-let devtools = {
-  open: false,
-  orientation: null
-};
-
+let devtools = { open: false };
 const threshold = 160;
 
-// 개발자 도구 감지 함수
 function detectDevTools() {
   if (window.outerHeight - window.innerHeight > threshold || 
       window.outerWidth - window.innerWidth > threshold) {
     if (!devtools.open) {
       devtools.open = true;
+      console.log(1);
       handleDevToolsOpen();
     }
   } else {
@@ -19,151 +15,87 @@ function detectDevTools() {
   }
 }
 
-// 개발자 도구가 열렸을 때 처리
+// 2. debugger 감지
+function detectDebugger() {
+  const start = performance.now();
+  debugger;
+  const end = performance.now();
+
+  if (end - start > 100) {
+    console.warn('%c🚨 개발자 도구가 감지되었습니다. 게임이 중단됩니다.', 'color: red; font-size: 16px; font-weight: bold;');
+    handleDevToolsOpen();
+  }
+}
+
+// 개발자 도구 감지 시 처리
 function handleDevToolsOpen() {
-  // 콘솔 클리어
-  console.clear();
-  
-  // 경고 메시지
-  alert('개발자 도구 사용이 감지되었습니다.\n게임의 공정성을 위해 페이지를 새로고침합니다.');
-  
-  // 페이지 새로고침 (게임 상태 리셋)
+  alert('개발자 도구 사용이 감지되었습니다.\n개발자 모드를 끄려면 f12를 눌러주세요.\n게임의 공정성을 위해 페이지를 새로고침합니다.');
   location.reload();
 }
 
-// 0.5초마다 체크
-setInterval(detectDevTools, 500);
+//  감지 루프 실행
+setInterval(() => {
+  detectDevTools();
+  detectDebugger();
+}, 1000);
 
-// 2. 우클릭 방지
-document.addEventListener('contextmenu', function(e) {
-  e.preventDefault();
-  return false;
-});
+// 6. 우클릭 방지
+document.addEventListener('contextmenu', e => e.preventDefault());
 
-// 3. 키보드 단축키 방지
+// 7. 키보드 단축키 방지
 document.addEventListener('keydown', function(e) {
-  // F12 (개발자 도구)
-  if (e.keyCode === 123) {
-    e.preventDefault();
-    return false;
-  }
-  
-  // Ctrl+Shift+I (개발자 도구)
-  if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
-    e.preventDefault();
-    return false;
-  }
-  
-  // Ctrl+Shift+C (요소 검사)
-  if (e.ctrlKey && e.shiftKey && e.keyCode === 67) {
-    e.preventDefault();
-    return false;
-  }
-  
-  // Ctrl+U (소스보기)
-  if (e.ctrlKey && e.keyCode === 85) {
-    e.preventDefault();
-    return false;
-  }
-  
-  // Ctrl+Shift+J (콘솔)
-  if (e.ctrlKey && e.shiftKey && e.keyCode === 74) {
-    e.preventDefault();
-    return false;
+  const blocked = [
+    123, // F12
+    [17, 73], // Ctrl+Shift+I
+    [17, 67], // Ctrl+Shift+C
+    [17, 74], // Ctrl+Shift+J
+    [17, 85], // Ctrl+U
+    [17, 65], // Ctrl+A
+    [17, 83], // Ctrl+S
+    [17, 67]  // Ctrl+C
+  ];
+
+  for (const combo of blocked) {
+    if (Array.isArray(combo)) {
+      if (e.ctrlKey && e.keyCode === combo[1]) {
+        e.preventDefault();
+        return false;
+      }
+    } else if (e.keyCode === combo) {
+      e.preventDefault();
+      return false;
+    }
   }
 });
 
-// 4. 콘솔 사용 방지 (고급)
-(function() {
-  let devtools = { open: false, orientation: null };
-  let threshold = 160;
-  
-  // 콘솔 함수들 무력화
-  const originalLog = console.log;
-  const originalWarn = console.warn;
-  const originalError = console.error;
-  const originalInfo = console.info;
-  const originalDebug = console.debug;
-  const originalDir = console.dir;
-  const originalDirxml = console.dirxml;
-  const originalTable = console.table;
-  const originalTrace = console.trace;
-  const originalGroup = console.group;
-  const originalGroupEnd = console.groupEnd;
-  
-  // 콘솔 함수들을 빈 함수로 교체
-  console.log = function() {};
-  console.warn = function() {};
-  console.error = function() {};
-  console.info = function() {};
-  console.debug = function() {};
-  console.dir = function() {};
-  console.dirxml = function() {};
-  console.table = function() {};
-  console.trace = function() {};
-  console.group = function() {};
-  console.groupEnd = function() {};
-  
-  // 콘솔 클리어도 무력화
-  console.clear = function() {
-    console.log('%c ', 'font-size: 1px;');
-  };
+// 8. 콘솔 함수 무력화
+(() => {
+  const noop = () => {};
+  ['log', 'warn', 'error', 'info', 'debug', 'dir', 'dirxml', 'table', 'trace', 'group', 'groupEnd'].forEach(fn => {
+    console[fn] = noop;
+  });
+  console.clear = () => { console.log('%c ', 'font-size: 1px;'); };
 })();
 
-// 5. debugger 문 감지 및 차단
-setInterval(function() {
-  (function() {
-    return false;
-  })();
+// 9. debugger 문 무력화 루프
+setInterval(() => {
+  (function() { return false; })();
 }, 100);
 
-// 6. 개발자 도구에서 변수 접근 차단
-Object.defineProperty(window, 'gameState', {
-  get: function() {
-    location.reload();
-  },
-  configurable: false
+// 10. 민감 변수 접근 차단
+['gameState', 'difficultyConfigs'].forEach(prop => {
+  Object.defineProperty(window, prop, {
+    get: function() {
+      location.reload();
+    },
+    configurable: false
+  });
 });
 
-Object.defineProperty(window, 'difficultyConfigs', {
-  get: function() {
-    location.reload();
-  },
-  configurable: false
-});
-
-// 7. 텍스트 선택 방지
-document.addEventListener('selectstart', function(e) {
-  e.preventDefault();
-  return false;
-});
-
-// 8. 드래그 방지
-document.addEventListener('dragstart', function(e) {
-  e.preventDefault();
-  return false;
-});
-
-// 9. 복사 방지 (Ctrl+C, Ctrl+A)
-document.addEventListener('keydown', function(e) {
-  // Ctrl+C (복사)
-  if (e.ctrlKey && e.keyCode === 67) {
-    e.preventDefault();
-    return false;
-  }
-  
-  // Ctrl+A (전체선택)
-  if (e.ctrlKey && e.keyCode === 65) {
-    e.preventDefault();
-    return false;
-  }
-  
-  // Ctrl+S (저장)
-  if (e.ctrlKey && e.keyCode === 83) {
-    e.preventDefault();
-    return false;
-  }
-});
+// 11. 텍스트 선택, 드래그, 복사 방지
+['selectstart', 'dragstart'].forEach(evt =>
+  document.addEventListener(evt, e => e.preventDefault())
+);
 
 const MAX_POINTS = 1000000000; // 10억
 
