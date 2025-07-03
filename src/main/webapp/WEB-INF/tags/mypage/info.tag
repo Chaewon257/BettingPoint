@@ -1,5 +1,8 @@
 <%@ tag language="java" pageEncoding="UTF-8"%>
+<%@ taglib prefix="ui" tagdir="/WEB-INF/tags"%>
 
+<link rel="icon" href="https://static.toss.im/icons/png/4x/icon-toss-logo.png" />
+<script src="https://js.tosspayments.com/v2/standard"></script>
 <div data-content="info" class="tab-content w-full flex flex-col gap-y-8 my-4">
 	<div class="w-full flex flex-col gap-y-5 md:flex-row md:gap-x-5 lg:gap-x-10 rounded-lg bg-gray-10 p-4 sm:p-6 md:p-8 lg:p-10">
 		<div class="flex flex-col gap-x-4 items-center md:col-span-2 gap-y-5 lg:gap-y-10">
@@ -14,7 +17,8 @@
 						<div>P</div>
 					</div>
 					<div class="w-full h-px bg-gray-1"></div>
-					<button class="grow w-full rounded lg:rounded-xl text-gray-6 hover:text-white hover:bg-blue-3">충전하기</button>
+					<button class="grow w-full rounded lg:rounded-xl text-gray-6 hover:text-white hover:bg-blue-3" 
+							onclick="document.getElementById('chargePointModal').classList.remove('hidden')">충전하기</button>
 				</div>
 			</div>
 		</div>
@@ -53,6 +57,28 @@
 		<button class="h-full bg-blue-2 hover:bg-blue-5 rounded-lg text-white shadow-[2px_2px_8px_rgba(0,0,0,0.1)] text-ts-14 sm:text-ts-18 md:text-ts-20 lg:text-ts-24 w-full md:w-60 py-2">수정하기</button>
 	</div>
 </div>
+
+<ui:modal modalId="chargePointModal" title="포인트 결제창">
+	<jsp:attribute name="content">
+		<!-- 주문서 영역 -->
+		<div class="overflow-y-scroll w-[20rem] sm:w-[36rem] md:w-[30rem] mx-auto">
+			<!-- 첫 번째 결제 위젯 영역 -->
+			<div class="bg-white rounded-[10px] p-[10px_20px_25px_20px] mt-[10px] mb-[20px] text-center">
+		    	<!-- 결제 UI -->
+		    	<div id="payment-method"></div>
+			    <!-- 이용약관 UI -->
+			    <div id="agreement"></div>		    
+			    <!-- 결제하기 버튼 -->
+			    <button id="payment-button"
+						class="mt-[20px] mx-[15px] px-4 py-3 w-[250px] text-white bg-blue-500 font-semibold text-[15px] rounded hover:bg-blue-700 transition">
+			      결제하기
+			    </button>
+		  	</div>
+		</div>
+		<script src="${cpath}/resources/js/chargemodal.js"></script>
+	</jsp:attribute>
+</ui:modal>
+
 
 <script type="text/javascript">
 	$(document).ready(function () {
