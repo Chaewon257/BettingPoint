@@ -72,4 +72,9 @@
 		#{gh_uid})
 	</insert>
 
+	<insert id="chargePoint" parameterType="pointHistoryDTO">
+		insert into
+		point_history(uid, user_uid, type, amount, balance_after)
+		values(#{uid}, #{user_uid}, 'CHARGE', #{amount}, #{balance_after})
+	</insert>
 </mapper>
