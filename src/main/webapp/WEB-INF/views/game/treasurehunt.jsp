@@ -13,12 +13,12 @@
         class="inline-block h-9 sm:h-11 lg:h-13 xl:h-13 mr-2 bg-transparent object-contain">
       Treasure Hunt
     </h1>      
-    <button
-      class="absolute right-0 top-0 sm:top-0 top-8
-             bg-blue-200 text-blue-900 border-none py-2 px-4 rounded-lg font-bold cursor-pointer text-xs transition-colors duration-300 hover:bg-blue-300 sm:text-sm"
-      onclick="location.href='/solo'">
-      뒤로가기
-    </button>
+ <button
+  class="absolute right-0 top-0 sm:top-0 top-8  
+         bg-blue-200 text-blue-900 border-none py-2 px-4 rounded-lg font-bold cursor-pointer text-xs transition-colors duration-300 hover:bg-blue-300 sm:text-sm"
+  onclick="history.back()">
+  뒤로가기
+</button>
   </div>
 
   <div class="bg-white sm:min-h-[580px] h-auto max-sm:h-auto max-sm:min-h-[750px] rounded-2xl p-6 border border-blue-200 flex flex-col gap-5 md:flex-row xl:p-12">

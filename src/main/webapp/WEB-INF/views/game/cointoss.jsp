@@ -15,7 +15,7 @@
 <button
   class="absolute right-0 top-0 sm:top-0 top-8  
          bg-blue-200 text-blue-900 border-none py-2 px-4 rounded-lg font-bold cursor-pointer text-xs transition-colors duration-300 hover:bg-blue-300 sm:text-sm"
-  onclick="location.href='/solo'">
+  onclick="history.back()">
   뒤로가기
 </button>
   </div>
