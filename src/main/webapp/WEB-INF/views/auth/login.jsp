@@ -23,7 +23,7 @@
 		  				<div class="w-full md:w-10/12 flex gap-x-8 text-gray-3 justify-end px-4 mb-8">
 		  					<a href="/register" class="hover:text-gray-6">회원가입</a>
 		  					|
-		  					<a href="/" class="hover:text-gray-6">ID/PW찾기</a>
+		  					<button class="hover:text-gray-6" onclick="document.getElementById('findAccountModal').classList.remove('hidden')">ID/PW찾기</button>
 		  				</div>
 		  				<div class="w-full text-center text-red-600 text-base">
 		  					${errorMessage}
@@ -33,6 +33,10 @@
 	  			<img class="hidden md:block max-w-[14rem] min-w-[8rem]" src="${cpath}/resources/images/auth_turtle.png" alt="Turtle Character" />  			
 	  		</div>
 	  	</div>
+	  	<ui:modal modalId="findAccountModal" title="아이디/비밀번호 찾기">
+	  		<jsp:attribute name="content">
+	  		</jsp:attribute>
+	  	</ui:modal>
 	  	<script src="${cpath}/resources/js/login.js"></script>
 	</jsp:attribute>
 </ui:layout>
