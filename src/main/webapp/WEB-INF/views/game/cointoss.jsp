@@ -19,7 +19,7 @@
   뒤로가기
 </button>
   </div>
-	<div class="bg-white sm:min-h-[580px] h-auto max-sm:h-auto max-sm:min-h-[750px] rounded-2xl p-6 border border-blue-200 flex flex-col gap-5 md:flex-row xl:p-12">
+	<div class="bg-white sm:min-h-[590px] h-auto max-sm:h-auto max-sm:min-h-[750px] rounded-2xl p-6 border border-blue-200 flex flex-col gap-5 md:flex-row xl:p-12">
     <!-- 왼쪽 패널 -->
     
 
@@ -68,12 +68,12 @@
           <span class="input-error hidden text-red-700" id="input-error"></span>
         </div>
         <div class="flex items-center gap-3 mb-2.5">
-          <input type="number" class="flex-1 p-3 border-2 border-blue-400 rounded-lg text-sm text-center min-w-0 focus:outline-none focus:border-blue-600 sm:text-base" id="bet-amount" placeholder="배팅할 포인트 입력" min="1" />
+          <input type="text" class="flex-1 p-3 border-2 border-blue-400 rounded-lg text-sm text-center min-w-0 focus:outline-none focus:border-blue-600 sm:text-base" id="bet-amount" placeholder="배팅할 포인트 입력" min="1" />
         </div>
         <div class="grid grid-cols-[repeat(auto-fit,minmax(60px,1fr))] gap-2">
-          <button class="bet-preset py-3 px-2 border-none rounded-lg bg-blue-200 text-blue-900 font-bold cursor-pointer transition-colors duration-300 text-xs hover:bg-blue-400 sm:text-sm" data-amount="1000">1000</button>
-          <button class="bet-preset py-3 px-2 border-none rounded-lg bg-blue-200 text-blue-900 font-bold cursor-pointer transition-colors duration-300 text-xs hover:bg-blue-400 sm:text-sm" data-amount="10000">10000</button>
-          <button class="bet-preset py-3 px-2 border-none rounded-lg bg-blue-200 text-blue-900 font-bold cursor-pointer transition-colors duration-300 text-xs hover:bg-blue-400 sm:text-sm" data-amount="50000">50000</button>
+          <button class="bet-preset py-3 px-2 border-none rounded-lg bg-blue-200 text-blue-900 font-bold cursor-pointer transition-colors duration-300 text-xs hover:bg-blue-400 sm:text-sm" data-amount="1000">1,000</button>
+          <button class="bet-preset py-3 px-2 border-none rounded-lg bg-blue-200 text-blue-900 font-bold cursor-pointer transition-colors duration-300 text-xs hover:bg-blue-400 sm:text-sm" data-amount="10000">10,000</button>
+          <button class="bet-preset py-3 px-2 border-none rounded-lg bg-blue-200 text-blue-900 font-bold cursor-pointer transition-colors duration-300 text-xs hover:bg-blue-400 sm:text-sm" data-amount="50000">50,000</button>
           <button class="bet-preset py-3 px-2 border-none rounded-lg bg-blue-200 text-blue-900 font-bold cursor-pointer transition-colors duration-300 text-xs hover:bg-blue-400 sm:text-sm" data-amount="all">ALL IN</button>
         </div>
       </div>

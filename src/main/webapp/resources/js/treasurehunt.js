@@ -106,8 +106,8 @@ let gameState = {
   difficulty: "normal",     // 디폴트 난이도(중)
   gemsFound: 0,             // 발견한 보석 수
   gameActive: false,        // 게임진행 상태
-  potentialWin: 0,          // 예상획득 포인트
-  accumulatedWin: 0,        // 누적 획득 포인트
+  potentialWin: 0,          // 예상획득 포인트 (다음 성공시)
+  accumulatedWin: 0,        // 누적 획득 포인트 (현재까지)
   userNickname: null,       // 사용자 닉네임 (DB에서 받아올 예정)
   loading: false,           // 로딩 상태
   board: [],                // 게임 보드 상태
@@ -331,7 +331,6 @@ function updateDifficultyDisplay(gameLevels) {
   });
 }
 
-
 // 로딩 상태 설정
 function setLoadingState(loading) {
   gameState.loading = loading;
@@ -402,44 +401,39 @@ function handleTileClick(index) {
     gameState.revealedTiles[index] = true;
     gameState.gemsFound++;
     
-    // 획득 포인트 계산
- 
-	const difficultyConfig = difficultyConfigs[gameState.difficulty];
-	let calculatedWin = Math.round(gameState.currentBet * Math.pow(difficultyConfig.payout, gameState.gemsFound));
+    // 획득 포인트 계산 (코인토스와 같은 방식)
+    const difficultyConfig = difficultyConfigs[gameState.difficulty];
+    gameState.accumulatedWin = Math.round(gameState.currentBet * Math.pow(difficultyConfig.payout, gameState.gemsFound));
+    gameState.potentialWin = Math.round(gameState.accumulatedWin * difficultyConfig.payout);
 
-	// 10억 초과 체크
-	if (calculatedWin >=MAX_POINTS) {
-  	gameState.potentialWin = MAX_POINTS;
-  	updateUI();
-  	showResult(`💎 최대 금액 도달! 자동으로 현금화됩니다. (${gameState.gemsFound}개 발견)`, "win");
-  
-     setTimeout(() => {
-          stopGame();
-        }, 2000);
-   
-  	
-  	return;
-	}
-  else{
-	gameState.potentialWin = calculatedWin;
+    // 10억 초과 체크
+    if (gameState.accumulatedWin >= MAX_POINTS) {
+      gameState.accumulatedWin = MAX_POINTS;
+      gameState.potentialWin = MAX_POINTS;
+      updateUI();
+      showResult(`💎 최대 금액 도달! 자동으로 현금화됩니다. (${gameState.gemsFound}개 발견)`, "win");
+      
+      setTimeout(() => {
+        stopGame();
+      }, 2000);
+      
+      return;
+    } else {
+      updateUI();
+      showResult(`💎 보석 발견! 연속 ${gameState.gemsFound}개! 다음 성공시 ${gameState.potentialWin.toLocaleString()}포인트 획득`, "win");
+      
+      // 현재 난이도의 전체 보석 수 계산
+      const totalGems = 25 - difficultyConfigs[gameState.difficulty].mineCount;
 
-	updateUI();
-	showResult(`💎 보석 발견! (${gameState.gemsFound}개) 현금화하거나 계속 진행하세요!`, "win");
-    
-    
-    
-    // 현재 난이도의 전체 보석 수 계산
-	const totalGems = 25 - difficultyConfigs[gameState.difficulty].mineCount;
-
-	// 보석 다 찾았을 경우 자동 종료 처리
-	if (gameState.gemsFound >= totalGems) {
-  	stopGame();  // 자동으로 현금화
-	}
-    
-    // 현금화 버튼 표시
-    elements.stopBtn.classList.remove("hidden");
+      // 보석 다 찾았을 경우 자동 종료 처리
+      if (gameState.gemsFound >= totalGems) {
+        stopGame();  // 자동으로 현금화
+      }
+      
+      // 현금화 버튼 표시
+      elements.stopBtn.classList.remove("hidden");
+    }
   }
-}
 }
 
 // 게임 시작
@@ -463,7 +457,8 @@ function startGame(betAmount) {
       gameState.currentBet = betAmount;
       gameState.gemsFound = 0;
       gameState.gameActive = true;
-      gameState.potentialWin = 0;
+      gameState.accumulatedWin = 0;  // 초기값 0으로 설정
+      gameState.potentialWin = Math.round(betAmount * difficultyConfigs[gameState.difficulty].payout);
 
       // 지뢰 위치 설정
       const difficultyConfig = difficultyConfigs[gameState.difficulty];
@@ -477,10 +472,10 @@ function startGame(betAmount) {
       elements.stopBtn.classList.add("hidden");
 
       updateUI();
-      showResult(` 게임 시작! (난이도: ${difficultyConfig.name}) 타일을 클릭해서 보석을 찾으세요!`, "info");
+      showResult(`게임 시작! (난이도: ${difficultyConfig.name}) 타일을 클릭해서 보석을 찾으세요!`, "info");
     },
     error: function (xhr) {
-      console.error(" 게임 시작 실패:", xhr.responseText);
+      console.error("게임 시작 실패:", xhr.responseText);
       const msg = (xhr.responseJSON && xhr.responseJSON.message) || "게임 시작 실패!";
       startErrorMessage(msg);
     }
@@ -502,12 +497,12 @@ function setMinePositions(mineCount) {
 
 // 현금화
 function stopGame() {
-	
   // 10억 초과 시 10억으로 제한
-  if (gameState.potentialWin >=MAX_POINTS) {
-    gameState.potentialWin = MAX_POINTS;
-    showResult(`포인트가 최대값(20억)으로 제한되어 현금화됩니다.`, "info");
+  if (gameState.accumulatedWin >= MAX_POINTS) {
+    gameState.accumulatedWin = MAX_POINTS;
+    showResult(`포인트가 최대값(10억)으로 제한되어 현금화됩니다.`, "info");
   }
+  
   $.ajax({
     url: '/api/game/stop',
     method: 'POST',
@@ -517,7 +512,7 @@ function stopGame() {
     },
     data: JSON.stringify({
       betAmount: gameState.currentBet,    
-      winAmount: gameState.potentialWin,
+      winAmount: gameState.accumulatedWin,
       difficulty: gameState.difficulty,
       streak: gameState.gemsFound,
       gameResult: "WIN",
@@ -525,14 +520,14 @@ function stopGame() {
     }),
     success: function (response) {
       gameState.balance = response.newBalance;
-      endGame(true, "현금화 성공!");
-      showResult(`성공! +${gameState.potentialWin}포인트 획득! (보석 ${gameState.gemsFound}개 발견)`, "win");
+      endGame(true, "포인트 get 성공!");
+      showResult(`성공! +${gameState.accumulatedWin.toLocaleString()}포인트 획득! (보석 ${gameState.gemsFound}개 발견)`, "win");
       updateUI();
     },
     error: function (xhr) {
       console.error('포인트 저장 실패:', xhr.responseText);
-      endGame(true, "현금화 성공!");
-      showResult(`성공! +${gameState.potentialWin}포인트 획득 (서버 저장 실패)`, "win");
+      endGame(true, "포인트 get 성공!");
+      showResult(`성공! +${gameState.accumulatedWin.toLocaleString()}포인트 획득 (서버 저장 실패)`, "win");
     }
   });
 }
@@ -622,38 +617,41 @@ function setupEventListeners() {
     });
   });
 
- // 배팅 프리셋 버튼 (수정된 버전 - 금액 누적)
-document.querySelectorAll(".bet-preset").forEach((btn) => {
-  btn.addEventListener("click", () => {
-    if (gameState.gameActive || gameState.loading) return;
+  // 배팅 프리셋 버튼 (수정된 버전 - 금액 누적)
+  document.querySelectorAll(".bet-preset").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      if (gameState.gameActive || gameState.loading) return;
 
-    const amountStr = btn.dataset.amount;  // 문자열로 먼저 받기
-    const currentAmount = parseInt(elements.betAmount.value) || 0;
+      const amountStr = btn.dataset.amount;  
+      const currentAmount = parseInt(elements.betAmount.value.replace(/,/g, '')) || 0; 
 
-    if (amountStr === "all") {  // 문자열 비교
-      elements.betAmount.value = gameState.balance;
-    } else {
-      const amount = parseInt(amountStr) || 0;  // 숫자 변환
-      const newAmount = currentAmount + amount;
-
-      if (gameState.balance < newAmount) {
-        inputErrorMessage("보유포인트 내에서만 배팅이 가능합니다.");
-        elements.betAmount.value = 0;  
+      if (amountStr === "all") {  // 문자열 비교
+        elements.betAmount.value = gameState.balance.toLocaleString();
       } else {
-        elements.betAmount.value = newAmount;
+        const amount = parseInt(amountStr) || 0;  // 숫자 변환
+        const newAmount = currentAmount + amount;
+
+        if (gameState.balance < newAmount) {
+          inputErrorMessage("보유포인트 내에서만 배팅이 가능합니다.");
+          elements.betAmount.value = 0;  
+        } else {
+          elements.betAmount.value = newAmount.toLocaleString();
+        }
       }
-    }
-    updateUI();
+      updateUI();
+    });
   });
-});
 
   // 배팅 금액 입력
-  elements.betAmount.addEventListener("input", () => {
-    const amount = parseInt(elements.betAmount.value) || 0;
+  elements.betAmount.addEventListener("input", (e) => {
+    let value = e.target.value.replace(/[^0-9]/g, '');
+    const amount = parseInt(value) || 0;
    
     if (gameState.balance < amount) {
       inputErrorMessage("보유포인트 내에서만 배팅이 가능합니다.");
       elements.betAmount.value = 0;
+    } else {
+      elements.betAmount.value = amount > 0 ? amount.toLocaleString() : '';
     }
      
     updateUI();
@@ -668,7 +666,7 @@ document.querySelectorAll(".bet-preset").forEach((btn) => {
       return;
     }
    
-    const betAmount = parseInt(elements.betAmount.value) || 0;
+    const betAmount = parseInt(elements.betAmount.value.replace(/,/g, '')) || 0;
 
     if (!betAmount || betAmount <= 0) {
       startErrorMessage("올바른 배팅 금액을 입력해주세요.");
@@ -702,7 +700,10 @@ function updateUI() {
   elements.balance.textContent = gameState.balance.toLocaleString();
   elements.currentBet.textContent = gameState.currentBet.toLocaleString();
   elements.gemsFound.textContent = gameState.gemsFound;
-  elements.potentialWin.textContent = gameState.potentialWin.toLocaleString();
+  // 코인토스처럼 현재 누적 획득 포인트 표시
+  elements.potentialWin.textContent = gameState.gameActive  
+    ? gameState.accumulatedWin.toLocaleString()  
+    : "0";
 }
 
 // 결과 메시지 표시
