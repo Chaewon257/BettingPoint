@@ -66,6 +66,16 @@
                         </svg>
                     </button>
                 </div>
+
+                <div id="userInfoPanel" class="hidden lg:flex bg-gray-8 flex flex-col items-center justify-center gap-y-4 px-4 py-6">
+                    <div class="grow flex flex-col items-center justify-center">
+                        <div class="text-3xl font-extrabold text-blue-5 mb-2 text-center">Betting Point</div>
+                        <div class="text-base font-bold mb-0.5">포인트로 즐기는 짜릿한 한 판!</div>
+                        <div class="font-light text-gray-7">포인트를 모아 한층 더 큰 즐거움을 경험하세요.</div>
+                    </div>
+                    <button onclick="location.href='/login'" class="w-full py-2 outline-none bg-blue-2 rounded-full border border-blue-2 text-white text-lg hover:bg-blue-1">로그인</button>
+                    <button onclick="location.href='/register'" class="w-full py-2 outline-none bg-blue-3 rounded-full border border-blue-3 text-white text-lg hover:bg-blue-1">회원가입</button>
+                </div>
             </div>
 		<script type="text/javascript">
             $(document).ready(function() {
@@ -127,6 +137,53 @@
                 showBannerSlide(0);
                 startBannerAutoSlide();
                 
+                
+                // 사용자 로그인 여부 확인
+                let token = localStorage.getItem('accessToken');
+                
+                function renderUser(user) {
+        			if (!user || !user.user_name) return;
+
+        			// PC
+        			$('#userInfoPanel').html(`
+        					<div class="w-36 h-36 rounded-full bg-white overflow-hidden">
+        						<img id="profileImage" alt="default profile image" src="\${user.profile_img || "/resources/images/profile_default_image.png"}">
+        					</div>
+                            <div class="text-base"><a href="/mypage" class="hover:underline font-semibold">\${user.nickname}</a> 님,환영합니다!</div>
+                            <div class="w-full flex flex-col item-start bg-blue-3 rounded-lg p-2">
+                            	<div class="font-bold mb-2">보유포인트</div>
+                            	<div class="w-full flex items-center justify-between text-gray-700 font-extrabold text-2xl px-2 mb-2">
+                            		<img alt="money box" src="${cpath}/resources/images/money_box.png" class="w-8">
+                            		<div id="pointBalance" class="grow text-center">\${user.point_balance}</div>
+                            		<div>P</div>
+                            	</div>
+        						<button onclick="location.href='/'" class="w-full rounded text-white bg-blue-2 hover:bg-blue-1 py-1">충전하기</button>
+                            </div>
+        					
+        				`);
+        		}
+                
+             	// 유저 정보 요청
+        		function getUserInfo() {
+        			return $.ajax({
+        				url: '/api/user/me',
+        				method: 'GET',
+        				xhrFields: { withCredentials: true }
+        			});
+        		}
+             	
+        		// 페이지 진입 시 유저 정보 로딩
+        		if (token) {
+        			getUserInfo()
+        				.done(renderUser)
+        				.fail(xhr => {
+        					console.warn('⚠️ 사용자 정보 요청 실패', xhr);
+        					if (xhr.status === 401) {
+        						localStorage.removeItem("accessToken");
+        					}
+        				});
+        		}
+            });
         </script>
     </jsp:attribute>
 </ui:layout>
