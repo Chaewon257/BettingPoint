@@ -14,14 +14,14 @@
       Treasure Hunt
     </h1>      
     <button
-      class="absolute right-0 top-0 sm:top-0 top-8  /* 모바일에서 top-10(3rem)로 아래로 내림 */
+      class="absolute right-0 top-0 sm:top-0 top-8
              bg-blue-200 text-blue-900 border-none py-2 px-4 rounded-lg font-bold cursor-pointer text-xs transition-colors duration-300 hover:bg-blue-300 sm:text-sm"
       onclick="location.href='/solo'">
       뒤로가기
     </button>
   </div>
 
-  <div class="bg-white sm:h-[570px] max-sm:h-auto max-sm:min-h-[800px] rounded-2xl p-6 border border-blue-200 flex flex-col gap-5 md:flex-row xl:p-12">
+  <div class="bg-white sm:min-h-[580px] h-auto max-sm:h-auto max-sm:min-h-[750px] rounded-2xl p-6 border border-blue-200 flex flex-col gap-5 md:flex-row xl:p-12">
     <!-- 왼쪽 패널 -->
     <div class="flex-1 flex flex-col gap-5 border-b-2 border-blue-100 pb-5 md:border-b-0 md:border-r-2 md:pr-6 md:pb-0 xl:pr-16">
       <!-- 유저 포인트 -->
@@ -97,9 +97,9 @@
 
       <div class="mt-2.5 flex flex-col items-center">
   <div id="gameBoard" class="grid grid-cols-5 
-                            gap-1 sm:gap-2 md:gap-1
+                            gap-1 sm:gap-2 md:gap-2
                             w-full 
-                            max-w-[250px] sm:max-w-[280px] md:max-w-[300x]
+                            max-w-[250px] sm:max-w-[260px] md:max-w-[270x]
                             mx-auto 
                             p-1 sm:p-3 md:p-3 
                             bg-blue-50 rounded-xl">

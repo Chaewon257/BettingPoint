@@ -13,14 +13,17 @@
       Coin Toss
     </h1>
 <button
-  class="absolute right-0 top-0 sm:top-0 top-8  /* 모바일에서 top-10(3rem)로 아래로 내림 */
+  class="absolute right-0 top-0 sm:top-0 top-8  
          bg-blue-200 text-blue-900 border-none py-2 px-4 rounded-lg font-bold cursor-pointer text-xs transition-colors duration-300 hover:bg-blue-300 sm:text-sm"
   onclick="location.href='/solo'">
   뒤로가기
 </button>
   </div>
-    <div class="bg-white sm:h-[550px] max-sm:h-auto max-sm:min-h-[750px] rounded-2xl p-6 border border-blue-200 flex flex-col gap-5 md:flex-row xl:p-12">
+	<div class="bg-white sm:min-h-[580px] h-auto max-sm:h-auto max-sm:min-h-[750px] rounded-2xl p-6 border border-blue-200 flex flex-col gap-5 md:flex-row xl:p-12">
     <!-- 왼쪽 패널 -->
+    
+
+    
     <div class="flex-1 flex flex-col gap-5 border-b-2 border-blue-100 pb-5 md:border-b-0 md:border-r-2 md:pr-6 md:pb-0 xl:pr-16">
       <!-- 유저 포인트 -->
       <div class="bg-blue-200 p-5 rounded-xl text-center text-blue-900">
@@ -115,7 +118,7 @@
           <button class="game-button btn-danger hidden py-3 px-6 border-none rounded-xl text-sm font-bold cursor-pointer transition-all duration-300 bg-red-500 text-white min-w-20 hover:bg-red-700 sm:text-base disabled:bg-gray-400 disabled:cursor-not-allowed" id="stop-btn">STOP</button>
         </div>
 
-        <div class="start-error-message text-red-700" id="start-error-message"></div>
+        <div class="start-error-message mt-2 text-red-700" id="start-error-message"></div>
       </div>
     </div>
   </div>
