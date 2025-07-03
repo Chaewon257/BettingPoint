@@ -29,44 +29,11 @@
             <div class="w-full lg:grid lg:grid-cols-5">
                 <!-- 배너 슬라이더 섹션 -->
                 <div class="relative col-span-4 w-full h-56 md:h-96 overflow-hidden">
-                    <div id="bannerContainer" class="flex w-full h-full banner-slide">
-                        <!-- 배너 1 -->
-                        <div class="flex-none w-full h-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
-                            <div class="text-center text-white">
-                                <h2 class="text-4xl font-bold mb-4">첫 번째 배너</h2>
-                                <p class="text-xl">멋진 콘텐츠를 만나보세요</p>
-                            </div>
-                        </div>
-                        <!-- 배너 2 -->
-                        <div class="flex-none w-full h-full bg-gradient-to-r from-green-500 to-teal-600 flex items-center justify-center">
-                            <div class="text-center text-white">
-                                <h2 class="text-4xl font-bold mb-4">두 번째 배너</h2>
-                                <p class="text-xl">새로운 경험을 시작하세요</p>
-                            </div>
-                        </div>
-                        <!-- 배너 3 -->
-                        <div class="flex-none w-full h-full bg-gradient-to-r from-orange-500 to-red-600 flex items-center justify-center">
-                            <div class="text-center text-white">
-                                <h2 class="text-4xl font-bold mb-4">세 번째 배너</h2>
-                                <p class="text-xl">특별한 혜택을 놓치지 마세요</p>
-                            </div>
-                        </div>
-                        <!-- 배너 4 -->
-                        <div class="flex-none w-full h-full bg-gradient-to-r from-pink-500 to-rose-600 flex items-center justify-center">
-                            <div class="text-center text-white">
-                                <h2 class="text-4xl font-bold mb-4">네 번째 배너</h2>
-                                <p class="text-xl">지금 바로 참여해보세요</p>
-                            </div>
-                        </div>
-                    </div>
+                	<!-- 배너 영역 -->
+                    <div id="bannerContainer" class="flex w-full h-full banner-slide"></div>
 
                     <!-- 배너 인디케이터 -->
-                    <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
-                        <button class="banner-dot w-3 h-3 rounded-full bg-white bg-opacity-50 hover:bg-opacity-75 transition-all" data-slide="0"></button>
-                        <button class="banner-dot w-3 h-3 rounded-full bg-white bg-opacity-50 hover:bg-opacity-75 transition-all" data-slide="1"></button>
-                        <button class="banner-dot w-3 h-3 rounded-full bg-white bg-opacity-50 hover:bg-opacity-75 transition-all" data-slide="2"></button>
-                        <button class="banner-dot w-3 h-3 rounded-full bg-white bg-opacity-50 hover:bg-opacity-75 transition-all" data-slide="3"></button>
-                    </div>
+                    <div id="bannerIndicators" class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2"></div>
 
                     <!-- 배너 화살표 버튼 -->
                     <button id="bannerPrev" class="absolute left-4 top-1/2 transform -translate-y-1/2 w-10 h-10 rounded-full bg-white bg-opacity-20 hover:bg-opacity-30 flex items-center justify-center transition-all">
@@ -225,7 +192,7 @@
             $(document).ready(function() {
                 // 배너 슬라이더 변수
                 let currentBannerSlide = 0;
-                const totalBannerSlides = 4;
+            	let totalBannerSlides = 0;
                 let bannerInterval;
                
                 function showBannerSlide(index) {
@@ -254,32 +221,61 @@
                     clearInterval(bannerInterval);
                 }
 
-                $('#bannerNext').click(function() {
-                    stopBannerAutoSlide();
-                    nextBannerSlide();
-                    startBannerAutoSlide();
-                });
+                function bindBannerEvents() {
+                    $('#bannerNext').click(function() {
+                        stopBannerAutoSlide();
+                        nextBannerSlide();
+                        startBannerAutoSlide();
+                    });
 
-                $('#bannerPrev').click(function() {
-                    stopBannerAutoSlide();
-                    prevBannerSlide();
-                    startBannerAutoSlide();
-                });
+                    $('#bannerPrev').click(function() {
+                        stopBannerAutoSlide();
+                        prevBannerSlide();
+                        startBannerAutoSlide();
+                    });
 
-                $('.banner-dot').click(function() {
-                    stopBannerAutoSlide();
-                    const slideIndex = parseInt($(this).data('slide'));
-                    showBannerSlide(slideIndex);
-                    startBannerAutoSlide();
-                });
+                    $(document).on('click', '.banner-dot', function () {
+                        stopBannerAutoSlide();
+                        const slideIndex = parseInt($(this).data('slide'));
+                        showBannerSlide(slideIndex);
+                        startBannerAutoSlide();
+                    });
 
-                $('#bannerContainer').parent().hover(
-                    function() { stopBannerAutoSlide(); },
-                    function() { startBannerAutoSlide(); }
-                );
+                    $('#bannerContainer').parent().hover(
+                        function() { stopBannerAutoSlide(); },
+                        function() { startBannerAutoSlide(); }
+                    );
+                }
+               	
+				fetch('/api/content/banner/list')
+				    .then(response => response.json())
+				    .then(data => {
+				        const container = $('#bannerContainer');
+				        const indicator = $('#bannerIndicators');
+				        totalBannerSlides = data.length;
+				
+				        data.forEach((banner, index) => {
+				        	container.append(`
+		                        <div class="flex-none w-full h-full">
+		                            <a href="\${banner.banner_link_url}" class="block w-full h-full">
+		                                <img src="\${banner.image_path}" alt="\${banner.title}" class="w-full h-full object-cover" />
+		                            </a>
+		                        </div>
+		                    `);
 
-                showBannerSlide(0);
-                startBannerAutoSlide();
+		                    indicator.append(`
+		                        <button class="banner-dot w-3 h-3 rounded-full bg-white bg-opacity-50 hover:bg-opacity-75 transition-all" data-slide="\${index}"></button>
+		                    `);
+				        });
+				
+				        // 이후에 슬라이드 관련 스크립트 init 함수 호출 
+				        // 슬라이더 동작 연결 (기존 코드 재사용)
+				        bindBannerEvents();
+				        showBannerSlide(0);
+				        startBannerAutoSlide();
+				    })
+				    .catch(error => console.error("배너 로딩 실패:", error));
+
                 
                 function adjustWidth() {
                 	const screenWidth = $(window).width() - 32;
@@ -383,5 +379,6 @@
         		}
             });
         </script>
+		<%-- <script src="${cpath}/resources/js/home.js"></script> --%>
     </jsp:attribute>
 </ui:layout>
