@@ -193,6 +193,34 @@
 						게임 시작
 					</button>
 		    	</div>
+		    	<div class="w-full flex flex-col">
+		    		<h1 class="text-2xl font-bold text-gray-900 mb-4">공지사항</h1>
+		    		<div class="w-full h-[2px] bg-gray-1"></div>
+		    		<div class="grid grid-cols-1 grid-rows-5 border-b-2 border-gray-1">
+		    			<div class="p-4 flex items-center justify-between border-b border-gray-1 font-light">
+							<button data-notice="" class="col-span-4 truncate hover:underline">이것이 자유다 정말!!</button>
+							<span class="col-span-1">2025.06.23</span>
+						</div>
+		    			<div class="p-4 flex items-center justify-between border-b border-gray-1 font-light">
+							<button data-notice="" class="col-span-4 truncate hover:underline">이것이 자유다 정말!!</button>
+							<span class="col-span-1">2025.06.23</span>
+						</div>
+		    			<div class="p-4 flex items-center justify-between border-b border-gray-1 font-light">
+							<button data-notice="" class="col-span-4 truncate hover:underline">이것이 자유다 정말!!</button>
+							<span class="col-span-1">2025.06.23</span>
+						</div>
+		    			<div class="p-4 flex items-center justify-between border-b border-gray-1 font-light">
+							<button data-notice="" class="col-span-4 truncate hover:underline">이것이 자유다 정말!!</button>
+							<span class="col-span-1">2025.06.23</span>
+						</div>
+		    			<div class="p-4 flex items-center justify-between border-b border-gray-1 font-light">
+							<button data-notice="" class="col-span-4 truncate hover:underline">이것이 자유다 정말!!</button>
+							<span class="col-span-1">2025.06.23</span>
+						</div>
+		    		</div>
+		    	</div>
+		    </div>
+        </div>
 		<script type="text/javascript">
             $(document).ready(function() {
                 // 배너 슬라이더 변수
