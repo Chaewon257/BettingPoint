@@ -175,6 +175,24 @@
 		            </div>
 		        </div>
 		    </div>
+		    <div class="w-full grid grid-cols-1 gap-y-8 md:grid-cols-2 items-end md:gap-x-10 px-4 mb-6">
+		    	<div class="w-full grid grid-cols-2 grid-rows-4 gap-2 my-auto">
+		    		<div class="col-span-2 row-span-2 overflow-hidden rounded">
+		    			<img alt="main image" src="${cpath}/resources/images/main-page.png">
+		    		</div>
+		    		<button class="w-full bg-blue-3 hover:bg-blue-1 rounded-lg text-white shadow-[2px_2px_8px_rgba(0,0,0,0.1)] font-extrabold sm:text-base md:text-lg lg:text-xl xl:text-2xl py-2 md:py-4 disabled:bg-blue-2 disabled:opacity-60 disabled:cursor-not-allowed">
+						게임 시작
+					</button>
+		    		<button class="w-full bg-blue-3 hover:bg-blue-1 rounded-lg text-white shadow-[2px_2px_8px_rgba(0,0,0,0.1)] font-extrabold sm:text-base md:text-lg lg:text-xl xl:text-2xl py-2 md:py-4 disabled:bg-blue-2 disabled:opacity-60 disabled:cursor-not-allowed">
+						게임 시작
+					</button>
+		    		<button class="w-full bg-blue-3 hover:bg-blue-1 rounded-lg text-white shadow-[2px_2px_8px_rgba(0,0,0,0.1)] font-extrabold sm:text-base md:text-lg lg:text-xl xl:text-2xl py-2 md:py-4 disabled:bg-blue-2 disabled:opacity-60 disabled:cursor-not-allowed">
+						게임 시작
+					</button>
+		    		<button class="w-full bg-blue-3 hover:bg-blue-1 rounded-lg text-white shadow-[2px_2px_8px_rgba(0,0,0,0.1)] font-extrabold sm:text-base md:text-lg lg:text-xl xl:text-2xl py-2 md:py-4 disabled:bg-blue-2 disabled:opacity-60 disabled:cursor-not-allowed">
+						게임 시작
+					</button>
+		    	</div>
 		<script type="text/javascript">
             $(document).ready(function() {
                 // 배너 슬라이더 변수
