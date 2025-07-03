@@ -13,9 +13,14 @@
 	    const clientKey = "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm";
 	    const customerKey = generateRandomString();
 
+	    // 1) 사용자가 입력/버튼으로 설정한 포인트를 가져와서
+	    const rawPoint = parseInt(document.getElementById("point").value, 10) || 0;
+	    // 2) 1.1배 수수료 적용
+	    const parsedAmount = Math.floor(rawPoint * 1.1);
+
 	    const amount = {
 	      currency: "KRW",
-	      value: 50000,
+	      value: parsedAmount,
 	    };
 
 	    // TossPayments 초기화 (v2 standard SDK 방식)
@@ -46,38 +51,37 @@
 	      }),
 	    ]);
 
-	 	// ------  주문서의 결제 금액이 변경되었을 경우 결제 금액 업데이트 ------
-	    coupon.addEventListener("change", async function () {
-	      const discountAmount = coupon.checked ? amount.value - 5000 : amount.value;
-	      await widgets.setAmount({
-	        currency: "KRW",
-	        value: discountAmount,
-	      });
-	    });
-
 	 	// ------ '결제하기' 버튼 누르면 결제창 띄우기 ------
 	    button.addEventListener("click", async function () {
 	      try {
+	    	  
+	    	// 1) 화면 입력값(포인트)을 읽어서 동적 amount 계산
+	        const rawPoint = parseInt(document.getElementById("point").value, 10) || 0;
+	        const dynamicValue = Math.floor(rawPoint * 1.1);
+	  
+	        console.log("dynamicValue:", dynamicValue);
+	  
+	        // 2) 위젯에 최신 금액 재설정
+	        await widgets.setAmount({
+	          currency: "KRW",
+	          value: dynamicValue,
+	        });
+
 	    	// 결제를 요청하기 전에 orderId, amount를 서버에 저장하세요.
             // 결제 과정에서 악의적으로 결제 금액이 바뀌는 것을 확인하는 용도입니다.
 	        await widgets.requestPayment({
-	          orderId: generateRandomString(),
-	          orderName: "토스 티셔츠 외 2건",
-	          successUrl: currentURL + "success.jsp",
-	          failUrl: currentURL + "fail.jsp",
-	          customerEmail: "customer123@gmail.com",
-	          customerName: "김토스",
-	          // 가상계좌 안내, 퀵계좌이체 휴대폰 번호 자동 완성에 사용되는 값입니다. 필요하다면 주석을 해제해 주세요.
-	          // customerMobilePhone: "01012341234", // 필요 시 활성화
+	        	orderId: generateRandomString(),
+		        orderName: "[Betting Point] 포인트 충전",
+		        successUrl: currentURL + "mypage/success",
+		        failUrl: currentURL + "mypage/fail",
 	        });
 	      } catch (err) {
-	        console.error("결제 요청 중 에러 발생:", err);
+	    	  console.error("결제 요청 중 에러 발생:", err);
 	      }
 	    });
 	  }
-	
-	    // 랜덤 문자열 생성 함수
-	    function generateRandomString() {
-	      	return "7HBEHt9msR-pAbwhBYdus";
-	    	//return window.btoa(Math.random()).slice(0, 20);
-	    }
+	  
+	// 랜덤 문자열 생성 함수
+    function generateRandomString() {
+    	return window.btoa(Math.random()).slice(0, 20);
+    }

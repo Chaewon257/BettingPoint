@@ -144,7 +144,7 @@
             $("#nickname").val(user.nickname);
             $("#birthDate").val(formattedDate);
             $("#phoneNumber").val(user.phone_number);
-            $("#pointBalance").text(user.point_balance || "0");
+            $("#pointBalance").text(user.point_balance.toLocaleString() || "0");
             $("#profileImage").attr("src", user.profile_img || "/resources/images/profile_default_image.png");
 		}
 	});

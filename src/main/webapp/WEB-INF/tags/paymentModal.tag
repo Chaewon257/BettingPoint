@@ -84,24 +84,33 @@
 		
 		// 포인트 값 업데이트 함수
 	    function updateAmountDisplay() {
-	        let point = parseInt($("#point").val().replace(/,/g, "")) || 0;
-	        let payment = Math.floor(point * 1.1);
-	        
+	    	const point = parseInt($("#point").val(), 10) || 0;
+	    	const payment = Math.floor(point * 1.1);
+	    	
 	        $("#amountDisplay").text(payment.toLocaleString());
 	    }
 
 	    // input 변경 시
-	    $("#point").on("input", function () {
+	    $("#point").on("input", function () {	        
 	        updateAmountDisplay();
 	    });
 
 	    // 버튼 클릭 시
 	    $(".point-btn").click(function () {
-	        const addPoint = parseInt($(this).data("value"));
-	        let currentPoint = parseInt($("#point").val().replace(/,/g, "")) || 0;
-	        let newPoint = currentPoint + addPoint;
+	    	const addPoint = parseInt($(this).data("value"), 10) || 0;
+	        const currentPoint = parseInt($("#point").val(), 10) || 0;
+	        const newPoint = currentPoint + addPoint;
+
 	        $("#point").val(newPoint);
 	        updateAmountDisplay();
 	    });
 	});
+	
+	// 모달 닫힐 때 input 초기화
+	$(`#${modalId} > div > button`).on("click", function () {
+	    // 닫기 버튼이 클릭되면 해당 모달 내 input 및 표시 초기화
+	    $("#point").val('');
+	    $("#amountDisplay").text('');
+	});
+
 </script>
