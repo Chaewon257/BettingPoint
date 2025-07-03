@@ -1,12 +1,11 @@
 package com.bettopia.game.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.bettopia.game.model.board.BoardDTO;
 import com.bettopia.game.model.board.SupportService;
@@ -16,12 +15,30 @@ import com.bettopia.game.model.board.SupportService;
 public class SupportRestController {
 	
 	@Autowired
-	SupportService supportService;
-	
-	// 카테고리(FAQ, NOTICE)로 리스트 전체 출력하기
+	private SupportService supportService;
+
 	@GetMapping("/list/{category}")
-    public List<BoardDTO> getBoardsByCategory(@PathVariable String category) {
-        return supportService.selectByCategory(category);
+    public Object getBoardsByCategory(@PathVariable String category,
+            						  @RequestParam(required = false, defaultValue = "1") int page) {
+
+        String upperCategory = category.toUpperCase();
+
+        if (upperCategory.equals("NOTICE")) {
+            int size = 10;
+            int offset = (page - 1) * size;
+
+            List<BoardDTO> list = supportService.selectByCategoryWithPaging(upperCategory, offset, size);
+            int total = supportService.countByCategory(upperCategory);
+            
+            Map<String, Object> result = new HashMap<>();
+            result.put("notices", list);
+            result.put("total", total);
+            return result;
+
+        } else {
+            // FAQ 또는 기타 카테고리는 전체 리스트 반환
+            return supportService.selectByCategory(upperCategory);
+        }
     }
 
     @GetMapping("/detail/{boardId}")
