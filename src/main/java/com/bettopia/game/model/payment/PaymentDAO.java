@@ -14,16 +14,21 @@ public class PaymentDAO {
 
     String namespace = "com.bpoint.payment.";
 
-    public PaymentDTO insertPayment(PaymentRequestDTO request, String userId){
+    public PaymentDTO insertPayment(PaymentDTO response, String userId){
         String uid = UUID.randomUUID().toString().replaceAll("-", "");
-        String order_uid = UUID.randomUUID().toString();
 
         PaymentDTO payment = PaymentDTO.builder()
                 .uid(uid)
-                .order_uid(order_uid)
-                .amount(request.getAmount())
-                .order_name(request.getOrder_name())
+                .payment_key(response.getPayment_key())
+                .order_uid(response.getOrder_uid())
+                .order_name(response.getOrder_name())
+                .pay_type(response.getPay_type())
+                .amount(response.getAmount())
                 .user_uid(userId)
+                .status(response.getStatus())
+                .approve_at(response.getApprove_at())
+                .failure_reason(response.getFailure_reason())
+                .receipt_url(response.getReceipt_url())
                 .build();
 
         sqlSession.insert(namespace + "insert", payment);
@@ -33,20 +38,5 @@ public class PaymentDAO {
 
     public PaymentDTO selectByOrderId(String orderId) {
         return sqlSession.selectOne(namespace + "selectByOrderId", orderId);
-    }
-
-    public PaymentDTO updatePayment(PaymentConfirmDTO response, PaymentStatus status, String failureReason, String receiptUrl) {
-        PaymentDTO payment = PaymentDTO.builder()
-                .status(status)
-                .payment_key(response.getPayment_key())
-                .failure_reason(failureReason)
-                .receipt_url(receiptUrl)
-                .build();
-
-        sqlSession.update(namespace + "update", payment);
-
-        PaymentDTO result = selectByOrderId(response.getOrder_uid());
-
-        return result;
     }
 }

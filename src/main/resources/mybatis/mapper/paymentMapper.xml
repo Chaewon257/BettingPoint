@@ -12,33 +12,12 @@
 	<!-- 결제 요청 시 정보 저장 -->
 	<insert id="insert" parameterType="paymentDTO">
 		INSERT INTO payment (
-			uid,
-			pay_type,
-			amount,
-			order_uid,
-			order_name,
-			user_uid,
-			payment_key
+			uid, payment_key, order_uid, order_name, pay_type,
+			amount, user_uid, status, approve_at, failure_reason, receipt_url
 		) VALUES (
-			#{uid},
-			#{pay_type},
-			#{amount},
-			#{order_uid},
-			#{order_name},
-			#{user_uid},
-			#{payment_key}
+			#{uid}, #{payment_key}, #{order_uid}, #{order_name}, #{pay_type},
+			#{amount}, #{user_uid}, #{status}, #{approve_at}, #{failure_reason}, #{receipt_url}
 		)
 	</insert>
-
-	<!-- 결제 승인 후 처리 -->
-	<update id="update" parameterType="paymentDTO">
-		update payment
-		set status = #{status},
-		    payment_key = #{payment_key},
-			approve_at = NOW(),
-			failure_reason = #{failure_reason},
-			receipt_url = #{receipt_url}
-		where order_uid = #{order_uid}
-	</update>
 
 </mapper>
