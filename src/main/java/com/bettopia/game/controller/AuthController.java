@@ -15,6 +15,16 @@ public class AuthController {
 	public String goRegisterPage() {
 		return "/auth/register";
 	}
+	
+	@GetMapping("/findId")
+	public String authFindId() {
+		return "/auth/findAccount/findId";
+	}
+	
+	@GetMapping("/findPassword")
+	public String authFindPassword() {
+		return "/auth/findAccount/findPassword";
+	}
 
 	@GetMapping("/logout")
 	public String goHomePage() {

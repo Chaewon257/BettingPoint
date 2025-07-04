@@ -77,6 +77,10 @@ public class HistoryService {
     public String insertPointHistory(PointHistoryDTO pointHistory, String userId) {
         return historyDAO.insertPointHistory(pointHistory, userId);
     }
+
+    public String insertPointHistory(String userId, int amount) {
+        return historyDAO.insertPointHistory(userId, amount);
+    }
     
     public GameHistoryDTO insertGameHistory(String gameUid, String gameName, int betAmount, int pointValue, String result, String userId) {
         GameHistoryDTO dto = new GameHistoryDTO();

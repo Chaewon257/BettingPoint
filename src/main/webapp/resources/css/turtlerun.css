@@ -245,8 +245,9 @@ body, html {
   object-fit: contain;
 }
 
-.live-turtle.my-turtle {
-  border: 3px solid gold;
+.turtle.selected {
+  border: 3px solid gold !important;
+  z-index:80;
 }
 
 .turtle.winner-highlight {

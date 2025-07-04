@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-
 import com.bettopia.game.Exception.SessionExpiredException;
 import com.bettopia.game.model.auth.AuthService;
 import com.bettopia.game.model.aws.S3FileService;
@@ -143,5 +142,17 @@ public class BoardRestController {
 
 		return response;
 	}
-
+	
+	// summernote에서 이미지 삭제시 
+	@DeleteMapping("/image-delete")
+	public String deleteImage(@RequestBody Map<String,String> body) {
+	    s3FileService.deleteFileByUrl(body.get("url"));
+	    return "이미지 삭제가 처리되었습니다.";
+	}
 }
+
+
+	
+	
+
+

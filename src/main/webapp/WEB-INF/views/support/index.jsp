@@ -24,7 +24,33 @@
 				</div>
 			</div>
 		</div>
-		<script type="text/javascript">		
+		<script type="text/javascript">	
+			// 메인페이지에서 uid 들고 공지사항 페이지 넘어왔을 때
+			$(function(){
+				const uidParam = new URLSearchParams(location.search).get('uid');
+				  
+				if(uidParam){				   
+					// 1. 공지사항 탭 버튼 클릭 (탭을 띄우기 위함)
+					$('button.tab-btn[data-tab="notice"]').trigger('click');
+					
+					// 2. 탭 콘텐츠가 로딩될 시간을 고려해서 약간 지연 실행
+					setTimeout(function () {
+					    // 3. 해당 uid를 가진 공지사항 항목을 찾아 클릭 트리거s
+					    $(`[data-notice="\${uidParam}"]`).first().trigger('click');
+					}, 300); // 필요 시 딜레이 조정
+				}
+				
+				$(document).on('click', '.tab-btn', function () {
+				    removeUidFromUrl(); // ← 탭 전환 시 주소에서 uid 제거
+				});
+				
+				function removeUidFromUrl() {
+				    const url = new URL(location.href);
+				    url.searchParams.delete('uid');
+				    history.replaceState(null, '', url.pathname); // → "/support"
+				}
+			});		
+		
 			//FAQ 토글 버튼
 			$(document).on("click", ".faq-toggle", function () {
 			    const $faqItem = $(this).closest(".faq-item");
@@ -63,6 +89,7 @@
 			
 			$(document).on("click", '.notice-view', function () {
 				const selectednotice = $(this).data("notice");
+				//const selectednotice = new URLSearchParams(window.location.search).get('uid');
 				
 				// 콘텐츠 영역 비우고 로딩
 				const contentContainer = $("#support-tab-content");
