@@ -39,39 +39,92 @@
 			</div>
 			<!-- 첫 번째 결제 위젯 영역 -->
 			<div class="md:col-span-3 bg-white rounded-[10px] pb-[20px] text-center">
-		    	<!-- 결제 UI -->
-		    	<div id="payment-method"></div>
-			    <!-- 이용약관 UI -->
-			    <div id="agreement"></div>		    
-			    <!-- 결제하기 버튼 -->
-			    <button id="payment-button"
+				<!-- 결제 UI -->
+				<div id="payment-method"></div>
+				<!-- 이용약관 UI -->
+				<div id="agreement"></div>
+
+				<!-- 결제하기 버튼 -->
+				<button id="payment-button"
 						class="mt-[20px] mx-[15px] px-4 py-3 w-[250px] text-white bg-blue-500 font-semibold text-[15px] rounded hover:bg-blue-700 transition">
-			      결제하기
-			    </button>
-		  	</div>
+					결제하기
+				</button>
+			</div>
+		</div>
+
+		<div id="successModal" style="
+		  display:none;
+		  position: fixed; top: 50%; left: 50%;
+		  transform: translate(-50%, -50%);
+		  background: #fff;
+		  border-radius: 16px;
+		  width: 360px;
+		  height: 420px;
+		  text-align: center;
+		  padding: 40px 20px;
+		  color: #222;
+		  z-index: 10000;
+		  user-select: none;
+		  flex-direction: column;
+		  justify-content: center;
+		  align-items: center;
+		">
+			<svg width="96" height="96" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-bottom: 40px;">
+				<circle cx="12" cy="12" r="12" fill="#2F80ED"/>
+				<polyline points="18 6 9 17 5 12" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+			</svg>
+			<div style="font-weight: 700; font-size: 1.5rem; line-height: 1.3;">
+				결제를 완료했어요
+			</div>
+		</div>
+
+		<div id="failModal" style="
+		  display:none;
+		  position: fixed; top: 50%; left: 50%;
+		  transform: translate(-50%, -50%);
+		  background: #fff;
+		  border-radius: 16px;
+		  width: 360px;
+		  height: 420px;
+		  text-align: center;
+		  padding: 40px 20px;
+		  color: #222;
+		  z-index: 10000;
+		  user-select: none;
+		  flex-direction: column;
+		  justify-content: center;
+		  align-items: center;
+		">
+			<svg width="96" height="96" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-bottom: 40px;">
+				<circle cx="12" cy="12" r="12" fill="#FFC84B"/>
+				<rect x="11" y="6" width="2" height="8" rx="1" fill="#000"/>
+				<rect x="11" y="16" width="2" height="2" rx="1" fill="#000"/>
+			</svg>
+			<div style="font-weight: 700; font-size: 1.5rem; line-height: 1.3;">
+				결제를 실패했어요
+			</div>
 		</div>
 		<script src="${cpath}/resources/js/chargemodal.js"></script>
 	</jsp:attribute>
 </ui:modal>
-
 <script type="text/javascript">
 	$(document).ready(function () {
 		// 화면 너비 계산
 		function adjustWidth() {
-		    let screenWidth = $(window).width();
-		    let newWidth;
+			let screenWidth = $(window).width();
+			let newWidth;
 
-		    if (screenWidth >= 1280) {
-		        newWidth = screenWidth * 0.7;
-		    } else if (screenWidth >= 1024) {
-		        newWidth = screenWidth * 0.8;
-		    } else if (screenWidth >= 768) {
-		        newWidth = screenWidth * 0.9;
-		    } else {
-		        newWidth = screenWidth - 32;
-		    }
+			if (screenWidth >= 1280) {
+				newWidth = screenWidth * 0.7;
+			} else if (screenWidth >= 1024) {
+				newWidth = screenWidth * 0.8;
+			} else if (screenWidth >= 768) {
+				newWidth = screenWidth * 0.9;
+			} else {
+				newWidth = screenWidth - 32;
+			}
 
-		    $("#modalContainer").css("width", `\${newWidth}px`);
+			$("#modalContainer").css("width", `${newWidth}px`);
 		}
 
 		// 처음 실행
@@ -79,38 +132,76 @@
 
 		// 리사이즈 시 다시 적용
 		$(window).resize(function() {
-		    adjustWidth();
+			adjustWidth();
 		});
-		
+
 		// 포인트 값 업데이트 함수
-	    function updateAmountDisplay() {
-	    	const point = parseInt($("#point").val(), 10) || 0;
-	    	const payment = Math.floor(point * 1.1);
-	    	
-	        $("#amountDisplay").text(payment.toLocaleString());
-	    }
+		function updateAmountDisplay() {
+			const point = parseInt($("#point").val(), 10) || 0;
+			const payment = Math.floor(point * 1.1);
 
-	    // input 변경 시
-	    $("#point").on("input", function () {	        
-	        updateAmountDisplay();
-	    });
+			$("#amountDisplay").text(payment.toLocaleString());
+		}
 
-	    // 버튼 클릭 시
-	    $(".point-btn").click(function () {
-	    	const addPoint = parseInt($(this).data("value"), 10) || 0;
-	        const currentPoint = parseInt($("#point").val(), 10) || 0;
-	        const newPoint = currentPoint + addPoint;
+		// input 변경 시
+		$("#point").on("input", function () {
+			updateAmountDisplay();
+		});
 
-	        $("#point").val(newPoint);
-	        updateAmountDisplay();
-	    });
+		// 버튼 클릭 시
+		$(".point-btn").click(function () {
+			const addPoint = parseInt($(this).data("value"), 10) || 0;
+			const currentPoint = parseInt($("#point").val(), 10) || 0;
+			const newPoint = currentPoint + addPoint;
+
+			$("#point").val(newPoint);
+			updateAmountDisplay();
+		});
 	});
-	
+
 	// 모달 닫힐 때 input 초기화
 	$(`#${modalId} > div > button`).on("click", function () {
-	    // 닫기 버튼이 클릭되면 해당 모달 내 input 및 표시 초기화
-	    $("#point").val('');
-	    $("#amountDisplay").text('');
+		$("#point").val('');
+		$("#amountDisplay").text('');
 	});
 
+	function openSuccessModal() {
+		const $modal = $("#successModal");
+		$modal.stop(true, true)
+				.css("display", "flex")   // flex로 display 설정
+				.hide()                  // 우선 숨긴 뒤
+				.fadeTo(200, 1);         // 0 -> 1로 페이드 인
+
+		setTimeout(() => {
+			closeSuccessModal();
+		}, 3000);
+	}
+
+	function closeSuccessModal() {
+		const $modal = $("#successModal");
+		$modal.stop(true, true)
+				.fadeTo(200, 0, function() {
+					$modal.css("display", "none");  // 투명도 0되면 display:none 처리
+				});
+	}
+
+	function openFailModal() {
+		const $modal = $("#failModal");
+		$modal.stop(true, true)
+				.css("display", "flex")
+				.hide()
+				.fadeTo(200, 1);
+
+		setTimeout(() => {
+			closeFailModal();
+		}, 3000);
+	}
+
+	function closeFailModal() {
+		const $modal = $("#failModal");
+		$modal.stop(true, true)
+				.fadeTo(200, 0, function() {
+					$modal.css("display", "none");
+				});
+	}
 </script>

@@ -1,5 +1,6 @@
 
 	  const currentURL = window.location.href.replace(/[^/]*$/, '');
+
 	  main();
 
 	  async function main() {		
@@ -59,8 +60,6 @@
 	        const rawPoint = parseInt(document.getElementById("point").value, 10) || 0;
 	        const dynamicValue = Math.floor(rawPoint * 1.1);
 	  
-	        console.log("dynamicValue:", dynamicValue);
-	  
 	        // 2) 위젯에 최신 금액 재설정
 	        await widgets.setAmount({
 	          currency: "KRW",
@@ -69,14 +68,50 @@
 
 	    	// 결제를 요청하기 전에 orderId, amount를 서버에 저장하세요.
             // 결제 과정에서 악의적으로 결제 금액이 바뀌는 것을 확인하는 용도입니다.
-	        await widgets.requestPayment({
+	        const paymentResult = await widgets.requestPayment({
 	        	orderId: generateRandomString(),
-		        orderName: "[Betting Point] 포인트 충전",
-		        successUrl: currentURL + "mypage/success",
-		        failUrl: currentURL + "mypage/fail",
+		        orderName: "[Betting Point] 포인트 충전"
 	        });
+
+		  	// 서버로 결제 승인에 필요한 결제 정보를 보내세요.
+		    async function confirm() {
+				var requestData = {
+					payment_key: paymentResult.paymentKey,
+					order_uid: paymentResult.orderId,
+					amount: paymentResult.amount.value
+				};
+
+				const token = localStorage.getItem("accessToken");
+				const response = await fetch("/api/payment/confirm", {
+				  method: "POST",
+				  headers: {
+					  "Content-Type": "application/json",
+					  "Authorization": "Bearer " + token,
+				  },
+				  body: JSON.stringify(requestData),
+				});
+
+			    const json = await response.json();
+
+				if(!response.ok) {
+					openFailModal();
+					return;
+				}
+
+				return json
+			}
+
+		    confirm()
+			  .then(function () {
+				  openSuccessModal();
+			  })
+			  .catch(() => {
+				  openFailModal();
+			  });
+
 	      } catch (err) {
 	    	  console.error("결제 요청 중 에러 발생:", err);
+			  openFailModal();
 	      }
 	    });
 	  }
