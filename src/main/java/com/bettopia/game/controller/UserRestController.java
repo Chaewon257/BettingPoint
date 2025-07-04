@@ -24,6 +24,11 @@ public class UserRestController {
 		String userId = authService.validateAndGetUserId(authHeader);
 		UserVO user = authService.findByUid(userId); // 또는 getUserByUid(userId)
 
+		String baseUrl = "https://bettopia-bucket.s3.ap-southeast-2.amazonaws.com/";
+		String profileFullUrl = (user.getProfile_img() != null && !user.getProfile_img().isBlank())
+		                        ? baseUrl + user.getProfile_img()
+		                        : "";
+		
 		return ResponseEntity.ok(Map.of(
 									"uid", user.getUid(),
 									"user_name", user.getUser_name(),
@@ -32,7 +37,7 @@ public class UserRestController {
 									"birth_date", user.getBirth_date(),
 									"phone_number", user.getPhone_number(),
 									"point_balance", user.getPoint_balance(),
-									"profile_img", user.getProfile_img() 
+									"profile_img", profileFullUrl 
 								));
 	}
 

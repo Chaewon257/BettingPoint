@@ -24,7 +24,19 @@
 				</div>
 			</div>
 		</div>
-		<script type="text/javascript">
+		<script type="text/javascript">		
+			//FAQ 토글 버튼
+			$(document).on("click", ".faq-toggle", function () {
+			    const $faqItem = $(this).closest(".faq-item");
+			    const $content = $faqItem.find(".faq-content");
+			    const $question = $faqItem.find(".question-title");
+			    const $icon = $(this).find(".icon-open");
+	
+			    $content.stop(true, true).slideToggle(300);
+			    $question.toggleClass("font-semibold");
+			    $icon.toggleClass("rotate-180");
+			});
+		
 			$(".tab-btn").on("click", function () {
 				const selectedTab = $(this).data("tab");
 				
@@ -56,12 +68,27 @@
 				const contentContainer = $("#support-tab-content");
 				contentContainer.html('<div class="text-center py-8 text-gray-5">로딩 중...</div>');
 				
-				// url: `/support/view/\${selectednotice}`,
 				$.ajax({
 					url: `/support/view`,
 					type: 'GET',
 					success: function (html) {
 						contentContainer.html(html);
+						
+						// ✅ 상세 API 호출
+						$.ajax({
+							url: `/api/support/detail/\${selectednotice}`,
+							type: 'GET',
+							success: function (notice) {
+								$("#notice-title").text(notice.title || "-");
+								$("#notice-writer").text(notice.writer || "관리자");
+								$("#notice-views").text(notice.view_count ?? 0);
+								$("#notice-date").text(formatDate(notice.created_at));
+								$("#notice-content").html(notice.content || "-");
+							},
+							error: function () {
+								alert("공지사항 데이터를 불러오는 데 실패했습니다.");
+							}
+						});
 					},
 					error: function () {
 						alert('공지사항 보기 실패');

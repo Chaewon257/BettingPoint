@@ -37,9 +37,6 @@
 			$.ajax({
 				url: `/api/history/game/list?page=\${page}`,
 				method: 'GET',
-				headers: {
-					'Authorization': 'Bearer ' + token
-				},
 				success: function (res) {
 					const histories = res.histories;
 					totalCount = res.total;
@@ -62,27 +59,27 @@
 			}
 	
 			histories.forEach((history, idx) => {
-
-
-				const number = (page - 1) * itemsPerPage + idx + 1;
-				
+				const number = (page - 1) * itemsPerPage + idx + 1;				
 				
 				const gameName = history.game_name || "Unknown Game";    
 				const result = history.game_result === "WIN" ? "승리" : "패배";
 				const resultClass = history.game_result === "WIN" ? "text-blue-1" : "text-red-1";
 				const sign = history.game_result === "WIN" ? "+" : "-";
-				const pointChange = `(\${sign}\${history.point_value})`;
+				
+				// 🔹 숫자에 콤마 추가
+				const bettingAmount = Number(history.betting_amount).toLocaleString();
+				const pointValue = Number(history.point_value).toLocaleString();				
+				const pointChange = `(\${sign}\${pointValue})`;
+				
 				const date = formatDate(history.created_at);
-
-				
-				
+								
 				const html = `
 					<div class="p-4 grid grid-cols-12 items-center text-center border-b border-gray-1">
 						<span class="font-light">\${number}</span>
 						<span class="col-span-5">\${gameName}</span>
 						<span class="\${resultClass}">\${result}</span>
 						<div class="col-span-3 flex flex-col sm:flex-row items-center justify-center">
-							<span class="font-light">\${history.betting_amount}</span>
+							<span class="font-light">\${bettingAmount}</span>
 							<span class="\${resultClass}">\${pointChange}</span>
 						</div>
 						<span class="col-span-2 font-light">\${date}</span>
@@ -147,9 +144,6 @@
 		$.ajax({
 			url: '/api/user/me',
 			method: 'GET',
-			headers: {
-				'Authorization': 'Bearer ' + token
-			},
 			success: function () {
 				loadGameHistory(token, currentPage);
 			},

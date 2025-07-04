@@ -173,8 +173,8 @@
 	            // DOM 요소에 데이터 삽입
 	            $('#chatDetailTitle').text(res.title || "(제목 없음)");
 	            $('#chatDetailDate').text(formatDate(res.chat_date));
-	            $('#chatDetailQuestion').text(res.question || "(질문 없음)");
-	            $('#chatDetailAnswer').text(res.response || "(답변 없음)");
+	            $('#chatDetailQuestion').html(res.question || "(질문 없음)");
+	            $('#chatDetailAnswer').html(res.response || "(답변 없음)");
 	            $('#chatDetailResponseDate').text(res.response_date ? formatDate(res.response_date) : "-");
 
 	            // 모달 열기
