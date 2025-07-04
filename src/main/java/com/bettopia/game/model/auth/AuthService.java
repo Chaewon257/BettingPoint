@@ -151,10 +151,13 @@ public class AuthService {
 	    
 	    // ✅ 프로필 이미지 처리
 	    MultipartFile newImage = userRequest.getProfile_image();
+	    String oldUrl = userRequest.getProfile_img_url();
 	    if (newImage != null && !newImage.isEmpty()) {
-	        // 기존 이미지가 있다면 S3에서 삭제
-	    	String oldUrl = userRequest.getProfile_img_url();
+	    	
+	    	System.out.println("oldUrl: "+oldUrl);
+	    	System.out.println("newImage: "+ newImage);
 	        if (oldUrl != null && !oldUrl.isBlank()) {
+		        // 기존 이미지가 있다면 S3에서 삭제
 	            String key = extractObjectKeyFromUrl(oldUrl);
 	            s3FileService.deleteObject(key);
 	        }
@@ -164,10 +167,8 @@ public class AuthService {
 	        existingUser.setProfile_img(newUrl);
 	    } else {
 	    	// 이미지 변경 안 했다면
-	    	String existingUrl = (existingUser.getProfile_img() != null)
-                    ? existingUser.getProfile_img()
-                    : "";
-	    	existingUser.setProfile_img(existingUrl);
+	    	oldUrl = extractObjectKeyFromUrl(oldUrl);
+	    	existingUser.setProfile_img(oldUrl != null ? oldUrl : "");
 	    }
 		
 		userDAO.updateUser(existingUser, userId);
