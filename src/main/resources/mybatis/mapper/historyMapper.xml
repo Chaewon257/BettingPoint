@@ -68,8 +68,7 @@
 	<insert id="insertPointHistory" parameterType="pointHistoryDTO">
 		insert into
 		point_history(uid, user_uid, type, amount, balance_after, gh_uid)
-		values(#{uid}, #{user_uid}, #{type}, #{amount}, #{balance_after},
-		#{gh_uid})
+		values(#{uid}, #{user_uid}, #{type}, #{amount}, #{balance_after}, #{gh_uid})
 	</insert>
 
 	<insert id="chargePoint" parameterType="pointHistoryDTO">
