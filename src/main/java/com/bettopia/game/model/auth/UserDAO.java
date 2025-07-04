@@ -56,7 +56,7 @@ public class UserDAO {
 
     public void updatePassword(String password, String userId) {
         Map<String, Object> params = new HashMap<>();
-        params.put("password", passwordEncoder.encode(password););
+        params.put("password", passwordEncoder.encode(password));
         params.put("uid", userId);
         sqlSession.update(namespace + "updatePassword", params);
     }
