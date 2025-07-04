@@ -70,6 +70,27 @@
 			$(window).resize(function() {
 			    adjustWidth();
 			});
+			
+			// 아이디/비밀번호 찾기 버튼 클릭
+			$(".tab-btn").on("click", function () {
+				const selectedTab = $(this).data("tab");
+				
+				// 콘텐츠 영역 비우고 로딩
+				const contentContainer = $("#modalContainer");
+				contentContainer.html('<div class="text-center py-8 text-gray-5">로딩 중...</div>');
+				
+				// 선택된 탭에 따라 콘텐츠 요청
+				$.ajax({
+					url: `/\${selectedTab}`,
+					type: 'GET',
+					success: function (html) {
+						contentContainer.html(html);
+					},
+					error: function () {
+						contentContainer.html('<div class="text-red-500">콘텐츠 로딩 실패</div>');
+					}
+				});
+			});
 	  	</script>
 	</jsp:attribute>
 </ui:layout>
