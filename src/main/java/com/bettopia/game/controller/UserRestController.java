@@ -5,8 +5,10 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.bettopia.game.model.auth.AuthService;
+import com.bettopia.game.model.auth.UserUpdateRequestDTO;
 import com.bettopia.game.model.auth.UserVO;
 import com.bettopia.game.util.JWTUtil;
 
@@ -42,11 +44,12 @@ public class UserRestController {
 	}
 
 	// 회원정보 수정
-	@PutMapping("/update")
-	public void updateMyInfo(@RequestBody UserVO userRequest,
-							 @RequestHeader("Authorization") String authHeader) {
+	@PostMapping("/update")
+	public ResponseEntity<?> updateMyInfo(@ModelAttribute UserUpdateRequestDTO userRequest,
+							 			  @RequestHeader("Authorization") String authHeader) {
 		String userId = authService.validateAndGetUserId(authHeader);
 		authService.updateUser(userRequest, userId);
+	    return ResponseEntity.ok().build();
 	}
 
 	// 포인트 충전
@@ -65,5 +68,15 @@ public class UserRestController {
 		int point = request.get("point");
 		String userId = authService.validateAndGetUserId(authHeader);
 		authService.losePoint(point, userId);
+	}
+
+	// 이메일 찾기
+	@GetMapping("/findEmail")
+	public String findEmail(@RequestHeader("Authorization") String authHeader,
+							@RequestBody Map<String, String> request) {
+		authService.validateAndGetUserId(authHeader);
+		String user_name = request.get("user_name");
+		String phone_number = request.get("phone_number");
+		return authService.getUserEmail(user_name, phone_number);
 	}
 }

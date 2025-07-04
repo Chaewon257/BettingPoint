@@ -13,15 +13,15 @@
         class="inline-block h-9 sm:h-11 lg:h-13 xl:h-13 mr-2 bg-transparent object-contain">
       Treasure Hunt
     </h1>      
-    <button
-      class="absolute right-0 top-0 sm:top-0 top-8  /* 모바일에서 top-10(3rem)로 아래로 내림 */
-             bg-blue-200 text-blue-900 border-none py-2 px-4 rounded-lg font-bold cursor-pointer text-xs transition-colors duration-300 hover:bg-blue-300 sm:text-sm"
-      onclick="location.href='/solo'">
-      뒤로가기
-    </button>
+ <button
+  class="absolute right-0 top-0 sm:top-0 top-8  
+         bg-blue-200 text-blue-900 border-none py-2 px-4 rounded-lg font-bold cursor-pointer text-xs transition-colors duration-300 hover:bg-blue-300 sm:text-sm"
+  onclick="history.back()">
+  뒤로가기
+</button>
   </div>
 
-  <div class="bg-white sm:h-[570px] max-sm:h-auto max-sm:min-h-[800px] rounded-2xl p-6 border border-blue-200 flex flex-col gap-5 md:flex-row xl:p-12">
+  <div class="bg-white sm:min-h-[590px] h-auto max-sm:h-auto max-sm:min-h-[750px] rounded-2xl p-6 border border-blue-200 flex flex-col gap-5 md:flex-row xl:p-12">
     <!-- 왼쪽 패널 -->
     <div class="flex-1 flex flex-col gap-5 border-b-2 border-blue-100 pb-5 md:border-b-0 md:border-r-2 md:pr-6 md:pb-0 xl:pr-16">
       <!-- 유저 포인트 -->
@@ -67,12 +67,12 @@
           <span class="input-error hidden text-red-700" id="input-error"></span>
         </div>
         <div class="flex items-center gap-3 mb-2.5">
-          <input type="number" class="flex-1 p-3 border-2 border-blue-400 rounded-lg text-sm text-center min-w-0 focus:outline-none focus:border-blue-600 sm:text-base" id="bet-amount" placeholder="배팅할 포인트 입력" min="1" />
+          <input type="text" class="flex-1 p-3 border-2 border-blue-400 rounded-lg text-sm text-center min-w-0 focus:outline-none focus:border-blue-600 sm:text-base" id="bet-amount" placeholder="배팅할 포인트 입력" min="1" />
         </div>
         <div class="grid grid-cols-4 gap-2">
-          <button class="bet-preset py-3 px-2 border-none rounded-lg bg-blue-200 text-blue-900 font-bold cursor-pointer transition-colors duration-300 text-xs hover:bg-blue-400 sm:text-sm" data-amount="1000">1000</button>
-          <button class="bet-preset py-3 px-2 border-none rounded-lg bg-blue-200 text-blue-900 font-bold cursor-pointer transition-colors duration-300 text-xs hover:bg-blue-400 sm:text-sm" data-amount="10000">10000</button>
-          <button class="bet-preset py-3 px-2 border-none rounded-lg bg-blue-200 text-blue-900 font-bold cursor-pointer transition-colors duration-300 text-xs hover:bg-blue-400 sm:text-sm" data-amount="50000">50000</button>
+          <button class="bet-preset py-3 px-2 border-none rounded-lg bg-blue-200 text-blue-900 font-bold cursor-pointer transition-colors duration-300 text-xs hover:bg-blue-400 sm:text-sm" data-amount="1000">1,000</button>
+          <button class="bet-preset py-3 px-2 border-none rounded-lg bg-blue-200 text-blue-900 font-bold cursor-pointer transition-colors duration-300 text-xs hover:bg-blue-400 sm:text-sm" data-amount="10000">10,000</button>
+          <button class="bet-preset py-3 px-2 border-none rounded-lg bg-blue-200 text-blue-900 font-bold cursor-pointer transition-colors duration-300 text-xs hover:bg-blue-400 sm:text-sm" data-amount="50000">50,000</button>
           <button class="bet-preset py-3 px-2 border-none rounded-lg bg-blue-200 text-blue-900 font-bold cursor-pointer transition-colors duration-300 text-xs hover:bg-blue-400 sm:text-sm" data-amount="all">ALL IN</button>
         </div>
       </div>
@@ -97,9 +97,9 @@
 
       <div class="mt-2.5 flex flex-col items-center">
   <div id="gameBoard" class="grid grid-cols-5 
-                            gap-1 sm:gap-2 md:gap-1
+                            gap-1 sm:gap-2 md:gap-2
                             w-full 
-                            max-w-[250px] sm:max-w-[280px] md:max-w-[300x]
+                            max-w-[250px] sm:max-w-[260px] md:max-w-[270x]
                             mx-auto 
                             p-1 sm:p-3 md:p-3 
                             bg-blue-50 rounded-xl">
