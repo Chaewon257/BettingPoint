@@ -52,7 +52,7 @@
 			</div>
 			<div class="flex flex-col items-start gap-y-1">
 				<span class="text-xs text-gray-6 pl-1">전화번호</span>
- 				<input type="text" id="phoneNumber" name="phoneNumber" class="w-full px-4 py-2 text-xs outline-none bg-gray-4 rounded-full border border-gray-5" placeholder="전화번호(010-0000-0000)" required>
+ 				<input type="text" id="phoneNumber" name="phoneNumber" class="w-full px-4 py-2 text-xs outline-none bg-gray-4 rounded-full border border-gray-5 cursor-not-allowed" placeholder="전화번호(010-0000-0000)" required readonly>
 			</div>
 		</div>				
 	</div>
@@ -240,8 +240,7 @@
 	    
 	 	// ✅ 현재 사용 중인 프로필 이미지 URL도 서버로 전달
 	    const currentProfileImg = $("#profileImage").attr("data-key");
-	    formData.append("profile_img_url", currentProfileImg || "");
-
+	    
 	    // ✅ 새로 선택한 프로필 이미지 파일이 있다면 첨부
 	    const file = $("#profileImageInput")[0].files[0];
 	    
@@ -254,6 +253,9 @@
 	    
 	    if (file) {
 	        formData.append("profile_image", file);
+	        formData.append("profile_img_url", currentProfileImg || "");
+	    } else {
+	    	formData.append("profile_img_url", currentProfileImg || "");
 	    }
 
 	    $.ajax({
