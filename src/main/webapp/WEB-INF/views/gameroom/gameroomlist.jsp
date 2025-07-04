@@ -263,6 +263,8 @@
 		
 		      	const roomName = $('#roomName').val().trim();
 		      	const minBet = $('#min_bet').val().trim();
+				const gameUid = $('#gameUid').val();
+				const gameLevelUid = $('#gameLevelUid').val();
 		
 		      	if (!roomName) {
 		      		error.textContent = '방 제목을 입력해주세요';
@@ -272,12 +274,21 @@
 		      		error.textContent = '유효한 최소 베팅 금액을 입력해주세요.';
 		        	return;
 		      	}
+
+				if (!gameUid || gameUid === 'none') {
+					error.textContent = '게임을 선택해주세요.';
+					return;
+				}
+				if (!gameLevelUid || gameLevelUid === 'none') {
+					error.textContent = '난이도를 선택해주세요.';
+					return;
+				}
 		      	
 		      	const payload = {
 		        		title: roomName,
 		                min_bet: minBet,
-		                game_uid: $('#gameUid').val(),
-		                game_level_uid: $('#gameLevelUid').val()
+		                game_uid: gameUid,
+		                game_level_uid: gameLevelUid
 		       		};
 		      	
 		      	const token = localStorage.getItem("accessToken");
@@ -292,9 +303,6 @@
 		            },
 		            success: function(roomId) {
 		                location.href = '/gameroom/detail/' + roomId;
-		            },
-		            error: function() {
-		                alert("다시 시도하세요.");
 		            }
 		        });
 		    });
