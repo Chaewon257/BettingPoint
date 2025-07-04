@@ -27,8 +27,9 @@ public class PaymentRestController {
         PaymentDTO payment = paymentService.confirmPayment(response, userId);
 
         if(payment.getStatus().equals(PaymentStatus.PAID)) {
-            authService.addPoint(payment.getAmount(), userId);
-            historyService.insertPointHistory(userId, payment.getAmount());
+            int netPoint = (int) Math.floor(payment.getAmount() * 0.9);
+            authService.addPoint(netPoint, userId);
+            historyService.insertPointHistory(userId, netPoint);
         }
 
         return payment;
