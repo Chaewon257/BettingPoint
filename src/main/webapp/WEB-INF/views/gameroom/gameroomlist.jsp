@@ -60,6 +60,23 @@
 		</ui:modal>
 		<script type="text/javascript">
 			$(document).ready(function () {
+				const token = localStorage.getItem("accessToken");
+				if (!token) {
+					alert("로그인이 필요합니다.");
+					return;
+				}
+
+				$.ajax({
+					url: '/api/user/me',
+					type: 'GET',
+					headers: {
+						'Authorization': 'Bearer ' + token
+					},
+					success: function(user) {
+						point_balance = user.point_balance;
+					}
+				});
+
 		    	let gamerooms = []; // 게임방 리스트
 		    	let playerCounts = {}; // 각 게임방 플레이어 수
 		    	let socket;
@@ -255,7 +272,7 @@
 			        }
 			    });
 			});
-			
+
 			// 게임방 생성 버튼
 			$('#createGameRoomBtn').on('click', function () {
 				const error = document.getElementById('errorMessage');
@@ -306,6 +323,30 @@
 		            }
 		        });
 		    });
+
+			let point_balance = 0;
+
+			$('#min_bet').on('blur', function() {
+				let value = parseInt($(this).val(), 10);
+				const INT_MAX = 2147483600;
+
+				if (isNaN(value) || value <= 0) {
+					$(this).val('');
+					return;
+				}
+
+				if(value > INT_MAX) {
+					value = INT_MAX;
+				}
+
+				if(value > point_balance) {
+					value = point_balance;
+				}
+
+				value = Math.floor(value / 100) * 100;
+
+				$(this).val(value);
+			});
 		</script>
 	</jsp:attribute>
 </ui:layout>
