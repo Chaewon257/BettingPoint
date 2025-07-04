@@ -100,36 +100,68 @@
 	        });
 	    }
 	    
-	 	// 🔹 페이지네이션 버튼 렌더링
+	 // 🔹 포인트 히스토리 페이지네이션 렌더링 (그룹 단위)
 	    function renderPointPagination(current, totalCount) {
-	        const maxPages = Math.ceil(totalCount / itemsPerPage);
 	        paginationContainer.empty();
+	        const maxPages = Math.ceil(totalCount / itemsPerPage);
+	        const pagesPerGroup = 5; // 한 그룹에 보여줄 페이지 수
+	        
+	        // 현재 페이지가 속한 그룹 계산
+	        const currentGroup = Math.ceil(current / pagesPerGroup);
+	        const startPage = (currentGroup - 1) * pagesPerGroup + 1;
+	        const endPage = Math.min(startPage + pagesPerGroup - 1, maxPages);
+	        
 	        const paginationHTML = [];
-
-	        paginationHTML.push(`
-	            <button class="w-8 h-8 rounded-s border border-gray-1 
-						\${current <= 1 ? 'text-gray-1 hover:bg-gray-2 cursor-not-allowed' 
-								: 'hover:bg-gray-2'}"
-		        		\${current <= 1 ? 'disabled' : ''}
-	                    onclick="changePointPage(\${current - 1})">&lt;</button>
-	        `);
-
-	        for (let i = 1; i <= maxPages; i++) {
-	        	paginationHTML.push(`
-	                <button class="w-8 h-8 \${i === current ? 'bg-gray-2' : 'hover:bg-gray-2'} border border-gray-1"
-                        	onclick="changePointPage(\${i})">\${i}</button>
-	            `);
+	        
+	        // 맨 처음 페이지 버튼 (<<)
+	        const isFirstPage = current === 1;
+	        paginationHTML.push(
+	            '<button class="w-8 h-8 rounded-s border border-gray-1 ' +
+	            (isFirstPage ? 'text-gray-1 hover:bg-gray-2 cursor-not-allowed' : 'hover:bg-gray-2') + '"' +
+	            (isFirstPage ? ' disabled' : '') +
+	            ' onclick="changePointPage(1)" title="맨 처음 페이지">&lt;&lt;</button>'
+	        );
+	        
+	        // Prev 버튼
+	        const isFirstPageInGroup = current === startPage;
+	        const prevPage = isFirstPageInGroup ? startPage - 1 : current - 1;
+	        
+	        paginationHTML.push(
+	            '<button class="w-8 h-8 border border-gray-1 ' +
+	            (isFirstPage ? 'text-gray-1 hover:bg-gray-2 cursor-not-allowed' : 'hover:bg-gray-2') + '"' +
+	            (isFirstPage ? ' disabled' : '') +
+	            ' onclick="changePointPage(' + prevPage + ')" title="이전 페이지">&lt;</button>'
+	        );
+	        
+	        // 페이지 번호들
+	        for (let i = startPage; i <= endPage; i++) {
+	            paginationHTML.push(
+	                '<button class="w-8 h-8 ' + (i === current ? 'bg-gray-2' : 'hover:bg-gray-2') + ' border border-gray-1"' +
+	                ' onclick="changePointPage(' + i + ')">' + i + '</button>'
+	            );
 	        }
-
-	        paginationHTML.push(`
-	            <button class="w-8 h-8 rounded-e border border-gray-1 
-						\${current >= maxPages ? 'text-gray-1 hover:bg-gray-2 cursor-not-allowed' 
-								: 'hover:bg-gray-2'}"
-						\${current >= maxPages ? 'disabled' : ''}    
-	                    onclick="changePointPage(\${current + 1})">&gt;</button>
-	        `);
-
-	        paginationContainer.html(paginationHTML.join(''));
+	        
+	        // Next 버튼
+	        const isLastPage = current === maxPages;
+	        const isLastPageInGroup = current === endPage;
+	        const nextPage = isLastPageInGroup ? endPage + 1 : current + 1;
+	        
+	        paginationHTML.push(
+	            '<button class="w-8 h-8 border border-gray-1 ' +
+	            (isLastPage ? 'text-gray-1 hover:bg-gray-2 cursor-not-allowed' : 'hover:bg-gray-2') + '"' +
+	            (isLastPage ? ' disabled' : '') +
+	            ' onclick="changePointPage(' + nextPage + ')" title="다음 페이지">&gt;</button>'
+	        );
+	        
+	        // 맨 마지막 페이지 버튼 (>>)
+	        paginationHTML.push(
+	            '<button class="w-8 h-8 rounded-e border border-gray-1 ' +
+	            (isLastPage ? 'text-gray-1 hover:bg-gray-2 cursor-not-allowed' : 'hover:bg-gray-2') + '"' +
+	            (isLastPage ? ' disabled' : '') +
+	            ' onclick="changePointPage(' + maxPages + ')" title="맨 마지막 페이지">&gt;&gt;</button>'
+	        );
+	        
+	        paginationContainer.html(paginationHTML.join(""));
 	    }
 	 	
 	 	// 날짜 포맷팅 함수 (yyyy.mm.dd)

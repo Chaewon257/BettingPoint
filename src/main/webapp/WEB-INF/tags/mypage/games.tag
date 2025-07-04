@@ -107,7 +107,7 @@
 		            '<button class="w-8 h-8 border border-gray-1 ' +
 		            (isFirstPage ? 'text-gray-1 hover:bg-gray-2 cursor-not-allowed' : 'hover:bg-gray-2') + '"' +
 		            (isFirstPage ? ' disabled' : '') +
-		            ' onclick="changePage(1)" title="이전 페이지">&lt&lt;</button>'
+		            ' onclick="changePage(1)" title="이전 페이지">&lt;&lt;</button>'
 		    );
 		    
 		    // Prev 버튼
@@ -147,7 +147,7 @@
 			        '<button class="w-8 h-8 rounded-e border border-gray-1 ' +
 			        (isLastGroup ? 'text-gray-1 hover:bg-gray-2 cursor-not-allowed' : 'hover:bg-gray-2') + '"' +
 			        (isLastGroup ? ' disabled' : '') +
-			        ' onclick="changePage(' + maxPages + ')">&gt&gt;</button>'
+			        ' onclick="changePage(' + maxPages + ')">&gt;&gt;</button>'
 			    );
 		    
 		    paginationContainer.html(paginationHTML.join(""));
