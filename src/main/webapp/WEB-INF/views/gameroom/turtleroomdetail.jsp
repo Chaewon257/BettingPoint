@@ -195,7 +195,7 @@
 					success: function(user) {
 						userId = user.uid;
 						point_balance = user.point_balance;
-						$("#user-point").text(point_balance);
+						$("#user-point").text(point_balance.toLocaleString());
 						callback(userId);
 					}
 				});
@@ -282,7 +282,7 @@
 			// 게임방 상세 정보 렌더링(임시)
 			function renderGameRoomDetail(room) {
 				$("#room-title").text(`\${room.title}`);
-				$("#min-bet").text(`\${room.min_bet}`);
+				$("#min-bet").text(room.min_bet.toLocaleString());
 
 				userInfo(function() {
 					updateButtons();
@@ -365,7 +365,7 @@
 				});
 
 				$(document).on('blur', '#bet_point', function() {
-					const point = $(this).val();
+					const point = $(this).val().replace(/,/g, '');
 
 					if (!point || point <= 0) {
 						$("#errorMessage").text('베팅 포인트를 입력하세요.');
