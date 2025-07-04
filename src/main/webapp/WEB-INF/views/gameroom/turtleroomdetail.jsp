@@ -255,7 +255,7 @@
 					const html = `
             <div class="relative aspect-square rounded-xl shadow-[2px_2px_8px_rgba(0,0,0,0.1)] flex justify-center items-center overflow-hidden p-2 md:p-4">
                 <img src="/resources/images/turtle\${turtleId}.png" alt="Turtle Character" class="h-full" />
-                <div class="absolute left-0 top-0 w-20 h-10 md:h-14 flex justify-center items-center font-extrabold sm:text-base md:text-lg lg:text-xl xl:text-2xl">
+                <div class="absolute text-gray-7 left-0 top-0 w-20 h-10 md:h-14 flex justify-center items-center font-extrabold sm:text-base md:text-lg lg:text-xl xl:text-2xl">
                     <span>\${nickname}</span>
                 </div>
 				<div class="absolute left-1/2 bottom-0 -translate-x-1/2 w-20 md:w-32 h-10 md:h-14 bg-white blur rounded-full"></div>
