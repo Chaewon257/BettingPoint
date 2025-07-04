@@ -35,8 +35,41 @@
 	  	</div>
 	  	<ui:modal modalId="findAccountModal" title="아이디/비밀번호 찾기">
 	  		<jsp:attribute name="content">
+	  			<div id="modalContainer" class="overflow-y-scroll flex flex-col items-center justify-center p-4">
+	  				<button data-tab="findId" class="tab-btn w-full px-10 py-3 outline-none bg-blue-3 rounded-full text-white text-lg hover:bg-blue-1 my-4">아이디 찾기</button>
+	  				<button data-tab="findPassword" class="tab-btn w-full px-10 py-3 outline-none bg-blue-3 rounded-full text-white text-lg hover:bg-blue-1 mb-4">비밀번호 찾기</button>
+	  			</div>
 	  		</jsp:attribute>
 	  	</ui:modal>
 	  	<script src="${cpath}/resources/js/login.js"></script>
+	  	<script type="text/javascript">
+		 	// 화면 너비 계산
+			function adjustWidth() {
+			    let screenWidth = $(window).width();
+			    let newWidth;
+	
+			    if (screenWidth >= 1280) {
+			        newWidth = screenWidth * 0.3;
+			    } else if (screenWidth >= 1024) {
+			        newWidth = screenWidth * 0.4;
+			    } else if (screenWidth >= 768) {
+			        newWidth = screenWidth * 0.5;
+			    } else if (screenWidth >= 640) {
+			        newWidth = screenWidth * 0.6;
+			    } else {
+			        newWidth = screenWidth - 32;
+			    }
+	
+			    $("#modalContainer").css("width", `\${newWidth}px`);
+			}
+	
+			// 처음 실행
+			adjustWidth();
+	
+			// 리사이즈 시 다시 적용
+			$(window).resize(function() {
+			    adjustWidth();
+			});
+	  	</script>
 	</jsp:attribute>
 </ui:layout>
