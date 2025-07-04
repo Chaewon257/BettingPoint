@@ -21,6 +21,7 @@
             .banner-slide {
                 transition: transform 0.5s ease-in-out;
             }
+        }
         </style>
     </jsp:attribute>
 
@@ -383,5 +384,6 @@
         		}
             });
         </script>
+        <ui:chatbot></ui:chatbot>
     </jsp:attribute>
 </ui:layout>

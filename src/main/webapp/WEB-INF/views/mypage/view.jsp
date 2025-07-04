@@ -50,5 +50,6 @@
 				});
 			});
 		</script>
+		 <ui:chatbot></ui:chatbot>
 	</jsp:attribute>
 </ui:layout>

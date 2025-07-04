@@ -30,6 +30,7 @@
 				</div>
 			</div>
 		</div>
+		 <ui:chatbot></ui:chatbot>
 	</jsp:attribute>
 </ui:layout>
 		<script src="/resources/js/board2.js"></script>
