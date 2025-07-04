@@ -22,7 +22,6 @@ function detectDebugger() {
   const end = performance.now();
 
   if (end - start > 100) {
-    console.warn('%c🚨 개발자 도구가 감지되었습니다. 게임이 중단됩니다.', 'color: red; font-size: 16px; font-weight: bold;');
     handleDevToolsOpen();
   }
 }
