@@ -91,6 +91,29 @@
 					}
 				});
 			});
+			
+			$(document).ready(function () {
+			    // 초기 컨텐츠를 변수에 저장
+			    const initialContent = $("#modalContainer").html();
+
+			    // 모달을 감시하는 MutationObserver 생성
+			    const targetNode = document.getElementById("findAccountModal");
+
+			    const observer = new MutationObserver(function (mutationsList, observer) {
+			        for (const mutation of mutationsList) {
+			            if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+			                const isHidden = $(targetNode).hasClass("hidden");
+			                if (isHidden) {
+			                    // hidden 되었을 때 초기화
+			                    $("#modalContainer").html(initialContent);
+			                }
+			            }
+			        }
+			    });
+
+			    // observer 옵션 설정
+			    observer.observe(targetNode, { attributes: true });
+			});
 	  	</script>
 	</jsp:attribute>
 </ui:layout>
