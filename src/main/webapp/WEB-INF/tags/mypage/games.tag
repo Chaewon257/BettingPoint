@@ -1,12 +1,11 @@
 <%@ tag language="java" pageEncoding="UTF-8"%>
 
-<div data-content="games" class="tab-content w-full flex flex-col mb-20 text-xs sm:text-sm">
-	<div class="p-4 grid grid-cols-12 text-center text-gray-3 font-semibold border-b-2 border-gray-7 border-double">
-		<span>번호</span>
-		<span class="col-span-5">게임 이름</span>
-		<span>결과</span>
-		<span class="col-span-3">포인트 변동</span>
-		<span class="col-span-2">날짜</span>
+<div data-content="games"
+	class="tab-content w-full flex flex-col mb-20 text-xs sm:text-sm">
+	<div
+		class="p-4 grid grid-cols-12 text-center text-gray-3 font-semibold border-b-2 border-gray-7 border-double">
+		<span>번호</span> <span class="col-span-5">게임 이름</span> <span>결과</span>
+		<span class="col-span-3">포인트 변동</span> <span class="col-span-2">날짜</span>
 	</div>
 	<div class="grid grid-cols-1 border-b-2 border-gray-7 mb-6">
 		<div id="gameHistoryList"></div>
@@ -90,39 +89,55 @@
 			});
 		}
 		
-		// 🔹 페이지네이션 렌더링
+		// 🔹 페이지네이션 렌더링 (그룹 단위)
 		function renderPagination(current, totalCount) {
-			paginationContainer.empty();
-			const maxPages = Math.ceil(totalCount / itemsPerPage);
-			const paginationHTML = [];
-
-			// Prev
-			paginationHTML.push(`
-				<button class="w-8 h-8 rounded-s border border-gray-1 
-						\${current <= 1 ? 'text-gray-1 hover:bg-gray-2 cursor-not-allowed' 
-										: 'hover:bg-gray-2'}"
-				        \${current <= 1 ? 'disabled' : ''}
-				        onclick="changePage(\${current - 1})">&lt;</button>
-			`);
-
-			for (let i = 1; i <= maxPages; i++) {
-				paginationHTML.push(`
-					<button class="w-8 h-8 \${i === current ? 'bg-gray-2' : 'hover:bg-gray-2'} border border-gray-1"
-					        onclick="changePage(\${i})">\${i}</button>
-				`);
-			}
-
-			// Next
-			paginationHTML.push(`
-				<button class="w-8 h-8 rounded-e border border-gray-1 
-						\${current >= maxPages ? 'text-gray-1 hover:bg-gray-2 cursor-not-allowed' 
-												: 'hover:bg-gray-2'}"
-						\${current >= maxPages ? 'disabled' : ''}
-				        onclick="changePage(\${current + 1})">&gt;</button>
-			`);
-
-			paginationContainer.html(paginationHTML.join(""));
+		    paginationContainer.empty();
+		    const maxPages = Math.ceil(totalCount / itemsPerPage);
+		    const pagesPerGroup = 5; // 한 그룹에 보여줄 페이지 수
+		    
+		    // 현재 페이지가 속한 그룹 계산
+		    const currentGroup = Math.ceil(current / pagesPerGroup);
+		    const startPage = (currentGroup - 1) * pagesPerGroup + 1;
+		    const endPage = Math.min(startPage + pagesPerGroup - 1, maxPages);
+		    
+		    const paginationHTML = [];
+		    
+		    // Prev 버튼
+		    const isFirstPageOverall = current === 1; // 전체에서 첫 번째 페이지인지 확인
+		    const isFirstPageInGroup = current === startPage;  //현재 그룹의 첫 페이지인지 확인
+		    const prevPage = isFirstPageInGroup ? startPage - 1 : current - 1;
+		    
+		    paginationHTML.push(
+		        '<button class="w-8 h-8 rounded-s border border-gray-1 ' +
+		        (isFirstPageOverall ? 'text-gray-1 hover:bg-gray-2 cursor-not-allowed' : 'hover:bg-gray-2') + '"' +
+		        (isFirstPageOverall ? ' disabled' : '') +
+		        ' onclick="changePage(' + prevPage + ')">&lt;</button>'
+		    );
+		    
+		    // 페이지 번호들
+		    for (let i = startPage; i <= endPage; i++) {
+		        paginationHTML.push(
+		            '<button class="w-8 h-8 ' + (i === current ? 'bg-gray-2' : 'hover:bg-gray-2') + ' border border-gray-1"' +
+		            ' onclick="changePage(' + i + ')">' + i + '</button>'
+		        );
+		    }
+		    
+		    // Next 버튼
+		    const isLastGroup = endPage === maxPages;
+		    const isLastPageInGroup = current === endPage;
+		    const nextPage = isLastPageInGroup ? endPage + 1 : current + 1;
+		    
+		    paginationHTML.push(
+		        '<button class="w-8 h-8 rounded-e border border-gray-1 ' +
+		        (isLastGroup ? 'text-gray-1 hover:bg-gray-2 cursor-not-allowed' : 'hover:bg-gray-2') + '"' +
+		        (isLastGroup ? ' disabled' : '') +
+		        ' onclick="changePage(' + nextPage + ')">&gt;</button>'
+		    );
+		    
+		    paginationContainer.html(paginationHTML.join(""));
 		}
+		
+		
 		
 		// 날짜 포맷팅 함수 (yyyy.mm.dd)
 		function formatDate(dateStr) {
