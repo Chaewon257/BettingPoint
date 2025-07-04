@@ -1,18 +1,8 @@
 let currentPage     = 1;
 const PAGE_SIZE     = 10;
 let currentCategory = "free";
-let currentSort     = "created_at";
+let currentSort     = "";
 
-	// 카테고리 표시 변환
-	function translateCategory(category) {
-	  switch (category) {
-	    case "free": return "자유";
-	    case "info": return "정보/조언";
-	    case "idea": return "제안/아이디어";
-	    default: return category;
-	  }
-	}
-	
 	// 게시글 목록 로드
 	function loadBoardList(page=1, category, sort) {
 	  currentPage = page;
@@ -55,14 +45,11 @@ let currentSort     = "created_at";
     boards.forEach(function(b, idx) {
       const date = new Date(b.created_at)
                      .toLocaleDateString("ko-KR");
+    
       listHtml += `
         <div class="p-4 grid grid-cols-12 items-center text-center border-b border-gray-1 font-light">
           <span>${startNo + idx}</span>
-          <span class="col-span-3 truncate">
-            <a href="/board/view/${b.uid}" class="hover:underline">
-              ${b.title}
-            </a>
-          </span>
+          <button data-board="${b.uid}" onclick = 'f_boardViewClick("${b.uid}")'  class="board-view col-span-3 truncate hover:underline">${b.title}</button>
           <div class="col-span-2 flex items-center justify-center gap-x-2">
             <img src="/resources/images/like.png" class="w-4" alt="like"/>
             <span>${b.like_count}</span>
