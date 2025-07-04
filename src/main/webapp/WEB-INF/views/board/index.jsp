@@ -23,6 +23,7 @@
 				</div>
 			</div>
 		</div>
+		 <ui:chatbot></ui:chatbot>
 		<script src="/resources/js/board.js"></script>
 		<script>
 	
