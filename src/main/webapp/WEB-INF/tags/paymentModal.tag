@@ -56,7 +56,7 @@
 		  display:none;
 		  position: fixed; top: 50%; left: 50%;
 		  transform: translate(-50%, -50%);
-		  background: #fff;
+		  background: #F7F7F7;
 		  border-radius: 16px;
 		  width: 360px;
 		  height: 420px;
@@ -82,7 +82,7 @@
 		  display:none;
 		  position: fixed; top: 50%; left: 50%;
 		  transform: translate(-50%, -50%);
-		  background: #fff;
+		  background: #F7F7F7;
 		  border-radius: 16px;
 		  width: 360px;
 		  height: 420px;
