@@ -102,6 +102,14 @@
 		    
 		    const paginationHTML = [];
 		    
+		    const isFirstPage = current === 1;
+		    paginationHTML.push(
+		            '<button class="w-8 h-8 border border-gray-1 ' +
+		            (isFirstPage ? 'text-gray-1 hover:bg-gray-2 cursor-not-allowed' : 'hover:bg-gray-2') + '"' +
+		            (isFirstPage ? ' disabled' : '') +
+		            ' onclick="changePage(1)" title="이전 페이지">&lt&lt;</button>'
+		    );
+		    
 		    // Prev 버튼
 		    const isFirstPageOverall = current === 1; // 전체에서 첫 번째 페이지인지 확인
 		    const isFirstPageInGroup = current === startPage;  //현재 그룹의 첫 페이지인지 확인
@@ -133,6 +141,14 @@
 		        (isLastGroup ? ' disabled' : '') +
 		        ' onclick="changePage(' + nextPage + ')">&gt;</button>'
 		    );
+		    
+		    
+		    paginationHTML.push(
+			        '<button class="w-8 h-8 rounded-e border border-gray-1 ' +
+			        (isLastGroup ? 'text-gray-1 hover:bg-gray-2 cursor-not-allowed' : 'hover:bg-gray-2') + '"' +
+			        (isLastGroup ? ' disabled' : '') +
+			        ' onclick="changePage(' + maxPages + ')">&gt&gt;</button>'
+			    );
 		    
 		    paginationContainer.html(paginationHTML.join(""));
 		}
