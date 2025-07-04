@@ -251,6 +251,7 @@
 		
 			    const email = document.getElementById('email');
 				const emailVerified = document.getElementById('emailVerified');
+				const verificationCodeInput = document.getElementById('verificationCodeInput');
 			    const password = document.getElementById('password');
 			    const passwordCheck = document.getElementById('passwordCheck');
 			    const name = document.getElementById('name');
@@ -262,10 +263,32 @@
 			    const agreePrivacy = document.getElementById('agreePrivacy');
 				const age = new Date().getFullYear() - birthDateVal.getFullYear();
 
+				if(email.value === '') {
+					email.classList.remove("border-gray-5");
+					email.classList.add("border-red-600");
+		        	
+		        	error.textContent = "이메일을 입력해야합니다.";
+		        	return;
+		        } else {
+		        	email.classList.remove("border-red-600");
+		        	email.classList.add("border-gray-5");
+		        }
+				
 				if (!emailVerified.checked) {
 					error.textContent = "이메일 인증을 완료해야 합니다.";
 					return;
 				}
+				
+				if(verificationCodeInput.value === '') {
+					verificationCodeInput.classList.remove("border-gray-5");
+					verificationCodeInput.classList.add("border-red-600");
+		        	
+		        	error.textContent = "인증번호를 입력해야합니다.";
+		        	return;
+		        } else {
+		        	verificationCodeInput.classList.remove("border-red-600");
+		        	emverificationCodeInputail.classList.add("border-gray-5");
+		        }
 
 				if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{6,}$/.test(password.value)) {
 					password.classList.remove("border-gray-5");
@@ -298,6 +321,17 @@
 		        } else {
 		        	name.classList.remove("border-red-600");
 		        	name.classList.add("border-gray-5");
+		        }
+		        
+		        if(nickname.value === '') {
+		        	nickname.classList.remove("border-gray-5");
+		        	nickname.classList.add("border-red-600");
+		        	
+		        	error.textContent = "닉네임을 입력해야합니다.";
+		        	return;
+		        } else {
+		        	nickname.classList.remove("border-red-600");
+		        	nickname.classList.add("border-gray-5");
 		        }
 		        
 		        if (!verifyNickname.checked) {
