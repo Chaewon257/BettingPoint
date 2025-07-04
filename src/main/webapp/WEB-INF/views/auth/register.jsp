@@ -170,8 +170,10 @@
 
 			/* 이메일 인증번호 확인 */
 			document.getElementById('verifyCodeBtn').addEventListener('click', function () {
-				const emailInput = document.getElementById('email');
+				const emailInput = document.getElementById('email'); 
+				const requestVerificationBtn = document.getElementById('requestVerificationBtn'); 
 				const codeInput = document.getElementById('verificationCodeInput');
+				const verifyCodeBtn = document.getElementById('verifyCodeBtn');
 				const emailVerified = document.getElementById('emailVerified');
 				const error = document.getElementById('errorMessage');
 
@@ -195,6 +197,16 @@
 					success: function (res) {
 						alert(res); // "이메일 인증이 완료되었습니다."
 						emailVerified.checked = true;
+						
+						emailInput.readOnly = true;
+						emailInput.classList.add("cursor-not-allowed", "bg-gray-4");
+						codeInput.readOnly = true;
+						codeInput.classList.add("cursor-not-allowed", "bg-gray-4");
+						
+						requestVerificationBtn.disabled = true;
+						requestVerificationBtn.classList.add("cursor-not-allowed", "bg-gray-2", "text-gray-400", "border-gray-400");
+						verifyCodeBtn.disabled = true;
+						verifyCodeBtn.classList.add("cursor-not-allowed", "bg-gray-2", "text-gray-400", "border-gray-400");
 					},
 					error: function () {
 						error.textContent = "인증번호 확인 중 오류가 발생했습니다.";
