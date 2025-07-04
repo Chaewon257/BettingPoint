@@ -63,36 +63,41 @@
 			    $("#modalContainer").css("width", `\${newWidth}px`);
 			}
 	
-			// 처음 실행
-			adjustWidth();
-	
-			// 리사이즈 시 다시 적용
-			$(window).resize(function() {
-			    adjustWidth();
-			});
 			
-			// 아이디/비밀번호 찾기 버튼 클릭
-			$(".tab-btn").on("click", function () {
-				const selectedTab = $(this).data("tab");
-				
-				// 콘텐츠 영역 비우고 로딩
-				const contentContainer = $("#modalContainer");
-				contentContainer.html('<div class="text-center py-8 text-gray-5">로딩 중...</div>');
-				
-				// 선택된 탭에 따라 콘텐츠 요청
-				$.ajax({
-					url: `/\${selectedTab}`,
-					type: 'GET',
-					success: function (html) {
-						contentContainer.html(html);
-					},
-					error: function () {
-						contentContainer.html('<div class="text-red-500">콘텐츠 로딩 실패</div>');
-					}
+			// 탭 버튼 이벤트 바인딩 함수
+			function bindTabBtnEvents() {
+				// 아이디/비밀번호 찾기 버튼 클릭
+				$(".tab-btn").on("click", function () {
+					const selectedTab = $(this).data("tab");
+					
+					// 콘텐츠 영역 비우고 로딩
+					const contentContainer = $("#modalContainer");
+					contentContainer.html('<div class="text-center py-8 text-gray-5">로딩 중...</div>');
+					
+					// 선택된 탭에 따라 콘텐츠 요청
+					$.ajax({
+						url: `/\${selectedTab}`,
+						type: 'GET',
+						success: function (html) {
+							contentContainer.html(html);
+						},
+						error: function () {
+							contentContainer.html('<div class="text-red-500">콘텐츠 로딩 실패</div>');
+						}
+					});
 				});
-			});
+			}
 			
 			$(document).ready(function () {
+				// 처음 실행
+				adjustWidth();
+			    bindTabBtnEvents();
+
+				// 리사이즈 시 다시 적용
+				$(window).resize(function() {
+				    adjustWidth();
+				});
+				
 			    // 초기 컨텐츠를 변수에 저장
 			    const initialContent = $("#modalContainer").html();
 
@@ -106,6 +111,10 @@
 			                if (isHidden) {
 			                    // hidden 되었을 때 초기화
 			                    $("#modalContainer").html(initialContent);
+			                    
+			                 	// 초기화 후 다시 바인딩
+			                    adjustWidth();
+			                    bindTabBtnEvents();
 			                }
 			            }
 			        }
