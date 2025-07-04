@@ -19,7 +19,7 @@
 	
 	<div id="boardList" class="grid grid-cols-1 border-b-2 border-gray-7 mb-6">
     <!-- JS에서 렌더링 -->
-    			<button data-notice="" class="board-view col-span-4 truncate hover:underline">이것이 자유다 정말!!</button>
+    			<button data-notice="" class="board-view col-span-4 truncate hover:underline">로딩중...</button>
     
  	</div>
  	
