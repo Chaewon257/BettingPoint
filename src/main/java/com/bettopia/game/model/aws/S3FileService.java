@@ -7,13 +7,11 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3Client;
@@ -75,9 +73,25 @@ public class S3FileService {
 		}
 		return uploadedKeys;
 	}
+	public String getBucketName() {
+	    return this.bucketName;
+	}
+	
+	// summernote에서 이미지 삭제 시 S3 객체의 전체 URL을 받아 object key 파싱 
+	public void deleteFileByUrl(String fileUrl) {
+		// fileUrl이 null이 아니고, 우리가 기대하는 S3 호스트로 시작하는지 확인
+	    String prefix = "https://" + bucketName + ".s3." + region + ".amazonaws.com/";
+	    // prefix 이후의 부분만 잘라내면 버킷 내 object key가 됨
+	    if (fileUrl != null && fileUrl.startsWith(prefix)) {
+	        String key = fileUrl.substring(prefix.length());
+	    // 잘라낸 key를 이용해 S3에서 실제 객체를 삭제
+	        deleteObject(key);
+	    }
+	}
 	
 	// S3에서 파일 삭제
     public void deleteObject(String objectKey) {
+    	
         try {
             // S3 버킷에서 객체 삭제 요청
         	amazonS3.deleteObject(bucketName, objectKey);
