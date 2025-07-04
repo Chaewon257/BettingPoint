@@ -358,7 +358,13 @@
 					if (e.key === "Enter" || e.keyCode === 13) {
 						e.preventDefault();
 
-						const point = parseInt($(this).val());
+						let point = parseInt($(this).val(), 10);
+						if (isNaN(point) || point <= 0) {
+							$(this).val('');
+							return;
+						}
+						point = Math.floor(point / 100) * 100;
+						$(this).val(point);
 
 						if (!point || point <= 0) {
 							$("#errorMessage").text('베팅 포인트를 입력하세요.');
