@@ -18,7 +18,7 @@
 	  				<div class="text-ts-24 mb-4">회원가입</div>
 		  				<div id="registerForm" class="w-full flex flex-col mb-4">
 		  					<div class="flex flex-col items-start gap-y-1">
-		  						<span class="text-xs text-gray-6 pl-1">이메일</span>
+		  						<span class="text-xs text-gray-6 pl-1">사용자 ID (Email)</span>
 		  						<div class="w-full flex items-center gap-x-2 mb-2">
 		  							<input type="email" id="email" name="email" class="grow px-4 py-2 text-xs outline-none bg-gray-4 rounded-full border border-gray-5" placeholder="사용자 ID(Email)" required>
 		  							<button id="requestVerificationBtn" class="px-3 py-2 text-xs rounded-full border border-blue-3 bg-blue-3 text-white hover:border-blue-2 hover:bg-blue-1">인증번호요청</button>

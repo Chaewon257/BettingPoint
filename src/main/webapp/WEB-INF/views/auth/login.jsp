@@ -16,7 +16,7 @@
 		  			<div class="flex flex-col min-w-[22rem] grow items-center justify-center p-4">
 		  				<form id="loginForm" class="w-full md:w-10/12 flex flex-col justify-items-start mb-4">
 		  					<span class="text-ts-28 pl-1.5 mb-16">로그인</span>
-		  					<input type="email" id="email" name="userid" class="w-full px-10 py-4 outline-none bg-gray-4 rounded-full border border-gray-5 mb-2" placeholder="사용자 ID" required>
+		  					<input type="email" id="email" name="userid" class="w-full px-10 py-4 outline-none bg-gray-4 rounded-full border border-gray-5 mb-2" placeholder="사용자 ID (Email)" required>
 		  					<input type="password" id="password" name="userpw" class="w-full px-10 py-4 outline-none bg-gray-4 rounded-full border border-gray-5 mb-4" placeholder="비밀번호" required>
 		  					<button type="submit" class="w-full px-10 py-3 outline-none bg-blue-2 rounded-full border border-blue-2 text-white text-lg hover:bg-blue-1">로그인</button>
 		  				</form>
