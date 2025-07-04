@@ -79,7 +79,7 @@ public class PaymentService {
 
             if(confirm.getStatusCode().is2xxSuccessful()) {
                 JsonNode root = objectMapper.readTree(confirm.getBody());
-                String paymentKey = root.path("payment_key").asText();
+                String paymentKey = root.path("paymentKey").asText();
                 String orderId = root.path("orderId").asText();
                 String orderName = root.path("orderName").asText();
                 String payType = root.path("method").asText();
