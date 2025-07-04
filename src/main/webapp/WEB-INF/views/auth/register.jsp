@@ -358,6 +358,22 @@
 		    		}
 		        });
 		    });
+		    
+		    $(document).ready(function () {
+			    $("#phoneNumber").on("input", function () {
+			        let number = $(this).val().replace(/[^0-9]/g, ""); // 숫자만 남기기
+			
+			        if (number.length < 4) {
+			            $(this).val(number);
+			        } else if (number.length < 7) {
+			            $(this).val(number.slice(0, 3) + "-" + number.slice(3));
+			        } else if (number.length < 11) {
+			            $(this).val(number.slice(0, 3) + "-" + number.slice(3, 6) + "-" + number.slice(6));
+			        } else {
+			            $(this).val(number.slice(0, 3) + "-" + number.slice(3, 7) + "-" + number.slice(7, 11));
+			        }
+			    });
+			});
 	  	</script>
 	</jsp:attribute>
 </ui:layout>
