@@ -92,6 +92,22 @@
 		      $('#summernote').summernote({
 		        height: 500,
 		        lang: "ko-KR",
+            toolbar: [
+            	// 글꼴 
+                ['fontname', ['fontname']],
+                // 글자 크기 설정
+                ['fontsize', ['fontsize']],
+                // 글꼴 스타일
+                ['font', ['bold', 'underline', 'clear']],
+                // 글자 색상
+                ['color', ['color']],
+                // 문단 스타일
+                ['para', ['paragraph']],
+                // 이미지, 링크, 동영상 삽입
+                ['insert', ['picture']],
+                // 코드 보기,도움말
+                ['view', ['codeview',  'help']],
+            ],
 		        placeholder: '최대 2048자까지 쓸 수 있습니다',
 		        callbacks: {
 		          onImageUpload: function (files) {
