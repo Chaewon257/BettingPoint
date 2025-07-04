@@ -1,17 +1,13 @@
 // 1. 개발자 도구 열림 감지
-let devtools = {
-  open: false,
-  orientation: null
-};
-
+let devtools = { open: false };
 const threshold = 160;
 
-// 개발자 도구 감지 함수
 function detectDevTools() {
   if (window.outerHeight - window.innerHeight > threshold || 
       window.outerWidth - window.innerWidth > threshold) {
     if (!devtools.open) {
       devtools.open = true;
+      console.log(1);
       handleDevToolsOpen();
     }
   } else {
@@ -19,151 +15,86 @@ function detectDevTools() {
   }
 }
 
-// 개발자 도구가 열렸을 때 처리
+// 2. debugger 감지
+function detectDebugger() {
+  const start = performance.now();
+  debugger;
+  const end = performance.now();
+
+  if (end - start > 100) {
+    handleDevToolsOpen();
+  }
+}
+
+// 개발자 도구 감지 시 처리
 function handleDevToolsOpen() {
-  // 콘솔 클리어
-  console.clear();
-  
-  // 경고 메시지
-  alert('개발자 도구 사용이 감지되었습니다.\n게임의 공정성을 위해 페이지를 새로고침합니다.');
-  
-  // 페이지 새로고침 (게임 상태 리셋)
+  alert('개발자 도구 사용이 감지되었습니다.\n개발자 모드를 끄려면 f12를 눌러주세요.\n게임의 공정성을 위해 페이지를 새로고침합니다.');
   location.reload();
 }
 
-// 0.5초마다 체크
-setInterval(detectDevTools, 500);
+//  감지 루프 실행
+setInterval(() => {
+  detectDevTools();
+  detectDebugger();
+}, 1000);
 
-// 2. 우클릭 방지
-document.addEventListener('contextmenu', function(e) {
-  e.preventDefault();
-  return false;
-});
+// 6. 우클릭 방지
+document.addEventListener('contextmenu', e => e.preventDefault());
 
-// 3. 키보드 단축키 방지
+// 7. 키보드 단축키 방지
 document.addEventListener('keydown', function(e) {
-  // F12 (개발자 도구)
-  if (e.keyCode === 123) {
-    e.preventDefault();
-    return false;
-  }
-  
-  // Ctrl+Shift+I (개발자 도구)
-  if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
-    e.preventDefault();
-    return false;
-  }
-  
-  // Ctrl+Shift+C (요소 검사)
-  if (e.ctrlKey && e.shiftKey && e.keyCode === 67) {
-    e.preventDefault();
-    return false;
-  }
-  
-  // Ctrl+U (소스보기)
-  if (e.ctrlKey && e.keyCode === 85) {
-    e.preventDefault();
-    return false;
-  }
-  
-  // Ctrl+Shift+J (콘솔)
-  if (e.ctrlKey && e.shiftKey && e.keyCode === 74) {
-    e.preventDefault();
-    return false;
+  const blocked = [
+    123, // F12
+    [17, 73], // Ctrl+Shift+I
+    [17, 67], // Ctrl+Shift+C
+    [17, 74], // Ctrl+Shift+J
+    [17, 85], // Ctrl+U
+    [17, 65], // Ctrl+A
+    [17, 83], // Ctrl+S
+    [17, 67]  // Ctrl+C
+  ];
+
+  for (const combo of blocked) {
+    if (Array.isArray(combo)) {
+      if (e.ctrlKey && e.keyCode === combo[1]) {
+        e.preventDefault();
+        return false;
+      }
+    } else if (e.keyCode === combo) {
+      e.preventDefault();
+      return false;
+    }
   }
 });
 
-// 4. 콘솔 사용 방지 (고급)
-(function() {
-  let devtools = { open: false, orientation: null };
-  let threshold = 160;
-  
-  // 콘솔 함수들 무력화
-  const originalLog = console.log;
-  const originalWarn = console.warn;
-  const originalError = console.error;
-  const originalInfo = console.info;
-  const originalDebug = console.debug;
-  const originalDir = console.dir;
-  const originalDirxml = console.dirxml;
-  const originalTable = console.table;
-  const originalTrace = console.trace;
-  const originalGroup = console.group;
-  const originalGroupEnd = console.groupEnd;
-  
-  // 콘솔 함수들을 빈 함수로 교체
-  console.log = function() {};
-  console.warn = function() {};
-  console.error = function() {};
-  console.info = function() {};
-  console.debug = function() {};
-  console.dir = function() {};
-  console.dirxml = function() {};
-  console.table = function() {};
-  console.trace = function() {};
-  console.group = function() {};
-  console.groupEnd = function() {};
-  
-  // 콘솔 클리어도 무력화
-  console.clear = function() {
-    console.log('%c ', 'font-size: 1px;');
-  };
+// 8. 콘솔 함수 무력화
+(() => {
+  const noop = () => {};
+  ['log', 'warn', 'error', 'info', 'debug', 'dir', 'dirxml', 'table', 'trace', 'group', 'groupEnd'].forEach(fn => {
+    console[fn] = noop;
+  });
+  console.clear = () => { console.log('%c ', 'font-size: 1px;'); };
 })();
 
-// 5. debugger 문 감지 및 차단
-setInterval(function() {
-  (function() {
-    return false;
-  })();
+// 9. debugger 문 무력화 루프
+setInterval(() => {
+  (function() { return false; })();
 }, 100);
 
-// 6. 개발자 도구에서 변수 접근 차단
-Object.defineProperty(window, 'gameState', {
-  get: function() {
-    location.reload();
-  },
-  configurable: false
+// 10. 민감 변수 접근 차단
+['gameState', 'difficultyConfigs'].forEach(prop => {
+  Object.defineProperty(window, prop, {
+    get: function() {
+      location.reload();
+    },
+    configurable: false
+  });
 });
 
-Object.defineProperty(window, 'difficultyConfigs', {
-  get: function() {
-    location.reload();
-  },
-  configurable: false
-});
-
-// 7. 텍스트 선택 방지
-document.addEventListener('selectstart', function(e) {
-  e.preventDefault();
-  return false;
-});
-
-// 8. 드래그 방지
-document.addEventListener('dragstart', function(e) {
-  e.preventDefault();
-  return false;
-});
-
-// 9. 복사 방지 (Ctrl+C, Ctrl+A)
-document.addEventListener('keydown', function(e) {
-  // Ctrl+C (복사)
-  if (e.ctrlKey && e.keyCode === 67) {
-    e.preventDefault();
-    return false;
-  }
-  
-  // Ctrl+A (전체선택)
-  if (e.ctrlKey && e.keyCode === 65) {
-    e.preventDefault();
-    return false;
-  }
-  
-  // Ctrl+S (저장)
-  if (e.ctrlKey && e.keyCode === 83) {
-    e.preventDefault();
-    return false;
-  }
-});
+// 11. 텍스트 선택, 드래그, 복사 방지
+['selectstart', 'dragstart'].forEach(evt =>
+  document.addEventListener(evt, e => e.preventDefault())
+);
 
 const MAX_POINTS = 1000000000; // 10억
 
@@ -174,8 +105,8 @@ let gameState = {
   difficulty: "normal",     // 디폴트 난이도(중)
   gemsFound: 0,             // 발견한 보석 수
   gameActive: false,        // 게임진행 상태
-  potentialWin: 0,          // 예상획득 포인트
-  accumulatedWin: 0,        // 누적 획득 포인트
+  potentialWin: 0,          // 예상획득 포인트 (다음 성공시)
+  accumulatedWin: 0,        // 누적 획득 포인트 (현재까지)
   userNickname: null,       // 사용자 닉네임 (DB에서 받아올 예정)
   loading: false,           // 로딩 상태
   board: [],                // 게임 보드 상태
@@ -399,7 +330,6 @@ function updateDifficultyDisplay(gameLevels) {
   });
 }
 
-
 // 로딩 상태 설정
 function setLoadingState(loading) {
   gameState.loading = loading;
@@ -470,44 +400,39 @@ function handleTileClick(index) {
     gameState.revealedTiles[index] = true;
     gameState.gemsFound++;
     
-    // 획득 포인트 계산
- 
-	const difficultyConfig = difficultyConfigs[gameState.difficulty];
-	let calculatedWin = Math.round(gameState.currentBet * Math.pow(difficultyConfig.payout, gameState.gemsFound));
+    // 획득 포인트 계산 (코인토스와 같은 방식)
+    const difficultyConfig = difficultyConfigs[gameState.difficulty];
+    gameState.accumulatedWin = Math.round(gameState.currentBet * Math.pow(difficultyConfig.payout, gameState.gemsFound));
+    gameState.potentialWin = Math.round(gameState.accumulatedWin * difficultyConfig.payout);
 
-	// 10억 초과 체크
-	if (calculatedWin >=MAX_POINTS) {
-  	gameState.potentialWin = MAX_POINTS;
-  	updateUI();
-  	showResult(`💎 최대 금액 도달! 자동으로 현금화됩니다. (${gameState.gemsFound}개 발견)`, "win");
-  
-     setTimeout(() => {
-          stopGame();
-        }, 2000);
-   
-  	
-  	return;
-	}
-  else{
-	gameState.potentialWin = calculatedWin;
+    // 10억 초과 체크
+    if (gameState.accumulatedWin >= MAX_POINTS) {
+      gameState.accumulatedWin = MAX_POINTS;
+      gameState.potentialWin = MAX_POINTS;
+      updateUI();
+      showResult(`💎 최대 금액 도달! 자동으로 현금화됩니다. (${gameState.gemsFound}개 발견)`, "win");
+      
+      setTimeout(() => {
+        stopGame();
+      }, 2000);
+      
+      return;
+    } else {
+      updateUI();
+      showResult(`💎 보석 발견! 연속 ${gameState.gemsFound}개! 다음 성공시 ${gameState.potentialWin.toLocaleString()}포인트 획득`, "win");
+      
+      // 현재 난이도의 전체 보석 수 계산
+      const totalGems = 25 - difficultyConfigs[gameState.difficulty].mineCount;
 
-	updateUI();
-	showResult(`💎 보석 발견! (${gameState.gemsFound}개) 현금화하거나 계속 진행하세요!`, "win");
-    
-    
-    
-    // 현재 난이도의 전체 보석 수 계산
-	const totalGems = 25 - difficultyConfigs[gameState.difficulty].mineCount;
-
-	// 보석 다 찾았을 경우 자동 종료 처리
-	if (gameState.gemsFound >= totalGems) {
-  	stopGame();  // 자동으로 현금화
-	}
-    
-    // 현금화 버튼 표시
-    elements.stopBtn.classList.remove("hidden");
+      // 보석 다 찾았을 경우 자동 종료 처리
+      if (gameState.gemsFound >= totalGems) {
+        stopGame();  // 자동으로 현금화
+      }
+      
+      // 현금화 버튼 표시
+      elements.stopBtn.classList.remove("hidden");
+    }
   }
-}
 }
 
 // 게임 시작
@@ -531,7 +456,8 @@ function startGame(betAmount) {
       gameState.currentBet = betAmount;
       gameState.gemsFound = 0;
       gameState.gameActive = true;
-      gameState.potentialWin = 0;
+      gameState.accumulatedWin = 0;  // 초기값 0으로 설정
+      gameState.potentialWin = Math.round(betAmount * difficultyConfigs[gameState.difficulty].payout);
 
       // 지뢰 위치 설정
       const difficultyConfig = difficultyConfigs[gameState.difficulty];
@@ -545,10 +471,10 @@ function startGame(betAmount) {
       elements.stopBtn.classList.add("hidden");
 
       updateUI();
-      showResult(` 게임 시작! (난이도: ${difficultyConfig.name}) 타일을 클릭해서 보석을 찾으세요!`, "info");
+      showResult(`게임 시작! (난이도: ${difficultyConfig.name}) 타일을 클릭해서 보석을 찾으세요!`, "info");
     },
     error: function (xhr) {
-      console.error(" 게임 시작 실패:", xhr.responseText);
+      console.error("게임 시작 실패:", xhr.responseText);
       const msg = (xhr.responseJSON && xhr.responseJSON.message) || "게임 시작 실패!";
       startErrorMessage(msg);
     }
@@ -570,12 +496,12 @@ function setMinePositions(mineCount) {
 
 // 현금화
 function stopGame() {
-	
   // 10억 초과 시 10억으로 제한
-  if (gameState.potentialWin >=MAX_POINTS) {
-    gameState.potentialWin = MAX_POINTS;
-    showResult(`포인트가 최대값(20억)으로 제한되어 현금화됩니다.`, "info");
+  if (gameState.accumulatedWin >= MAX_POINTS) {
+    gameState.accumulatedWin = MAX_POINTS;
+    showResult(`포인트가 최대값(10억)으로 제한되어 현금화됩니다.`, "info");
   }
+  
   $.ajax({
     url: '/api/game/stop',
     method: 'POST',
@@ -585,7 +511,7 @@ function stopGame() {
     },
     data: JSON.stringify({
       betAmount: gameState.currentBet,    
-      winAmount: gameState.potentialWin,
+      winAmount: gameState.accumulatedWin,
       difficulty: gameState.difficulty,
       streak: gameState.gemsFound,
       gameResult: "WIN",
@@ -593,14 +519,14 @@ function stopGame() {
     }),
     success: function (response) {
       gameState.balance = response.newBalance;
-      endGame(true, "현금화 성공!");
-      showResult(`성공! +${gameState.potentialWin}포인트 획득! (보석 ${gameState.gemsFound}개 발견)`, "win");
+      endGame(true, "포인트 get 성공!");
+      showResult(`성공! +${gameState.accumulatedWin.toLocaleString()}포인트 획득! (보석 ${gameState.gemsFound}개 발견)`, "win");
       updateUI();
     },
     error: function (xhr) {
       console.error('포인트 저장 실패:', xhr.responseText);
-      endGame(true, "현금화 성공!");
-      showResult(`성공! +${gameState.potentialWin}포인트 획득 (서버 저장 실패)`, "win");
+      endGame(true, "포인트 get 성공!");
+      showResult(`성공! +${gameState.accumulatedWin.toLocaleString()}포인트 획득 (서버 저장 실패)`, "win");
     }
   });
 }
@@ -690,38 +616,41 @@ function setupEventListeners() {
     });
   });
 
- // 배팅 프리셋 버튼 (수정된 버전 - 금액 누적)
-document.querySelectorAll(".bet-preset").forEach((btn) => {
-  btn.addEventListener("click", () => {
-    if (gameState.gameActive || gameState.loading) return;
+  // 배팅 프리셋 버튼 (수정된 버전 - 금액 누적)
+  document.querySelectorAll(".bet-preset").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      if (gameState.gameActive || gameState.loading) return;
 
-    const amountStr = btn.dataset.amount;  // 문자열로 먼저 받기
-    const currentAmount = parseInt(elements.betAmount.value) || 0;
+      const amountStr = btn.dataset.amount;  
+      const currentAmount = parseInt(elements.betAmount.value.replace(/,/g, '')) || 0; 
 
-    if (amountStr === "all") {  // 문자열 비교
-      elements.betAmount.value = gameState.balance;
-    } else {
-      const amount = parseInt(amountStr) || 0;  // 숫자 변환
-      const newAmount = currentAmount + amount;
-
-      if (gameState.balance < newAmount) {
-        inputErrorMessage("보유포인트 내에서만 배팅이 가능합니다.");
-        elements.betAmount.value = 0;  
+      if (amountStr === "all") {  // 문자열 비교
+        elements.betAmount.value = gameState.balance.toLocaleString();
       } else {
-        elements.betAmount.value = newAmount;
+        const amount = parseInt(amountStr) || 0;  // 숫자 변환
+        const newAmount = currentAmount + amount;
+
+        if (gameState.balance < newAmount) {
+          inputErrorMessage("보유포인트 내에서만 배팅이 가능합니다.");
+          elements.betAmount.value = 0;  
+        } else {
+          elements.betAmount.value = newAmount.toLocaleString();
+        }
       }
-    }
-    updateUI();
+      updateUI();
+    });
   });
-});
 
   // 배팅 금액 입력
-  elements.betAmount.addEventListener("input", () => {
-    const amount = parseInt(elements.betAmount.value) || 0;
+  elements.betAmount.addEventListener("input", (e) => {
+    let value = e.target.value.replace(/[^0-9]/g, '');
+    const amount = parseInt(value) || 0;
    
     if (gameState.balance < amount) {
       inputErrorMessage("보유포인트 내에서만 배팅이 가능합니다.");
       elements.betAmount.value = 0;
+    } else {
+      elements.betAmount.value = amount > 0 ? amount.toLocaleString() : '';
     }
      
     updateUI();
@@ -736,7 +665,7 @@ document.querySelectorAll(".bet-preset").forEach((btn) => {
       return;
     }
    
-    const betAmount = parseInt(elements.betAmount.value) || 0;
+    const betAmount = parseInt(elements.betAmount.value.replace(/,/g, '')) || 0;
 
     if (!betAmount || betAmount <= 0) {
       startErrorMessage("올바른 배팅 금액을 입력해주세요.");
@@ -770,7 +699,10 @@ function updateUI() {
   elements.balance.textContent = gameState.balance.toLocaleString();
   elements.currentBet.textContent = gameState.currentBet.toLocaleString();
   elements.gemsFound.textContent = gameState.gemsFound;
-  elements.potentialWin.textContent = gameState.potentialWin.toLocaleString();
+  // 코인토스처럼 현재 누적 획득 포인트 표시
+  elements.potentialWin.textContent = gameState.gameActive  
+    ? gameState.accumulatedWin.toLocaleString()  
+    : "0";
 }
 
 // 결과 메시지 표시
