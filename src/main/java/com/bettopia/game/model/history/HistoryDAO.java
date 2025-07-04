@@ -1,5 +1,7 @@
 package com.bettopia.game.model.history;
 
+import com.bettopia.game.model.auth.AuthService;
+import com.bettopia.game.model.auth.UserVO;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -16,6 +18,8 @@ public class HistoryDAO {
     private SqlSession sqlSession;
 
     String namespace = "com.bpoint.history.";
+    @Autowired
+    private AuthService authService;
 
     public List<GameHistoryDTO> gameHistoryList(String userId) {
         return sqlSession.selectList(namespace + "selectGameHistoryAll", userId);
@@ -86,5 +90,17 @@ public class HistoryDAO {
         return uid;
     }
 
+    public String insertPointHistory(String userId, int amount) {
+        String uid = UUID.randomUUID().toString().replace("-", "");
+        int balance = authService.findByUid(userId).getPoint_balance();
 
+        PointHistoryDTO history = PointHistoryDTO.builder()
+                .uid(uid)
+                .user_uid(userId)
+                .amount(amount)
+                .balance_after(balance)
+                .build();
+        sqlSession.insert(namespace + "chargePoint", history);
+        return uid;
+    }
 }

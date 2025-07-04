@@ -7,14 +7,17 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import com.bettopia.game.Exception.SessionExpiredException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.bettopia.game.Exception.InvalidPasswordException;
 import com.bettopia.game.Exception.InvalidTokenException;
+import com.bettopia.game.Exception.InvalidUpdatePasswordException;
+import com.bettopia.game.Exception.SessionExpiredException;
 import com.bettopia.game.Exception.UserNotFoundException;
+import com.bettopia.game.model.aws.S3FileServiceReturnKey;
 import com.bettopia.game.util.JWTUtil;
 
 @Service
@@ -28,6 +31,9 @@ public class AuthService {
 
 	@Autowired
 	private UserDAO userDAO;
+	
+	@Autowired
+	private S3FileServiceReturnKey s3FileService;
 
 	private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 	
@@ -117,8 +123,66 @@ public class AuthService {
 		loginDAO.insertUser(user);
 	}
 
-	public void updateUser(UserVO userRequest, String userId) {
-		userDAO.updateUser(userRequest, userId);
+	public void updateUser(UserUpdateRequestDTO userRequest, String userId) {
+		// 기존 정보 조회
+		UserVO existingUser = loginDAO.findByUid(userId);
+	    if (existingUser == null) {
+	        throw new RuntimeException("사용자를 찾을 수 없습니다.");
+	    }
+	    
+	    // 🔐 현재 비밀번호 확인
+	    if (!passwordEncoder.matches(userRequest.getPassword(), existingUser.getPassword())) {
+	        throw new InvalidUpdatePasswordException();
+	    }
+	    
+	    // 🔒 새 비밀번호가 들어온 경우 암호화 후 저장
+	    if (userRequest.getNew_password() != null && !userRequest.getNew_password().isBlank()) {
+	        String encodedNewPassword = passwordEncoder.encode(userRequest.getNew_password());
+	        existingUser.setPassword(encodedNewPassword);
+	    }
+		
+	    // 📱 전화번호: 무조건 수정 (빈 문자열이면 그대로 저장됨)
+	    existingUser.setPhone_number(userRequest.getPhone_number());
+	    
+	    // 🎂 생년월일: null이 아니면 수정
+	    if (userRequest.getBirth_date() != null) {
+	        existingUser.setBirth_date(userRequest.getBirth_date());
+	    }
+	    
+	    // ✅ 프로필 이미지 처리
+	    MultipartFile newImage = userRequest.getProfile_image();
+	    String oldUrl = userRequest.getProfile_img_url();
+	    if (newImage != null && !newImage.isEmpty()) {
+	    	
+	    	System.out.println("oldUrl: "+oldUrl);
+	    	System.out.println("newImage: "+ newImage);
+	        if (oldUrl != null && !oldUrl.isBlank()) {
+		        // 기존 이미지가 있다면 S3에서 삭제
+	            String key = extractObjectKeyFromUrl(oldUrl);
+	            s3FileService.deleteObject(key);
+	        }
+
+	        // 새 이미지 업로드
+	        String newUrl = s3FileService.uploadFile(newImage);
+	        existingUser.setProfile_img(newUrl);
+	    } else {
+	    	// 이미지 변경 안 했다면
+	    	oldUrl = extractObjectKeyFromUrl(oldUrl);
+	    	existingUser.setProfile_img(oldUrl != null ? oldUrl : "");
+	    }
+		
+		userDAO.updateUser(existingUser, userId);
+	}
+	
+	private String extractObjectKeyFromUrl(String url) {
+	    if (url == null || url.isBlank()) return null;
+
+	    // https://your-bucket.s3.amazonaws.com/images/folder/file.png
+	    int index = url.indexOf(".amazonaws.com/");
+	    if (index == -1) return null;
+
+	    // object key 부분만 추출
+	    return url.substring(index + ".amazonaws.com/".length());
 	}
 
 	public void addPoint(int point, String userId) {
@@ -131,5 +195,13 @@ public class AuthService {
 
 	public void logout(String userId) {
 		userDAO.logout(userId);
+	}
+
+	public String getUserEmail(String userName, String phoneNumber) {
+		return userDAO.getUserEmail(userName, phoneNumber);
+	}
+
+	public void updatePassword(String userId, String password) {
+		userDAO.updatePassword(userId, password);
 	}
 }

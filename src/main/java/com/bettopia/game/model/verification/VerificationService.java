@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Random;
 
+import com.bettopia.game.model.auth.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -17,6 +18,9 @@ public class VerificationService {
 
 	@Autowired
 	private JavaMailSender mailSender;
+
+	@Autowired
+	private AuthService authService;
 
 	// 인증 요청 시
 	public void requestVerification(String email) {
@@ -37,6 +41,35 @@ public class VerificationService {
 		verificationDAO.saveOrUpdate(verification);
 
 		sendEmail(email, code);
+	}
+
+	// 임시 비밀번호 발급
+	public void updatePassword(String email, String userId) {
+		String tempPassword = generateTempPassword();
+
+		authService.updatePassword(tempPassword, userId);
+
+		sendTempPassword(email, tempPassword);
+	}
+
+	// 임시 비밀번호 이메일 발송
+	private void sendTempPassword(String email, String tempPassword) {
+		SimpleMailMessage message = new SimpleMailMessage();
+		message.setTo(email);
+		message.setSubject("[Bettopia] 임시 비밀번호 발급 안내");
+		message.setText("임시 비밀번호: " + tempPassword + "\n로그인 후 반드시 비밀번호를 변경해 주세요.");
+		mailSender.send(message);
+	}
+
+	// 임시 비밀번호 생성
+	private String generateTempPassword() {
+		String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
+		StringBuilder sb = new StringBuilder();
+		Random rnd = new Random();
+		for (int i = 0; i < 8; i++) {
+			sb.append(chars.charAt(rnd.nextInt(chars.length())));
+		}
+		return sb.toString();
 	}
 
 	// 인증번호 확인

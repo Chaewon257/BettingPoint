@@ -7,4 +7,5 @@ public class ExceptionMessage {
 	public static final String SESSION_EXPIRED = "다시 로그인이 필요합니다";
 	public static final String UNAUTHORIZED_ACCESS = "로그인 후 이용이 가능한 서비스입니다";
 	public static final String INVALID_TOKEN = "잘못된 토큰입니다";
+	public static final String INVALID_UPDATE_PASSWORD = "현재 비밀번호가 올바르지 않습니다";
 }

@@ -30,8 +30,15 @@
 <script>
 
 function goBackToNotice() {
+	removeUidFromUrl();
     // 공지사항 탭 버튼을 클릭한 것처럼 처리
     $('.tab-btn[data-tab="notice"]').trigger('click');
+}
+
+function removeUidFromUrl() {
+    const url = new URL(location.href);
+    url.searchParams.delete('uid');
+    history.replaceState(null, '', url.pathname); // → "/support"
 }
 
 function formatDate(dateStr) {
