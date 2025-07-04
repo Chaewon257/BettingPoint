@@ -69,4 +69,14 @@ public class UserRestController {
 		String userId = authService.validateAndGetUserId(authHeader);
 		authService.losePoint(point, userId);
 	}
+
+	// 이메일 찾기
+	@GetMapping("/findEmail")
+	public String findEmail(@RequestHeader("Authorization") String authHeader,
+							@RequestBody Map<String, String> request) {
+		authService.validateAndGetUserId(authHeader);
+		String user_name = request.get("user_name");
+		String phone_number = request.get("phone_number");
+		return authService.getUserEmail(user_name, phone_number);
+	}
 }

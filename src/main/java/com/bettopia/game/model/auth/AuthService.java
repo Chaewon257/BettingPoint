@@ -196,4 +196,12 @@ public class AuthService {
 	public void logout(String userId) {
 		userDAO.logout(userId);
 	}
+
+	public String getUserEmail(String userName, String phoneNumber) {
+		return userDAO.getUserEmail(userName, phoneNumber);
+	}
+
+	public void updatePassword(String userId, String password) {
+		userDAO.updatePassword(userId, password);
+	}
 }

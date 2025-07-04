@@ -354,34 +354,30 @@
 					}));
 				});
 
-				$(document).on('keydown', '#bet_point', function(e) {
-					if (e.key === "Enter" || e.keyCode === 13) {
-						e.preventDefault();
+				$(document).on('blur', '#bet_point', function() {
+					const point = $(this).val();
 
-						const point = parseInt($(this).val());
-
-						if (!point || point <= 0) {
-							$("#errorMessage").text('베팅 포인트를 입력하세요.');
-							return;
-						}
-
-						if(point < minBet) {
-							$("#errorMessage").text(`최소 베팅은 \${minBet} 포인트 입니다.`);
-							return;
-						}
-
-						if(point > point_balance) {
-							$("#errorMessage").text(`보유 포인트가 부족합니다.`);
-							return;
-						}
-
-						$("#errorMessage").text('');
-
-						socket.send(JSON.stringify({
-							type: "betting",
-							betting_point: point
-						}));
+					if (!point || point <= 0) {
+						$("#errorMessage").text('베팅 포인트를 입력하세요.');
+						return;
 					}
+
+					if(point < minBet) {
+						$("#errorMessage").text(`최소 베팅은 \${minBet} 포인트 입니다.`);
+						return;
+					}
+
+					if(point > point_balance) {
+						$("#errorMessage").text(`보유 포인트가 부족합니다.`);
+						return;
+					}
+
+					$("#errorMessage").text('');
+
+					socket.send(JSON.stringify({
+						type: "betting",
+						betting_point: point
+					}));
 				});
 
 				$(document).on('click', '#ready-btn', function() {

@@ -1,5 +1,8 @@
 <%@ tag language="java" pageEncoding="UTF-8"%>
+<%@ taglib prefix="ui" tagdir="/WEB-INF/tags"%>
 
+<link rel="icon" href="https://static.toss.im/icons/png/4x/icon-toss-logo.png" />
+<script src="https://js.tosspayments.com/v2/standard"></script>
 <div data-content="info" class="tab-content w-full flex flex-col gap-y-8 my-4">
 	<div class="w-full flex flex-col gap-y-5 md:flex-row md:gap-x-5 lg:gap-x-10 rounded-lg bg-gray-10 p-4 sm:p-6 md:p-8 lg:p-10">
 		<div class="flex flex-col gap-x-4 items-center md:col-span-2 gap-y-5 lg:gap-y-10">
@@ -15,7 +18,8 @@
 						<div>P</div>
 					</div>
 					<div class="w-full h-px bg-gray-1"></div>
-					<button class="grow w-full rounded lg:rounded-xl text-gray-6 hover:text-white hover:bg-blue-3">충전하기</button>
+					<button class="grow w-full rounded lg:rounded-xl text-gray-6 hover:text-white hover:bg-blue-3" 
+							onclick="document.getElementById('chargePointModal').classList.remove('hidden')">충전하기</button>
 				</div>
 			</div>
 		</div>
@@ -60,7 +64,7 @@
 		<button id="profileSubmitBtn" class="h-full bg-blue-2 hover:bg-blue-5 rounded-lg text-white shadow-[2px_2px_8px_rgba(0,0,0,0.1)] text-ts-14 sm:text-ts-18 md:text-ts-20 lg:text-ts-24 w-full md:w-60 py-2">수정하기</button>
 	</div>
 </div>
-
+<ui:paymentModal modalId="chargePointModal"></ui:paymentModal>
 <script type="text/javascript">
 	$(document).ready(function () {
 		const token = localStorage.getItem('accessToken');
@@ -141,7 +145,7 @@
             $("#nickname").val(user.nickname);
             $("#birthDate").val(formattedDate);
             $("#phoneNumber").val(user.phone_number);
-            $("#pointBalance").text(user.point_balance || "0");
+            $("#pointBalance").text(user.point_balance.toLocaleString() || "0");
             $("#profileImage").attr("src", user.profile_img || "/resources/images/profile_default_image.png")
             				  .attr("data-key", user.profile_img || "");
 		}

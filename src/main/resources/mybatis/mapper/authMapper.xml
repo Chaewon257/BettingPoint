@@ -79,4 +79,16 @@
 		delete from auth_token
 		where user_uid = #{userId}
 	</delete>
+
+	<select id="findEmail" parameterType="map" resultType="String">
+		select email from user
+		where user_name = #{user_name}
+		and phone_number = #{phone_number}
+	</select>
+
+	<select id="updatePassword" parameterType="map">
+		update user set
+		password = #{password}
+		where uid = #{uid}
+	</select>
 </mapper>

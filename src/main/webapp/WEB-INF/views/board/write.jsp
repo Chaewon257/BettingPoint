@@ -83,132 +83,137 @@
         </form>
       </div>
     </div>
-    </jsp:attribute>
-</ui:layout>
-    
     <script>
-    const cpath = "${cpath}";
-    const boardId = "${boardId}";
-
-      $(document).ready(function () {
-        if ($('#summernote').length) {
-          $('#summernote').summernote({
-            height: 500,
-            lang: "ko-KR",
-            placeholder: '최대 2048자까지 쓸 수 있습니다',
-            callbacks: {
-              onImageUpload: function (files) {
-                uploadSummernoteImageFile(files[0], this);
-              },
-              onPaste: function (e) {
-                var clipboardData = e.originalEvent.clipboardData;
-                if (clipboardData && clipboardData.items && clipboardData.items.length) {
-                  var item = clipboardData.items[0];
-                  if (item.kind === 'file'
-                      && item.type.indexOf('image/') !== -1) {
-                    e.preventDefault();
-                  }
-                }
-              }
-            }
-          });
-       	// 이미지 S3에 업로드 후 Summernote에 삽입
-          function uploadSummernoteImageFile(file, editor) {
-            let data = new FormData();
-            data.append("image", file);
-
-            $.ajax({
-              data: data,
-              type: "POST",
-              url: `\${cpath}/api/board/image-upload`,
-              contentType: false,
-              processData: false,
-              success: function (data) {
-                $(editor).summernote('insertImage', data.url);
-              },
-              error: function () {
-                alert("이미지 업로드에 실패했습니다.");
-              }
-            });
-          }
-        }
-        
-   
-        // 수정 모드일 때 기존 데이터 불러오기
-        <c:if test="${mode == 'update'}">
-        (function(){
-          const bid = $('#boardId').val();
-          $.ajax({
-            url: `\${cpath}/api/board/boarddetail/\${boardId}`,
-            type: "GET",
-            success: function(b) {
-              $('#title').val(b.title);
-              $('#category').val(b.category);
-              $('#summernote').summernote('code', b.content);
-            },
-            error: function() {
-              alert('기존 글을 불러오지 못했습니다.');
-              history.back();
-            }
-          });
-        })();
-        </c:if>
-
-        // 폼 제출 (등록 vs 수정 분기)
-        $('#insertForm').on('submit', function (e) {
-          e.preventDefault();
-          const token = localStorage.getItem("accessToken");
-          if (!token) {
-            alert("로그인이 필요합니다.");
-            return;
-          }
-
-          const dto = {
-            title: $('#title').val(),
-            content: $('#summernote').summernote('code'),
-            category: $('#category').val() || "free"
-          };
-
-          // 모드에 따라 URL / method 분기
-          let url, method;
-          <c:choose>
-            <c:when test="${mode == 'update'}">
-              url = `\${cpath}/api/board/boardupdate/\${boardId}`;
-              method = 'PUT';
-            </c:when>
-            <c:otherwise>
-              url = `\${cpath}/api/board/boardinsert`;
-              method = 'POST';
-            </c:otherwise>
-          </c:choose>
-
-          $.ajax({
-            url: url,
-            method: method,
-            contentType: 'application/json',
-            headers: { 'Authorization': 'Bearer ' + token },
-            data: JSON.stringify(dto),
-            success: function () {
-              alert("${mode == 'update' ? '수정' : '등록'} 성공");
-              location.href = "${cpath}/board";
-            },
-            error: function () {
-              alert("${mode == 'update' ? '수정' : '등록'} 실패");
-            }
-          });
-        });
-
-        // 카테고리 탭 클릭
-        $(".tab-btn").on("click", function () {
-          const selectedTab = $(this).data("tab");
-          $(".tab-btn")
-            .removeClass("bg-blue-3")
-            .addClass("bg-blue-4 hover:bg-blue-3");
-          $(this)
-            .removeClass("bg-blue-4 hover:bg-blue-3")
-            .addClass("bg-blue-3");
-          $("#category").val(selectedTab);
-        });
-      });
-   </script>
-  
+		  const boardId = "${boardId}";
+		
+		  $(document).ready(function () {
+		    // 1) Summernote 초기화
+		    if ($('#summernote').length) {
+		      $('#summernote').summernote({
+		        height: 500,
+		        lang: "ko-KR",
+		        placeholder: '최대 2048자까지 쓸 수 있습니다',
+		        callbacks: {
+		          onImageUpload: function (files) {
+		            uploadSummernoteImageFile(files[0], this);
+		          },
+		          // 에디터에서 사진 지우는 즉시 s3에서도 삭제.
+		          onMediaDelete: function (target) {
+		        	// target: jQuery 객체(<img> 요소)
+		            const imageUrl = target.attr('src');
+		            $.ajax({
+		              url: '/api/board/image-delete',
+		              method: 'DELETE',
+		              contentType: 'application/json',
+		              data: JSON.stringify({ url: imageUrl }),
+		              success: function () {
+		                console.log('S3에서 이미지 삭제 완료');
+		              },
+		              error: function (err) {
+		                console.error('S3 이미지 삭제 실패:', err);
+		              }
+		            });
+		          }
+		        }
+		      });
+		    }
+		
+		    // 2) 이미지 업로드 함수
+		    function uploadSummernoteImageFile(file, editor) {
+		      let data = new FormData();
+		      data.append("image", file);
+		
+		      $.ajax({
+		        data: data,
+		        type: "POST",
+		        url: "/api/board/image-upload",
+		        contentType: false,
+		        processData: false,
+		        success: function (res) {
+		          $(editor).summernote('insertImage', res.url);
+		        },
+		        error: function () {
+		          alert("이미지 업로드에 실패했습니다.");
+		        }
+		      });
+		    }
+		
+		    // 3) 수정 모드일 때 기존 데이터 불러오기
+		    <c:if test="${mode == 'update'}">
+		    (function(){
+		      const bid = $('#boardId').val();
+		      $.ajax({
+		        url: '/api/board/boarddetail/' + bid,
+		        type: "GET",
+		        success: function(b) {
+		          $('#title').val(b.title);
+		          $('#category').val(b.category);
+		          $('#summernote').summernote('code', b.content);
+		        },
+		        error: function() {
+		          alert('기존 글을 불러오지 못했습니다.');
+		          history.back();
+		        }
+		      });
+		    })();
+		    </c:if>
+		
+		    // 4) 폼 제출 처리
+		    $('#insertForm').on('submit', function (e) {
+		      e.preventDefault();
+		      const token = localStorage.getItem("accessToken");
+		      if (!token) {
+		        alert("로그인이 필요합니다.");
+		        return;
+		      }
+		
+		      const dto = {
+		        title: $('#title').val(),
+		        content: $('#summernote').summernote('code'),
+		        category: $('#category').val() || "free"
+		      };
+		
+		      let url, method;
+		      <c:choose>
+		        <c:when test="${mode == 'update'}">
+		          url = '/api/board/boardupdate/' + boardId;
+		          method = 'PUT';
+		        </c:when>
+		        <c:otherwise>
+		          url = '/api/board/boardinsert';
+		          method = 'POST';
+		        </c:otherwise>
+		      </c:choose>
+		
+		      $.ajax({
+		        url: url,
+		        method: method,
+		        contentType: 'application/json',
+		        headers: { 'Authorization': 'Bearer ' + token },
+		        data: JSON.stringify(dto),
+		        success: function () {
+		          alert("${mode == 'update' ? '수정' : '등록'} 성공");
+		          location.href = "/board";
+		        },
+		        error: function () {
+		          alert("${mode == 'update' ? '수정' : '등록'} 실패");
+		        }
+		      });
+		    });
+		
+		    // 5) 카테고리 탭 클릭 처리
+		    $(".tab-btn").on("click", function () {
+		      const selectedTab = $(this).data("tab");
+		      $(".tab-btn")
+		        .removeClass("bg-blue-3")
+		        .addClass("bg-blue-4 hover:bg-blue-3");
+		      $(this)
+		        .removeClass("bg-blue-4 hover:bg-blue-3")
+		        .addClass("bg-blue-3");
+		      $("#category").val(selectedTab);
+		    });
+		
+		  }); // 문서 로드 콜백 끝
+	</script>
+  </jsp:attribute>
+</ui:layout>

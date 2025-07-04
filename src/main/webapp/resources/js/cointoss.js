@@ -310,13 +310,13 @@ function stopGame() {
 
       gameState.balance = response.newBalance;
       endGame(true, "게임을 멈췄습니다!");
-      showResult(`성공! +${gameState.accumulatedWin}포인트 획득! (연속 ${gameState.streak}회 성공)`, "win");
+      showResult(`성공! +${gameState.accumulatedWin.toLocaleString()}포인트 획득! (연속 ${gameState.streak}회 성공)`, "win");
       updateUI();
     },
     error: function (xhr) {
       console.error(' 포인트 저장 실패:', xhr.responseText);
       endGame(true, "게임을 멈췄습니다!");
-      showResult(`성공! +${gameState.accumulatedWin}포인트 획득 (서버 저장 실패)`, "win");
+      showResult(`성공! +${gameState.accumulatedWin.toLocaleString()}포인트 획득 (서버 저장 실패)`, "win");
     }
   });
 }
@@ -363,7 +363,7 @@ function flipCoin() {
       }
       
       else{
-      showResult(`앞면! 연속 ${gameState.streak}회 성공! (난이도: ${difficultyConfig.name}) 다음 성공시 ${gameState.potentialWin}포인트 획득`, "win");
+      showResult(`앞면! 연속 ${gameState.streak}회 성공! 다음 성공시 ${gameState.potentialWin.toLocaleString()}포인트 획득`, "win");
 	
 	  elements.goBtn.classList.remove("hidden");
       elements.stopBtn.classList.remove("hidden");
@@ -441,10 +441,10 @@ document.querySelectorAll(".bet-preset").forEach((btn) => {
     if (gameState.gameActive || gameState.loading) return;
 
     const amountStr = btn.dataset.amount;  // 문자열로 먼저 받기
-    const currentAmount = parseInt(elements.betAmount.value) || 0;
+    const currentAmount = parseInt(elements.betAmount.value.replace(/,/g, '')) || 0;
 
     if (amountStr === "all") {  // 문자열 비교
-      elements.betAmount.value = gameState.balance;
+      elements.betAmount.value =gameState.balance.toLocaleString();;
     } else {
       const amount = parseInt(amountStr) || 0;  // 숫자 변환
       const newAmount = currentAmount + amount;
@@ -453,23 +453,30 @@ document.querySelectorAll(".bet-preset").forEach((btn) => {
         inputErrorMessage("보유포인트 내에서만 배팅이 가능합니다.");
         elements.betAmount.value = 0;  
       } else {
-        elements.betAmount.value = newAmount;
+        elements.betAmount.value =newAmount.toLocaleString();;
       }
     }
     updateUI();
   });
 });
-  // 배팅 금액 입력
-  elements.betAmount.addEventListener("input", () => {
-    const amount = parseInt(elements.betAmount.value) || 0;
-   
-    if (gameState.balance < amount) {
-      inputErrorMessage("보유포인트 내에서만 배팅이 가능합니다.");
-      elements.betAmount.value = 0;
-    }
-     
-    updateUI();
-  });
+ // 배팅 금액 입력 이벤트 리스너 수정
+elements.betAmount.addEventListener("input", (e) => {
+
+  let value = e.target.value.replace(/[^0-9]/g, '');
+  
+  const amount = parseInt(value) || 0;
+  
+  if (gameState.balance < amount) {
+    inputErrorMessage("보유포인트 내에서만 배팅이 가능합니다.");
+    elements.betAmount.value = "0";
+  } else {
+    // 천 단위 구분자를 적용하여 다시 설정
+    elements.betAmount.value = amount > 0 ? amount.toLocaleString() : '';
+  }
+  
+  updateUI();
+});
+
 
   // 게임 시작 버튼
   elements.startBtn.addEventListener("click", () => {
@@ -480,7 +487,7 @@ document.querySelectorAll(".bet-preset").forEach((btn) => {
       return;
     }
    
-    const betAmount = parseInt(elements.betAmount.value) || 0;
+    const betAmount =parseInt(elements.betAmount.value.replace(/,/g, '')) || 0;
 
     if (!betAmount || betAmount <= 0) {
       startErrorMessage("올바른 배팅 금액을 입력해주세요.");
