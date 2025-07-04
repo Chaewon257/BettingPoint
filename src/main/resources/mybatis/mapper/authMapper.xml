@@ -57,6 +57,7 @@
 		password = #{password},
 		nickname = #{nickname},
 		phone_number = #{phone_number},
+		updated_at = NOW(),
 		profile_img = #{profile_img}
         where uid = #{uid}
     </update>
