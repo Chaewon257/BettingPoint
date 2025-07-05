@@ -21,7 +21,7 @@ public class UserDAO {
     public void updateUser(UserVO userRequest, String userId) {
         UserVO user = UserVO.builder()
                 .uid(userId)
-                .password(passwordEncoder.encode(userRequest.getPassword()))
+                .password(userRequest.getPassword())
                 .phone_number(userRequest.getPhone_number())
                 .nickname(userRequest.getNickname())
                 .profile_img(userRequest.getProfile_img())
