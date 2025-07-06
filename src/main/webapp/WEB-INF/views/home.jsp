@@ -196,7 +196,7 @@
 				        	container.append(`
 		                        <div class="flex-none w-full h-full">
 		                            <a href="\${banner.banner_link_url}" class="block w-full h-full">
-		                                <img src="\${banner.image_path}" alt="\${banner.title}" class="w-full h-full object-cover" />
+		                                <img src="\${banner.image_path}" alt="\${banner.title}" class="h-full object-contain mx-auto" />
 		                            </a>
 		                        </div>
 		                    `);
