@@ -60,7 +60,7 @@
 		</ui:modal>
 		<script>
 			let currentPage = ${currentPage};
-			const totalPages = ${totalPages};
+			let totalPages = ${totalPages};
 		</script>
 		<script type="text/javascript">
 			$(document).ready(function () {
@@ -165,7 +165,8 @@
 		        		method: "GET",
 						data: { page: page },
 		        		success: function (responseData) {
-		            		renderGameRooms(responseData);
+		            		renderGameRooms(responseData.roomlist);
+							totalPages = responseData.totalPages;
 							updatePaginationButtons(page);
 		        		}
 		      		});
