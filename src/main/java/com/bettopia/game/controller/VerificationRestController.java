@@ -3,10 +3,7 @@ package com.bettopia.game.controller;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.bettopia.game.model.auth.AuthService;
 import com.bettopia.game.model.verification.VerificationService;
@@ -38,5 +35,19 @@ public class VerificationRestController {
 		String code = request.get("code");
 		verificationService.verifyCode(email, code);
 		return "이메일 인증이 완료되었습니다.";
+	}
+
+	@PostMapping(value = "/password", produces = "text/plain;charset=utf-8")
+	public String updatePassword(@RequestBody Map<String, String> request,
+								 @RequestHeader("Authorization") String authHeader) {
+		String email = request.get("email");
+		String userId = authService.validateAndGetUserId(authHeader);
+
+		if(!authService.isEmailExists(email)) {
+			return "해당 이메일이 존재하지 않습니다.";
+		} else {
+			verificationService.updatePassword(email, userId);
+			return "임시 비밀번호가 이메일로 발송되었습니다.";
+		}
 	}
 }

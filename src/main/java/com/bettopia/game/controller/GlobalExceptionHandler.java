@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.bettopia.game.Exception.InvalidPasswordException;
 import com.bettopia.game.Exception.InvalidTokenException;
+import com.bettopia.game.Exception.InvalidUpdatePasswordException;
 import com.bettopia.game.Exception.MissingCredentialsException;
 import com.bettopia.game.Exception.SessionExpiredException;
 import com.bettopia.game.Exception.UnauthorizedAccessException;
@@ -51,6 +52,13 @@ public class GlobalExceptionHandler {
 		return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
 				.body(Map.of("error", "INVALID_TOKEN", "message", ex.getMessage()));
 	}
+	
+	@ExceptionHandler(InvalidUpdatePasswordException.class)
+    public ResponseEntity<?> handleInvalidUpdatePassword(InvalidUpdatePasswordException ex) {
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(Map.of("error", "INVALID_UPDATE_PASSWORD", "message", ex.getMessage()));
+    }
 
 	// Optional: 모든 예외를 처리하는 fallback
 	@ExceptionHandler(Exception.class)

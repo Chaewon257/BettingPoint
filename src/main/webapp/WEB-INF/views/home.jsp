@@ -21,6 +21,7 @@
             .banner-slide {
                 transition: transform 0.5s ease-in-out;
             }
+        }
         </style>
     </jsp:attribute>
 
@@ -29,44 +30,11 @@
             <div class="w-full lg:grid lg:grid-cols-5">
                 <!-- 배너 슬라이더 섹션 -->
                 <div class="relative col-span-4 w-full h-56 md:h-96 overflow-hidden">
-                    <div id="bannerContainer" class="flex w-full h-full banner-slide">
-                        <!-- 배너 1 -->
-                        <div class="flex-none w-full h-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
-                            <div class="text-center text-white">
-                                <h2 class="text-4xl font-bold mb-4">첫 번째 배너</h2>
-                                <p class="text-xl">멋진 콘텐츠를 만나보세요</p>
-                            </div>
-                        </div>
-                        <!-- 배너 2 -->
-                        <div class="flex-none w-full h-full bg-gradient-to-r from-green-500 to-teal-600 flex items-center justify-center">
-                            <div class="text-center text-white">
-                                <h2 class="text-4xl font-bold mb-4">두 번째 배너</h2>
-                                <p class="text-xl">새로운 경험을 시작하세요</p>
-                            </div>
-                        </div>
-                        <!-- 배너 3 -->
-                        <div class="flex-none w-full h-full bg-gradient-to-r from-orange-500 to-red-600 flex items-center justify-center">
-                            <div class="text-center text-white">
-                                <h2 class="text-4xl font-bold mb-4">세 번째 배너</h2>
-                                <p class="text-xl">특별한 혜택을 놓치지 마세요</p>
-                            </div>
-                        </div>
-                        <!-- 배너 4 -->
-                        <div class="flex-none w-full h-full bg-gradient-to-r from-pink-500 to-rose-600 flex items-center justify-center">
-                            <div class="text-center text-white">
-                                <h2 class="text-4xl font-bold mb-4">네 번째 배너</h2>
-                                <p class="text-xl">지금 바로 참여해보세요</p>
-                            </div>
-                        </div>
-                    </div>
+                	<!-- 배너 영역 -->
+                    <div id="bannerContainer" class="flex w-full h-full banner-slide"></div>
 
                     <!-- 배너 인디케이터 -->
-                    <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
-                        <button class="banner-dot w-3 h-3 rounded-full bg-white bg-opacity-50 hover:bg-opacity-75 transition-all" data-slide="0"></button>
-                        <button class="banner-dot w-3 h-3 rounded-full bg-white bg-opacity-50 hover:bg-opacity-75 transition-all" data-slide="1"></button>
-                        <button class="banner-dot w-3 h-3 rounded-full bg-white bg-opacity-50 hover:bg-opacity-75 transition-all" data-slide="2"></button>
-                        <button class="banner-dot w-3 h-3 rounded-full bg-white bg-opacity-50 hover:bg-opacity-75 transition-all" data-slide="3"></button>
-                    </div>
+                    <div id="bannerIndicators" class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2"></div>
 
                     <!-- 배너 화살표 버튼 -->
                     <button id="bannerPrev" class="absolute left-4 top-1/2 transform -translate-y-1/2 w-10 h-10 rounded-full bg-white bg-opacity-20 hover:bg-opacity-30 flex items-center justify-center transition-all">
@@ -110,94 +78,31 @@
 		        </div>
 		
 		        <!-- 카드 컨테이너 -->
-		        <div id="cardContainer" class="flex gap-6 overflow-x-auto scrollbar-custom card-container pb-4">
-		            <!-- 카드 1 -->
-		            <div class="flex-none w-72 bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-		                <div class="w-full h-40 bg-gray-300 rounded-lg mb-4"></div>
-		                <h3 class="text-lg font-semibold text-gray-900 mb-2">게임영상 1</h3>
-		                <p class="truncate text-sm text-gray-600 leading-relaxed">
-		                    동해물과 백두산이 마르고 닳도록 하느님이 보우하사 우리나라 만세 무궁화 삼천리 화려 강산 대한 사람 대한...
-		                </p>
-		            </div>
-		
-		            <!-- 카드 2 -->
-		            <div class="flex-none w-72 bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-		                <div class="w-full h-40 bg-gray-300 rounded-lg mb-4"></div>
-		                <h3 class="text-lg font-semibold text-gray-900 mb-2">게임영상 2</h3>
-		                <p class="truncate text-sm text-gray-600 leading-relaxed">
-		                    동해물과 백두산이 마르고 닳도록 하느님이 보우하사 우리나라 만세 무궁화 삼천리 화려 강산 대한 사람 대한...
-		                </p>
-		            </div>
-		
-		            <!-- 카드 3 -->
-		            <div class="flex-none w-72 bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-		                <div class="w-full h-40 bg-gray-300 rounded-lg mb-4"></div>
-		                <h3 class="text-lg font-semibold text-gray-900 mb-2">게임영상 3</h3>
-		                <p class="truncate text-sm text-gray-600 leading-relaxed">
-		                    동해물과 백두산이 마르고 닳도록 하느님이 보우하사 우리나라 만세 무궁화 삼천리 화려 강산 대한 사람 대한...
-		                </p>
-		            </div>
-		
-		            <!-- 카드 4 -->
-		            <div class="flex-none w-72 bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-		                <div class="w-full h-40 bg-gray-300 rounded-lg mb-4"></div>
-		                <h3 class="text-lg font-semibold text-gray-900 mb-2">게임영상 4</h3>
-		                <p class="truncate text-sm text-gray-600 leading-relaxed">
-		                    동해물과 백두산이 마르고 닳도록 하느님이 보우하사 우리나라 만세 무궁화 삼천리 화려 강산 대한 사람 대한...
-		                </p>
-		            </div>
-		
-		            <!-- 카드 5 -->
-		            <div class="flex-none w-72 bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-		                <div class="w-full h-40 bg-gray-300 rounded-lg mb-4"></div>
-		                <h3 class="text-lg font-semibold text-gray-900 mb-2">게임영상 5</h3>
-		                <p class="truncate text-sm text-gray-600 leading-relaxed">
-		                    동해물과 백두산이 마르고 닳도록 하느님이 보우하사 우리나라 만세 무궁화 삼천리 화려 강산 대한 사람 대한...
-		                </p>
-		            </div>
-		
-		            <!-- 카드 6 -->
-		            <div class="flex-none w-72 bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-		                <div class="w-full h-40 bg-gray-300 rounded-lg mb-4"></div>
-		                <h3 class="text-lg font-semibold text-gray-900 mb-2">게임영상 6</h3>
-		                <p class="truncate text-sm text-gray-600 leading-relaxed">
-		                    동해물과 백두산이 마르고 닳도록 하느님이 보우하사 우리나라 만세 무궁화 삼천리 화려 강산 대한 사람 대한...
-		                </p>
-		            </div>
-		
-		            <!-- 카드 7 -->
-		            <div class="flex-none w-72 bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-		                <div class="w-full h-40 bg-gray-300 rounded-lg mb-4"></div>
-		                <h3 class="text-lg font-semibold text-gray-900 mb-2">게임영상 7</h3>
-		                <p class="truncate text-sm text-gray-600 leading-relaxed">
-		                    동해물과 백두산이 마르고 닳도록 하느님이 보우하사 우리나라 만세 무궁화 삼천리 화려 강산 대한 사람 대한...
-		                </p>
-		            </div>
-		        </div>
+		        <div id="cardContainer" class="flex gap-6 overflow-x-auto scrollbar-custom card-container pb-4"></div>
 		    </div>
-		    <div class="w-full grid grid-cols-1 gap-y-8 md:grid-cols-2 items-end md:gap-x-10 px-4 mb-6">
+		    <div class="w-full grid grid-cols-1 gap-y-8 md:grid-cols-2 items-center md:gap-x-10 px-4 mb-6">
 		    	<div class="w-full grid grid-cols-2 grid-rows-4 gap-2 my-auto">
 		    		<div class="col-span-2 row-span-2 overflow-hidden rounded">
 		    			<img alt="main image" src="${cpath}/resources/images/main-page.png">
 		    		</div>
-		    		<button class="w-full bg-blue-3 hover:bg-blue-1 rounded-lg text-white shadow-[2px_2px_8px_rgba(0,0,0,0.1)] font-extrabold sm:text-base md:text-lg lg:text-xl xl:text-2xl py-2 md:py-4 disabled:bg-blue-2 disabled:opacity-60 disabled:cursor-not-allowed">
-						게임 시작
+		    		<button onclick="location.href='/solo/CoinToss'" class="w-full bg-blue-3 hover:bg-blue-1 rounded-lg text-white shadow-[2px_2px_8px_rgba(0,0,0,0.1)] font-extrabold sm:text-base md:text-lg lg:text-xl xl:text-2xl py-2 md:py-4 disabled:bg-blue-2 disabled:opacity-60 disabled:cursor-not-allowed">
+						Coin Toss[개인]
 					</button>
-		    		<button class="w-full bg-blue-3 hover:bg-blue-1 rounded-lg text-white shadow-[2px_2px_8px_rgba(0,0,0,0.1)] font-extrabold sm:text-base md:text-lg lg:text-xl xl:text-2xl py-2 md:py-4 disabled:bg-blue-2 disabled:opacity-60 disabled:cursor-not-allowed">
-						게임 시작
+		    		<button onclick="location.href='/gameroom'" class="w-full bg-blue-3 hover:bg-blue-1 rounded-lg text-white shadow-[2px_2px_8px_rgba(0,0,0,0.1)] font-extrabold sm:text-base md:text-lg lg:text-xl xl:text-2xl py-2 md:py-4 disabled:bg-blue-2 disabled:opacity-60 disabled:cursor-not-allowed">
+						Multi Game
 					</button>
-		    		<button class="w-full bg-blue-3 hover:bg-blue-1 rounded-lg text-white shadow-[2px_2px_8px_rgba(0,0,0,0.1)] font-extrabold sm:text-base md:text-lg lg:text-xl xl:text-2xl py-2 md:py-4 disabled:bg-blue-2 disabled:opacity-60 disabled:cursor-not-allowed">
-						게임 시작
+		    		<button onclick="location.href='/solo/TreasureHunt'" class="w-full bg-blue-3 hover:bg-blue-1 rounded-lg text-white shadow-[2px_2px_8px_rgba(0,0,0,0.1)] font-extrabold sm:text-base md:text-lg lg:text-xl xl:text-2xl py-2 md:py-4 disabled:bg-blue-2 disabled:opacity-60 disabled:cursor-not-allowed">
+						Treasure Hunt[개인]
 					</button>
-		    		<button class="w-full bg-blue-3 hover:bg-blue-1 rounded-lg text-white shadow-[2px_2px_8px_rgba(0,0,0,0.1)] font-extrabold sm:text-base md:text-lg lg:text-xl xl:text-2xl py-2 md:py-4 disabled:bg-blue-2 disabled:opacity-60 disabled:cursor-not-allowed">
-						게임 시작
+		    		<button onclick="location.href='/gameroom'" class="w-full bg-blue-3 hover:bg-blue-1 rounded-lg text-white shadow-[2px_2px_8px_rgba(0,0,0,0.1)] font-extrabold sm:text-base md:text-lg lg:text-xl xl:text-2xl py-2 md:py-4 disabled:bg-blue-2 disabled:opacity-60 disabled:cursor-not-allowed">
+						Turtle Run[단체]
 					</button>
 		    	</div>
 		    	<div class="w-full flex flex-col">
 		    		<h1 class="text-2xl font-bold text-gray-900 mb-4">공지사항</h1>
 		    		<div class="w-full h-[2px] bg-gray-1"></div>
-		    		<div class="grid grid-cols-1 grid-rows-5 border-b-2 border-gray-1">
-		    			<div class="p-4 flex items-center justify-between border-b border-gray-1 font-light">
+		    		<div id="TopNoticeContainer" class="grid grid-cols-1 grid-rows-5 border-b-2 border-gray-1">
+		    			<!-- <div class="p-4 flex items-center justify-between border-b border-gray-1 font-light">
 							<button data-notice="" class="col-span-4 truncate hover:underline">이것이 자유다 정말!!</button>
 							<span class="col-span-1">2025.06.23</span>
 						</div>
@@ -216,7 +121,7 @@
 		    			<div class="p-4 flex items-center justify-between border-b border-gray-1 font-light">
 							<button data-notice="" class="col-span-4 truncate hover:underline">이것이 자유다 정말!!</button>
 							<span class="col-span-1">2025.06.23</span>
-						</div>
+						</div> -->
 		    		</div>
 		    	</div>
 		    </div>
@@ -225,7 +130,7 @@
             $(document).ready(function() {
                 // 배너 슬라이더 변수
                 let currentBannerSlide = 0;
-                const totalBannerSlides = 4;
+            	let totalBannerSlides = 0;
                 let bannerInterval;
                
                 function showBannerSlide(index) {
@@ -254,36 +159,93 @@
                     clearInterval(bannerInterval);
                 }
 
-                $('#bannerNext').click(function() {
-                    stopBannerAutoSlide();
-                    nextBannerSlide();
-                    startBannerAutoSlide();
-                });
+                function bindBannerEvents() {
+                    $('#bannerNext').click(function() {
+                        stopBannerAutoSlide();
+                        nextBannerSlide();
+                        startBannerAutoSlide();
+                    });
 
-                $('#bannerPrev').click(function() {
-                    stopBannerAutoSlide();
-                    prevBannerSlide();
-                    startBannerAutoSlide();
-                });
+                    $('#bannerPrev').click(function() {
+                        stopBannerAutoSlide();
+                        prevBannerSlide();
+                        startBannerAutoSlide();
+                    });
 
-                $('.banner-dot').click(function() {
-                    stopBannerAutoSlide();
-                    const slideIndex = parseInt($(this).data('slide'));
-                    showBannerSlide(slideIndex);
-                    startBannerAutoSlide();
-                });
+                    $(document).on('click', '.banner-dot', function () {
+                        stopBannerAutoSlide();
+                        const slideIndex = parseInt($(this).data('slide'));
+                        showBannerSlide(slideIndex);
+                        startBannerAutoSlide();
+                    });
 
-                $('#bannerContainer').parent().hover(
-                    function() { stopBannerAutoSlide(); },
-                    function() { startBannerAutoSlide(); }
-                );
+                    $('#bannerContainer').parent().hover(
+                        function() { stopBannerAutoSlide(); },
+                        function() { startBannerAutoSlide(); }
+                    );
+                }
+               	
+				fetch('/api/content/banner/list')
+				    .then(response => response.json())
+				    .then(data => {
+				        const container = $('#bannerContainer');
+				        const indicator = $('#bannerIndicators');
+				        totalBannerSlides = data.length;
+				
+				        data.forEach((banner, index) => {
+				        	container.append(`
+		                        <div class="flex-none w-full h-full">
+		                            <a href="\${banner.banner_link_url}" class="block w-full h-full">
+		                                <img src="\${banner.image_path}" alt="\${banner.title}" class="w-full h-full object-cover" />
+		                            </a>
+		                        </div>
+		                    `);
 
-                showBannerSlide(0);
-                startBannerAutoSlide();
-                
+		                    indicator.append(`
+		                        <button class="banner-dot w-3 h-3 rounded-full bg-white bg-opacity-50 hover:bg-opacity-75 transition-all" data-slide="\${index}"></button>
+		                    `);
+				        });
+				
+				        // 이후에 슬라이드 관련 스크립트 init 함수 호출 
+				        // 슬라이더 동작 연결 (기존 코드 재사용)
+				        bindBannerEvents();
+				        showBannerSlide(0);
+				        startBannerAutoSlide();
+				    })
+				    .catch(error => console.error("배너 로딩 실패:", error));
+				
+				// 베튜브 리스트
+				fetch('/api/content/bettube/list')
+		            .then(response => response.json())
+		            .then(data => {
+		                const container = $('#cardContainer');
+		                container.empty(); // 기존 카드 제거
+	
+		                data.forEach(item => {
+		                    const videoId = extractYouTubeId(item.bettube_url);
+		                    if (!videoId) return;
+	
+		                    const card = `
+		                    	<a href="https://www.youtube.com/watch?v=\${videoId}" target="_blank" rel="noopener noreferrer">
+			                        <div class="flex-none w-72 bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+			                            <div class="w-full h-40 rounded-lg mb-4 overflow-hidden">
+			                                <img src="https://img.youtube.com/vi/\${videoId}/hqdefault.jpg"
+				                                 alt="\${item.title}" class="w-full h-full object-cover" />
+			                            </div>
+			                            <h3 class="text-lg font-semibold text-gray-900 mb-2">\${item.title}</h3>
+			                            <p class="truncate text-sm text-gray-600 leading-relaxed">\${item.description}</p>
+			                        </div>
+		                        </a>
+		                    `;
+		                    container.append(card);
+		                });
+		            })
+		            .catch(error => console.error('Bettube 로딩 실패:', error));
+					
                 function adjustWidth() {
                 	const screenWidth = $(window).width() - 32;
                 	$("#mainContainer").css("max-width", `\${screenWidth}px`);
+                	$("#mainContainer").css("width", `\${screenWidth}px`);
                 }
 
                 // 처음 실행
@@ -336,6 +298,54 @@
                 // 초기 버튼 상태 설정
                 container.trigger('scroll');
                 
+                
+                const topNoticeContainer = $("#TopNoticeContainer");
+                
+             	// 공지 5개만 로딩
+                $.ajax({
+                    url: `/api/support/list/NOTICE?page=1`,
+                    method: 'GET',
+                    success: function (res) {
+                        const notices = res.notices || res;
+                        const top5 = notices.slice(0, 5); // 최대 5개
+
+                        if (!top5 || top5.length === 0) {
+                            topNoticeContainer.html(`<div class="text-center text-gray-500 py-6">공지사항이 없습니다.</div>`);
+                            return;
+                        }
+
+                        top5.forEach(notice => {
+                            const date = formatDate(notice.created_at);
+                            const html = `
+                                <div class="p-4 flex items-center justify-between border-b border-gray-1 font-light">
+                                    <button data-notice="\${notice.uid}" class="col-span-4 truncate hover:underline text-left">
+                                        \${notice.title}
+                                    </button>
+                                    <span class="col-span-1">\${date}</span>
+                                </div>
+                            `;
+                            topNoticeContainer.append(html);
+                        });
+                    },
+                    error: function () {
+                        topNoticeContainer.html(`<div class="text-center text-red-500 py-6">공지사항을 불러오는 데 실패했습니다.</div>`);
+                    }
+                });
+             	
+             	// 날짜 포맷 함수
+                function formatDate(dateStr) {
+                    if (!dateStr) return "-";
+                    const date = new Date(dateStr);
+                    if (isNaN(date)) return "-";
+                    return date.toLocaleDateString('ko-KR').replace(/\s/g, '').replace(/\.$/, '');
+                }
+             	
+                $(document).on('click', '[data-notice]', function () {
+                    const uid = $(this).data('notice');
+                    location.href = `/support?uid=\${uid}`;
+                });
+
+                
                 // 사용자 로그인 여부 확인
                 let token = localStorage.getItem('accessToken');
                 
@@ -352,7 +362,7 @@
                             	<div class="font-bold mb-2">보유포인트</div>
                             	<div class="w-full flex items-center justify-between text-gray-700 font-extrabold text-2xl px-2 mb-2">
                             		<img alt="money box" src="${cpath}/resources/images/money_box.png" class="w-8">
-                            		<div id="pointBalance" class="grow text-center">\${user.point_balance}</div>
+                            		<div id="pointBalance" class="grow text-center">\${user.point_balance.toLocaleString()}</div>
                             		<div>P</div>
                             	</div>
         						<button onclick="location.href='/'" class="w-full rounded text-white bg-blue-2 hover:bg-blue-1 py-1">충전하기</button>
@@ -382,6 +392,25 @@
         				});
         		}
             });
+            
+         	// 유튜브 ID 추출 함수
+            function extractYouTubeId(url) {
+                try {
+                    const urlObj = new URL(url);
+                    const hostname = urlObj.hostname;
+
+                    if (hostname.includes('youtu.be')) {
+                        return urlObj.pathname.slice(1);
+                    } else if (hostname.includes('youtube.com')) {
+                        const params = new URLSearchParams(urlObj.search);
+                        return params.get('v');
+                    }
+                } catch (e) {
+                    return null;
+                }
+                return null;
+            }
         </script>
+        <ui:chatbot></ui:chatbot>
     </jsp:attribute>
 </ui:layout>

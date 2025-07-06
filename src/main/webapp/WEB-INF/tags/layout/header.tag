@@ -112,7 +112,7 @@
 
 			<c:if test="${pageType eq 'main'}">
 				<div
-					class="bg-white transition-all duration-300 ease-in-out z-[999] nav-bar">
+					class="bg-white transition-all duration-300 ease-in-out z-[998] nav-bar">
 					<div
 						class="relative flex justify-center items-center py-1 md:py-7 md:pl-44 md:pr-16 lg:pl-60 lg:pr-24">
 						<div class="md:absolute md:left-12">

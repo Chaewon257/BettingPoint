@@ -18,29 +18,25 @@
 						</div>
 					</div>
 				</div>
-				<div class="w-full px-4 py-2 flex justify-end gap-x-5">
-					<input type="hidden" id="sort" name="sort" value="created_at" />
-					<button data-sort="created_at" class="sort-btn text-gray-7 underline">최신순</button>
-					<button data-sort="like_count" class="sort-btn text-gray-3 hover:text-gray-7">좋아요순</button>
-					<button data-sort="view_count" class="sort-btn text-gray-3 hover:text-gray-7">조회순</button>
-				</div>
-				<div class="w-full h-[2px] bg-gray-1"></div>
 				<div id="board-tab-content" class="w-full">
 					<board:free></board:free>
 				</div>
 			</div>
 		</div>
-	</jsp:attribute>
-</ui:layout>
-		<script src="/resources/js/board2.js"></script>
+		 <ui:chatbot></ui:chatbot>
+		<script src="/resources/js/board.js"></script>
 		<script>
+	
 		$(function(){
-		      // 페이지 로드 시 
-		      loadBoardList(1, currentCategory , currentSort);
-		
+			
+			
+			
 			$(".tab-btn").on("click", function () {
 				const selectedTab = $(this).data("tab");
 				
+				currentCategory = selectedTab;
+				
+								
 				// 버튼 스타일 업데이트
 				$(".tab-btn").removeClass("bg-blue-3").addClass("bg-blue-4 hover:bg-blue-3");
 				$(this).removeClass("bg-blue-4 hover:bg-blue-3").addClass("bg-blue-3");
@@ -63,7 +59,7 @@
 					type: 'GET',
 					success: function (html) {
 						contentContainer.html(html);
-						loadBoardList(1, selectedTab);
+						loadBoardList(1, currentCategory, currentSort);
 					},
 					error: function () {
 						contentContainer.html('<div class="text-red-500">게시판 로딩 실패</div>');
@@ -72,20 +68,71 @@
 				
 			});
 			
-			$(".sort-btn").on("click", function () {
+			// 정렬
+			$(document).on("click", ".sort-btn", function () {
 				const selectedSort = $(this).data("sort");
-				
+			
 				// 정렬 버튼 스타일 기본값으로 초기화
 				$(".sort-btn").removeClass("text-gray-7 underline").addClass("text-gray-3 hover:text-gray-7");
 				
 				// 기본 정렬 값 적용 (created_at)
 				$(this).removeClass("text-gray-3 hover:text-gray-7").addClass("text-gray-7 underline");
 				
+				currentSort = selectedSort;
 				
 				loadBoardList(1, currentCategory, selectedSort);
-				
-			});
-			
 		
+			});
+
+		// 게시글 상세보기
+		//$(document).on("click", '.board-view', f_boardViewClick);
+			
 		});
+	
+		function f_boardViewClick(boardId) {
+			//const boardId = $(this).data("board");
+						
+			// 콘텐츠 영역 비우고 로딩
+			const contentContainer = $("#board-tab-content");
+			contentContainer.html('<div class="text-center py-8 text-gray-5">로딩 중...</div>');
+			const token   = localStorage.getItem("accessToken");
+	 		
+			$.ajax({
+				url: `/board/view/\${boardId}`,
+				type: 'GET',
+				success: function (html) {
+					contentContainer.html(html); 
+					$.ajax({
+					      url: `/api/board/boarddetail/\${boardId}`,
+					      type: "GET",
+					      headers: { "Authorization": "Bearer " + token },
+					      success: function(board) {
+					    	  
+					        $("#detailTitle").text(board.title);
+					        $("#detailAuthor").text(board.nickname);
+					        $("#detailLikeCount").text(board.like_count);
+					        $("#detailViewCount").text(board.view_count);
+					        $("#detailCreatedAt").text(
+					          new Date(board.created_at).toLocaleString("ko-KR")
+					        );
+					        $("#detailContent").html(board.content);
+					       
+					        if (board.oner == true) {
+					            $("#btnEdit, #btnDelete").show();
+					          }
+							
+					      },
+					      error: function() {
+					        alert("상세 정보를 불러오지 못했습니다.");
+					        history.back();
+					      }
+					    });
+					}
+			});
+		}
+		
+		
 		</script>
+	</jsp:attribute>
+</ui:layout>
+		

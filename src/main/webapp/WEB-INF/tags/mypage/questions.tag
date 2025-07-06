@@ -19,29 +19,55 @@
 </div>
 <ui:modal modalId="questionsDetailModal" title="문의내역 상세보기">
 	<jsp:attribute name="content">
-		<div class="py-4 px-2 sm:w-[36rem] md:w-[48rem] min-w-72 flex flex-col gap-y-4">
-		
-			<div class="text-lg font-semibold flex justify-between">
-			  <span id="chatDetailTitle">제목</span>
-			  <span id="chatDetailDate" class="text-sm text-gray-500">2025.06.25</span>
+		<div id="modalContainer" class="overflow-y-scroll flex flex-col items-start justify-center py-4">
+			<div id="chatDetailTitle" class="font-extrabold text-2xl"><!-- 제목 --></div>
+			<div id="chatDetailDate" class="w-full text-end font-light text-gray-7"><!-- 문의 일시 --></div>
+			<div class="w-full flex flex-col bg-gray-4 rounded-lg p-2 mb-2">
+				<div class="font-bold text-xl mb-2.5">문의내역</div>
+				<div id="chatDetailQuestion" class="bg-white rounded p-2">
+					<!-- 문의 내용 -->
+				</div>
 			</div>
-			
-			<div class="mt-4">
-			  <h4 class="font-semibold mb-1">문의 내용</h4>
-			  <p id="chatDetailQuestion" class="text-sm text-gray-700"></p>
+			<div class="w-full h-px bg-gray-1 mb-2"></div>
+			<div class="w-full flex flex-col bg-gray-2 rounded-lg p-2 mb-2">
+				<div class="font-bold text-xl">답변내용</div>
+				<div id="chatDetailResponseDate" class="w-full text-end font-light mb-2.5"><!-- 답변 일시 --></div>
+				<div id="chatDetailAnswer" class="bg-white rounded p-2">
+					<!-- 답변 내용 -->
+				</div>
 			</div>
-			
-			<div class="mt-4">
-			  <h4 class="font-semibold mb-1">답변</h4>
-			  <p id="chatDetailAnswer" class="text-sm text-gray-700"></p>
-			  <p class="text-xs text-right text-gray-400 mt-1">답변일시: <span id="chatDetailResponseDate">-</span></p>
-			</div>
-			
 		</div>
 	</jsp:attribute>
 </ui:modal>
 
 <script type="text/javascript">
+	//화면 너비 계산
+	function adjustWidth() {
+	    let screenWidth = $(window).width();
+	    let newWidth;
+	
+	    if (screenWidth >= 1280) {
+	        newWidth = screenWidth * 0.5;
+	    } else if (screenWidth >= 1024) {
+	        newWidth = screenWidth * 0.55;
+	    } else if (screenWidth >= 768) {
+	        newWidth = screenWidth * 0.6;
+	    } else {
+	        newWidth = screenWidth - 32;
+	    }
+	
+	    $("#modalContainer").css("width", `\${newWidth}px`);
+	}
+	
+	// 처음 실행
+	adjustWidth();
+
+	// 리사이즈 시 다시 적용
+	$(window).resize(function() {
+	    adjustWidth();
+	});
+
+
 	$(document).ready(function () {
 		const token = localStorage.getItem('accessToken');
 		const logListContainer = $("#chatlogList");
