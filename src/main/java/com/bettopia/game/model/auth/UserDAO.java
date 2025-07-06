@@ -60,4 +60,8 @@ public class UserDAO {
         params.put("uid", userId);
         sqlSession.update(namespace + "updatePassword", params);
     }
+
+    public UserVO findByEmail(String email) {
+        return sqlSession.selectOne(namespace + "findByEmail", email);
+    }
 }
