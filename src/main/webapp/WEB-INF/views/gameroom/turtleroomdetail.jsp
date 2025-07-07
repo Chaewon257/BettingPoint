@@ -365,20 +365,19 @@
 				});
 
 				$(document).on('blur', '#bet_point', function() {
-					const point = $(this).val().replace(/,/g, '');
+				    let point = parseInt($(this).val(), 10);
+				    if (isNaN(point) || point <= 0) {
+					  $(this).val('');
+					  return;
+				    }
 
-          let point = parseInt($(this).val(), 10);
-          if (isNaN(point) || point <= 0) {
-            $(this).val('');
-            return;
-          }
-          point = Math.floor(point / 100) * 100;
-          $(this).val(point);
+				    point = Math.floor(point / 100) * 100;
+				    $(this).val(point);
 
-          if (!point || point <= 0) {
-            $("#errorMessage").text('베팅 포인트를 입력하세요.');
-            return;
-          }
+				    if (!point || point <= 0) {
+					  $("#errorMessage").text('베팅 포인트를 입력하세요.');
+					  return;
+				    }
 
 					if(point < minBet) {
 						$("#errorMessage").text(`최소 베팅은 \${minBet} 포인트 입니다.`);
