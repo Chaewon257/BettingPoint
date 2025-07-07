@@ -2,10 +2,10 @@ package com.bettopia.game.controller;
 
 import java.util.Map;
 
+import com.bettopia.game.Exception.EmailNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.bettopia.game.model.auth.AuthService;
 import com.bettopia.game.model.auth.UserUpdateRequestDTO;
@@ -74,6 +74,12 @@ public class UserRestController {
 	@GetMapping("/findEmail")
 	public String findEmail(@RequestParam("user_name") String userName,
 		@RequestParam("phone_number") String phoneNumber) {
-		return authService.getUserEmail(userName, phoneNumber);
+		String email = authService.getUserEmail(userName, phoneNumber);
+
+		if(email != null) {
+			return email;
+		} else {
+			throw new EmailNotFoundException();
+		}
 	}
 }

@@ -17,13 +17,22 @@
 	<button id="findIdSubmit" class="w-full px-10 py-3 outline-none bg-blue-3 rounded-full text-white text-lg hover:bg-blue-1">비밀번호 찾기</button>
 </div>
 <script type="text/javascript">
-	let verificationRequested = false;
+	if (typeof verificationRequested === "undefined") {
+		let verificationRequested = false;
+	}
 
 	/* 이메일 입력 시 버튼 및 상태 초기화 */
 	document.getElementById('findemail').addEventListener('input', function () {
 		const requestBtn = document.getElementById('requestVerificationBtn');
+		const verifyBtn = document.getElementById('verifyCodeBtn');
+		const codeInput = document.getElementById('verificationCodeInput');
+		const emailVerified = document.getElementById('emailVerified');
+
 		verificationRequested = false;
 		requestBtn.disabled = false;
+		verifyBtn.disabled = false;
+		codeInput.disabled = false;
+		emailVerified.checked = false;
 	});
 
 	/* 이메일 인증번호 요청 */
@@ -60,8 +69,8 @@
 				alert(res); // "인증번호가 이메일로 발송되었습니다." 표시
 				verificationRequested = true; // 요청 완료 상태로 변경
 			},
-			error: function () {
-				error.textContent = "인증번호 요청 중 오류가 발생했습니다.";
+			error: function (xhr) {
+				error.textContent = xhr.responseJSON?.message || "인증번호 요청 중 오류가 발생했습니다.";
 				requestBtn.disabled = false; // 오류 시 다시 활성화
 			}
 		});
@@ -96,8 +105,7 @@
 				alert(res); // "이메일 인증이 완료되었습니다."
 				emailVerified.checked = true;
 
-				// 인증 완료 시 이메일/버튼/인증입력 비활성화
-				emailInput.disabled = true;
+				// 인증 완료 시 버튼/인증입력 비활성화
 				document.getElementById('requestVerificationBtn').disabled = true;
 				codeInput.disabled = true;
 				document.getElementById('verifyCodeBtn').disabled = true;
