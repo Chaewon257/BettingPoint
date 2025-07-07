@@ -132,6 +132,7 @@
 
 				  		if(roomStatus === "PLAYING") {
 							alert("진행중인 게임방입니다.");
+							return;
 				  		}
 						if (roomCount >= 8) {
 							alert("정원이 가득 찬 방입니다.");
@@ -163,6 +164,7 @@
 		          			case "delete":
 		          			case "enter":
 		          			case "exit":
+							case "update":
 		            			loadGameRooms(currentPage);
 		            			break;
 		          			default:
