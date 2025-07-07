@@ -1,6 +1,7 @@
 package com.bettopia.game.controller;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -26,8 +27,18 @@ public class GameRoomRestController {
 
 	// 게임방 리스트 조회
 	@GetMapping("/list")
-	public List<GameRoomResponseDTO> selectAll(@RequestParam(defaultValue = "1") int page) {
-		return gameRoomService.selectAll(page);
+	public Map<String, Object> selectAll(@RequestParam(defaultValue = "1") int page) {
+		int size = 6;
+		int totalCount = gameRoomService.selectAll().size();
+		int totalPages = (int) Math.ceil((double) totalCount / size);
+
+		Map<String, Object> response = new HashMap<>();
+		response.put("totalPages", totalPages);
+
+		List<GameRoomResponseDTO> roomlist = gameRoomService.selectAll(page);
+		response.put("roomlist", roomlist);
+
+		return response;
 	}
 
 	// 게임방 상세 조회

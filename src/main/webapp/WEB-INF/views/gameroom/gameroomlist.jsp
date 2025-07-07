@@ -24,8 +24,8 @@
 					</div>
 				</div>
 				<div class="flex items-center justify-center gap-x-12 sm:gap-x-20 md:gap-x-28 lg:gap-x-36">
-					<button class="w-8 h-8 rounded-md text-blue-2 border border-blue-3 hover:bg-blue-3">&lt;</button>
-					<button class="w-8 h-8 rounded-md text-blue-2 border border-blue-3 hover:bg-blue-3">&gt;</button>
+					<button id="paginationPrev" class="w-8 h-8 rounded-md text-blue-2 border border-blue-3 hover:bg-blue-3">&lt;</button>
+					<button id="paginationNext" class="w-8 h-8 rounded-md text-blue-2 border border-blue-3 hover:bg-blue-3">&gt;</button>
 				</div>
 			</div>
 		</div>
@@ -58,6 +58,10 @@
 				</div>
 			</jsp:attribute>
 		</ui:modal>
+		<script>
+			let currentPage = ${currentPage};
+			let totalPages = ${totalPages};
+		</script>
 		<script type="text/javascript">
 			$(document).ready(function () {
 				const token = localStorage.getItem("accessToken");
@@ -80,6 +84,8 @@
 		    	let gamerooms = []; // 게임방 리스트
 		    	let playerCounts = {}; // 각 게임방 플레이어 수
 		    	let socket;
+
+				connectGameWebSocket();
 		       
 		    	// 레벨 텍스트 변환 함수
 				const getLevelText = (level) => ({ HARD: '상', NORMAL: '중', EASY: '하' }[level] || '-');
@@ -148,7 +154,7 @@
 		          			case "delete":
 		          			case "enter":
 		          			case "exit":
-		            			renderGameRooms(gamerooms);
+		            			loadGameRooms(currentPage);
 		            			break;
 		          			default:
 		            			console.warn("알 수 없는 메시지 타입", msg.type);
@@ -163,20 +169,43 @@
 		        		console.error("❌ 웹소켓 에러 발생", error);
 		      		};
 		    	}
+
+				// 페이지 버튼 활성/비활성 상태 업데이트
+				function updatePaginationButtons() {
+					$('#paginationPrev').prop('disabled', currentPage <= 1);
+					$('#paginationNext').prop('disabled', currentPage >= totalPages);
+				}
 		
-		    	function loadGameRooms() {
+		    	function loadGameRooms(page) {
 		      		$.ajax({
 		        		url: "/api/gameroom/list",
 		        		method: "GET",
+						data: { page: page },
 		        		success: function (responseData) {
-		            		connectGameWebSocket();
-		            		renderGameRooms(responseData);
+		            		renderGameRooms(responseData.roomlist);
+							totalPages = responseData.totalPages;
+							updatePaginationButtons(page);
 		        		}
 		      		});
 		    	}
+
+				// 페이지네이션 버튼 이벤트
+				$('#paginationPrev').on('click', function () {
+					if (currentPage > 1) {
+						currentPage--;
+						loadGameRooms(currentPage);
+					}
+				});
+
+				$('#paginationNext').on('click', function () {
+					if (currentPage < totalPages) {
+						currentPage++;
+						loadGameRooms(currentPage);
+					}
+				});
 		    	
 		    	// ✅ 화면 렌더링 시 실행
-		        loadGameRooms();
+		        loadGameRooms(currentPage);
 		  	});
 		  
 			$('#createGameRoomModalOpen').on('click', function () {				
