@@ -1,7 +1,6 @@
 <%@ tag language="java" pageEncoding="UTF-8"%>
 <%@ taglib prefix="ui" tagdir="/WEB-INF/tags"%>
 
-<link rel="icon" href="https://static.toss.im/icons/png/4x/icon-toss-logo.png" />
 <script src="https://js.tosspayments.com/v2/standard"></script>
 <div data-content="info" class="tab-content w-full flex flex-col gap-y-8 my-4">
 	<div class="w-full flex flex-col gap-y-5 md:flex-row md:gap-x-5 lg:gap-x-10 rounded-lg bg-gray-10 p-4 sm:p-6 md:p-8 lg:p-10">
@@ -35,12 +34,10 @@
 			<div class="flex flex-col items-start gap-y-1">
 			  	<span class="text-xs text-gray-6 pl-1">새로운 비밀번호</span>
 				<input type="password" id="newPassword" name="password" class="w-full px-4 py-2 text-xs outline-none bg-gray-4 rounded-full border border-gray-5" placeholder="새로운 비밀번호">
-				<small id="passwordErrorMsg" class="text-red-500 text-xs hidden">비밀번호는 6자 이상, 대소문자, 특수문자를 포함해야 합니다.</small>
 			</div>
 			<div class="flex flex-col items-start gap-y-1">
 			  	<span class="text-xs text-gray-6 pl-1">새로운 비밀번호 확인</span>
 				<input type="password" id="newPasswordCheck" name="passwordCheck" class="w-full px-4 py-2 text-xs outline-none bg-gray-4 rounded-full border border-gray-5" placeholder="새로운 비밀번호 확인">
-				<small id="newPasswordErrorMsg" class="text-red-500 text-xs hidden">비밀번호가 일치하지 않습니다.</small>
 			</div>
 			<div class="flex flex-col items-start gap-y-1">
 				<span class="text-xs text-gray-6 pl-1">이름</span>
@@ -58,7 +55,10 @@
 				<span class="text-xs text-gray-6 pl-1">전화번호</span>
  				<input type="text" id="phoneNumber" name="phoneNumber" class="w-full px-4 py-2 text-xs outline-none bg-gray-4 rounded-full border border-gray-5 cursor-not-allowed" placeholder="전화번호(010-0000-0000)" required readonly>
 			</div>
-		</div>				
+			<div class="flex flex-col items-start gap-y-1">
+				<span id="errorMessage" class="grow text-xs h-5 text-red-600" style="visibility: hidden;"></span>	
+			</div>
+		</div>							
 	</div>
 	<div class="w-full flex flex-col items-end">
 		<button id="profileSubmitBtn" class="h-full bg-blue-2 hover:bg-blue-5 rounded-lg text-white shadow-[2px_2px_8px_rgba(0,0,0,0.1)] text-ts-14 sm:text-ts-18 md:text-ts-20 lg:text-ts-24 w-full md:w-60 py-2">수정하기</button>
@@ -149,6 +149,27 @@
             $("#profileImage").attr("src", user.profile_img || "/resources/images/profile_default_image.png")
             				  .attr("data-key", user.profile_img || "");
 		}
+		
+		 
+	    // 포인트 충전 모달이 닫힐 때 잔액 갱신
+		// 4) 모달 닫힐 때마다 포인트 갱신 관찰자
+		const chargeModal = document.getElementById("chargePointModal");
+		if (chargeModal) {
+		  const observer = new MutationObserver(mutations => {
+		    mutations.forEach(mutation => {
+		      // 속성 변화 중 class가 바뀌었고, hidden이 포함됐다면 닫힌 상태
+		      if (
+		        mutation.type === "attributes" &&
+		        mutation.attributeName === "class" &&
+		        chargeModal.classList.contains("hidden")
+		      ) {
+		        // 다시 서버 호출해서 잔액만 업데이트
+		        getUserInfo().done(renderUserInfo);
+		      }
+		    });
+		  });
+		  observer.observe(chargeModal, { attributes: true });
+		}
 	});
 	
 	// 이미지 클릭하면 파일 선택창 열기
@@ -172,12 +193,10 @@
 	$("#newPassword, #newPasswordCheck").on("input", function () {
 	    const newPassword = $("#newPassword").val().trim();
 	    const newPasswordCheck = $("#newPasswordCheck").val().trim();
-	    const $errorMsg = $("#passwordErrorMsg"); // 비밀번호 유효성 관련
-	    const $newErrorMsg = $("#newPasswordErrorMsg"); // 비밀번호 일치 관련
+	    const $errorMsg = $("#errorMessage"); 
 
 	    // 모든 메시지 숨기기 초기화
-	    $errorMsg.addClass("hidden");
-	    $newErrorMsg.addClass("hidden");
+	    $errorMsg.css("visibility", "hidden");
 
 	    if (newPassword) {
 	        $("#newPasswordCheck").prop("required", true);
@@ -185,13 +204,13 @@
 	        // 유효성 검사 (6자 이상, 대소문자, 특수문자 포함)
 	        const pwRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{6,}$/;
 	        if (!pwRegex.test(newPassword)) {
-	            $errorMsg.text("비밀번호는 6자 이상, 대소문자, 특수문자를 포함해야 합니다.").removeClass("hidden");
+	            $errorMsg.text("비밀번호는 6자 이상, 대소문자, 특수문자를 포함해야 합니다.").css("visibility", "visible");
 	            return;
 	        }
 
 	        // 일치 여부 검사
 	        if (newPasswordCheck && newPassword !== newPasswordCheck) {
-	            $newErrorMsg.text("비밀번호가 일치하지 않습니다.").removeClass("hidden");
+	            $errorMsg.text("비밀번호가 일치하지 않습니다.").css("visibility", "visible");
 	        }
 
 	    } else {
@@ -205,13 +224,12 @@
         submitBtn.disabled = true;
         submitBtn.textContent = "등록 중...";
         
-	    const currentPassword = $("#password").val().trim();
-	    const newPassword = $("#newPassword").val().trim();
-	    const newPasswordCheck = $("#newPasswordCheck").val().trim();
-	    const phoneNumber = $("#phoneNumber").val().trim();
+        const currentPassword = ($("#password").val() || "").trim();
+	    const newPassword = ($("#newPassword").val() || "").trim();
+	    const newPasswordCheck = ($("#newPasswordCheck").val() || "").trim();
 
-	    const $errorMsg = $("#newPasswordErrorMsg");
-	    $errorMsg.addClass("hidden"); // 초기화
+	    const $errorMsg = $("#errorMessage");
+	    $errorMsg.css("visibility", "hidden"); // 초기화
 
 	    // 현재 비밀번호는 무조건 필요
 	    if (!currentPassword) {
@@ -223,15 +241,23 @@
 
 	 	// 새 비밀번호 입력한 경우
 	    if (newPassword && !newPasswordCheck) {
-	        $errorMsg.text("비밀번호 확인을 입력해주세요.").removeClass("hidden");
+	        $errorMsg.text("비밀번호 확인을 입력해주세요.").css("visibility", "visible");
 	        submitBtn.disabled = false;
             submitBtn.textContent = "수정하기";
 	        return;
 	    }
+	 	
+	 	// 새 비밀번호/확인 일치 여부 검사
+        if (newPasswordCheck && newPassword !== newPasswordCheck) {
+            $errorMsg.text("비밀번호가 일치하지 않습니다.").css("visibility", "visible");
+            submitBtn.disabled = false;
+            submitBtn.textContent = "수정하기";
+	        return;
+        }
 
 	    const formData = new FormData();
 	    formData.append("password", currentPassword);
-	    formData.append("phone_number", phoneNumber);
+	    formData.append("phone_number", $("#phoneNumber").val());
 	    formData.append("email", $("#email").val());
 	    formData.append("user_name", $("#name").val());
 	    formData.append("nickname", $("#nickname").val());
@@ -274,6 +300,7 @@
 	        },
 	        error: function (xhr) {
 	        	if (xhr.status === 401 && xhr.responseJSON?.message) {
+	        		// 현재 비밀번호가 틀렸을 경우
 	                alert(xhr.responseJSON.message);
 	            } else {
 	                alert("회원 정보 수정에 실패했습니다.");

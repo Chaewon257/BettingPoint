@@ -139,6 +139,9 @@ public class AuthService {
 	    if (userRequest.getNew_password() != null && !userRequest.getNew_password().isBlank()) {
 	        String encodedNewPassword = passwordEncoder.encode(userRequest.getNew_password());
 	        existingUser.setPassword(encodedNewPassword);
+	    } else {
+	    	// 새 비밀번호를 입력하지 않았다면 기존 비밀번호를 유지
+	        existingUser.setPassword(existingUser.getPassword());
 	    }
 		
 	    // 📱 전화번호: 무조건 수정 (빈 문자열이면 그대로 저장됨)
@@ -153,9 +156,6 @@ public class AuthService {
 	    MultipartFile newImage = userRequest.getProfile_image();
 	    String oldUrl = userRequest.getProfile_img_url();
 	    if (newImage != null && !newImage.isEmpty()) {
-	    	
-	    	System.out.println("oldUrl: "+oldUrl);
-	    	System.out.println("newImage: "+ newImage);
 	        if (oldUrl != null && !oldUrl.isBlank()) {
 		        // 기존 이미지가 있다면 S3에서 삭제
 	            String key = extractObjectKeyFromUrl(oldUrl);
@@ -170,7 +170,6 @@ public class AuthService {
 	    	oldUrl = extractObjectKeyFromUrl(oldUrl);
 	    	existingUser.setProfile_img(oldUrl != null ? oldUrl : "");
 	    }
-		
 		userDAO.updateUser(existingUser, userId);
 	}
 	
@@ -203,5 +202,9 @@ public class AuthService {
 
 	public void updatePassword(String userId, String password) {
 		userDAO.updatePassword(userId, password);
+	}
+
+	public UserVO findByEmail(String email) {
+		return userDAO.findByEmail(email);
 	}
 }

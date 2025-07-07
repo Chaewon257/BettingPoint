@@ -72,13 +72,18 @@
 							<div class="flex flex-col items-start">
 								<div class="font-extrabold text-sm md:text-lg lg:text-xl xl:text-2xl">베팅 포인트 입력</div>
 								<div class="w-full flex justify-start gap-x-2 font-light text-gray-7 text-xs md:text-sm">
-									<span>보유 포인트:</span>
+									<span>현재 보유 포인트:</span>
 									<strong id="user-point"></strong>
+									<span>P</span>
+								</div>
+								<div class="w-full flex justify-start gap-x-2 font-light text-gray-7 text-xs md:text-sm">
+									<span>최소 베팅 포인트:</span>
+									<strong id="min-bet"></strong>
 									<span>P</span>
 								</div>
 							</div>
 							<input type="number" id="bet_point" name="bet_point" class="w-full px-2 md:px-4 py-1 md:py-2.5 text-xs outline-none bg-gray-4 rounded-full border border-gray-9" placeholder="베팅할 금액 입력해주세요" required>
-							<div id="errorMessage" class="h-4 font-light text-red-600 text-xs md:text-sm"></div>
+								<div id="errorMessage" class="h-4 font-light text-red-600 text-xs md:text-sm"></div>
 						</div>
 					</div>
 					<!-- 게임 시작 버튼 -->
@@ -190,7 +195,7 @@
 					success: function(user) {
 						userId = user.uid;
 						point_balance = user.point_balance;
-						$("#user-point").text(point_balance);
+						$("#user-point").text(point_balance.toLocaleString());
 						callback(userId);
 					}
 				});
@@ -241,17 +246,21 @@
 					const turtleId = player.turtle_id ?? 0;
 					const isReady = player.ready;
 					const isHost = player.user_uid === hostId;
+					const nickname = player.nickname;
 
-					const stateColor = isReady ? "text-red-600" : "text-gray-900";
+					const stateColor = isReady ? "text-red-600" : "text-gray-400";
 					const labelText = isHost ? "방 장" : "준비 완료";
 					const labelColor = isHost ? "text-blue-500" : stateColor;
 
 					const html = `
             <div class="relative aspect-square rounded-xl shadow-[2px_2px_8px_rgba(0,0,0,0.1)] flex justify-center items-center overflow-hidden p-2 md:p-4">
                 <img src="/resources/images/turtle\${turtleId}.png" alt="Turtle Character" class="h-full" />
-                <div class="absolute left-1/2 bottom-0 -translate-x-1/2 w-20 md:w-32 h-10 md:h-14 bg-white blur rounded-full"></div>
+                <div class="absolute text-gray-7 left-0 top-0 w-20 h-10 md:h-14 flex justify-center items-center font-extrabold sm:text-base md:text-lg lg:text-xl xl:text-2xl">
+                    <span>\${nickname}</span>
+                </div>
+				<div class="absolute left-1/2 bottom-0 -translate-x-1/2 w-20 md:w-32 h-10 md:h-14 bg-white blur rounded-full"></div>
                 <div class="absolute left-1/2 bottom-0 -translate-x-1/2 w-20 md:w-32 h-10 md:h-14 flex justify-center items-center font-extrabold sm:text-base md:text-lg lg:text-xl xl:text-2xl \${labelColor}">
-                    \${labelText}
+                    <span>\${labelText}</span>
                 </div>
             </div>
         `;
@@ -273,6 +282,7 @@
 			// 게임방 상세 정보 렌더링(임시)
 			function renderGameRoomDetail(room) {
 				$("#room-title").text(`\${room.title}`);
+				$("#min-bet").text(room.min_bet.toLocaleString());
 
 				userInfo(function() {
 					updateButtons();
@@ -355,12 +365,19 @@
 				});
 
 				$(document).on('blur', '#bet_point', function() {
-					const point = $(this).val();
+				    let point = parseInt($(this).val(), 10);
+				    if (isNaN(point) || point <= 0) {
+					  $(this).val('');
+					  return;
+				    }
 
-					if (!point || point <= 0) {
-						$("#errorMessage").text('베팅 포인트를 입력하세요.');
-						return;
-					}
+				    point = Math.floor(point / 100) * 100;
+				    $(this).val(point);
+
+				    if (!point || point <= 0) {
+					  $("#errorMessage").text('베팅 포인트를 입력하세요.');
+					  return;
+				    }
 
 					if(point < minBet) {
 						$("#errorMessage").text(`최소 베팅은 \${minBet} 포인트 입니다.`);

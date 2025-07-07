@@ -1,6 +1,6 @@
 <%@ tag language="java" pageEncoding="UTF-8"%>
 
-<script src="${cpath}/resources/js/summernote/summernote-lite-support.js"></script>
+<script src="${cpath}/resources/js/summernote/summernote-lite.js"></script>
 <div class="w-full grid grid-cols-1 lg:grid-cols-5">
 	<div class="col-span-4 w-full h-full flex flex-col gap-y-4 bg-gray-8 p-4">
 		<input type="text" id="title" name="title" class="text-3xl font-extrabold bg-transparent outline-none" placeholder="제목을 입력하세요">
@@ -19,6 +19,21 @@
 			$('#summernote').summernote({
 				height : 400,
 				lang : "ko-KR",
+				toolbar: [
+	            	// 글꼴 
+	                ['fontname', ['fontname']],
+	                // 글자 크기 설정
+	                ['fontsize', ['fontsize']],
+	                // 글꼴 스타일
+	                ['font', ['bold', 'underline', 'clear']],
+	                // 글자 색상
+	                ['color', ['color']],
+	                // 문단 스타일
+	                ['para', ['paragraph']],
+	                // 코드 보기
+	                ['view', ['codeview']],
+	            ],
+				
 				placeholder : '최대 2048자까지 쓸 수 있습니다'
 			});
 		}
@@ -33,6 +48,12 @@
 	        alert("제목과 내용을 모두 입력해주세요.");
 	        return;
 	    }
+	    
+	 	// 🔹 확인 알림 추가
+	    const confirmSubmit = confirm("문의 등록 후에는 수정이 불가능합니다.\n정말로 제출하시겠습니까?");
+	    if (!confirmSubmit) {
+	        return; // 사용자가 취소를 누르면 아무 것도 하지 않음
+	    }
 
 	    const requestData = {
 	        title: title,
@@ -45,7 +66,7 @@
 	        contentType: "application/json",
 	        data: JSON.stringify(requestData),
 	        success: function () {
-	            alert("문의가 정상적으로 등록되었습니다. 문의 내역 확인은 [마이페이지]-[문의 내역]에서 확인해주세요!");
+	            alert("문의가 정상적으로 등록되었습니다. \n\n문의 내역 확인은 [마이페이지]-[문의 내역]에서 확인해주세요!");
 	            window.location.href = "/support";
 	        },
 	        error: function () {

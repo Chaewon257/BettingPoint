@@ -1,6 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8"%>
 <%@ taglib prefix="ui" tagdir="/WEB-INF/tags"%>
 
+<script src="https://js.tosspayments.com/v2/standard"></script>
 <ui:layout pageName="홈 페이지" pageType="main">
     <jsp:attribute name="headLink">
         <style>
@@ -101,31 +102,11 @@
 		    	<div class="w-full flex flex-col">
 		    		<h1 class="text-2xl font-bold text-gray-900 mb-4">공지사항</h1>
 		    		<div class="w-full h-[2px] bg-gray-1"></div>
-		    		<div id="TopNoticeContainer" class="grid grid-cols-1 grid-rows-5 border-b-2 border-gray-1">
-		    			<!-- <div class="p-4 flex items-center justify-between border-b border-gray-1 font-light">
-							<button data-notice="" class="col-span-4 truncate hover:underline">이것이 자유다 정말!!</button>
-							<span class="col-span-1">2025.06.23</span>
-						</div>
-		    			<div class="p-4 flex items-center justify-between border-b border-gray-1 font-light">
-							<button data-notice="" class="col-span-4 truncate hover:underline">이것이 자유다 정말!!</button>
-							<span class="col-span-1">2025.06.23</span>
-						</div>
-		    			<div class="p-4 flex items-center justify-between border-b border-gray-1 font-light">
-							<button data-notice="" class="col-span-4 truncate hover:underline">이것이 자유다 정말!!</button>
-							<span class="col-span-1">2025.06.23</span>
-						</div>
-		    			<div class="p-4 flex items-center justify-between border-b border-gray-1 font-light">
-							<button data-notice="" class="col-span-4 truncate hover:underline">이것이 자유다 정말!!</button>
-							<span class="col-span-1">2025.06.23</span>
-						</div>
-		    			<div class="p-4 flex items-center justify-between border-b border-gray-1 font-light">
-							<button data-notice="" class="col-span-4 truncate hover:underline">이것이 자유다 정말!!</button>
-							<span class="col-span-1">2025.06.23</span>
-						</div> -->
-		    		</div>
+		    		<div id="TopNoticeContainer" class="grid grid-cols-1 grid-rows-5 border-b-2 border-gray-1"></div>
 		    	</div>
 		    </div>
         </div>
+        <ui:paymentModal modalId="chargePointModal"></ui:paymentModal>
 		<script type="text/javascript">
             $(document).ready(function() {
                 // 배너 슬라이더 변수
@@ -196,7 +177,7 @@
 				        	container.append(`
 		                        <div class="flex-none w-full h-full">
 		                            <a href="\${banner.banner_link_url}" class="block w-full h-full">
-		                                <img src="\${banner.image_path}" alt="\${banner.title}" class="w-full h-full object-cover" />
+		                                <img src="\${banner.image_path}" alt="\${banner.title}" class="h-full object-contain mx-auto" />
 		                            </a>
 		                        </div>
 		                    `);
@@ -349,28 +330,6 @@
                 // 사용자 로그인 여부 확인
                 let token = localStorage.getItem('accessToken');
                 
-                function renderUser(user) {
-        			if (!user || !user.user_name) return;
-
-        			// PC
-        			$('#userInfoPanel').html(`
-        					<div class="w-36 h-36 rounded-full bg-white overflow-hidden">
-        						<img id="profileImage" alt="default profile image" src="\${user.profile_img || "/resources/images/profile_default_image.png"}">
-        					</div>
-                            <div class="text-base"><a href="/mypage" class="hover:underline font-semibold">\${user.nickname}</a> 님,환영합니다!</div>
-                            <div class="w-full flex flex-col item-start bg-blue-3 rounded-lg p-2">
-                            	<div class="font-bold mb-2">보유포인트</div>
-                            	<div class="w-full flex items-center justify-between text-gray-700 font-extrabold text-2xl px-2 mb-2">
-                            		<img alt="money box" src="${cpath}/resources/images/money_box.png" class="w-8">
-                            		<div id="pointBalance" class="grow text-center">\${user.point_balance.toLocaleString()}</div>
-                            		<div>P</div>
-                            	</div>
-        						<button onclick="location.href='/'" class="w-full rounded text-white bg-blue-2 hover:bg-blue-1 py-1">충전하기</button>
-                            </div>
-        					
-        				`);
-        		}
-                
              	// 유저 정보 요청
         		function getUserInfo() {
         			return $.ajax({
@@ -380,6 +339,46 @@
         			});
         		}
              	
+                
+                function renderUser(user) {
+        			if (!user || !user.user_name) return;
+
+        			// PC
+        			$('#userInfoPanel').html(`
+        					<div class="w-36 h-36 rounded-full bg-white overflow-hidden">
+        						<img id="profileImage" alt="default profile image" src="\${user.profile_img || "/resources/images/profile_default_image.png"}">
+        					</div>
+                            <div class="text-base">
+                            	<a href="/mypage" class="hover:underline font-semibold">\${user.nickname}</a> 님,환영합니다!
+                           	</div>
+                            <div class="w-full flex flex-col item-start bg-blue-3 rounded-lg p-2">
+                            	<div class="font-bold mb-2">보유포인트</div>
+                            	<div class="w-full flex items-center justify-between text-gray-700 font-extrabold text-2xl px-2 mb-2">
+                            		<img alt="money box" src="${cpath}/resources/images/money_box.png" class="w-8">
+                            		<div id="pointBalance" class="grow text-center">\${user.point_balance.toLocaleString()}</div>
+                            		<div>P</div>
+                            	</div>
+        						<button onclick="document.getElementById('chargePointModal').classList.remove('hidden')" 
+        								class="w-full rounded text-white bg-blue-2 hover:bg-blue-1 py-1">충전하기</button>
+                            </div>
+        					
+        				`);
+        		}
+                
+             	// 충전 모달 관찰자 설정:
+                const chargeModal = document.getElementById('chargePointModal');
+                const chargeObserver = new MutationObserver((mutations) => {
+                  for (const m of mutations) {
+                    if (m.type === 'attributes' && m.attributeName === 'class') {
+                      if ($(chargeModal).hasClass('hidden')) {
+                    	// hidden 클래스가 붙으면(모달 닫힘) 유저 정보 다시 불러오기
+                        getUserInfo().done(renderUser);
+                      }
+                    }
+                  }
+                });
+                chargeObserver.observe(chargeModal, { attributes: true });
+                             	
         		// 페이지 진입 시 유저 정보 로딩
         		if (token) {
         			getUserInfo()
@@ -391,6 +390,8 @@
         					}
         				});
         		}
+        		
+        		
             });
             
          	// 유튜브 ID 추출 함수

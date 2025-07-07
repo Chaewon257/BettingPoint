@@ -58,5 +58,20 @@
 		
 		console.log("이름: ", findName.value);
 		console.log("전화번호: ", findPhone.value);
+
+		$.ajax({
+			type: 'GET',
+			url: '/api/user/findEmail',
+			data: {
+				user_name: findName.value,
+				phone_number: findPhone.value
+			},
+			success: function (response) {
+				alert('가입된 이메일: ' + response);
+			},
+			error: function () {
+				error.textContent = "가입된 계정을 찾을 수 없습니다.";
+			}
+		});
 	});
 </script>
