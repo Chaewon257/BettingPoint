@@ -24,8 +24,15 @@
 	/* 이메일 입력 시 버튼 및 상태 초기화 */
 	document.getElementById('findemail').addEventListener('input', function () {
 		const requestBtn = document.getElementById('requestVerificationBtn');
+		const verifyBtn = document.getElementById('verifyCodeBtn');
+		const codeInput = document.getElementById('verificationCodeInput');
+		const emailVerified = document.getElementById('emailVerified');
+
 		verificationRequested = false;
 		requestBtn.disabled = false;
+		verifyBtn.disabled = false;
+		codeInput.disabled = false;
+		emailVerified.checked = false;
 	});
 
 	/* 이메일 인증번호 요청 */
@@ -98,8 +105,7 @@
 				alert(res); // "이메일 인증이 완료되었습니다."
 				emailVerified.checked = true;
 
-				// 인증 완료 시 이메일/버튼/인증입력 비활성화
-				emailInput.disabled = true;
+				// 인증 완료 시 버튼/인증입력 비활성화
 				document.getElementById('requestVerificationBtn').disabled = true;
 				codeInput.disabled = true;
 				document.getElementById('verifyCodeBtn').disabled = true;
