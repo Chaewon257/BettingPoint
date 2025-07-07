@@ -17,7 +17,9 @@
 	<button id="findIdSubmit" class="w-full px-10 py-3 outline-none bg-blue-3 rounded-full text-white text-lg hover:bg-blue-1">비밀번호 찾기</button>
 </div>
 <script type="text/javascript">
-	let verificationRequested = false;
+	if (typeof verificationRequested === "undefined") {
+		let verificationRequested = false;
+	}
 
 	/* 이메일 입력 시 버튼 및 상태 초기화 */
 	document.getElementById('findemail').addEventListener('input', function () {
@@ -60,8 +62,8 @@
 				alert(res); // "인증번호가 이메일로 발송되었습니다." 표시
 				verificationRequested = true; // 요청 완료 상태로 변경
 			},
-			error: function () {
-				error.textContent = "인증번호 요청 중 오류가 발생했습니다.";
+			error: function (xhr) {
+				error.textContent = xhr.responseJSON?.message || "인증번호 요청 중 오류가 발생했습니다.";
 				requestBtn.disabled = false; // 오류 시 다시 활성화
 			}
 		});

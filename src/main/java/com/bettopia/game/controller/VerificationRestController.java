@@ -2,6 +2,7 @@ package com.bettopia.game.controller;
 
 import java.util.Map;
 
+import com.bettopia.game.Exception.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,7 +35,7 @@ public class VerificationRestController {
 		String email = request.get("email");
 
 		if(!authService.isEmailExists(email)) {
-			return "해당 이메일이 존재하지 않습니다.";
+			throw new UserNotFoundException();
 		} else {
 			verificationService.requestVerification(email);
 			return "인증번호가 이메일로 발송되었습니다.";
