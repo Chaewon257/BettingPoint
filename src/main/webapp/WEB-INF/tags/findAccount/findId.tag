@@ -69,8 +69,8 @@
 			success: function (response) {
 				alert('가입된 이메일: ' + response);
 			},
-			error: function () {
-				error.textContent = "가입된 계정을 찾을 수 없습니다.";
+			error: function (xhr) {
+				error.textContent = xhr.responseJSON?.message;
 			}
 		});
 	});
