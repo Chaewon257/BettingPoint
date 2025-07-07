@@ -203,4 +203,8 @@ public class AuthService {
 	public void updatePassword(String userId, String password) {
 		userDAO.updatePassword(userId, password);
 	}
+
+	public UserVO findByEmail(String email) {
+		return userDAO.findByEmail(email);
+	}
 }

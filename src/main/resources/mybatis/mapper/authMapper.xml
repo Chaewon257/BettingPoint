@@ -86,9 +86,9 @@
 		and phone_number = #{phone_number}
 	</select>
 
-	<select id="updatePassword" parameterType="map">
+	<update id="updatePassword" parameterType="map">
 		update user set
 		password = #{password}
 		where uid = #{uid}
-	</select>
+	</update>
 </mapper>
