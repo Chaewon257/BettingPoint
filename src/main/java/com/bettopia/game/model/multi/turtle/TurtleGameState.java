@@ -33,7 +33,7 @@ public class TurtleGameState {
                     winner = i;
                     finished = true;
                     status = "FINISHED";
-                    positions[i] = 103;
+                    positions[i] = 101;
                 }
             }
         }

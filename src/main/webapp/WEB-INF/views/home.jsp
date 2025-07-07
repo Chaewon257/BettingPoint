@@ -353,7 +353,7 @@
                            	</div>
                             <div class="w-full flex flex-col item-start bg-blue-3 rounded-lg p-2">
                             	<div class="font-bold mb-2">보유포인트</div>
-                            	<div class="w-full flex items-center justify-between text-gray-700 font-extrabold text-2xl px-2 mb-2">
+                            	<div class="w-full flex items-center justify-between text-gray-700 font-extrabold text-lg xl:text-2xl px-2 mb-2">
                             		<img alt="money box" src="${cpath}/resources/images/money_box.png" class="w-8">
                             		<div id="pointBalance" class="grow text-center">\${user.point_balance.toLocaleString()}</div>
                             		<div>P</div>

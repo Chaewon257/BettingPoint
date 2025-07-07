@@ -14,19 +14,17 @@
 						</a>
 		  			</div>
 		  			<div class="flex flex-col min-w-[22rem] grow items-center justify-center p-4">
-		  				<form id="loginForm" class="w-full md:w-10/12 flex flex-col justify-items-start mb-4">
+		  				<div class="w-full md:w-10/12 flex flex-col justify-items-start mb-4">
 		  					<span class="text-ts-28 pl-1.5 mb-16">로그인</span>
-		  					<input type="email" id="email" name="userid" class="w-full px-10 py-4 outline-none bg-gray-4 rounded-full border border-gray-5 mb-2" placeholder="사용자 ID" required>
-		  					<input type="password" id="password" name="userpw" class="w-full px-10 py-4 outline-none bg-gray-4 rounded-full border border-gray-5 mb-4" placeholder="비밀번호" required>
-		  					<button type="submit" class="w-full px-10 py-3 outline-none bg-blue-2 rounded-full border border-blue-2 text-white text-lg hover:bg-blue-1">로그인</button>
-		  				</form>
+		  					<input type="email" id="email" name="userid" class="w-full px-10 py-4 outline-none bg-gray-4 rounded-full border border-gray-5 mb-2" placeholder="사용자 ID (Email)" required>
+		  					<input type="password" id="password" name="userpw" class="w-full px-10 py-4 outline-none bg-gray-4 rounded-full border border-gray-5 mb-2" placeholder="비밀번호" required>
+		  					<span id="errorMessage" class="text-xs w-full h-5 text-red-600 mb-2 ml-2"></span>
+		  					<button id="loginSubmitbtn" class="w-full px-10 py-3 outline-none bg-blue-2 rounded-full border border-blue-2 text-white text-lg hover:bg-blue-1">로그인</button>
+		  				</div>
 		  				<div class="w-full md:w-10/12 flex gap-x-8 text-gray-3 justify-end px-4 mb-8">
 		  					<a href="/register" class="hover:text-gray-6">회원가입</a>
 		  					|
 		  					<button class="hover:text-gray-6" onclick="document.getElementById('findAccountModal').classList.remove('hidden')">ID/PW찾기</button>
-		  				</div>
-		  				<div class="w-full text-center text-red-600 text-base">
-		  					${errorMessage}
 		  				</div>
 		  			</div>
 	  			</div>
@@ -41,8 +39,75 @@
 	  			</div>
 	  		</jsp:attribute>
 	  	</ui:modal>
-	  	<script src="${cpath}/resources/js/login.js"></script>
 	  	<script type="text/javascript">
+	  		document.getElementById('loginSubmitbtn').addEventListener('click', function (e) {
+		  	    e.preventDefault(); // 기본 제출 막기
+		  	    
+			  	const errorElement = document.getElementById('errorMessage');
+			  	errorElement.textContent = "";
+	
+		  	    const emailInput = document.getElementById('email');
+				const emailVal = emailInput.value.trim();
+			    const passwordInput = document.getElementById('password');
+				const passwordVal = passwordInput.value;
+
+		  	  	if (!emailVal) {
+		  	  		errorElement.textContent = "이메일을 입력해주세요.";
+					emailInput.classList.add("border-red-600");
+					return;
+				} else {
+					emailInput.classList.remove("border-red-600");
+					emailInput.classList.add("border-gray-5");
+				}
+		  	  	
+		  	  	if (!passwordVal) {
+		  			errorElement.textContent = "비밀번호를 입력해주세요.";
+					passwordInput.classList.add("border-red-600");
+					return;
+				} else {
+					passwordInput.classList.remove("border-red-600");
+					passwordInput.classList.add("border-gray-5");
+				}
+		  	  	
+		  	  	const requestBody = {
+		  	  		email: emailVal,
+		  	  		password: passwordVal
+		  	  	}
+		  	    
+		  	    $.ajax({
+		  	    	url: '/api/auth/login',
+		  	    	type: 'POST',
+		  	    	contentType: 'application/json',
+		  	    	data: JSON.stringify(requestBody),
+		  	    	xhrFields: {
+		  				withCredentials: true  // ✅ 쿠키 포함 허용
+		  			},
+		  	    	success: function (response) {
+		  	        	// 토큰 저장
+		  	        	localStorage.setItem('accessToken', response.accessToken);
+		  	        	
+		  	        	alert(response.message);
+		  	        	
+		  	        	window.location.href = '/'; // 성공 시 이동
+		  	      	},
+		  	    	error: function (xhr) {
+		  	    		let message = "로그인 실패";
+
+			  	    	try {
+			  	    		const json = JSON.parse(xhr.responseText);
+			  	    	    if (json.message) {
+			  	    	      message = json.message;
+			  	    	    }
+			  	    	} catch (e) {
+			  	    	    // JSON 파싱 실패 시 기본 메시지 사용
+			  	    	    message = xhr.responseText || message;
+			  	    	}
+	
+			  	    	errorElement.textContent = message;
+		  			},
+		  		});
+		  	});
+	  	
 		 	// 화면 너비 계산
 			function adjustWidth() {
 			    let screenWidth = $(window).width();
