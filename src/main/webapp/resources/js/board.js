@@ -66,55 +66,81 @@ let currentSort     = "";
      $("#boardList").html(listHtml);
  }
 	
-  function renderPaging(current, totalCount) {
-	  const itemsPerPage = PAGE_SIZE;
-	  const maxPages     = Math.ceil(totalCount / itemsPerPage);
-	  const html         = [];
+  const PAGE_BTN_COUNT = 5;  // 한 블록당 버튼 수
 
-	  // ◀ 이전
-	  html.push(`
-	    <button
-	      class="w-8 h-8 rounded-s border border-gray-1
-	             ${current <= 1
-	               ? 'text-gray-1 cursor-not-allowed'
-	               : 'hover:bg-gray-2'}"
-	      ${current <= 1 ? 'disabled' : ''}
-	      onclick="loadBoardList(${current - 1}, '${currentCategory}', '${currentSort}')">
-	      &lt;
-	    </button>
-	  `);
+function renderPaging(current, totalCount) {
+  const maxPages = Math.ceil(totalCount / PAGE_SIZE);
 
-	  // [1] [2] … 숫자
-	  for (let i = 1; i <= maxPages; i++) {
-	    html.push(`
-	      <button
-	        class="w-8 h-8 border border-gray-1
-	               ${i === current
-	                 ? 'bg-gray-2'
-	                 : 'hover:bg-gray-2'} page-btn"
-	        onclick="loadBoardList(${i}, '${currentCategory}', '${currentSort}')">
-	        ${i}
-	      </button>
-	    `);
-	  }
+  // 현재 블록 계산
+  const currentBlock  = Math.floor((current - 1) / PAGE_BTN_COUNT);
+  const startPage     = currentBlock * PAGE_BTN_COUNT + 1;
+  const endPage       = Math.min(startPage + PAGE_BTN_COUNT - 1, maxPages);
 
-	  // ▶ 다음
-	  html.push(`
-	    <button
-	      class="w-8 h-8 rounded-e border border-gray-1
-	             ${current >= maxPages
-	               ? 'text-gray-1 cursor-not-allowed'
-	               : 'hover:bg-gray-2'}"
-	      ${current >= maxPages ? 'disabled' : ''}
-	      onclick="loadBoardList(${current + 1}, '${currentCategory}', '${currentSort}')">
-	      &gt;
-	    </button>
-	  `);
+  // 블록 이동용 페이지
+  const prevBlockPage = startPage > 1      ? startPage - 1 : 1;
+  const nextBlockPage = endPage < maxPages ? endPage + 1   : maxPages;
 
-	  // 컨테이너에 출력
-	  $("#paging").html(html.join(''));
-	}
-  
+  const html = [];
+
+  // << (처음)
+  html.push(`
+    <button
+      class="w-8 h-8 border border-gray-1 rounded-s
+             ${current === 1 ? 'text-gray-1 cursor-not-allowed' : 'hover:bg-gray-2'}"
+      ${current === 1 ? 'disabled' : ''}
+      onclick="loadBoardList(1, '${currentCategory}', '${currentSort}')">
+      &laquo;
+    </button>
+  `);
+
+  // < (이전 블록)
+  html.push(`
+    <button
+      class="w-8 h-8 border border-gray-1
+             ${current  === 1 ? 'text-gray-1 cursor-not-allowed' : 'hover:bg-gray-2'}"
+      ${current  === 1 ? 'disabled' : ''}
+      onclick="loadBoardList(${current - 1}, '${currentCategory}', '${currentSort}')">
+      &lsaquo;
+    </button>
+  `);
+
+  // 번호 버튼들
+  for (let i = startPage; i <= endPage; i++) {
+    html.push(`
+      <button
+        class="w-8 h-8 border border-gray-1
+               ${i === current ? 'bg-gray-2' : 'hover:bg-gray-2'} page-btn"
+        onclick="loadBoardList(${i}, '${currentCategory}', '${currentSort}')">
+        ${i}
+      </button>
+    `);
+  }
+
+  // › (다음 블록)
+  html.push(`
+    <button
+      class="w-8 h-8 border border-gray-1
+             ${endPage === maxPages ? 'text-gray-1 cursor-not-allowed' : 'hover:bg-gray-2'}"
+      ${endPage === maxPages ? 'disabled' : ''}
+      onclick="loadBoardList(${current + 1}, '${currentCategory}', '${currentSort}')">
+      &rsaquo;
+    </button>
+  `);
+
+  // » (마지막)
+  html.push(`
+    <button
+      class="w-8 h-8 border border-gray-1 rounded-e
+             ${current === maxPages ? 'text-gray-1 cursor-not-allowed' : 'hover:bg-gray-2'}"
+      ${current === maxPages ? 'disabled' : ''}
+      onclick="loadBoardList(${maxPages}, '${currentCategory}', '${currentSort}')">
+      &raquo;
+    </button>
+  `);
+
+  $("#paging").html(html.join(''));
+}
+
   	$(function() {
 	  loadBoardList(1);
 	});
