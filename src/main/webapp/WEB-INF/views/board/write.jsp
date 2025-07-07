@@ -8,6 +8,7 @@
 
 <ui:layout pageName="Betting Point 게시판 글 ${mode == 'create' ? '작성' : '수정'}" pageType="main">
   <jsp:attribute name="bodyContent">
+  
     <script src="${cpath}/resources/js/summernote/summernote-lite.js"></script>
     <script src="${cpath}/resources/js/board.js"></script>
     
@@ -87,28 +88,32 @@
 		  const boardId = "${boardId}";
 		
 		  $(document).ready(function () {
+			  
 		    // 1) Summernote 초기화
 		    if ($('#summernote').length) {
 		      $('#summernote').summernote({
 		        height: 500,
 		        lang: "ko-KR",
-            toolbar: [
-            	// 글꼴 
-                ['fontname', ['fontname']],
-                // 글자 크기 설정
-                ['fontsize', ['fontsize']],
-                // 글꼴 스타일
-                ['font', ['bold', 'underline', 'clear']],
-                // 글자 색상
-                ['color', ['color']],
-                // 문단 스타일
-                ['para', ['paragraph']],
-                // 이미지, 링크, 동영상 삽입
-                ['insert', ['picture']],
-                // 코드 보기,도움말
-                ['view', ['codeview',  'help']],
-            ],
 		        placeholder: '최대 2048자까지 쓸 수 있습니다',
+		        toolbar: [
+		            	// 글꼴 
+		                [ 'fontname', ['fontname']],
+		                // 글자 크기 설정
+		                ['fontsize', ['fontsize']],
+		                // 글꼴 스타일
+		                ['font', ['bold', 'underline', 'clear']],
+		                // 글자 색상
+		                ['color', ['color']],
+		                // 문단 스타일
+		                ['para', ['paragraph']],
+		                // 글 높낮이 간격
+		                ['height', ['height']],
+		            	// 이미지 삽입
+		                ['insert', ['picture']],
+		                // 코드 보기
+		                ['view', ['codeview']],   
+		            ],
+					
 		        callbacks: {
 		          onImageUpload: function (files) {
 		            uploadSummernoteImageFile(files[0], this);
@@ -208,11 +213,11 @@
 		        headers: { 'Authorization': 'Bearer ' + token },
 		        data: JSON.stringify(dto),
 		        success: function () {
-		          alert("${mode == 'update' ? '수정' : '등록'} 성공");
+		          alert("게시글이 ${mode == 'update' ? '수정' : '등록'} 되었습니다.");
 		          location.href = "/board";
 		        },
 		        error: function () {
-		          alert("${mode == 'update' ? '수정' : '등록'} 실패");
+		          alert("게시글이 ${mode == 'update' ? '수정' : '등록'} 되었습니다.");
 		        }
 		      });
 		    });
