@@ -135,7 +135,7 @@
 							return;
 				  		}
 						if (roomCount >= 8) {
-							alert("정원이 가득 찬 방입니다.");
+							alert("정원이 가득 찼습니다.");
 							return;
 						}
 						if (point_balance < roomMinBet) {
