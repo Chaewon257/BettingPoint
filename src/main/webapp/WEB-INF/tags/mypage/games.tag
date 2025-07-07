@@ -89,7 +89,7 @@
 			});
 		}
 		
-		// 🔹 페이지네이션 렌더링 (그룹 단위)
+		//게임 히스토리 페이지네이션 렌더링 (그룹 단위)
 		function renderPagination(current, totalCount) {
 		    paginationContainer.empty();
 		    const maxPages = Math.ceil(totalCount / itemsPerPage);
@@ -102,23 +102,25 @@
 		    
 		    const paginationHTML = [];
 		    
-		    const isFirstPage = current === 1;
+		    // << 버튼 (이전 그룹의 첫 페이지로)
+		    const isFirstGroup = currentGroup === 1;
+		    const prevGroupFirstPage = isFirstGroup ? 1 : (currentGroup - 2) * pagesPerGroup + 1;
+		    
 		    paginationHTML.push(
-		            '<button class="w-8 h-8 border border-gray-1 ' +
-		            (isFirstPage ? 'text-gray-1 hover:bg-gray-2 cursor-not-allowed' : 'hover:bg-gray-2') + '"' +
-		            (isFirstPage ? ' disabled' : '') +
-		            ' onclick="changePage(1)" title="이전 페이지">&lt;&lt;</button>'
+		        '<button class="w-8 h-8 border border-gray-1 ' +
+		        (isFirstGroup ? 'text-gray-1 hover:bg-gray-2 cursor-not-allowed' : 'hover:bg-gray-2') + '"' +
+		        (isFirstGroup ? ' disabled' : '') +
+		        ' onclick="changePage(' + prevGroupFirstPage + ')" title="이전 그룹">&lt;&lt;</button>'
 		    );
 		    
-		    // Prev 버튼
-		    const isFirstPageOverall = current === 1; // 전체에서 첫 번째 페이지인지 확인
-		    const isFirstPageInGroup = current === startPage;  //현재 그룹의 첫 페이지인지 확인
-		    const prevPage = isFirstPageInGroup ? startPage - 1 : current - 1;
+		    // < 버튼 (이전 페이지)
+		    const isFirstPage = current === 1;
+		    const prevPage = current - 1;
 		    
 		    paginationHTML.push(
 		        '<button class="w-8 h-8 rounded-s border border-gray-1 ' +
-		        (isFirstPageOverall ? 'text-gray-1 hover:bg-gray-2 cursor-not-allowed' : 'hover:bg-gray-2') + '"' +
-		        (isFirstPageOverall ? ' disabled' : '') +
+		        (isFirstPage ? 'text-gray-1 hover:bg-gray-2 cursor-not-allowed' : 'hover:bg-gray-2') + '"' +
+		        (isFirstPage ? ' disabled' : '') +
 		        ' onclick="changePage(' + prevPage + ')">&lt;</button>'
 		    );
 		    
@@ -130,29 +132,30 @@
 		        );
 		    }
 		    
-		    // Next 버튼
-		    const isLastGroup = endPage === maxPages;
-		    const isLastPageInGroup = current === endPage;
-		    const nextPage = isLastPageInGroup ? endPage + 1 : current + 1;
+		    // > 버튼 (다음 페이지)
+		    const isLastPage = current === maxPages;
+		    const nextPage = current + 1;
 		    
 		    paginationHTML.push(
 		        '<button class="w-8 h-8 rounded-e border border-gray-1 ' +
-		        (isLastGroup ? 'text-gray-1 hover:bg-gray-2 cursor-not-allowed' : 'hover:bg-gray-2') + '"' +
-		        (isLastGroup ? ' disabled' : '') +
+		        (isLastPage ? 'text-gray-1 hover:bg-gray-2 cursor-not-allowed' : 'hover:bg-gray-2') + '"' +
+		        (isLastPage ? ' disabled' : '') +
 		        ' onclick="changePage(' + nextPage + ')">&gt;</button>'
 		    );
 		    
+		    // >> 버튼 (다음 그룹의 첫 페이지로)
+		    const isLastGroup = endPage === maxPages;
+		    const nextGroupFirstPage = isLastGroup ? maxPages : currentGroup * pagesPerGroup + 1;
 		    
 		    paginationHTML.push(
-			        '<button class="w-8 h-8 rounded-e border border-gray-1 ' +
-			        (isLastGroup ? 'text-gray-1 hover:bg-gray-2 cursor-not-allowed' : 'hover:bg-gray-2') + '"' +
-			        (isLastGroup ? ' disabled' : '') +
-			        ' onclick="changePage(' + maxPages + ')">&gt;&gt;</button>'
-			    );
+		        '<button class="w-8 h-8 border border-gray-1 ' +
+		        (isLastGroup ? 'text-gray-1 hover:bg-gray-2 cursor-not-allowed' : 'hover:bg-gray-2') + '"' +
+		        (isLastGroup ? ' disabled' : '') +
+		        ' onclick="changePage(' + nextGroupFirstPage + ')" title="다음 그룹">&gt;&gt;</button>'
+		    );
 		    
 		    paginationContainer.html(paginationHTML.join(""));
 		}
-		
 		
 		
 		// 날짜 포맷팅 함수 (yyyy.mm.dd)

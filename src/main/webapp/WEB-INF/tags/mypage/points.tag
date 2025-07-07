@@ -100,7 +100,7 @@
 	        });
 	    }
 	    
-	 // 🔹 포인트 히스토리 페이지네이션 렌더링 (그룹 단위)
+	    //포인트 히스토리 페이지네이션 렌더링 (그룹 단위)
 	    function renderPointPagination(current, totalCount) {
 	        paginationContainer.empty();
 	        const maxPages = Math.ceil(totalCount / itemsPerPage);
@@ -113,18 +113,20 @@
 	        
 	        const paginationHTML = [];
 	        
-	        // 맨 처음 페이지 버튼 (<<)
-	        const isFirstPage = current === 1;
+	        // << 버튼 (이전 그룹의 첫 페이지로)
+	        const isFirstGroup = currentGroup === 1;
+	        const prevGroupFirstPage = isFirstGroup ? 1 : (currentGroup - 2) * pagesPerGroup + 1;
+	        
 	        paginationHTML.push(
 	            '<button class="w-8 h-8 rounded-s border border-gray-1 ' +
-	            (isFirstPage ? 'text-gray-1 hover:bg-gray-2 cursor-not-allowed' : 'hover:bg-gray-2') + '"' +
-	            (isFirstPage ? ' disabled' : '') +
-	            ' onclick="changePointPage(1)" title="맨 처음 페이지">&lt;&lt;</button>'
+	            (isFirstGroup ? 'text-gray-1 hover:bg-gray-2 cursor-not-allowed' : 'hover:bg-gray-2') + '"' +
+	            (isFirstGroup ? ' disabled' : '') +
+	            ' onclick="changePointPage(' + prevGroupFirstPage + ')" title="이전 그룹">&lt;&lt;</button>'
 	        );
 	        
-	        // Prev 버튼
-	        const isFirstPageInGroup = current === startPage;
-	        const prevPage = isFirstPageInGroup ? startPage - 1 : current - 1;
+	        // < 버튼 (이전 페이지)
+	        const isFirstPage = current === 1;
+	        const prevPage = current - 1;
 	        
 	        paginationHTML.push(
 	            '<button class="w-8 h-8 border border-gray-1 ' +
@@ -141,10 +143,9 @@
 	            );
 	        }
 	        
-	        // Next 버튼
+	        // > 버튼 (다음 페이지)
 	        const isLastPage = current === maxPages;
-	        const isLastPageInGroup = current === endPage;
-	        const nextPage = isLastPageInGroup ? endPage + 1 : current + 1;
+	        const nextPage = current + 1;
 	        
 	        paginationHTML.push(
 	            '<button class="w-8 h-8 border border-gray-1 ' +
@@ -153,16 +154,20 @@
 	            ' onclick="changePointPage(' + nextPage + ')" title="다음 페이지">&gt;</button>'
 	        );
 	        
-	        // 맨 마지막 페이지 버튼 (>>)
+	        // >> 버튼 (다음 그룹의 첫 페이지로)
+	        const isLastGroup = endPage === maxPages;
+	        const nextGroupFirstPage = isLastGroup ? maxPages : currentGroup * pagesPerGroup + 1;
+	        
 	        paginationHTML.push(
 	            '<button class="w-8 h-8 rounded-e border border-gray-1 ' +
-	            (isLastPage ? 'text-gray-1 hover:bg-gray-2 cursor-not-allowed' : 'hover:bg-gray-2') + '"' +
-	            (isLastPage ? ' disabled' : '') +
-	            ' onclick="changePointPage(' + maxPages + ')" title="맨 마지막 페이지">&gt;&gt;</button>'
+	            (isLastGroup ? 'text-gray-1 hover:bg-gray-2 cursor-not-allowed' : 'hover:bg-gray-2') + '"' +
+	            (isLastGroup ? ' disabled' : '') +
+	            ' onclick="changePointPage(' + nextGroupFirstPage + ')" title="다음 그룹">&gt;&gt;</button>'
 	        );
 	        
 	        paginationContainer.html(paginationHTML.join(""));
 	    }
+	 
 	 	
 	 	// 날짜 포맷팅 함수 (yyyy.mm.dd)
 		function formatDate(dateStr) {
