@@ -93,10 +93,9 @@ function players(roomPlayers, callback) {
 }
 
 function renderGameDetail(room, roomPlayers) {
-    console.log('== renderGameDetail 실행 ==', Date.now());
     // 1. 난이도, 거북이 수 등
     const difficulty = room.level;
-    const turtleCount = difficultyMap[difficulty]?.count;  
+    const turtleCount = (difficultyMap[difficulty] ? difficultyMap[difficulty].count : undefined);  
     // 3. 사용자 베팅, 포인트, 선택 등
     const myInfo = roomPlayers.find(p => p.user_uid === userId);
     if(!myInfo) {
@@ -144,21 +143,10 @@ function connectGameWebSocket(roomId) {
     ws = new WebSocket(`ws://${location.host}/ws/game/turtle/${roomId}?token=${encodeURIComponent(token)}`);
    
     ws.onopen = function() {
-        console.log("WS 연결 성공");
     }
 
     ws.onmessage = function(event) {
         const msg = JSON.parse(event.data);
-        // 게임 시작
-        // if(msg.type === "game_start") {
-        //     console.log("msg : ", msg);
-        //     const totalBetAmount = msg.totalBet;
-        //     showCountdownOverlay(5, totalBetAmount, () => {
-        //         // if(isHost) {
-        //         //     ws.send(JSON.stringify({ type: "game_start", roomId }));
-        //         // }
-        //     });
-        // }
         // 방장이 퇴장했을 때 방장 변경
         if(msg.type === "host_changed") {
             isHost = (userId === msg.newHostUid);
@@ -169,10 +157,7 @@ function connectGameWebSocket(roomId) {
         }
         // 경기 종료
         if(msg.type === "race_finish" && turtleGame) {
-            console.log("msg.results : ", msg.results);
-            console.log("userId : ", userId);
             const myResult = msg.results.find(r => r.user_uid === userId);
-            console.log("myResult : ", myResult);
             turtleGame.finishRace(msg, myResult);
         }
         // 중간 퇴장
@@ -204,12 +189,6 @@ function showCountdownOverlay(startNum, callback, totalBetAmount) {
     const step = () => {
         if (count > 0) {
             overlay.innerText = count;
-    //          `
-    //     <div style="text-align:center;">
-    //         <div id="countText">${count}</div>
-    //         <div style="font-size:2.5vw; margin-top:1vw;">이번 판 총 베팅금액: <b>${(totalBetAmount || 0).toLocaleString()}</b> 포인트</div>
-    //     </div>
-    // `;
             count--;
             setTimeout(step, 1000);
         } else {
@@ -256,7 +235,6 @@ class TurtleRacingGame {
             this.turtles.push({ id: i, name: `${this.numbers[i]} 거북이`, class: `${this.numbers[i]}-turtle` });
         }
         this.renderTrack();
-        console.log("내 선택:", selectedTurtle);
         this.selectTurtle(this.selectedTurtle);
         showCountdownOverlay(3, () => {
             if(isHost) {
@@ -492,7 +470,6 @@ class TurtleRacingGame {
         const selectedTurtle = this.selectedTurtle;
         // ---- 패닝/애니메이션용 ----
         const winnerPx = START_MARGIN + TRACK_LENGTH + END_MARGIN / 2 + TURTLE_GAP * 2;
-        console.log(winnerPx);
         if (this.turtleElements[winner]) {
             this.turtleElements[winner].style.left = winnerPx + 'px';
             this.displayedPositions[winner] = winnerPx + 'px';
