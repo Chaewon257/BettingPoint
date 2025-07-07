@@ -364,15 +364,27 @@
 					}));
 				});
 
-				$(document).on('blur', '#bet_point', function() {
-				    let point = parseInt($(this).val(), 10);
-				    if (isNaN(point) || point <= 0) {
-					  $(this).val('');
-					  return;
-				    }
 
-				    point = Math.floor(point / 100) * 100;
-				    $(this).val(point);
+				$(document).on('blur', '#bet_point', function() {
+					let value = parseInt($(this).val(), 10);
+					const INT_MAX = 2147483600;
+
+					if (isNaN(value) || value <= 0) {
+						$(this).val('');
+						return;
+					}
+
+					if(value > INT_MAX) {
+						value = INT_MAX;
+					}
+
+					if(value > point_balance) {
+						value = point_balance;
+					}
+
+					value = Math.floor(value / 100) * 100;
+
+					$(this).val(value);
 
 				    if (!point || point <= 0) {
 					  $("#errorMessage").text('베팅 포인트를 입력하세요.');
