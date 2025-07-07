@@ -338,6 +338,10 @@
 		       		};
 		      	
 		      	const token = localStorage.getItem("accessToken");
+
+				// 버튼 비활성화
+				const $btn = $(this);
+				$btn.prop('disabled', true).text('생성 중...');
 		      	
 		      	$.ajax({
 		        	url: '/api/gameroom/insert',
@@ -349,7 +353,11 @@
 		            },
 		            success: function(roomId) {
 		                location.href = '/gameroom/detail/' + roomId;
-		            }
+		            },
+					error: function() {
+						error.textContent = "게임방 생성에 실패했습니다. 관리자에게 문의하세요.";
+						$btn.prop('disabled', false).text('게임방 생성');
+					}
 		        });
 		    });
 
