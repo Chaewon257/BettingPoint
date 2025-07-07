@@ -3,7 +3,7 @@
 <script type="text/javascript">
    	function chatWidth() {
    	    const screenWidth = $(window).width();
-   	 	const screenHeight = window.screen.height * 0.6;
+   	 	const screenHeight = window.screen.height;
    	 	   	 	
    	 	if(screenHeight < 365) {
    	 		$("#chatbotContainer").addClass("right-0 w-full");
