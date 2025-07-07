@@ -104,7 +104,7 @@
 		              			<div class="grow text-ts-18 sm:text-ts-20 md:text-ts-24 lg:text-ts-28 font-bold truncate">
 		                			\${room.title}
 		              			</div>
-		              			<div class="min-w-12 text-ts-14 sm:text-ts-18 md:text-ts-20 lg:text-ts-24 font-bold text-gray-9">
+		              			<div class="roomCount min-w-12 text-ts-14 sm:text-ts-18 md:text-ts-20 lg:text-ts-24 font-bold text-gray-9">
 		                			\${room.count} / 8
 		              			</div>
 		            		</div>
@@ -112,7 +112,7 @@
 		            			<div class="w-full grid grid-cols-2 items-center">
 		              				<div class="flex items-center sm:min-w-56 justify-between text-gray-7 text-base md:text-lg">
 		                				<span>최소 베팅 금액</span>
-		                				<span class="text-black">\${room.min_bet}</span>
+		                				<span class="roomMinBet text-black">\${room.min_bet}</span>
 		                				<span>point</span>
 		              				</div>
 		              				<div class="w-full text-end text-lg md:text-xl text-blue-2 font-bold">
@@ -126,13 +126,22 @@
 		
 		      		$(".game-room").on("click", function () {
 				  		const roomStatus = $(this).data("status");
+						const roomId = $(this).data("room-id");
+						const roomCount = Number($(this).find(".roomCount").text().split("/")[0].trim());
+						const roomMinBet = Number($(this).find(".roomMinBet").text().trim());
 
-				  		if(roomStatus !== "PLAYING") {
-					  		const roomId = $(this).data("room-id");
-					  		window.location.href = `/gameroom/detail/\${roomId}`;
-				  		} else {
-					  		alert("진행중인 게임방입니다.");
+				  		if(roomStatus === "PLAYING") {
+							alert("진행중인 게임방입니다.");
 				  		}
+						if (roomCount >= 8) {
+							alert("정원이 가득 찬 방입니다.");
+							return;
+						}
+						if (point_balance < roomMinBet) {
+							alert(`최소 \${roomMinBet.toLocaleString()} 포인트 이상 보유 시 입장할 수 있습니다.`);
+							return;
+						}
+						window.location.href = `/gameroom/detail/\${roomId}`;
 		      		});
 		    	}
 		
