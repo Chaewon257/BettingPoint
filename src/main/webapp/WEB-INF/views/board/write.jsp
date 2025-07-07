@@ -86,7 +86,14 @@
     </div>
     <script>
 		  const boardId = "${boardId}";
-		
+		  
+		// 1) 제한 용량 정의 (예: 30KB)
+		  const MAX_TOTAL_BYTES = 30 * 1024;
+
+		  // 2) 이미지 누적 바이트 (이미 업로드된 이미지들 크기 합)
+		  let totalImageBytes = 0;
+//		      — onImageUpload 콜백에서 totalImageBytes += file.size;
+
 		  $(document).ready(function () {
 			  
 		    // 1) Summernote 초기화
@@ -182,9 +189,24 @@
 		    })();
 		    </c:if>
 		
-		    // 4) 폼 제출 처리
-		    $('#insertForm').on('submit', function (e) {
+		 // 3) 폼 제출 전에 전체 용량 검사
+		    $('#insertForm').on('submit', function(e) {
 		      e.preventDefault();
+		      
+		      // (A) 에디터 HTML 바이트 계산
+		      const contentHtml = $('#summernote').summernote('code');
+		      const htmlBytes = new Blob([contentHtml], { type: 'text/html' }).size;
+		      
+		      // (B) 전체 바이트 합
+		      const totalBytes = htmlBytes + totalImageBytes;
+		      
+		      // (C) 검사 & 경고
+		      if (totalBytes > MAX_TOTAL_BYTES) {
+		        alert(`전체 용량이 \${(MAX_TOTAL_BYTES/1024)}KB를 초과했습니다. 현재 \${(totalBytes/1024).toFixed(1)}KB입니다.`);
+		        return;  // 제출 중단
+		      }
+		      
+		      
 		      const token = localStorage.getItem("accessToken");
 		      if (!token) {
 		        alert("로그인이 필요합니다.");
@@ -220,7 +242,7 @@
 		          location.href = "/board";
 		        },
 		        error: function () {
-		          alert("게시글이 ${mode == 'update' ? '수정' : '등록'} 되었습니다.");
+		          alert("게시글 ${mode == 'update' ? '수정' : '등록'}을 실패했습니다.");
 		        }
 		      });
 		    });
