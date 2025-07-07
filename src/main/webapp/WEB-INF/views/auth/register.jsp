@@ -139,11 +139,28 @@
 		    	}
 		    });
 
+			let verificationRequested = false;
+
+			/* 이메일 입력 시 상태 초기화 */
+			document.getElementById('email').addEventListener('input', function () {
+				const requestBtn = document.getElementById('requestVerificationBtn');
+				const verifyBtn = document.getElementById('verifyCodeBtn');
+				const codeInput = document.getElementById('verificationCodeInput');
+				const emailVerified = document.getElementById('emailVerified');
+
+				verificationRequested = false;
+				requestBtn.disabled = false;
+				verifyBtn.disabled = false;
+				codeInput.disabled = false;
+				emailVerified.checked = false;
+			});
+
 			/* 이메일 인증번호 요청 */
 			document.getElementById('requestVerificationBtn').addEventListener('click', function () {
 				const emailInput = document.getElementById('email');
 				const emailVal = emailInput.value.trim();
 				const error = document.getElementById('errorMessage');
+				const requestBtn = document.getElementById('requestVerificationBtn');
 
 				if (!emailVal) {
 					error.textContent = "이메일을 입력해주세요.";
@@ -154,6 +171,8 @@
 					emailInput.classList.add("border-gray-5");
 				}
 
+				requestBtn.disabled = true;
+
 				$.ajax({
 					url: '/api/email/request',
 					type: 'POST',
@@ -161,9 +180,11 @@
 					data: JSON.stringify({ email: emailVal }),
 					success: function (res) {
 						alert(res); // "인증번호가 이메일로 발송되었습니다." 표시
+						verificationRequested = true;
 					},
 					error: function () {
 						error.textContent = "인증번호 요청 중 오류가 발생했습니다.";
+						requestBtn.disabled = false;
 					}
 				});
 			});
@@ -174,6 +195,8 @@
 				const codeInput = document.getElementById('verificationCodeInput');
 				const emailVerified = document.getElementById('emailVerified');
 				const error = document.getElementById('errorMessage');
+				const verifyBtn = document.getElementById('verifyCodeBtn');
+				const requestBtn = document.getElementById('requestVerificationBtn');
 
 				const emailVal = emailInput.value.trim();
 				const codeVal = codeInput.value.trim();
@@ -195,6 +218,10 @@
 					success: function (res) {
 						alert(res); // "이메일 인증이 완료되었습니다."
 						emailVerified.checked = true;
+
+						requestBtn.disabled = true;
+						codeInput.disabled = true;
+						verifyBtn.disabled = true;
 					},
 					error: function () {
 						error.textContent = "인증번호 확인 중 오류가 발생했습니다.";
