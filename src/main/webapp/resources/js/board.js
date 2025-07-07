@@ -82,16 +82,17 @@ function renderPaging(current, totalCount) {
 
   const html = [];
 
-  // << (처음)
+  // << (이전 블록)
   html.push(`
     <button
       class="w-8 h-8 border border-gray-1 rounded-s
-             ${current === 1 ? 'text-gray-1 cursor-not-allowed' : 'hover:bg-gray-2'}"
-      ${current === 1 ? 'disabled' : ''}
-      onclick="loadBoardList(1, '${currentCategory}', '${currentSort}')">
+             ${startPage === 1 ? 'text-gray-1 cursor-not-allowed' : 'hover:bg-gray-2'}"
+      ${startPage === 1 ? 'disabled' : ''}
+      onclick="loadBoardList(${prevBlockPage}, '${currentCategory}', '${currentSort}')">
       &laquo;
     </button>
   `);
+
 
   // < (이전 페이지)
   html.push(`
