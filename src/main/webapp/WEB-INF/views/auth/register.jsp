@@ -48,7 +48,7 @@
 		  						<span class="text-xs text-gray-6 pl-1">닉네임</span>
 		  						<div class="w-full flex items-center gap-x-2 mb-2">
 		  							<input type="text" id="nickname" name="nickname" class="grow px-4 py-2 text-xs outline-none bg-gray-4 rounded-full border border-gray-5" placeholder="닉네임" required>
-		  							<button id="verifyNicknamebtn" class="px-3 py-2 text-xs rounded-full border border-blue-3 bg-blue-3 text-white hover:border-blue-2 hover:bg-blue-1">중복검사</button>
+		  							<button id="verifyNicknamebtn" class="px-3 py-2 text-xs rounded-full border border-blue-3 bg-blue-3 text-white hover:border-blue-2 hover:bg-blue-1">중복검사요청</button>
 		  							<input id="verifyNickname" type="checkbox" class="absolute w-0 h-0" >
 		  						</div>
 		  					</div>
@@ -141,6 +141,10 @@
 
 			/* 이메일 인증번호 요청 */
 			document.getElementById('requestVerificationBtn').addEventListener('click', function () {
+				const requestVerificationBtn = document.getElementById('requestVerificationBtn');
+				requestVerificationBtn.disabled = true;
+				requestVerificationBtn.textContent = "요청중입니다";
+				
 				const emailInput = document.getElementById('email');
 				const emailVal = emailInput.value.trim();
 				const error = document.getElementById('errorMessage');
@@ -164,18 +168,26 @@
 					},
 					error: function () {
 						error.textContent = "인증번호 요청 중 오류가 발생했습니다.";
-					}
+					},
+					complete: function () {
+			            // 성공하든 실패하든 버튼 복구
+			            requestVerificationBtn.disabled = false;
+			            requestVerificationBtn.textContent = "인증번호요청";
+			        }
 				});
 			});
 
 			/* 이메일 인증번호 확인 */
-			document.getElementById('verifyCodeBtn').addEventListener('click', function () {
+			document.getElementById('verifyCodeBtn').addEventListener('click', function () {				
 				const emailInput = document.getElementById('email'); 
 				const requestVerificationBtn = document.getElementById('requestVerificationBtn'); 
 				const codeInput = document.getElementById('verificationCodeInput');
 				const verifyCodeBtn = document.getElementById('verifyCodeBtn');
 				const emailVerified = document.getElementById('emailVerified');
 				const error = document.getElementById('errorMessage');
+				
+				verifyCodeBtn.disabled = true;
+				verifyCodeBtn.textContent = "확인중입니다";
 
 				const emailVal = emailInput.value.trim();
 				const codeVal = codeInput.value.trim();
@@ -207,15 +219,22 @@
 						requestVerificationBtn.classList.add("cursor-not-allowed", "bg-gray-2", "text-gray-400", "border-gray-400");
 						verifyCodeBtn.disabled = true;
 						verifyCodeBtn.classList.add("cursor-not-allowed", "bg-gray-2", "text-gray-400", "border-gray-400");
+			            verifyCodeBtn.textContent = "인증번호확인";
 					},
 					error: function () {
 						error.textContent = "인증번호 확인 중 오류가 발생했습니다.";
+						verifyCodeBtn.disabled = false;
+			            verifyCodeBtn.textContent = "인증번호확인";
 					}
 				});
 			});
 		    
 		    /* 닉네임 중복 확인 이벤트 */
 		    document.getElementById('verifyNicknamebtn').addEventListener('click', function (e) {
+		    	const verifyNicknamebtn = document.getElementById('verifyNicknamebtn');
+		    	verifyNicknamebtn.disabled = true;
+		    	verifyNicknamebtn.textContent = "검사중입니다";
+		    	
 		        const error = document.getElementById('errorMessage');
 		        error.textContent = "";
 
@@ -251,12 +270,21 @@
 		            },
 		            error: function () {
 		                error.textContent = "닉네임 확인 중 오류가 발생했습니다.";
-		            }
+		            },
+		            complete: function () {
+			            // 성공하든 실패하든 버튼 복구
+			            verifyNicknamebtn.disabled = false;
+			            verifyNicknamebtn.textContent = "중복검사요청";
+			        }
 		        });
 		    });
 		    
 		    /* 회원가입 입력 유효성 검사 */
 		    document.getElementById('registerSubmit').addEventListener('click', function (e) {
+		    	const registerSubmit = document.getElementById('registerSubmit');
+		    	registerSubmit.disabled = true;
+		    	registerSubmit.textContent = "회원가입 중..";
+		    	
 			    e.preventDefault();
 			    const error = document.getElementById('errorMessage');
 			    error.textContent = "";
@@ -401,7 +429,12 @@
 		          	error: function (xhr) {
 		    			const message = xhr.responseText || '회원가입 실패';
 		    			error.textContent = message;
-		    		}
+		    		},
+		    		complete: function () {
+			            // 성공하든 실패하든 버튼 복구
+			            registerSubmit.disabled = false;
+			            registerSubmit.textContent = "회원가입";
+			        }
 		        });
 		    });
 		    
