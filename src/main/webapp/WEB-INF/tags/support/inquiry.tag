@@ -21,6 +21,8 @@
 				lang : "ko-KR",
 				shortcuts: false, //단축키 비활성화
 		        placeholder: '최대 2048자까지 쓸 수 있습니다',
+		        fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New',
+		        			'맑은 고딕','궁서','굴림체','굴림','돋움체','바탕체'],
 		        toolbar: [
 		            	// 글꼴 
 		                [ 'fontname', ['fontname']],
@@ -39,7 +41,7 @@
 		                // 코드 보기
 		                ['view', ['codeview']],   
 		            ],
-		            fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New','맑은 고딕','궁서','굴림체','굴림','돋움체','바탕체'],
+		            
 					
 				placeholder : '최대 2048자까지 쓸 수 있습니다'
 			});
