@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -46,7 +47,7 @@ public class AuthRestController {
 
 			return ResponseEntity.ok().header("Set-Cookie", cookie.toString()).body(new LoginResponse(accessToken, "로그인 성공"));
 		} catch (AuthException error) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error.getMessage());
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.valueOf("text/plain;charset=UTF-8")).body(error.getMessage());
 		}
 	}
 
