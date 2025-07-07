@@ -3,9 +3,14 @@
 <script type="text/javascript">
    	function chatWidth() {
    	    const screenWidth = $(window).width();
-   	 	const screenHeight = $(window).height() * 0.8;
-   	 	
-   	 	$("#chatbotContainer").css("max-height", `\${screenWidth}px`);
+   	 	const screenHeight = window.screen.height * 0.6;
+   	 	   	 	
+   	 	if(screenHeight < 365) {
+   	 		$("#chatbotContainer").addClass("right-0 w-full");
+   	   	 	$("#chatbotContainer").css("max-height", `\${screenHeight * 0.8}px`);
+   	 	} else {
+   	   	 	$("#chatbotContainer").css("max-height", `\${screenHeight * 0.6}px`);
+   	 	}
 
    	    if (screenWidth < 408) {
    	  		// 버튼 스타일 업데이트
@@ -212,7 +217,7 @@
 </script>
 <button
 	id="chatbotToggle"
-	class="fixed bottom-6 right-6 w-16 h-16 p-2 flex flex-col items-center justify-center bg-[#FFE29E] text-white rounded-full shadow-lg hover:bg-[#F1B752] focus:outline-none focus:ring-4 focus:ring-[#F1B752] z-50 animate-bounce-custom transition-all duration-300 ease-in-out"
+	class="fixed bottom-6 right-6 w-16 h-16 p-2 flex flex-col items-center justify-center bg-[#FFE29E] text-white rounded-full shadow-lg hover:bg-[#F1B752] focus:outline-none focus:ring-4 focus:ring-[#F1B752] z-[999] animate-bounce-custom transition-all duration-300 ease-in-out"
 	onclick="document.getElementById('chatbotContainer').classList.toggle('hidden')"
 >
 	<img id="chatIcon" src="${cpath}/resources/images/chatbot.png" alt="chatbot" class="w-full h-full transition-all duration-200" />
