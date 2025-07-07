@@ -1,7 +1,6 @@
 <%@ tag language="java" pageEncoding="UTF-8"%>
 <%@ taglib prefix="ui" tagdir="/WEB-INF/tags"%>
 
-<link rel="icon" href="https://static.toss.im/icons/png/4x/icon-toss-logo.png" />
 <script src="https://js.tosspayments.com/v2/standard"></script>
 <div data-content="info" class="tab-content w-full flex flex-col gap-y-8 my-4">
 	<div class="w-full flex flex-col gap-y-5 md:flex-row md:gap-x-5 lg:gap-x-10 rounded-lg bg-gray-10 p-4 sm:p-6 md:p-8 lg:p-10">
@@ -148,6 +147,27 @@
             $("#pointBalance").text(user.point_balance.toLocaleString() || "0");
             $("#profileImage").attr("src", user.profile_img || "/resources/images/profile_default_image.png")
             				  .attr("data-key", user.profile_img || "");
+		}
+		
+		 
+	    // 포인트 충전 모달이 닫힐 때 잔액 갱신
+		// 4) 모달 닫힐 때마다 포인트 갱신 관찰자
+		const chargeModal = document.getElementById("chargePointModal");
+		if (chargeModal) {
+		  const observer = new MutationObserver(mutations => {
+		    mutations.forEach(mutation => {
+		      // 속성 변화 중 class가 바뀌었고, hidden이 포함됐다면 닫힌 상태
+		      if (
+		        mutation.type === "attributes" &&
+		        mutation.attributeName === "class" &&
+		        chargeModal.classList.contains("hidden")
+		      ) {
+		        // 다시 서버 호출해서 잔액만 업데이트
+		        getUserInfo().done(renderUserInfo);
+		      }
+		    });
+		  });
+		  observer.observe(chargeModal, { attributes: true });
 		}
 	});
 	
