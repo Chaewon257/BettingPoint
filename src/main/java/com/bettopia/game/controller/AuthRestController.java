@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -46,7 +47,7 @@ public class AuthRestController {
 
 			return ResponseEntity.ok().header("Set-Cookie", cookie.toString()).body(new LoginResponse(accessToken, "로그인 성공"));
 		} catch (AuthException error) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error.getMessage());
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.valueOf("text/plain;charset=UTF-8")).body(error.getMessage());
 		}
 	}
 
@@ -66,40 +67,40 @@ public class AuthRestController {
 				|| isBlank(dto.getNickname())
 				|| isBlank(dto.getBirth_date())
 				|| isBlank(dto.getPhone_number())) {
-			return ResponseEntity.badRequest().body("모든 필수 항목을 입력해주세요.");
+			return ResponseEntity.badRequest().contentType(MediaType.valueOf("text/plain;charset=UTF-8")).body("모든 필수 항목을 입력해주세요.");
 		}
 
 		// 이메일 중복 검사
 		if (authService.isEmailExists(dto.getEmail())) {
-			return ResponseEntity.badRequest().body("이미 사용 중인 이메일입니다.");
+			return ResponseEntity.badRequest().contentType(MediaType.valueOf("text/plain;charset=UTF-8")).body("이미 사용 중인 이메일입니다.");
 		}
 
 		// 닉네임 중복 검사
 		if (authService.isNicknameExists(dto.getNickname())) {
-			return ResponseEntity.badRequest().body("이미 사용 중인 닉네임입니다.");
+			return ResponseEntity.badRequest().contentType(MediaType.valueOf("text/plain;charset=UTF-8")).body("이미 사용 중인 닉네임입니다.");
 		}
 
 		// 비밀번호 일치 검사
 		if (!dto.getPassword().equals(dto.getPassword_check())) {
-			return ResponseEntity.badRequest().body("비밀번호가 일치하지 않습니다.");
+			return ResponseEntity.badRequest().contentType(MediaType.valueOf("text/plain;charset=UTF-8")).body("비밀번호가 일치하지 않습니다.");
 		}
 
 		// 비밀번호 정규식 검사 (6~8자, 대문자, 소문자, 숫자, 특수문자)
 		String passwordPattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*])[A-Za-z\\d!@#$%^&*]{6,}$";
 		
 		if (!Pattern.matches(passwordPattern, dto.getPassword())) {
-			return ResponseEntity.badRequest().body("비밀번호는 6~8자의 대소문자, 숫자, 특수문자를 포함해야 합니다.");
+			return ResponseEntity.badRequest().contentType(MediaType.valueOf("text/plain;charset=UTF-8")).body("비밀번호는 6~8자의 대소문자, 숫자, 특수문자를 포함해야 합니다.");
 		}
 
 		// 전화번호 형식 검사
 		String phonePattern = "^010-\\d{4}-\\d{4}$";
 		
 		if (!Pattern.matches(phonePattern, dto.getPhone_number())) {
-			return ResponseEntity.badRequest().body("전화번호 형식이 올바르지 않습니다. (예: 010-0000-0000)");
+			return ResponseEntity.badRequest().contentType(MediaType.valueOf("text/plain;charset=UTF-8")).body("전화번호 형식이 올바르지 않습니다. (예: 010-0000-0000)");
 		}
 		
 		if(authService.isPhoneNumberExists(dto.getPhone_number())) {
-			return ResponseEntity.badRequest().body("이미 가입한 전화번호입니다.");
+			return ResponseEntity.badRequest().contentType(MediaType.valueOf("text/plain;charset=UTF-8")).body("이미 가입한 전화번호입니다.");
 		}
 
 		// 생년월일로 만 19세 이상인지 검사
@@ -123,15 +124,15 @@ public class AuthRestController {
 	    }
 
 	    if (age < 19) {
-	        return ResponseEntity.badRequest().body("만 19세 이상만 가입할 수 있습니다.");
+	        return ResponseEntity.badRequest().contentType(MediaType.valueOf("text/plain;charset=UTF-8")).body("만 19세 이상만 가입할 수 있습니다.");
 	    }
 		} catch (Exception e) {
-			return ResponseEntity.badRequest().body("유효한 생년월일을 입력해주세요.");
+			return ResponseEntity.badRequest().contentType(MediaType.valueOf("text/plain;charset=UTF-8")).body("유효한 생년월일을 입력해주세요.");
 		}
 
 		// 개인정보 수집 동의
 		if (!dto.isAgree_privacy()) {
-			return ResponseEntity.badRequest().body("개인정보 수집 및 이용에 동의해야 가입할 수 있습니다.");
+			return ResponseEntity.badRequest().contentType(MediaType.valueOf("text/plain;charset=UTF-8")).body("개인정보 수집 및 이용에 동의해야 가입할 수 있습니다.");
 		}
 
 		authService.register(dto);
@@ -147,15 +148,15 @@ public class AuthRestController {
 				ResponseCookie cookie = ResponseCookie.from("refreshToken", "").path("/").httpOnly(true).maxAge(0) // 삭제
 						.build();
 
-				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).header("Set-Cookie", cookie.toString()).body("토큰이 없습니다.");
+				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).header("Set-Cookie", cookie.toString()).contentType(MediaType.valueOf("text/plain;charset=UTF-8")).body("토큰이 없습니다.");
 			}
 
 			String refreshToken = authHeader.substring(7);
 			String accessToken = authService.reissue(refreshToken);
 
-			return ResponseEntity.status(HttpStatus.OK).body(new LoginResponse(accessToken, "토큰 재발급"));
+			return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.valueOf("text/plain;charset=UTF-8")).body(new LoginResponse(accessToken, "토큰 재발급"));
 		} catch (AuthException error) {
-			return ResponseEntity.status(401).body(error.getMessage());
+			return ResponseEntity.status(401).contentType(MediaType.valueOf("text/plain;charset=UTF-8")).body(error.getMessage());
 		}
 	}
 
