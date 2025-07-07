@@ -18,7 +18,7 @@
 	  				<div class="text-ts-24 mb-4">회원가입</div>
 		  				<div id="registerForm" class="w-full flex flex-col mb-4">
 		  					<div class="flex flex-col items-start gap-y-1">
-		  						<span class="text-xs text-gray-6 pl-1">이메일</span>
+		  						<span class="text-xs text-gray-6 pl-1">사용자 ID (Email)</span>
 		  						<div class="w-full flex items-center gap-x-2 mb-2">
 		  							<input type="email" id="email" name="email" class="grow px-4 py-2 text-xs outline-none bg-gray-4 rounded-full border border-gray-5" placeholder="사용자 ID(Email)" required>
 		  							<button id="requestVerificationBtn" class="px-3 py-2 text-xs rounded-full border border-blue-3 bg-blue-3 text-white hover:border-blue-2 hover:bg-blue-1">인증번호요청</button>
@@ -48,7 +48,7 @@
 		  						<span class="text-xs text-gray-6 pl-1">닉네임</span>
 		  						<div class="w-full flex items-center gap-x-2 mb-2">
 		  							<input type="text" id="nickname" name="nickname" class="grow px-4 py-2 text-xs outline-none bg-gray-4 rounded-full border border-gray-5" placeholder="닉네임" required>
-		  							<button id="verifyNicknamebtn" class="px-3 py-2 text-xs rounded-full border border-blue-3 bg-blue-3 text-white hover:border-blue-2 hover:bg-blue-1">중복검사</button>
+		  							<button id="verifyNicknamebtn" class="px-3 py-2 text-xs rounded-full border border-blue-3 bg-blue-3 text-white hover:border-blue-2 hover:bg-blue-1">중복검사요청</button>
 		  							<input id="verifyNickname" type="checkbox" class="absolute w-0 h-0" >
 		  						</div>
 		  					</div>
@@ -141,6 +141,10 @@
 
 			/* 이메일 인증번호 요청 */
 			document.getElementById('requestVerificationBtn').addEventListener('click', function () {
+				const requestVerificationBtn = document.getElementById('requestVerificationBtn');
+				requestVerificationBtn.disabled = true;
+				requestVerificationBtn.textContent = "요청중입니다";
+				
 				const emailInput = document.getElementById('email');
 				const emailVal = emailInput.value.trim();
 				const error = document.getElementById('errorMessage');
@@ -164,16 +168,26 @@
 					},
 					error: function () {
 						error.textContent = "인증번호 요청 중 오류가 발생했습니다.";
-					}
+					},
+					complete: function () {
+			            // 성공하든 실패하든 버튼 복구
+			            requestVerificationBtn.disabled = false;
+			            requestVerificationBtn.textContent = "인증번호요청";
+			        }
 				});
 			});
 
 			/* 이메일 인증번호 확인 */
-			document.getElementById('verifyCodeBtn').addEventListener('click', function () {
-				const emailInput = document.getElementById('email');
+			document.getElementById('verifyCodeBtn').addEventListener('click', function () {				
+				const emailInput = document.getElementById('email'); 
+				const requestVerificationBtn = document.getElementById('requestVerificationBtn'); 
 				const codeInput = document.getElementById('verificationCodeInput');
+				const verifyCodeBtn = document.getElementById('verifyCodeBtn');
 				const emailVerified = document.getElementById('emailVerified');
 				const error = document.getElementById('errorMessage');
+				
+				verifyCodeBtn.disabled = true;
+				verifyCodeBtn.textContent = "확인중입니다";
 
 				const emailVal = emailInput.value.trim();
 				const codeVal = codeInput.value.trim();
@@ -195,15 +209,32 @@
 					success: function (res) {
 						alert(res); // "이메일 인증이 완료되었습니다."
 						emailVerified.checked = true;
+						
+						emailInput.readOnly = true;
+						emailInput.classList.add("cursor-not-allowed", "bg-gray-4");
+						codeInput.readOnly = true;
+						codeInput.classList.add("cursor-not-allowed", "bg-gray-4");
+						
+						requestVerificationBtn.disabled = true;
+						requestVerificationBtn.classList.add("cursor-not-allowed", "bg-gray-2", "text-gray-400", "border-gray-400");
+						verifyCodeBtn.disabled = true;
+						verifyCodeBtn.classList.add("cursor-not-allowed", "bg-gray-2", "text-gray-400", "border-gray-400");
+			            verifyCodeBtn.textContent = "인증번호확인";
 					},
 					error: function () {
 						error.textContent = "인증번호 확인 중 오류가 발생했습니다.";
+						verifyCodeBtn.disabled = false;
+			            verifyCodeBtn.textContent = "인증번호확인";
 					}
 				});
 			});
 		    
 		    /* 닉네임 중복 확인 이벤트 */
 		    document.getElementById('verifyNicknamebtn').addEventListener('click', function (e) {
+		    	const verifyNicknamebtn = document.getElementById('verifyNicknamebtn');
+		    	verifyNicknamebtn.disabled = true;
+		    	verifyNicknamebtn.textContent = "검사중입니다";
+		    	
 		        const error = document.getElementById('errorMessage');
 		        error.textContent = "";
 
@@ -239,18 +270,28 @@
 		            },
 		            error: function () {
 		                error.textContent = "닉네임 확인 중 오류가 발생했습니다.";
-		            }
+		            },
+		            complete: function () {
+			            // 성공하든 실패하든 버튼 복구
+			            verifyNicknamebtn.disabled = false;
+			            verifyNicknamebtn.textContent = "중복검사요청";
+			        }
 		        });
 		    });
 		    
 		    /* 회원가입 입력 유효성 검사 */
 		    document.getElementById('registerSubmit').addEventListener('click', function (e) {
+		    	const registerSubmit = document.getElementById('registerSubmit');
+		    	registerSubmit.disabled = true;
+		    	registerSubmit.textContent = "회원가입 중..";
+		    	
 			    e.preventDefault();
 			    const error = document.getElementById('errorMessage');
 			    error.textContent = "";
 		
 			    const email = document.getElementById('email');
 				const emailVerified = document.getElementById('emailVerified');
+				const verificationCodeInput = document.getElementById('verificationCodeInput');
 			    const password = document.getElementById('password');
 			    const passwordCheck = document.getElementById('passwordCheck');
 			    const name = document.getElementById('name');
@@ -262,10 +303,32 @@
 			    const agreePrivacy = document.getElementById('agreePrivacy');
 				const age = new Date().getFullYear() - birthDateVal.getFullYear();
 
+				if(email.value === '') {
+					email.classList.remove("border-gray-5");
+					email.classList.add("border-red-600");
+		        	
+		        	error.textContent = "이메일을 입력해야합니다.";
+		        	return;
+		        } else {
+		        	email.classList.remove("border-red-600");
+		        	email.classList.add("border-gray-5");
+		        }
+				
 				if (!emailVerified.checked) {
 					error.textContent = "이메일 인증을 완료해야 합니다.";
 					return;
 				}
+				
+				if(verificationCodeInput.value === '') {
+					verificationCodeInput.classList.remove("border-gray-5");
+					verificationCodeInput.classList.add("border-red-600");
+		        	
+		        	error.textContent = "인증번호를 입력해야합니다.";
+		        	return;
+		        } else {
+		        	verificationCodeInput.classList.remove("border-red-600");
+		        	verificationCodeInput.classList.add("border-gray-5");
+		        }
 
 				if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{6,}$/.test(password.value)) {
 					password.classList.remove("border-gray-5");
@@ -298,6 +361,17 @@
 		        } else {
 		        	name.classList.remove("border-red-600");
 		        	name.classList.add("border-gray-5");
+		        }
+		        
+		        if(nickname.value === '') {
+		        	nickname.classList.remove("border-gray-5");
+		        	nickname.classList.add("border-red-600");
+		        	
+		        	error.textContent = "닉네임을 입력해야합니다.";
+		        	return;
+		        } else {
+		        	nickname.classList.remove("border-red-600");
+		        	nickname.classList.add("border-gray-5");
 		        }
 		        
 		        if (!verifyNickname.checked) {
@@ -355,9 +429,35 @@
 		          	error: function (xhr) {
 		    			const message = xhr.responseText || '회원가입 실패';
 		    			error.textContent = message;
-		    		}
+		    		},
+		    		complete: function () {
+			            // 성공하든 실패하든 버튼 복구
+			            registerSubmit.disabled = false;
+			            registerSubmit.textContent = "회원가입";
+			        }
 		        });
 		    });
+		    
+		    $(document).ready(function () {
+		   		$("#nickname").on("input", function () {
+		    		$("#verifyNickname").prop("checked", false);
+		    	});
+
+		    	
+			    $("#phoneNumber").on("input", function () {
+			        let number = $(this).val().replace(/[^0-9]/g, ""); // 숫자만 남기기
+			
+			        if (number.length < 4) {
+			            $(this).val(number);
+			        } else if (number.length < 7) {
+			            $(this).val(number.slice(0, 3) + "-" + number.slice(3));
+			        } else if (number.length < 11) {
+			            $(this).val(number.slice(0, 3) + "-" + number.slice(3, 6) + "-" + number.slice(6));
+			        } else {
+			            $(this).val(number.slice(0, 3) + "-" + number.slice(3, 7) + "-" + number.slice(7, 11));
+			        }
+			    });
+			});
 	  	</script>
 	</jsp:attribute>
 </ui:layout>
