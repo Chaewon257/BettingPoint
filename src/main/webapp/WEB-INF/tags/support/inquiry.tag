@@ -21,7 +21,7 @@
 				lang : "ko-KR",
 				toolbar: [
 	            	// 글꼴 
-	                ['fontname', ['fontname']],
+	                [ 'fontname', ['fontname']],
 	                // 글자 크기 설정
 	                ['fontsize', ['fontsize']],
 	                // 글꼴 스타일
@@ -30,8 +30,13 @@
 	                ['color', ['color']],
 	                // 문단 스타일
 	                ['para', ['paragraph']],
+	                // 글 높낮이 간격
+	                ['height', ['height']],
+	            	// 이미지 삽입
+	                ['insert', ['picture']],
 	                // 코드 보기
 	                ['view', ['codeview']],
+	                
 	            ],
 				
 				placeholder : '최대 2048자까지 쓸 수 있습니다'
