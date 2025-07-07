@@ -93,7 +93,7 @@ function renderPaging(current, totalCount) {
     </button>
   `);
 
-  // < (이전 블록)
+  // < (이전 페이지)
   html.push(`
     <button
       class="w-8 h-8 border border-gray-1
@@ -104,7 +104,7 @@ function renderPaging(current, totalCount) {
     </button>
   `);
 
-  // 번호 버튼들
+  // 페이지 번호 버튼
   for (let i = startPage; i <= endPage; i++) {
     html.push(`
       <button
@@ -116,7 +116,7 @@ function renderPaging(current, totalCount) {
     `);
   }
 
-  // › (다음 블록)
+  // › (다음 페이지)
   html.push(`
     <button
       class="w-8 h-8 border border-gray-1
@@ -127,13 +127,13 @@ function renderPaging(current, totalCount) {
     </button>
   `);
 
-  // » (마지막)
+  // » (다음 블록으로 이동)
   html.push(`
     <button
       class="w-8 h-8 border border-gray-1 rounded-e
-             ${current === maxPages ? 'text-gray-1 cursor-not-allowed' : 'hover:bg-gray-2'}"
-      ${current === maxPages ? 'disabled' : ''}
-      onclick="loadBoardList(${maxPages}, '${currentCategory}', '${currentSort}')">
+             ${endPage === maxPages ? 'text-gray-1 cursor-not-allowed' : 'hover:bg-gray-2'}"
+      ${endPage === maxPages ? 'disabled' : ''}
+      onclick="loadBoardList(${nextBlockPage}, '${currentCategory}', '${currentSort}')">
       &raquo;
     </button>
   `);
