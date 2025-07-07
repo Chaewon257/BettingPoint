@@ -48,6 +48,12 @@
 	        alert("제목과 내용을 모두 입력해주세요.");
 	        return;
 	    }
+	    
+	 	// 🔹 확인 알림 추가
+	    const confirmSubmit = confirm("문의 등록 후에는 수정이 불가능합니다.\n정말로 제출하시겠습니까?");
+	    if (!confirmSubmit) {
+	        return; // 사용자가 취소를 누르면 아무 것도 하지 않음
+	    }
 
 	    const requestData = {
 	        title: title,
@@ -60,7 +66,7 @@
 	        contentType: "application/json",
 	        data: JSON.stringify(requestData),
 	        success: function () {
-	            alert("문의가 정상적으로 등록되었습니다. 문의 내역 확인은 [마이페이지]-[문의 내역]에서 확인해주세요!");
+	            alert("문의가 정상적으로 등록되었습니다. \n\n문의 내역 확인은 [마이페이지]-[문의 내역]에서 확인해주세요!");
 	            window.location.href = "/support";
 	        },
 	        error: function () {
