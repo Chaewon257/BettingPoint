@@ -56,6 +56,14 @@ function fetchUserInfo() {
     return;
   }
 
+  function updateUserInfo(user) {
+    $('#userNickname').text(user.nickname);
+    $('#balance').text(user.point_balance.toLocaleString());
+    gameState.balance = user.point_balance;
+    gameState.userNickname = user.nickname;
+    updateUI();
+  }
+
   $.ajax({
     url: '/api/user/me',
     method: 'GET',
@@ -64,13 +72,7 @@ function fetchUserInfo() {
     },
     xhrFields: { withCredentials: true }
   })
-  .done(function (user) {
-    $('#userNickname').text(user.nickname);
-    $('#balance').text(user.point_balance.toLocaleString());
-    gameState.balance = user.point_balance;
-    gameState.userNickname =  user.nickname; 
-    updateUI();
-  })
+  .done(updateUserInfo)
   .fail(function (xhr) {
     if (xhr.status === 401) {
       // 토큰 만료 → 재발급 시도
@@ -89,7 +91,7 @@ function fetchUserInfo() {
           setLoadingState(false);
           return;
         }
-
+        
         localStorage.setItem('accessToken', newToken);
         // 새 토큰으로 다시 사용자 정보 요청
         return $.ajax({
@@ -100,13 +102,7 @@ function fetchUserInfo() {
           },
           xhrFields: { withCredentials: true }
         })
-        .done(function (user) {
-          $('#userNickname').text(user.nickname);
-          $('#balance').text(user.point_balance.toLocaleString() + ' P');
-          gameState.balance = user.point_balance;
-          gameState.userNickname =  user.nickname;
-          updateUI();
-        })
+        .done(updateUserInfo)
         .fail(function () {
           console.warn('재시도 실패');
           setLoadingState(false);
@@ -469,6 +465,9 @@ elements.betAmount.addEventListener("input", (e) => {
   if (gameState.balance < amount) {
     inputErrorMessage("보유포인트 내에서만 배팅이 가능합니다.");
     elements.betAmount.value = "0";
+  }else if (amount > 0 && amount < 100) {
+    inputErrorMessage("최소배팅금액은 100포인트입니다.");
+    elements.betAmount.value = amount.toLocaleString();
   } else {
     // 천 단위 구분자를 적용하여 다시 설정
     elements.betAmount.value = amount > 0 ? amount.toLocaleString() : '';
@@ -486,8 +485,13 @@ elements.betAmount.addEventListener("input", (e) => {
       resetGameState();
       return;
     }
-   
+  
     const betAmount =parseInt(elements.betAmount.value.replace(/,/g, '')) || 0;
+
+     if (betAmount < 100) {
+    startErrorMessage("최소배팅금액은 100포인트입니다. 최소배팅보다 큰 포인트를 입력해주세요.");
+    return;
+    }
 
     if (!betAmount || betAmount <= 0) {
       startErrorMessage("올바른 배팅 금액을 입력해주세요.");

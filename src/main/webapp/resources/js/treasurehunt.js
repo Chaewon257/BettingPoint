@@ -649,7 +649,11 @@ function setupEventListeners() {
     if (gameState.balance < amount) {
       inputErrorMessage("보유포인트 내에서만 배팅이 가능합니다.");
       elements.betAmount.value = 0;
-    } else {
+    }else if (amount > 0 && amount < 100) {
+    inputErrorMessage("최소배팅금액은 100포인트입니다.");
+    elements.betAmount.value = amount.toLocaleString();
+  	}
+     else {
       elements.betAmount.value = amount > 0 ? amount.toLocaleString() : '';
     }
      
@@ -671,7 +675,13 @@ function setupEventListeners() {
       startErrorMessage("올바른 배팅 금액을 입력해주세요.");
       return;
     }
-
+    
+     if (betAmount < 100) {
+    startErrorMessage("최소배팅금액은 100포인트입니다. 최소배팅보다 큰 포인트를 입력해주세요.");
+    return;
+    }
+    
+    
     if (betAmount > gameState.balance) {
       startErrorMessage("보유포인트가 부족합니다.");
       return;
