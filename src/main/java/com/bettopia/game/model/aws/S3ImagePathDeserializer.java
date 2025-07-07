@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 
 public class S3ImagePathDeserializer extends JsonDeserializer<String> {
-    private static final String S3_BASE_URL = "https://bettopia-bucket.s3.ap-southeast-2.amazonaws.com/";
+    private static final String S3_BASE_URL = "https://bettopia-s3-bucket.s3.ap-northeast-2.amazonaws.com/";
 
     @Override
     public String deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
