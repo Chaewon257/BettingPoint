@@ -299,7 +299,7 @@
 		        	return;
 		        } else {
 		        	verificationCodeInput.classList.remove("border-red-600");
-		        	emverificationCodeInputail.classList.add("border-gray-5");
+		        	verificationCodeInput.classList.add("border-gray-5");
 		        }
 
 				if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{6,}$/.test(password.value)) {
@@ -406,6 +406,11 @@
 		    });
 		    
 		    $(document).ready(function () {
+		   		$("#nickname").on("input", function () {
+		    		$("#verifyNickname").prop("checked", false);
+		    	});
+
+		    	
 			    $("#phoneNumber").on("input", function () {
 			        let number = $(this).val().replace(/[^0-9]/g, ""); // 숫자만 남기기
 			
