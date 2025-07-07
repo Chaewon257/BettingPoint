@@ -88,6 +88,7 @@ public class GameRoomWebSocketHandler extends TextWebSocketHandler {
 			// 플레이어 추가
 			TurtlePlayerDTO player = TurtlePlayerDTO.builder()
 				.user_uid(userId)
+				.nickname(user.getNickname())
 				.room_uid(roomId)
 				.isReady(false)
 				.betting_point(gameroom.getMin_bet())

@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class TurtlePlayerDTO {
     private String user_uid;
+    private String nickname;
     private String room_uid;
     private boolean isReady;
     private String turtle_id;
