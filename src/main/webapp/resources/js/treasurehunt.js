@@ -1,4 +1,4 @@
-// 1. 개발자 도구 열림 감지
+//개발자 도구 열림 감지
 let devtools = { open: false };
 const threshold = 160;
 
@@ -15,7 +15,7 @@ function detectDevTools() {
   }
 }
 
-// 2. debugger 감지
+//debugger 감지
 function detectDebugger() {
   const start = performance.now();
   debugger;
@@ -38,10 +38,10 @@ setInterval(() => {
   detectDebugger();
 }, 1000);
 
-// 6. 우클릭 방지
+// 우클릭 방지
 document.addEventListener('contextmenu', e => e.preventDefault());
 
-// 7. 키보드 단축키 방지
+// 키보드 단축키 방지
 document.addEventListener('keydown', function(e) {
   const blocked = [
     123, // F12
@@ -67,7 +67,7 @@ document.addEventListener('keydown', function(e) {
   }
 });
 
-// 8. 콘솔 함수 무력화
+// 콘솔 함수 무력화
 (() => {
   const noop = () => {};
   ['log', 'warn', 'error', 'info', 'debug', 'dir', 'dirxml', 'table', 'trace', 'group', 'groupEnd'].forEach(fn => {
@@ -76,25 +76,6 @@ document.addEventListener('keydown', function(e) {
   console.clear = () => { console.log('%c ', 'font-size: 1px;'); };
 })();
 
-// 9. debugger 문 무력화 루프
-setInterval(() => {
-  (function() { return false; })();
-}, 100);
-
-// 10. 민감 변수 접근 차단
-['gameState', 'difficultyConfigs'].forEach(prop => {
-  Object.defineProperty(window, prop, {
-    get: function() {
-      location.reload();
-    },
-    configurable: false
-  });
-});
-
-// 11. 텍스트 선택, 드래그, 복사 방지
-['selectstart', 'dragstart'].forEach(evt =>
-  document.addEventListener(evt, e => e.preventDefault())
-);
 
 const MAX_POINTS = 1000000000; // 10억
 
