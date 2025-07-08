@@ -73,8 +73,7 @@ public class GameRestController {
 	@PostMapping("/start")
 	public ResponseEntity<?> startGame(@RequestHeader("Authorization") String authHeader,
 	                                   @RequestBody Map<String, Object> requestBody) {
-		
-		System.out.println("빠진금액: " + requestBody);
+
 
 	    // 토큰에서 uid 꺼냄
 	    String uid = authService.validateAndGetUserId(authHeader);
