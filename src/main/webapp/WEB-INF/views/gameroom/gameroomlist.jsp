@@ -385,12 +385,20 @@
 
 				if(value > INT_MAX) {
 					$("#errorMessage").text('최대 베팅은 \${INT_MAX} 포인트 입니다.');
-					value = INT_MAX;
+					$(this).val('');
+					return;
 				}
 
 				if(value > point_balance) {
-					$("#errorMessage").text(`보유 포인트가 부족하여 최대로 설정합니다.`);
-					value = point_balance;
+					$("#errorMessage").text(`보유 포인트가 부족합니다.`);
+					$(this).val('');
+					return;
+				}
+
+				if(value < 100) {
+					$("#errorMessage").text(`최소 베팅은 \${minBet} 포인트 입니다.`);
+					$(this).val('');
+					return;
 				}
 
 				value = Math.floor(value / 100) * 100;

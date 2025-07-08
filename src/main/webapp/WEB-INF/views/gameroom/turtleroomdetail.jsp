@@ -377,21 +377,25 @@
 
 					if(point > INT_MAX) {
 						$("#errorMessage").text('최대 베팅은 \${INT_MAX} 포인트 입니다.');
-						point = INT_MAX;
+						$(this).val('');
+						return;
 					}
 
 					if(point > point_balance) {
-						$("#errorMessage").text(`보유 포인트가 부족하여 최대로 설정합니다.`);
-						point = point_balance;
+						$("#errorMessage").text(`보유 포인트가 부족합니다.`);
+						$(this).val('');
+						return;
 					}
 
 				    if (!point || point <= 0) {
-					    $("#errorMessage").text('베팅 포인트를 입력하세요.');
-					    return;
+					    $("#errorMessage").text('유효한 베팅 포인트를 입력하세요.');
+						$(this).val('');
+						return;
 				    }
 
 					if(point < minBet) {
 						$("#errorMessage").text(`최소 베팅은 \${minBet} 포인트 입니다.`);
+						$(this).val('');
 						return;
 					}
 
@@ -414,7 +418,7 @@
 						return;
 					}
 
-					if(point <= 0) {
+					if(!point || point <= 0) {
 						alert("포인트를 베팅해주세요.");
 						return;
 					}
