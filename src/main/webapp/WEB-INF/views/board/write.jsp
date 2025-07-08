@@ -87,8 +87,8 @@
     <script>
 		  const boardId = "${boardId}";
 		  
-		// 1) 제한 용량 정의 (예: 200KB)
-		  const MAX_TOTAL_BYTES = 200 * 1024;
+		// 1) 제한 용량 정의 ()
+		  const MAX_TOTAL_BYTES = 20000000 * 1024;
 
 		  // 2) 이미지 누적 바이트 (이미 업로드된 이미지들 크기 합)
 		  let totalImageBytes = 0;
