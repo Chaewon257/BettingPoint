@@ -538,8 +538,8 @@ function endGame(won, message) {
   elements.startBtn.textContent = "다시 시작";
  
   setTimeout(() => {
-    elements.coin.classList.remove("heads", "tails");
-    elements.coin.classList.add("heads");
+    elements.coin.classList.remove("coin-heads", "coin-tails");
+    elements.coin.classList.add("coin-heads");
   }, 2000);
 }
 
@@ -604,8 +604,8 @@ function resetGameState() {
   elements.betAmount.value = "";
  
   // 동전 상태 초기화
-  elements.coin.classList.remove("heads", "tails", "flipping");
-  elements.coin.classList.add("heads");
+  elements.coin.classList.remove("coin-heads", "coin-tails", "flipping");
+  elements.coin.classList.add("coin-heads");
  
   // 메시지 초기화
   elements.resultMessage.style.display = "none";
