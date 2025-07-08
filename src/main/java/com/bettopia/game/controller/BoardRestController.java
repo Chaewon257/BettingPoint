@@ -70,18 +70,13 @@ public class BoardRestController {
 		// 조회수 증가
 		boardService.incrementViewCount(boardId);
 
-		// 게시글 조회
+		// 게시글 데이터 가져오기
 		BoardDTO board = boardService.getBoardByUid(boardId);
 
 		// 로그인 사용자라면 작성자 여부 확인
 		if (authHeader != null && authHeader.startsWith("Bearer ")) {
-			try {
 				String userId = authService.validateAndGetUserId(authHeader);
-				board.setOner(userId.equals(board.getUser_uid()));
-			} catch (SessionExpiredException e) {
-				// 토큰 만료 등 예외 발생 시에도 비로그인 상태로 간주
-				board.setOner(false);
-			}
+				board.setOner(userId != null && userId.equals(board.getUser_uid()));
 		} else {
 			// 비로그인 사용자
 			board.setOner(false);
@@ -135,7 +130,6 @@ public class BoardRestController {
 			response.put("success", 1);
 			response.put("message", "업로드 성공");
 		} catch (Exception e) {
-			e.printStackTrace();
 			response.put("success", 0);
 			response.put("message", "업로드 실패");
 		}
