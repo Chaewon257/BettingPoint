@@ -132,9 +132,10 @@
 
 				  		if(roomStatus === "PLAYING") {
 							alert("진행중인 게임방입니다.");
+							return;
 				  		}
 						if (roomCount >= 8) {
-							alert("정원이 가득 찬 방입니다.");
+							alert("정원이 가득 찼습니다.");
 							return;
 						}
 						if (point_balance < roomMinBet) {
@@ -163,6 +164,7 @@
 		          			case "delete":
 		          			case "enter":
 		          			case "exit":
+							case "update":
 		            			loadGameRooms(currentPage);
 		            			break;
 		          			default:
@@ -382,10 +384,12 @@
 				}
 
 				if(value > INT_MAX) {
+					$("#errorMessage").text('최대 베팅은 \${INT_MAX} 포인트 입니다.');
 					value = INT_MAX;
 				}
 
 				if(value > point_balance) {
+					$("#errorMessage").text(`보유 포인트가 부족하여 최대로 설정합니다.`);
 					value = point_balance;
 				}
 

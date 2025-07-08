@@ -29,8 +29,8 @@
 
 						</div>
 					</div>
-					<div id="chat-box" class="grow px-4 py-2 md:py-4 rounded-xl bg-black bg-opacity-10">
-						<div class="h-full max-h-8 md:max-h-28 flex flex-col items-start overflow-y-scroll text-gray-7 text-xs md:text-sm font-light">
+					<div class="grow px-4 py-2 md:py-4 rounded-xl bg-black bg-opacity-10">
+						<div id="chat-box" class="h-full max-h-8 md:max-h-28 flex flex-col items-start overflow-y-scroll text-gray-7 text-xs md:text-sm font-light">
 							<%-- 입/퇴장 메시지 --%>
 						</div>
 					</div>
@@ -173,7 +173,7 @@
 
 				function showSystemMessage(message) {
 					const $chatBox = $("#chat-box");
-					const $msg = $(`<span>\${message}</span><br>`);
+					const $msg = $(`<span>\${message}</span>`);
 					$chatBox.append($msg);
 				}
 			}
@@ -364,19 +364,30 @@
 					}));
 				});
 
-				$(document).on('blur', '#bet_point', function() {
-				    let point = parseInt($(this).val(), 10);
-				    if (isNaN(point) || point <= 0) {
-					  $(this).val('');
-					  return;
-				    }
 
-				    point = Math.floor(point / 100) * 100;
-				    $(this).val(point);
+				$(document).on('blur', '#bet_point', function() {
+					$("#errorMessage").text('');
+					let point = parseInt($(this).val(), 10);
+					const INT_MAX = 2147483600;
+
+					if (isNaN(point) || point <= 0) {
+						$(this).val('');
+						return;
+					}
+
+					if(point > INT_MAX) {
+						$("#errorMessage").text('최대 베팅은 \${INT_MAX} 포인트 입니다.');
+						point = INT_MAX;
+					}
+
+					if(point > point_balance) {
+						$("#errorMessage").text(`보유 포인트가 부족하여 최대로 설정합니다.`);
+						point = point_balance;
+					}
 
 				    if (!point || point <= 0) {
-					  $("#errorMessage").text('베팅 포인트를 입력하세요.');
-					  return;
+					    $("#errorMessage").text('베팅 포인트를 입력하세요.');
+					    return;
 				    }
 
 					if(point < minBet) {
@@ -384,12 +395,9 @@
 						return;
 					}
 
-					if(point > point_balance) {
-						$("#errorMessage").text(`보유 포인트가 부족합니다.`);
-						return;
-					}
+					point = Math.floor(point / 100) * 100;
 
-					$("#errorMessage").text('');
+					$(this).val(point);
 
 					socket.send(JSON.stringify({
 						type: "betting",

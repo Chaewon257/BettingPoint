@@ -65,18 +65,6 @@ public class GameRoomWebSocketHandler extends TextWebSocketHandler {
 					break;
 				}
 			}
-			// 최대 인원 초과 검사
-			if(players.size() >= 8) {
-				session.close(CloseStatus.BAD_DATA);
-				return;
-			}
-
-            // 보유 포인트 검사
-            // 최소 베팅 포인트 미만 입장 불가
-            if(user.getPoint_balance() < gameroom.getMin_bet()) {
-                session.close(CloseStatus.BAD_DATA);
-                return;
-            }
 		}
 
 		// 세션 등록
