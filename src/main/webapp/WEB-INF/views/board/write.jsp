@@ -92,7 +92,7 @@
 
 		  // 2) 이미지 누적 바이트 (이미 업로드된 이미지들 크기 합)
 		  let totalImageBytes = 0;
-//		      — onImageUpload 콜백에서 totalImageBytes += file.size;
+		  // onImageUpload 콜백에서 totalImageBytes += file.size;
 
 		  $(document).ready(function () {
 			  
@@ -126,6 +126,9 @@
             
 		        callbacks: {
 		          onImageUpload: function (files) {
+		          // 업로드 전에 누적 바이트 증가
+		        	totalImageBytes += files[0].size;
+
 		            uploadSummernoteImageFile(files[0], this);
 		          },
 		          // 에디터에서 사진 지우는 즉시 s3에서도 삭제.
