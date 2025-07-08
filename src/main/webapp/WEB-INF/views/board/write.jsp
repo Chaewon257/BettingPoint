@@ -8,6 +8,7 @@
 
 <ui:layout pageName="Betting Point 게시판 글 ${mode == 'create' ? '작성' : '수정'}" pageType="main">
   <jsp:attribute name="bodyContent">
+  
     <script src="${cpath}/resources/js/summernote/summernote-lite.js"></script>
     <script src="${cpath}/resources/js/board.js"></script>
     
@@ -85,32 +86,49 @@
     </div>
     <script>
 		  const boardId = "${boardId}";
-		
+		  
+		// 1) 제한 용량 정의 (예: 30KB)
+		  const MAX_TOTAL_BYTES = 30 * 1024;
+
+		  // 2) 이미지 누적 바이트 (이미 업로드된 이미지들 크기 합)
+		  let totalImageBytes = 0;
+		  // onImageUpload 콜백에서 totalImageBytes += file.size;
+
 		  $(document).ready(function () {
+			  
 		    // 1) Summernote 초기화
 		    if ($('#summernote').length) {
 		      $('#summernote').summernote({
 		        height: 500,
 		        lang: "ko-KR",
-            toolbar: [
-            	// 글꼴 
-                ['fontname', ['fontname']],
-                // 글자 크기 설정
-                ['fontsize', ['fontsize']],
-                // 글꼴 스타일
-                ['font', ['bold', 'underline', 'clear']],
-                // 글자 색상
-                ['color', ['color']],
-                // 문단 스타일
-                ['para', ['paragraph']],
-                // 이미지, 링크, 동영상 삽입
-                ['insert', ['picture']],
-                // 코드 보기,도움말
-                ['view', ['codeview',  'help']],
-            ],
+		        shortcuts: false, //단축키 비활성화
 		        placeholder: '최대 2048자까지 쓸 수 있습니다',
+		        fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New',
+        			'맑은 고딕','궁서','굴림체','굴림','돋움체','바탕체'],
+		        toolbar: [
+		            	// 글꼴 
+		                [ 'fontname', ['fontname']],
+		                // 글자 크기 설정
+		                ['fontsize', ['fontsize']],
+		                // 글꼴 스타일
+		                ['font', ['bold', 'underline', 'clear']],
+		                // 글자 색상
+		                ['color', ['color']],
+		                // 문단 스타일
+		                ['para', ['paragraph']],
+		                // 글 높낮이 간격
+		                ['height', ['height']],
+		            	// 이미지 삽입
+		                ['insert', ['picture']],
+		                // 코드 보기
+		                ['view', ['codeview']],   
+		            ],
+            
 		        callbacks: {
 		          onImageUpload: function (files) {
+		          // 업로드 전에 누적 바이트 증가
+		        	totalImageBytes += files[0].size;
+
 		            uploadSummernoteImageFile(files[0], this);
 		          },
 		          // 에디터에서 사진 지우는 즉시 s3에서도 삭제.
@@ -174,9 +192,24 @@
 		    })();
 		    </c:if>
 		
-		    // 4) 폼 제출 처리
-		    $('#insertForm').on('submit', function (e) {
+		 // 3) 폼 제출 전에 전체 용량 검사
+		    $('#insertForm').on('submit', function(e) {
 		      e.preventDefault();
+		      
+		      // (A) 에디터 HTML 바이트 계산
+		      const contentHtml = $('#summernote').summernote('code');
+		      const htmlBytes = new Blob([contentHtml], { type: 'text/html' }).size;
+		      
+		      // (B) 전체 바이트 합
+		      const totalBytes = htmlBytes + totalImageBytes;
+		      
+		      // (C) 검사 & 경고
+		      if (totalBytes > MAX_TOTAL_BYTES) {
+		        alert(`전체 용량이 \${(MAX_TOTAL_BYTES/1024)}KB를 초과했습니다. 현재 \${(totalBytes/1024).toFixed(1)}KB입니다.`);
+		        return;  // 제출 중단
+		      }
+		      
+		      
 		      const token = localStorage.getItem("accessToken");
 		      if (!token) {
 		        alert("로그인이 필요합니다.");
@@ -208,11 +241,11 @@
 		        headers: { 'Authorization': 'Bearer ' + token },
 		        data: JSON.stringify(dto),
 		        success: function () {
-		          alert("${mode == 'update' ? '수정' : '등록'} 성공");
+		          alert("게시글이 ${mode == 'update' ? '수정' : '등록'} 되었습니다.");
 		          location.href = "/board";
 		        },
 		        error: function () {
-		          alert("${mode == 'update' ? '수정' : '등록'} 실패");
+		          alert("게시글 ${mode == 'update' ? '수정' : '등록'}을 실패했습니다.");
 		        }
 		      });
 		    });
