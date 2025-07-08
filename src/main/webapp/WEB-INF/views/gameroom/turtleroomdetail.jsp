@@ -29,8 +29,8 @@
 
 						</div>
 					</div>
-					<div id="chat-box" class="grow px-4 py-2 md:py-4 rounded-xl bg-black bg-opacity-10">
-						<div class="h-full max-h-8 md:max-h-28 flex flex-col items-start overflow-y-scroll text-gray-7 text-xs md:text-sm font-light">
+					<div class="grow px-4 py-2 md:py-4 rounded-xl bg-black bg-opacity-10">
+						<div id="chat-box" class="h-full max-h-8 md:max-h-28 flex flex-col items-start overflow-y-scroll text-gray-7 text-xs md:text-sm font-light">
 							<%-- 입/퇴장 메시지 --%>
 						</div>
 					</div>
@@ -173,7 +173,7 @@
 
 				function showSystemMessage(message) {
 					const $chatBox = $("#chat-box");
-					const $msg = $(`<span>\${message}</span><br>`);
+					const $msg = $(`<span>\${message}</span>`);
 					$chatBox.append($msg);
 				}
 			}
