@@ -15,7 +15,7 @@ local.properties
 .recommenders
 .classpath
 .project
-.pem
+bettopia.pem
 
 # External tool builders
 .externalToolBuilders/
