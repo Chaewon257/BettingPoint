@@ -395,12 +395,6 @@
 					return;
 				}
 
-				if(value < 100) {
-					$("#errorMessage").text(`최소 베팅은 \${minBet} 포인트 입니다.`);
-					$(this).val('');
-					return;
-				}
-
 				value = Math.floor(value / 100) * 100;
 
 				$(this).val(value);
