@@ -82,7 +82,7 @@
 	            const date = formatDate(history.created_at);
 	
 
-	            const note = history.game_name || "Unknown";
+	            const note = history.game_name || "-";
 
 	
 	            const html = `
