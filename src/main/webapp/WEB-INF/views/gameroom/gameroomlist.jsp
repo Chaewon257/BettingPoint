@@ -384,7 +384,7 @@
 				}
 
 				if(value > INT_MAX) {
-					$("#errorMessage").text('최대 베팅은 \${INT_MAX} 포인트 입니다.');
+					$("#errorMessage").text(`최대 베팅은 \${INT_MAX} 포인트 입니다.`);
 					$(this).val('');
 					return;
 				}
