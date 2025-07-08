@@ -366,6 +366,7 @@
 
 
 				$(document).on('blur', '#bet_point', function() {
+					$("#errorMessage").text('');
 					let point = parseInt($(this).val(), 10);
 					const INT_MAX = 2147483600;
 
@@ -397,8 +398,6 @@
 					point = Math.floor(point / 100) * 100;
 
 					$(this).val(point);
-
-					$("#errorMessage").text('');
 
 					socket.send(JSON.stringify({
 						type: "betting",
