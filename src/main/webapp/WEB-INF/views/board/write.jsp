@@ -78,7 +78,7 @@
               ${mode == 'create' ? '등록하기' : '수정하기'}
             </button>
             
-            <button class="w-full bg-blue-3 hover:bg-blue-4 rounded-full py-2.5"
+            <button type="button" class="w-full bg-blue-3 hover:bg-blue-4 rounded-full py-2.5"
                     onclick="history.back()">취소하기</button>
           </div>
         </form>
