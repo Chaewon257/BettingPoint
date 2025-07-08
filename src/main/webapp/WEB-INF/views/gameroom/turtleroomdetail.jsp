@@ -366,29 +366,27 @@
 
 
 				$(document).on('blur', '#bet_point', function() {
-					let value = parseInt($(this).val(), 10);
+					let point = parseInt($(this).val(), 10);
 					const INT_MAX = 2147483600;
 
-					if (isNaN(value) || value <= 0) {
+					if (isNaN(point) || point <= 0) {
 						$(this).val('');
 						return;
 					}
 
-					if(value > INT_MAX) {
-						value = INT_MAX;
+					if(point > INT_MAX) {
+						$("#errorMessage").text('최대 베팅은 \${INT_MAX} 포인트 입니다.');
+						point = INT_MAX;
 					}
 
-					if(value > point_balance) {
-						value = point_balance;
+					if(point > point_balance) {
+						$("#errorMessage").text(`보유 포인트가 부족하여 최대로 설정합니다.`);
+						point = point_balance;
 					}
-
-					value = Math.floor(value / 100) * 100;
-
-					$(this).val(value);
 
 				    if (!point || point <= 0) {
-					  $("#errorMessage").text('베팅 포인트를 입력하세요.');
-					  return;
+					    $("#errorMessage").text('베팅 포인트를 입력하세요.');
+					    return;
 				    }
 
 					if(point < minBet) {
@@ -396,10 +394,9 @@
 						return;
 					}
 
-					if(point > point_balance) {
-						$("#errorMessage").text(`보유 포인트가 부족합니다.`);
-						return;
-					}
+					point = Math.floor(point / 100) * 100;
+
+					$(this).val(point);
 
 					$("#errorMessage").text('');
 
