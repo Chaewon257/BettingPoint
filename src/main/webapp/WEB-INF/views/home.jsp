@@ -346,7 +346,7 @@
         			// PC
         			$('#userInfoPanel').html(`
         					<div class="w-36 h-36 rounded-full bg-white overflow-hidden">
-        						<img id="profileImage" alt="default profile image" src="\${user.profile_img || "/resources/images/profile_default_image.png"}">
+        						<img id="profileImage" alt="default profile image" src="\${user.profile_img || "/resources/images/profile_default_image.png"}" class="h-full">
         					</div>
                             <div class="text-base">
                             	<a href="/mypage" class="hover:underline font-semibold">\${user.nickname}</a> 님,환영합니다!
