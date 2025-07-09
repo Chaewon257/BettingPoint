@@ -5,8 +5,8 @@
 
 <mapper namespace="com.bpoint.auth">
 	<insert id="insertUser" parameterType="com.bettopia.game.model.auth.UserVO">
-    	INSERT INTO user (uid, user_name, password, nickname, email, birth_date, phone_number, agree_privacy)
-    	VALUES (#{uid}, #{user_name}, #{password}, #{nickname}, #{email}, #{birth_date}, #{phone_number}, #{agree_privacy})
+    	INSERT INTO user (uid, user_name, password, nickname, email, birth_date, phone_number, agree_privacy, point_balance)
+    	VALUES (#{uid}, #{user_name}, #{password}, #{nickname}, #{email}, #{birth_date}, #{phone_number}, #{agree_privacy}, #{point_balance})
   	</insert>
 	<select id="findByEmail"
 		resultType="com.bettopia.game.model.auth.UserVO">

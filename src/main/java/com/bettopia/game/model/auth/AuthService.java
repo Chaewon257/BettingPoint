@@ -118,7 +118,7 @@ public class AuthService {
 				.birth_date(birthDate)
 				.phone_number(dto.getPhone_number())
 				.agree_privacy(dto.isAgree_privacy())
-				.point_balance(0)
+				.point_balance(100000)
 				.build();
 		
 		loginDAO.insertUser(user);

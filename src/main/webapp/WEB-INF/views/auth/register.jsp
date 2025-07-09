@@ -443,6 +443,7 @@
 		        	contentType: 'application/json; charset=utf-8',
 		        	data: JSON.stringify(requestBody),
 		        	success: function (response) {
+		  	        	alert("웰컴 포인트 100,000 지급되었습니다.");
 		            	window.location.href = '/'; // 성공 시 이동
 		          	},
 		          	error: function (xhr) {
