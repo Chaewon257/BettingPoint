@@ -31,7 +31,11 @@
 			return $.ajax({
 				url: '/api/user/me',
 				method: 'GET',
-				xhrFields: { withCredentials: true }
+				headers: {
+					"Authorization": "Bearer " + token
+				},
+				xhrFields: { withCredentials: true },
+				
 			});
 		}
 
