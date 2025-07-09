@@ -133,7 +133,13 @@
                 }
 
                 function startBannerAutoSlide() {
-                    bannerInterval = setInterval(nextBannerSlide, 5000);
+                	stopBannerAutoSlide(); // 기존 인터벌 제거
+
+                    // ✅ currentBannerSlide 기준으로 5초 뒤 next 실행 보장
+                    bannerInterval = setInterval(() => {
+                        const nextIndex = (currentBannerSlide + 1) % totalBannerSlides;
+                        showBannerSlide(nextIndex);
+                    }, 5000);
                 }
 
                 function stopBannerAutoSlide() {
