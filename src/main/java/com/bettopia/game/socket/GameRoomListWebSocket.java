@@ -38,7 +38,9 @@ public class GameRoomListWebSocket extends TextWebSocketHandler {
 
         for(WebSocketSession session : sessions) {
             if(session.isOpen()) {
-                session.sendMessage(new TextMessage(jsonMessage));
+                synchronized (session) {
+                    session.sendMessage(new TextMessage(jsonMessage));
+                }
             }
         }
     }
