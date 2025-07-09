@@ -10,7 +10,6 @@
 							<span id="room-title" class="truncate text-start text-gray-7 font-extrabold text-lg md:text-xl lg:text-2xl xl:text-3xl"></span>
 						</div>
 						<div class="grow flex md:justify-end gap-x-2">
-							<button class="h-full bg-blue-3 hover:bg-blue-2 rounded-lg text-white shadow-[2px_2px_8px_rgba(0,0,0,0.1)] font-extrabold sm:text-base md:text-lg lg:text-xl xl:text-2xl w-full md:min-w-24 md:max-w-56 py-1" onclick="document.getElementById('createGameRoomModal').classList.remove('hidden')">방정보 수정</button>
 							<button class="h-full bg-gray-4 hover:bg-gray-2 rounded-lg text-gray-9 shadow-[2px_2px_8px_rgba(0,0,0,0.1)] font-extrabold sm:text-base md:text-lg lg:text-xl xl:text-2xl w-full md:min-w-24 md:max-w-56 py-1" onclick="location.href='/gameroom'">나가기</button>
 						</div>
 					</div>
