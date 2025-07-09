@@ -16,6 +16,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>${pageName}</title>
+<link rel="icon" href="${cpath}/resources/images/favicon.ico" type="image/x-icon" />
 <link rel="stylesheet" href="${cpath}/resources/css/styles.css">
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <c:if test="${pageType eq 'ingame'}">
