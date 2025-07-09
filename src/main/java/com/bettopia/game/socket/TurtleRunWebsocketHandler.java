@@ -59,16 +59,17 @@ public class TurtleRunWebsocketHandler extends TextWebSocketHandler {
 	private final Map<String, List<Double>> latestPositions = new ConcurrentHashMap<>();
 	private final Map<String, ScheduledFuture<?>> broadcastTasks = new ConcurrentHashMap<>();
 	private final Map<String, List<TurtlePlayerDTO>> gameStartPlayersMap = new ConcurrentHashMap<>();
+	private final Map<String, Boolean> gameFinishMap = new ConcurrentHashMap<>();
 	
 	@Override
 	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
 		String roomId = (String) session.getAttributes().get("roomId");
 		String userId = (String) session.getAttributes().get("userId");
 
+		sessionService.addSession(roomId, session);
 	    // (1) 게임 시작 전이면 검증 건너뛰고, 그냥 세션 등록
 	    List<TurtlePlayerDTO> startPlayers = gameStartPlayersMap.get(roomId);
 	    if (startPlayers == null) {
-	        sessionService.addSession(roomId, session);
 	        return;
 	    }
 	    // (2) 게임 시작 후에는 userId가 freeze 목록에 없으면 강제퇴장
@@ -87,10 +88,9 @@ public class TurtleRunWebsocketHandler extends TextWebSocketHandler {
 	        ObjectMapper mapper = new ObjectMapper();
 	        String jsonMsg = mapper.writeValueAsString(msg);
 	        session.sendMessage(new TextMessage(jsonMsg));
-	        session.close();
+	        try { Thread.sleep(50); } catch (InterruptedException ignored) {}
 	        return;
 	    }
-		sessionService.addSession(roomId, session);
 	}
 
 	private void broadcastMessage(String type, String roomId, Map<String, Object> data) throws IOException {
@@ -112,11 +112,14 @@ public class TurtleRunWebsocketHandler extends TextWebSocketHandler {
 		String jsonMessage = mapper.writeValueAsString(messageMap);
 		
 		// 비정상 세션 감지 시 패배처리 하고 게임룸 리스트로 보냄
-		for (WebSocketSession session : sessions) {
+		List<WebSocketSession> sessionsCopy = new ArrayList<>(sessions);
+		for (WebSocketSession session : sessionsCopy) {
 		    try {
-		        if (session.isOpen()) {
-		            session.sendMessage(new TextMessage(jsonMessage));
-		        }
+		    	synchronized(session) {
+			        if (session.isOpen()) {
+			            session.sendMessage(new TextMessage(jsonMessage));
+			        }
+		    	}
 		    } catch (Exception e) {
 		    	// 강제퇴장 메시지 전송 시도
 		        try {
@@ -129,10 +132,12 @@ public class TurtleRunWebsocketHandler extends TextWebSocketHandler {
 		        } catch (Exception ignored) {}
 		        // 세션 목록에서 제거
 		        sessionService.removeSession(roomId, session);
-		        // 유저 아이디가 있으면 패배 처리도 같이!
-		        String userId = (String) session.getAttributes().get("userId");
-		        if (userId != null) {
-		            processUserLose(roomId, userId);
+		        if(!Boolean.TRUE.equals(gameFinishMap.get(roomId))) {
+			        // 유저 아이디가 있으면 패배 처리도 같이!
+			        String userId = (String) session.getAttributes().get("userId");
+			        if (userId != null) {
+			            processUserLose(roomId, userId);
+			        }
 		        }
 		    }
 		}
@@ -238,6 +243,9 @@ public class TurtleRunWebsocketHandler extends TextWebSocketHandler {
 		msg.put("winner", winner);
 		msg.put("results",  results);
 		broadcastMessage("race_finish", roomId, msg);
+		
+		// 게임 종료 상태
+		gameFinishMap.put(roomId, true);
 	}
 	@Override
 	public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
@@ -269,6 +277,7 @@ public class TurtleRunWebsocketHandler extends TextWebSocketHandler {
 				} else {
 					// 플레이어가 0명일 때 방 삭제
 					gameStartPlayersMap.remove(roomId);
+					gameFinishMap.remove(roomId);
 					gameroomDAO.deleteRoom(roomId);
 					gameRoomListWebSocket.broadcastMessage("delete");
 					ScheduledFuture<?> task = broadcastTasks.remove(roomId);
