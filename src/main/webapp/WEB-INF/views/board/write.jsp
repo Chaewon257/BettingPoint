@@ -85,184 +85,192 @@
       </div>
     </div>
     <script>
-		  const boardId = "${boardId}";
-		  
-		// 1) 제한 용량 정의 ()
-		  const MAX_TOTAL_BYTES = 20000000 * 1024;
+         const boardId = "${boardId}";
+         
+       // 1) 제한 용량 정의 ()
+         const MAX_TOTAL_BYTES = 20000000 * 1024;
 
-		  // 2) 이미지 누적 바이트 (이미 업로드된 이미지들 크기 합)
-		  let totalImageBytes = 0;
-		  // onImageUpload 콜백에서 totalImageBytes += file.size;
+         // 2) 이미지 누적 바이트 (이미 업로드된 이미지들 크기 합)
+         let totalImageBytes = 0;
+         // onImageUpload 콜백에서 totalImageBytes += file.size;
 
-		  $(document).ready(function () {
-			  
-		    // 1) Summernote 초기화
-		    if ($('#summernote').length) {
-		      $('#summernote').summernote({
-		        height: 500,
-		        lang: "ko-KR",
-		        shortcuts: false, //단축키 비활성화
-		        placeholder: '최대 2048자까지 쓸 수 있습니다',
-		        fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New',
-        			'맑은 고딕','궁서','굴림체','굴림','돋움체','바탕체'],
-		        toolbar: [
-		            	// 글꼴 
-		                [ 'fontname', ['fontname']],
-		                // 글자 크기 설정
-		                ['fontsize', ['fontsize']],
-		                // 글꼴 스타일
-		                ['font', ['bold', 'underline', 'clear']],
-		                // 글자 색상
-		                ['color', ['color']],
-		                // 문단 스타일
-		                ['para', ['paragraph']],
-		                // 글 높낮이 간격
-		                ['height', ['height']],
-		            	// 이미지 삽입
-		                ['insert', ['picture']],
-		                // 코드 보기
-		                ['view', ['codeview']],   
-		            ],
+         $(document).ready(function () {
             
-		        callbacks: {
-		          onImageUpload: function (files) {
-		          // 업로드 전에 누적 바이트 증가
-		        	totalImageBytes += files[0].size;
+           // 1) Summernote 초기화
+           if ($('#summernote').length) {
+             $('#summernote').summernote({
+               height: 500,
+               lang: "ko-KR",
+               shortcuts: false, //단축키 비활성화
+               placeholder: '최대 2048자까지 쓸 수 있습니다',
+               fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New',
+                  '맑은 고딕','궁서','굴림체','굴림','돋움체','바탕체'],
+               toolbar: [
+                      // 글꼴 
+                       [ 'fontname', ['fontname']],
+                       // 글자 크기 설정
+                       ['fontsize', ['fontsize']],
+                       // 글꼴 스타일
+                       ['font', ['bold', 'underline', 'clear']],
+                       // 글자 색상
+                       ['color', ['color']],
+                       // 문단 스타일
+                       ['para', ['paragraph']],
+                       // 글 높낮이 간격
+                       ['height', ['height']],
+                      // 이미지 삽입
+                       ['insert', ['picture']],
+                       // 코드 보기
+                       ['view', ['codeview']],   
+                   ],
+            
+               callbacks: {
+                 onImageUpload: function (files) {
+                 // 업로드 전에 누적 바이트 증가
+                  totalImageBytes += files[0].size;
 
-		            uploadSummernoteImageFile(files[0], this);
-		          },
-		          // 에디터에서 사진 지우는 즉시 s3에서도 삭제.
-		          onMediaDelete: function (target) {
-		        	// target: jQuery 객체(<img> 요소)
-		            const imageUrl = target.attr('src');
-		            $.ajax({
-		              url: '/api/board/image-delete',
-		              method: 'DELETE',
-		              contentType: 'application/json',
-		              data: JSON.stringify({ url: imageUrl }),
-		              success: function () {
-		                console.log('S3에서 이미지 삭제 완료');
-		              },
-		              error: function (err) {
-		                console.error('S3 이미지 삭제 실패:', err);
-		              }
-		            });
-		          }
-		        }
-		      });
-		    }
-		
-		    // 2) 이미지 업로드 함수
-		    function uploadSummernoteImageFile(file, editor) {
-		      let data = new FormData();
-		      data.append("image", file);
-		
-		      $.ajax({
-		        data: data,
-		        type: "POST",
-		        url: "/api/board/image-upload",
-		        contentType: false,
-		        processData: false,
-		        success: function (res) {
-		          $(editor).summernote('insertImage', res.url);
-		        },
-		        error: function () {
-		          alert("이미지 업로드에 실패했습니다.");
-		        }
-		      });
-		    }
-		
-		    // 3) 수정 모드일 때 기존 데이터 불러오기
-		    <c:if test="${mode == 'update'}">
-		    (function(){
-		      const bid = $('#boardId').val();
-		      $.ajax({
-		        url: '/api/board/boarddetail/' + bid,
-		        type: "GET",
-		        success: function(b) {
-		          $('#title').val(b.title);
-		          $('#category').val(b.category);
-		          $('#summernote').summernote('code', b.content);
-		        },
-		        error: function() {
-		          alert('기존 글을 불러오지 못했습니다.');
-		          history.back();
-		        }
-		      });
-		    })();
-		    </c:if>
-		
-		 // 3) 폼 제출 전에 전체 용량 검사
-		    $('#insertForm').on('submit', function(e) {
-		      e.preventDefault();
-		      
-		      // (A) 에디터 HTML 바이트 계산
-		      const contentHtml = $('#summernote').summernote('code');
-		      const htmlBytes = new Blob([contentHtml], { type: 'text/html' }).size;
-		      
-		      // (B) 전체 바이트 합
-		      const totalBytes = htmlBytes + totalImageBytes;
-		      
-		      // (C) 검사 & 경고
-		      if (totalBytes > MAX_TOTAL_BYTES) {
-		        alert(`전체 용량이 \${(MAX_TOTAL_BYTES/1024)}KB를 초과했습니다. 현재 \${(totalBytes/1024).toFixed(1)}KB입니다.`);
-		        return;  // 제출 중단
-		      }
-		      
-		      
-		      const token = localStorage.getItem("accessToken");
-		      if (!token) {
-		        alert("로그인이 필요합니다.");
-		        return;
-		      }
-		
-		      const dto = {
-		        title: $('#title').val(),
-		        content: $('#summernote').summernote('code'),
-		        category: $('#category').val() || "free"
-		      };
-		
-		      let url, method;
-		      <c:choose>
-		        <c:when test="${mode == 'update'}">
-		          url = '/api/board/boardupdate/' + boardId;
-		          method = 'PUT';
-		        </c:when>
-		        <c:otherwise>
-		          url = '/api/board/boardinsert';
-		          method = 'POST';
-		        </c:otherwise>
-		      </c:choose>
-		
-		      $.ajax({
-		        url: url,
-		        method: method,
-		        contentType: 'application/json',
-		        headers: { 'Authorization': 'Bearer ' + token },
-		        data: JSON.stringify(dto),
-		        success: function () {
-		          alert("게시글이 ${mode == 'update' ? '수정' : '등록'} 되었습니다.");
-		          location.href = "/board";
-		        },
-		        error: function () {
-		          alert("게시글 ${mode == 'update' ? '수정' : '등록'}을 실패했습니다.");
-		        }
-		      });
-		    });
-		
-		    // 5) 카테고리 탭 클릭 처리
-		    $(".tab-btn").on("click", function () {
-		      const selectedTab = $(this).data("tab");
-		      $(".tab-btn")
-		        .removeClass("bg-blue-3")
-		        .addClass("bg-blue-4 hover:bg-blue-3");
-		      $(this)
-		        .removeClass("bg-blue-4 hover:bg-blue-3")
-		        .addClass("bg-blue-3");
-		      $("#category").val(selectedTab);
-		    });
-		
-		  }); // 문서 로드 콜백 끝
-	</script>
+                   uploadSummernoteImageFile(files[0], this);
+                 }
+               }
+             });
+           }
+       
+           // 2) 이미지 업로드 함수
+           function uploadSummernoteImageFile(file, editor) {
+             let data = new FormData();
+             data.append("image", file);
+       
+             $.ajax({
+               data: data,
+               type: "POST",
+               url: "/api/board/image-upload",
+               contentType: false,
+               processData: false,
+               success: function (res) {
+                 $(editor).summernote('insertImage', res.url);
+               },
+               error: function () {
+                 alert("이미지 업로드에 실패했습니다.");
+               }
+             });
+           }
+
+            // 이미지 삭제 함수
+            let uploadedImageUrls = [];
+
+            function deleteImages(imageUrl) {
+              $.ajax({
+                url: `${cpath}/api/board/image-delete`,
+                method: 'DELETE',
+                contentType: 'application/json',
+                data: JSON.stringify({urls: imageUrl}),
+                success: function () {
+                  uploadedImageUrls = [];
+                },
+                error: function (err) {
+                  console.error('S3 이미지 삭제 실패:', err);
+                }
+              });
+            }
+       
+           // 3) 수정 모드일 때 기존 데이터 불러오기
+           <c:if test="${mode == 'update'}">
+           (function(){
+             const bid = $('#boardId').val();
+             $.ajax({
+               url: '/api/board/boarddetail/' + bid,
+               type: "GET",
+               success: function(b) {
+                 $('#title').val(b.title);
+                 $('#category').val(b.category);
+                 $('#summernote').summernote('code', b.content);
+               },
+               error: function() {
+                 alert('기존 글을 불러오지 못했습니다.');
+                 history.back();
+               }
+             });
+           })();
+           </c:if>
+       
+        // 3) 폼 제출 전에 전체 용량 검사
+           $('#insertForm').on('submit', function(e) {
+             e.preventDefault();
+
+              const dto = {
+                title: $('#title').val(),
+                content: $('#summernote').summernote('code'),
+                category: $('#category').val() || "free"
+              };
+
+              const currentImageUrls = boardData.content.match(/<img [^>]*src="([^"]*)"/g)
+                      ?.map(tag => tag.match(/src="([^"]*)"/)[1]) || [];
+
+              const imageUrl = uploadedImageUrls.filter(url => !currentImageUrls.includes(url));
+
+              deleteImages(imageUrl);
+             
+             // (A) 에디터 HTML 바이트 계산
+             const contentHtml = $('#summernote').summernote('code');
+             const htmlBytes = new Blob([contentHtml], { type: 'text/html' }).size;
+             
+             // (B) 전체 바이트 합
+             const totalBytes = htmlBytes + totalImageBytes;
+             
+             // (C) 검사 & 경고
+             if (totalBytes > MAX_TOTAL_BYTES) {
+               alert(`전체 용량이 \${(MAX_TOTAL_BYTES/1024)}KB를 초과했습니다. 현재 \${(totalBytes/1024).toFixed(1)}KB입니다.`);
+               return;  // 제출 중단
+             }
+             
+             
+             const token = localStorage.getItem("accessToken");
+             if (!token) {
+                alert("로그인이 필요합니다.");
+                return;
+              }
+       
+             let url, method;
+             <c:choose>
+               <c:when test="${mode == 'update'}">
+                 url = '/api/board/boardupdate/' + boardId;
+                 method = 'PUT';
+               </c:when>
+               <c:otherwise>
+                 url = '/api/board/boardinsert';
+                 method = 'POST';
+               </c:otherwise>
+             </c:choose>
+       
+             $.ajax({
+               url: url,
+               method: method,
+               contentType: 'application/json',
+               headers: { 'Authorization': 'Bearer ' + token },
+               data: JSON.stringify(dto),
+               success: function () {
+                 alert("게시글이 ${mode == 'update' ? '수정' : '등록'} 되었습니다.");
+                 location.href = "/board";
+               },
+               error: function () {
+                 alert("게시글 ${mode == 'update' ? '수정' : '등록'}을 실패했습니다.");
+               }
+             });
+           });
+       
+           // 5) 카테고리 탭 클릭 처리
+           $(".tab-btn").on("click", function () {
+             const selectedTab = $(this).data("tab");
+             $(".tab-btn")
+               .removeClass("bg-blue-3")
+               .addClass("bg-blue-4 hover:bg-blue-3");
+             $(this)
+               .removeClass("bg-blue-4 hover:bg-blue-3")
+               .addClass("bg-blue-3");
+             $("#category").val(selectedTab);
+           });
+       
+         }); // 문서 로드 콜백 끝
+    </script>
   </jsp:attribute>
 </ui:layout>
