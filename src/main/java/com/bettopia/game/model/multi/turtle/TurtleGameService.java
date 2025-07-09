@@ -129,7 +129,6 @@ public class TurtleGameService {
             result.put("winAmount", winAmount);
             result.put("pointChange", pointChange);
             results.add(result);
-            System.out.println(results);
         }
         return results;
     }
