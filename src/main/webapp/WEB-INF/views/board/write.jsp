@@ -203,7 +203,7 @@
                 category: $('#category').val() || "free"
               };
 
-              const currentImageUrls = boardData.content.match(/<img [^>]*src="([^"]*)"/g)
+              const currentImageUrls = dto.content.match(/<img [^>]*src="([^"]*)"/g)
                       ?.map(tag => tag.match(/src="([^"]*)"/)[1]) || [];
 
               const imageUrl = uploadedImageUrls.filter(url => !currentImageUrls.includes(url));
