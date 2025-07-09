@@ -42,6 +42,14 @@
 				
 				$(document).on('click', '.tab-btn', function () {
 				    removeUidFromUrl(); // ← 탭 전환 시 주소에서 uid 제거
+				    
+				 // ✅ 다시 탭 이동 시 rememberedUid 값 있으면 다시 클릭
+			        const tab = $(this).data('tab');
+			        if (tab === 'notice' && rememberedUid || uidParam) {
+			            setTimeout(function () {
+			                $(`[data-notice="${rememberedUid}"]`).first().trigger('click');
+			            }, 300);
+			        }
 				});
 				
 				function removeUidFromUrl() {
