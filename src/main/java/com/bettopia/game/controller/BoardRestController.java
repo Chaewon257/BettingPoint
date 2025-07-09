@@ -3,7 +3,6 @@ package com.bettopia.game.controller;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import com.bettopia.game.Exception.SessionExpiredException;
 import com.bettopia.game.model.auth.AuthService;
 import com.bettopia.game.model.aws.S3FileService;
 import com.bettopia.game.model.board.BoardDTO;
@@ -65,7 +63,7 @@ public class BoardRestController {
 	// 게시글 상세보기 시 조회수 증가
 	@GetMapping("/boarddetail/{boardId}")
 	public BoardDTO getBoardDetail2(@PathVariable String boardId,
-			@RequestHeader(value = "Authorization", required = false) String authHeader) {
+			@RequestHeader(value = "Authorization", required = false, defaultValue="") String authHeader) {
 
 		// 조회수 증가
 		boardService.incrementViewCount(boardId);
@@ -87,7 +85,7 @@ public class BoardRestController {
 
 	// 게시글 등록 (로그인한 사용자만 가능)
 	@PostMapping("/boardinsert")
-	public void insertBoard(@RequestBody InsertBoardRequestDTO dto, @RequestHeader("Authorization") String authHeader) {
+	public void insertBoard(@RequestBody InsertBoardRequestDTO dto, @RequestHeader(value="Authorization", required=false,defaultValue="") String authHeader) {
 		String userId = authService.validateAndGetUserId(authHeader);
 
 		boardService.insertBoard(dto, userId);
@@ -96,7 +94,7 @@ public class BoardRestController {
 	// 게시글 수정 (로그인 && 본인 글만 가능)
 	@PutMapping("/boardupdate/{boardId}")
 	public void updateBoard(@PathVariable String boardId, @RequestBody UpdateBoardRequestDTO dto,
-			@RequestHeader("Authorization") String authHeader) {
+			@RequestHeader(value="Authorization", required=false, defaultValue="") String authHeader) {
 		String userId = authService.validateAndGetUserId(authHeader);
 
 		boardService.updateBoard(boardId, dto, userId);
@@ -104,7 +102,7 @@ public class BoardRestController {
 
 	// 게시글 삭제 (로그인 && 본인 글만 가능)
 	@DeleteMapping("/boarddelete/{boardId}")
-	public void deleteBoard(@PathVariable String boardId, @RequestHeader("Authorization") String authHeader) {
+	public void deleteBoard(@PathVariable String boardId, @RequestHeader(value="Authorization", required=false) String authHeader) {
 		String userId = authService.validateAndGetUserId(authHeader);
 
 		boardService.deleteBoard(boardId, userId);
@@ -138,11 +136,16 @@ public class BoardRestController {
 	}
 	
 	// summernote에서 이미지 삭제시 
-	@DeleteMapping("/image-delete")
-	public String deleteImage(@RequestBody Map<String,String> body) {
-	    s3FileService.deleteFileByUrl(body.get("url"));
-	    return "이미지 삭제가 처리되었습니다.";
-	}
+	 @DeleteMapping("/image-delete")
+	    public void deleteImage(@RequestBody Map<String, List<String>> body) {
+	        List<String> urls = body.get("urls");
+
+	        if (urls != null) {
+	            for (String url : urls) {
+	                s3FileService.deleteFileByUrl(url);
+	            }
+	        }
+	    }
 }
 
 
