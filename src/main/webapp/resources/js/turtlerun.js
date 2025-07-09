@@ -164,6 +164,7 @@ function connectGameWebSocket(roomId) {
         if (msg.type === "force_exit") {
             alert("연결이 끊겨 패배 처리되었습니다.\n게임방 리스트로 이동합니다.");
             players(roomPlayers);
+            if(ws) ws.close();
             window.location.href = msg.targetUrl;
         }
         // 게임 종료 후 방으로 이동

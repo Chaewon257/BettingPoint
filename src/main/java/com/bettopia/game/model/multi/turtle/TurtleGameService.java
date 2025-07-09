@@ -37,6 +37,7 @@ public class TurtleGameService {
 	
     private final Map<String, TurtleGameState> gameStates = new ConcurrentHashMap<>();
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(4);
+    private final Map<String, List<TurtlePlayerDTO>> gameStartPlayersMap = new ConcurrentHashMap<>();
 
     // 콜백 인터페이스(핸들러에서 정의)
     public interface RaceUpdateCallback {
@@ -48,6 +49,11 @@ public class TurtleGameService {
     public void startGame(String roomId, int turtleCount, RaceUpdateCallback callback) {
         TurtleGameState state = new TurtleGameState(turtleCount);
         gameStates.put(roomId, state);
+        List<TurtlePlayerDTO> startPlayers = playerDAO.getAll(roomId);
+		// null 방지
+		if (startPlayers != null) {
+			gameStartPlayersMap.put(roomId, new ArrayList<>(startPlayers));
+		}
         scheduler.schedule(() -> runRaceLoop(roomId, state, callback), 0, TimeUnit.SECONDS);
     }
 
@@ -74,6 +80,7 @@ public class TurtleGameService {
     // 결과에 따른 포인트, 승패 계산
     private List<Map<String, Object>> gameResultAndPointCalc(String roomId, TurtleGameState state) {
         List<TurtlePlayerDTO> players = playerDAO.getAll(roomId);
+    	List<TurtlePlayerDTO> startPlayers = gameStartPlayersMap.get(roomId);
         GameRoomResponseDTO gameroom = gameRoomService.selectById(roomId);
         String gameName = "Turtle Run";
         String difficulty = gameroom.getLevel();
@@ -87,7 +94,7 @@ public class TurtleGameService {
         }
         int winnerTurtle = winner; // 0-based
 
-        int totalBet = players.stream().mapToInt(TurtlePlayerDTO::getBetting_point).sum();
+        int totalBet = startPlayers.stream().mapToInt(TurtlePlayerDTO::getBetting_point).sum();
         int winPool = players.stream()
             .filter(p -> p.getTurtle_id() != null && Integer.parseInt(p.getTurtle_id()) - 1 == winnerTurtle)
             .mapToInt(TurtlePlayerDTO::getBetting_point)
