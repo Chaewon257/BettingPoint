@@ -39,7 +39,7 @@ Betting Point는 사용자들이 포인트를 사용해 재미있게 배팅 게�
 
 > 전체 흐름 구조도 (클릭 시 확대)
 
-![UI/UX 설계](./images/81902cf1-a55a-46e0-ac81-f1794833fbb4.png)
+![UI/UX 설계](https://bettopia-s3-bucket.s3.ap-northeast-2.amazonaws.com/677bb5f5-eac4-485b-a561-5782323c8340.png)
 
 <br/>
 
@@ -86,9 +86,9 @@ cd BettingPoint
 
 ## 📸 기타 자료
 
-| 사용 기술 소개                                                    | UI 흐름도                                                       |
+| 사용 기술 소개                                                    | 프로젝트 ERD                                                       |
 | ----------------------------------------------------------- | ------------------------------------------------------------ |
-| ![기술 스택](./images/677bb5f5-eac4-485b-a561-5782323c8340.png) | ![UI 흐름도](./images/37a8885a-7a28-4911-9ad7-30727fad1256.png) |
+| ![기술 스택](https://bettopia-s3-bucket.s3.ap-northeast-2.amazonaws.com/81902cf1-a55a-46e0-ac81-f1794833fbb4.png) | ![ERD](https://bettopia-s3-bucket.s3.ap-northeast-2.amazonaws.com/11f352f7-e42f-4985-8407-88f5cfccdef2.png) |
 
 <br/>
 
