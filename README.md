@@ -1,4 +1,4 @@
-# 🎯 Betting Point - 금융 베팅 게임 플랫폼
+<img width="2559" height="1341" alt="image" src="https://github.com/user-attachments/assets/1f542571-d69b-47e9-b3dd-6c936d395976" /># 🎯 Betting Point - 금융 베팅 게임 플랫폼
 
 Betting Point는 사용자들이 포인트를 사용해 재미있게 배팅 게임을 즐길 수 있도록 기획된 **금융형 배팅 플랫폼**입니다.  
 **단체 및 개인 게임**, **배당금 시스템**, **고객 지원 기능**을 통해 사용자 몰입도와 소셜 참여를 높이고자 합니다.
@@ -81,6 +81,11 @@ git clone https://github.com/SinhanDS-Project/BettingPoint.git
 cd BettingPoint
 # Eclipse 또는 STS를 통해 프로젝트 Import 후, 서버 실행 (Tomcat)
 ```
+
+<br/>
+
+## 📷 프로젝트 대표 이미지
+![프로젝트 화면](https://bettopia-s3-bucket.s3.ap-northeast-2.amazonaws.com/BettingPointMainPage.png)
 
 <br/>
 
