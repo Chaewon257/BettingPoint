@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bpoint.chat">
+	  
+	<select id="selectAll" resultType="chatDTO">
+		SELECT * FROM chatbot_qa
+	</select> 
+	
+	<!-- 메인 카테고리에 딸린 하위 카테고리 조회 -->
+	<select id="subCatesByMainCate" parameterType="String" resultType="String">
+	    SELECT DISTINCT TRIM(sub_category) AS sub_category
+	    FROM chatbot_qa
+	    WHERE TRIM(main_category) = #{main_category}
+	    ORDER BY sub_category
+	</select>
+	
+	<!-- 메인-서브 카테고리에 해당하는 질문들 조회 -->
+	<select id="questionsByMainAndSub" parameterType="map" resultType="chatDTO">
+		SELECT * 
+		FROM chatbot_qa
+    	WHERE TRIM(main_category) = #{main_category}
+      	  AND TRIM(sub_category) = #{sub_category}
+		ORDER BY question_text
+	</select> 
+	
+	<!-- 질문 uid로 답변 조회 -->
+	<select id="answerByUid" parameterType="String" resultType="String">
+		SELECT answer_text
+	    FROM chatbot_qa 
+	    WHERE uid = #{uid}
+	</select> 
+		
+	<!-- 메인 카테고리에 딸린 모든 질문 조회 -->
+	<select id="questiontByMainCate" parameterType="String" resultType="chatDTO">
+		SELECT * 
+		FROM chatbot_qa
+    	WHERE TRIM(main_category) = #{main_category}
+	</select> 
+	
+</mapper>

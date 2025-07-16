@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bpoint.gameroom">
+
+    <!-- 게임방 리스트 조회 -->
+    <select id="selectAllWithPaging" parameterType="map" resultType="gameRoomDTO">
+        select * from game_room
+        order by status desc, created_at desc
+        limit #{size} offset #{offset}
+    </select>
+
+    <!-- 게임방 리스트 조회 -->
+    <select id="selectAll" resultType="gameRoomDTO">
+        select * from game_room
+    </select>
+
+    <!-- 게임방 상세 조회 -->
+    <select id="selectById" parameterType="String" resultType="gameRoomDTO">
+        select * from game_room where uid = #{roomId}
+    </select>
+
+    <!-- 게임방 생성 -->
+    <insert id="insert" parameterType="gameRoomDTO">
+        insert into game_room(uid, title, min_bet, host_uid, game_level_uid)
+        values(#{uid}, #{title}, #{min_bet}, #{host_uid}, #{game_level_uid})
+    </insert>
+
+    <!-- 게임방 수정 -->
+    <update id="update" parameterType="gameRoomDTO">
+        update game_room set
+        title = #{title},
+        game_uid = #{game_level_uid}
+        where uid = #{uid}
+    </update>
+
+    <update id="updateStatus" parameterType="map">
+        update game_room set
+        status = #{status}
+        where uid = #{uid}
+    </update>
+
+    <update id="updateHost" parameterType="map">
+        update game_room set
+        host_uid = #{host_uid}
+        where uid = #{uid}
+    </update>
+
+    <!-- 게임방 삭제 -->
+    <delete id="delete" parameterType="String">
+        delete from game_room where uid = #{roomId}
+    </delete>
+
+</mapper>

@@ -1,0 +1,16 @@
+/* Default css */
+* {
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	font-style: normal;
+	font-weight: 500;
+	font-size: 14px;
+	line-height: 1;
+	font-family: Pretendard, -apple-system, BlinkMacSystemFont, system-ui,
+		'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic',
+		'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif;
+	background-color: #F7F9FC;
+}

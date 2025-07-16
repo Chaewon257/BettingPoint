@@ -1,0 +1,34 @@
+body {
+  font-family: 'Noto Sans KR', sans-serif;
+  background: #eaf6fd;
+  color: #1E3A5F;
+  margin: 0;
+  padding: 20px;
+  min-height: 100vh;
+  overflow-x: auto;
+  box-sizing: border-box;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* 태블릿 이상에서 폰트 크기 증가 */
+@media (min-width: 640px) {
+  .tile {
+    font-size: 1.2rem;
+  }
+}
+
+.tile:hover:not(:disabled) {
+  background: #dbeafe;
+  transform: scale(1.05);
+}
+.tile.revealed {
+  background-color: #d1fae5;
+  color: #059669;
+}
+
+
+
+

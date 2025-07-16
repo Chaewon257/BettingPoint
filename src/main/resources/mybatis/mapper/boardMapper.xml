@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bpoint.board">
+
+	<!-- 카테고리별 리스트 조회, 좋아요/조회수 순으로 정렬 -->
+	<select id="getBoards" parameterType="map" resultType="BoardDTO">
+		SELECT b.*, u.nickname
+		FROM board b
+		LEFT JOIN user u ON b.user_uid =
+		u.uid
+		WHERE b.category = #{category}
+		<choose>
+			<when test="sort == 'like_count'">
+				ORDER BY b.like_count DESC
+			</when>
+			<when test="sort == 'view_count'">
+				ORDER BY b.view_count DESC
+			</when>
+			<otherwise>
+				ORDER BY b.created_at DESC
+			</otherwise>
+		</choose>
+		LIMIT #{limit} OFFSET #{offset}
+	</select>
+
+	<!-- 카테고리별 게시글 수 -->
+	<select id="getTotalBoardCountByCategory" parameterType="string"
+		resultType="int">
+		SELECT COUNT(*)
+		FROM board
+		WHERE category = #{category}
+	</select>
+
+	<!-- 게시글 상세 조회 -->
+	<select id="getBoardByUid" parameterType="String"
+		resultType="boardDTO">
+		SELECT b.*, u.nickname
+		FROM board b
+		LEFT JOIN user u ON b.user_uid = u.uid
+		WHERE b.uid = #{uid}
+	</select>
+
+	<!-- 게시글 등록 -->
+	<insert id="insertBoard" parameterType="boardDTO">
+		INSERT INTO board (
+		uid,
+		title, content, category,
+		board_img, user_uid
+		)
+		VALUES (
+		#{uid}, #{title},
+		#{content}, #{category},
+		#{board_img}, #{user_uid}
+		)
+	</insert>
+
+	<!-- 게시글 수정 -->
+	<update id="updateBoard" parameterType="boardDTO">
+		UPDATE board
+		SET
+		title =
+		#{title},
+		content = #{content},
+		category = #{category},
+		updated_at =
+		SYSDATE()
+		WHERE uid = #{uid}
+	</update>
+
+	<!-- 게시글 삭제 -->
+	<delete id="deleteBoardByUid" parameterType="string">
+		DELETE FROM board
+		WHERE uid = #{uid}
+	</delete>
+
+	<!-- 조회수 증가 -->
+	<update id="incrementViewCount">
+		UPDATE board
+		SET view_count = view_count + 1
+		WHERE uid
+		= #{uid}
+	</update>
+
+	<!-- 좋아요 수 증가 -->
+	<update id="incrementLikeCount">
+		UPDATE board
+		SET like_count = like_count + 1
+		WHERE uid
+		= #{uid}
+	</update>
+
+
+
+</mapper>

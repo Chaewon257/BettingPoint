@@ -1,0 +1,107 @@
+/* 글꼴 및 body 기본 설정 */
+body {
+  font-family: 'Noto Sans KR', sans-serif;
+  background: #eaf6fd;
+  color: #1E3A5F;
+  margin: 0;
+  padding: 20px;
+  min-height: 100vh;
+  overflow-x: auto;
+  box-sizing: border-box;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* 코인 이미지 배경 */
+.coin-heads {
+  background-image: url('../images/coin-head.png');
+  filter: drop-shadow(0 0 12px rgba(255, 215, 0, 0.5));
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+  transition: none;
+}
+
+.coin-tails {
+  background-image: url('../images/coin-tail.png');
+  filter: drop-shadow(0 0 10px rgba(100, 100, 100, 0.6));
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+  transition: none;
+}
+
+/* 코인 기호 색상 */
+.coin-heads .coin-symbol {
+  color: #b8860b;
+}
+
+.coin-tails .coin-symbol {
+  color: #555;
+}
+
+/* 난이도 선택 상태 */
+.difficulty-option.selected,
+.difficulty-selected {
+  border-color: #82C2EF !important;
+  background: #A3D3F5 !important;
+  color: #1E3A5F !important;
+}
+
+.difficulty-option.selected .difficulty-payout,
+.difficulty-selected .difficulty-payout {
+  color: #0d47a1 !important;
+}
+
+/* 결과 메시지 스타일 */
+.result-win {
+  background: #e3fcec !important;
+  color: #2e7d32 !important;
+}
+
+.result-lose {
+  background: #ffebee !important;
+  color: #c62828 !important;
+}
+
+/* 애니메이션 */
+@keyframes flip {
+  0% {
+    transform: rotateX(0deg) rotateY(0deg);
+  }
+  100% {
+    transform: rotateX(5000deg) rotateY(5000deg);
+  }
+}
+
+.flipping {
+  animation: flip 2s linear forwards;
+  transform-style: preserve-3d;
+}
+
+/* 모바일 대응 - 매우 작은 화면 */
+@media (max-width: 480px) {
+  body {
+    padding: 10px;
+  }
+  
+  .difficulty-options {
+    grid-template-columns: 1fr !important;
+  }
+  
+  .bet-buttons {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  
+  .stats-container {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* 난이도 선택 상태 */
+.difficulty-option.selected,
+.difficulty-selected {
+  border-color: #93c5fd !important;
+  background: #93c5fd !important;    
+  color: #1e3a8a !important;       
+}

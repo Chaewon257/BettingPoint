@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bpoint.support">
+
+    <!-- 🔹 카테고리로 필터링해서 게시글 목록 조회 -->
+    <select id="selectByCategory" parameterType="string" resultType="boardDTO">
+        SELECT * FROM board
+        WHERE category = #{category}
+        ORDER BY created_at DESC
+    </select>
+
+	<!-- 고객 지원 공지사항 페이지네이션 -->
+	<select id="selectByCategoryWithPaging" parameterType="map" resultType="boardDTO">
+	    SELECT * FROM board
+	    WHERE category = #{category}
+	    ORDER BY like_count DESC
+	    LIMIT #{size} OFFSET #{offset}
+	</select>
+	
+	<select id="countByCategory" parameterType="string" resultType="int">
+	    SELECT COUNT(*) 
+	    FROM board
+	    WHERE category = #{category}
+	</select>
+        
+    <select id="selectById" parameterType="String" resultType="boardDTO">
+        select * from board where uid = #{uid}
+    </select>
+        	    
+</mapper>
