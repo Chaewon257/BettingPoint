@@ -146,7 +146,7 @@ pay_type VARCHAR(20) COMMENT '결제 수단 (카드, 계좌 등)',
 amount INT NOT NULL COMMENT '결제 금액', 
 order_uid VARCHAR(50) NOT NULL UNIQUE COMMENT '가맹점 주문 UID', 
 order_name VARCHAR(255) COMMENT '주문명', 
-user_uid VARCHAR(36) NOT NULL COMMENT '결제 사용자 UID', 
+user_uid CHAR(32) NOT NULL COMMENT '결제 사용자 UID', 
 payment_key VARCHAR(100) UNIQUE COMMENT '토스페이먼츠 payment_key', 
 status ENUM('PENDING', 'PAID', 'FAILED', 'CANCELED') DEFAULT 'PENDING' COMMENT '결제 상태', 
 created_at DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '결제 생성 시각', 
@@ -154,4 +154,4 @@ approve_at DATETIME NULL COMMENT '결제 승인 시각',
 failure_reason VARCHAR(500) COMMENT '결제 실패 사유', 
 receipt_url VARCHAR(500) COMMENT '토스페이먼츠 영수증 URL', 
 CONSTRAINT fk_payment_user_uid FOREIGN KEY (user_uid) REFERENCES user(uid) ON DELETE CASCADE ON UPDATE CASCADE 
-); 
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
