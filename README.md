@@ -9,8 +9,8 @@ Betting Point는 사용자들이 포인트를 사용해 재미있게 배팅 게�
 
 ### ✅ 개발 환경
 - IDE: Eclipse, STS3, MySQL Workbench
-- DB: MySQL
-- Server: Apache Tomcat
+- DB: MySQL 8.0.42
+- Server: Apache Tomcat 9.0.102
 - 형상 관리: Git, GitHub
 - 협업 도구: Notion, Figma, Slack
 
