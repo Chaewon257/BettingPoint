@@ -326,6 +326,8 @@
 					email.classList.remove("border-gray-5");
 					email.classList.add("border-red-600");
 		        	
+					verifyNicknamebtn.disabled = false;
+					registerSubmit.textContent = "회원가입";
 		        	error.textContent = "이메일을 입력해야합니다.";
 		        	return;
 		        } else {
@@ -335,6 +337,8 @@
 				
 				if (!emailVerified.checked) {
 					error.textContent = "이메일 인증을 완료해야 합니다.";
+					verifyNicknamebtn.disabled = false;
+					registerSubmit.textContent = "회원가입";
 					return;
 				}
 				
@@ -343,6 +347,8 @@
 					verificationCodeInput.classList.add("border-red-600");
 		        	
 		        	error.textContent = "인증번호를 입력해야합니다.";
+		        	verifyNicknamebtn.disabled = false;
+		        	registerSubmit.textContent = "회원가입";
 		        	return;
 		        } else {
 		        	verificationCodeInput.classList.remove("border-red-600");
@@ -353,6 +359,8 @@
 					password.classList.remove("border-gray-5");
 					password.classList.add("border-red-600");
 		    		
+					verifyNicknamebtn.disabled = false;
+					registerSubmit.textContent = "회원가입";
 		        	error.textContent = "비밀번호는 6자 이상, 대소문자, 특수문자를 포함해야 합니다.";
 		        	return;
 		        } else {
@@ -364,6 +372,8 @@
 		        	passwordCheck.classList.remove("border-gray-5");
 		        	passwordCheck.classList.add("border-red-600");
 		        	
+		        	verifyNicknamebtn.disabled = false;
+		        	registerSubmit.textContent = "회원가입";
 		        	error.textContent = "비밀번호가 일치하지 않습니다.";
 		        	return;
 		        } else {
@@ -375,6 +385,8 @@
 		        	name.classList.remove("border-gray-5");
 		        	name.classList.add("border-red-600");
 		        	
+		        	verifyNicknamebtn.disabled = false;
+		        	registerSubmit.textContent = "회원가입";
 		        	error.textContent = "이름을 입력해야합니다.";
 		        	return;
 		        } else {
@@ -386,6 +398,8 @@
 		        	nickname.classList.remove("border-gray-5");
 		        	nickname.classList.add("border-red-600");
 		        	
+		        	verifyNicknamebtn.disabled = false;
+		        	registerSubmit.textContent = "회원가입";
 		        	error.textContent = "닉네임을 입력해야합니다.";
 		        	return;
 		        } else {
@@ -394,6 +408,8 @@
 		        }
 		        
 		        if (!verifyNickname.checked) {
+		        	verifyNicknamebtn.disabled = false;
+		        	registerSubmit.textContent = "회원가입";
 		        	error.textContent = "닉네임 중복 검사를 해야합니다.";
 		        	return;
 		        }
@@ -402,6 +418,8 @@
 		      		birthDate.classList.remove("border-gray-5");
 		      		birthDate.classList.add("border-red-600");
 		      		
+		      		verifyNicknamebtn.disabled = false;
+		      		registerSubmit.textContent = "회원가입";
 		        	error.textContent = "만 19세 이상만 가입할 수 있습니다.";
 		        	return;
 		        } else {
@@ -413,6 +431,8 @@
 		        	phoneNumber.classList.remove("border-gray-5");
 		        	phoneNumber.classList.add("border-red-600");
 		        	
+		        	verifyNicknamebtn.disabled = false;
+		            registerSubmit.textContent = "회원가입";
 		        	error.textContent = "전화번호 형식이 올바르지 않습니다.";
 		        	return;
 		        }  else {
@@ -421,6 +441,8 @@
 		        }
 		
 		        if (!agreePrivacy) {
+		        	verifyNicknamebtn.disabled = false;
+		            registerSubmit.textContent = "회원가입";
 		        	error.textContent = "개인정보 수집에 동의해야 합니다.";
 		        	return;
 		        }
