@@ -1,0 +1,16 @@
+FROM docker.io/library/mysql:8.0.28
+
+MAINTAINER "TEAM BETTOPIA<bettopia@gmail.com>"
+
+ENV MYSQL_ROOT_PASSWORD=betting
+ENV MYSQL_DATABASE=betting
+ENV MYSQL_USER=betting
+ENV MYSQL_PASSWORD=betting
+
+# secure-file-priv 디렉토리 생성
+RUN mkdir -p /var/lib/mysql-files && chown -R mysql:mysql /var/lib/mysql-files
+
+ADD my.cnf /etc/mysql/my.cnf
+
+#ADD bettopia_table.sql /docker-entrypoint-initdb.d/
+ADD bettopia_table_data.sql /docker-entrypoint-initdb.d/
